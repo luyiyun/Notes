@@ -1,0 +1,7 @@
+---
+title: "About"
+---
+
+This site is a migration-friendly home for notes that were previously managed in Obsidian.
+
+The project uses Quarto for publishing, Git for version control, and Neovim for day-to-day editing. Source note organization under `src/` is intentionally left open for later design.

@@ -1,0 +1,26 @@
+project:
+  type: website
+  render:
+    - index.qmd
+    - about.qmd
+    - "src/**/*.qmd"
+
+website:
+  title: "Rong's Notes"
+  draft-mode: gone
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: about.qmd
+        text: About
+
+format:
+  html:
+    theme:
+      - cosmo
+      # - quartz
+      # - brand
+    css: styles.css
+    toc: true
+

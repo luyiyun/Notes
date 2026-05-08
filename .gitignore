@@ -1,0 +1,16 @@
+_site/
+.quarto/
+*_files/
+
+.DS_Store
+.ipynb_checkpoints/
+.jupyter_cache/
+
+/.quarto/
+**/*.quarto_ipynb
+
+*.png
+*.jpg
+*.webp
+*.pdf
+
