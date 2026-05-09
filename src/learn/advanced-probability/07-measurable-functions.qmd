@@ -1,0 +1,847 @@
+---
+title: "可测函数"
+draft: true
+aliases:
+  - 可测函数与随机变量
+author:
+  - 荣志炜
+tags:
+  - 可测函数
+  - Borel函数
+  - 随机变量
+  - 原像
+  - 广义实数
+  - 简单函数
+  - 典型方法
+  - 一致收敛
+  - 分布函数
+  - 有限可测分割
+created: 2024-04-12 14:17
+updated: 2025-12-11 20:27
+order: 7
+---
+
+# 引言
+
+因为样本空间 $\Omega$ 可以是任意的结构（可能不是数字），所以建立从 $\Omega$ 到更简单空间的映射是进行研究是非常必要的，这带来了两个好处：
+
+- 简单空间可能是我们已经研究很好的空间 (比如实数空间 $\mathbb{R}$，其上存在非常完备的代数和分析结构);
+- 简单空间实际上起到了限制作用，其将研究聚焦于这个简单空间所形成的 $\sigma$ -field 上，一般，这个 $\sigma$ -field 比原始样本空间所关联的 $\sigma$ -field 更加简单。
+
+实际上，我们感兴趣的可能也只是这个简单空间所形成的 $\sigma$ -field。
+
+# 函数的原像
+
+::: {#def-07-measurable-functions-1}
+
+## 映射的原像
+
+对于映射 $f:X\to Y$，对于任何 $B\subset Y$，称
+
+$$
+f^{-1}(B):=\{ x \in X|f(x)\in B \}
+$$
+
+为 $B$ 在映射 $f$ 下的**原像（inverse image）**。
+
+:::
+映射的原像是个非常好的运算，其几乎在所有集合运算上保持不变。
+
+::: {#prp-07-measurable-functions-2}
+
+## 原像的性质
+
+对于映射 $f:X\to Y$，$\forall B,B_{1},B_{2}\subset Y$，任意的指标集合 $T$， 有
+1. $f^{-1}(\emptyset)=\emptyset$;
+2. $f^{-1}(Y)=X$;
+3. $B_{1}\subset B_{2}\implies f^{-1}(B_{1})\subset f^{-1}(B_{2})$;
+4. $(f^{-1}(B))^{c}=f^{-1}(B^{c})$;
+5. $f^{-1}\left( \bigcup_{t\in T}A_{t} \right)=\bigcup_{t\in T}f^{-1}(A_{t}),\quad\forall \{ A_{t}\subset Y,t\in T \}$
+6. $f^{-1}\left( \bigcap_{t\in T}A_{t} \right)=\bigcap_{t\in T}f^{-1}(A_{t}),\quad\forall \{ A_{t}\subset Y,t\in T \}$
+
+:::
+基于以上给出的性质，我们有下面的定理：
+
+::: {#thm-inverse-image}
+
+## $\sigma$ -field 的原像
+
+对于 $Y$ 上的任何集合系 $\mathcal{E}$，有
+
+$$
+\sigma(f^{-1}(\mathcal{E}))=f^{-1}(\sigma(\mathcal{E}))
+$$
+
+:::
+
+根据这个定理，**我们就可以定义可测函数了**。
+
+# 广义实数
+
+这里我们来扩展一下实数集的定义，方便后面的讲述。
+
+::: {#def-07-measurable-functions-4}
+
+## 广义实数
+
+往实数集中添加两个元素，称之为 $-\infty$ 和 $\infty$，其满足以下的性质：
+
+$$
+\begin{align}
+&-\infty<a<\infty,\quad\forall a\in\mathbb{R} \\
+&(\pm \infty)+a=a+(\pm \infty)=a-(\mp \infty)=\pm \infty \\
+&(\pm \infty)+(\pm \infty)=(\pm \infty)-(\mp \infty)=\pm \infty \\
+&a / (\pm \infty) = 0 \\
+& a\times(\pm \infty)=(\pm \infty)\times a=\left\{
+\begin{matrix}
+&\pm \infty,\quad &0<a\leq \infty, \\
+&0,\quad &a=0, \\
+&\mp \infty,\quad &-\infty\leq a<0.
+\end{matrix}
+\right.
+\end{align}
+$$
+
+其他运算则被认为没有定义。广义实数集为 $\bar{\mathbb{R}}:=\mathbb{R}\cup\{ -\infty,\infty \}$。
+
+:::
+基于此，我们还可以有下面的定义
+
+::: {#def-07-measurable-functions-5}
+
+## 广义区间
+
+对于任意的 $a,b\in \bar{\mathbb{R}}$，定义
+
+$$
+(a,b):=\{ x \in \bar{\mathbb{R}}|a<x<b \}
+$$
+
+$[a,b),(a,b],[a,b]$ 的定义类似。
+**Definition: 广义 Borel 可测集**
+
+$$
+\mathcal{B}_{\bar{\mathbb{R}}}:=\sigma(\mathcal{B}_{\mathbb{R}},\{ -\infty \},\{ \infty \})
+$$
+
+:::
+容易证明有下面的定理
+
+::: {#thm-09224b}
+
+## Theorem
+
+ $$
+\begin{align}
+\mathcal{B}_{\bar{\mathbb{R}}}&=\sigma([-\infty,a)|a\in\mathbb{R}) =\sigma([-\infty,a]|a\in\mathbb{R}) \\
+&=\sigma((a,\infty]|a\in\mathbb{R}) =\sigma([a,\infty]|a\in\mathbb{R})
+\end{align}
+$$
+
+:::
+
+# 可测函数和随机变量
+
+::: {#def-07-measurable-functions-7}
+
+## 可测函数和随机变量
+
+对于可测空间 $(X,\mathcal{F})$ 和 $(Y,\mathcal{T})$，$f:X\to Y$ 是一个映射，若
+
+$$
+f^{-1}(\mathcal{T})\in\mathcal{F},$$
+称 $f$ 是从 $(X,\mathcal{F})$ 到 $(Y,\mathcal{T})$ 上的**可测映射** (或随机元)，其中 $f^{-1}(\mathcal{T})$ 称为使映射 $f$ 可测的最小 $\sigma$ -field。
+若 $(Y,\mathcal{T})=(\bar{\mathbb{R}},\mathcal{B}_{\bar{\mathbb{R}}})$，则称 $f$ 是广义可测函数或**可测函数**。
+若 $(Y,\mathcal{T})=(\mathbb{R},\mathcal{B})$，则称 $f$ 是 Borel可测函数或 **Borel 函数**。此时，若在 $(X,\mathcal{F})$ 上定义了概率测度，则一般称 $f$ 为**随机变量**，用大写英文字母来表示。
+**Note: 名称的区别**
+以上所针对的对象，在不同的教材中可能称呼不同。比如，
+- 在《测度论与概率论基础》(程士宏) 中，称这里的 Borel 函数为有限值可测函数或随机变量，可测映射和可测函数的定义与这里一致；
+- 在《mathematical statistics》(Jun Shao) 中，则称这里的可测映射为 measurable function，对 Borel 函数的定义和这里一致，没有 $(Y,\mathcal{T})=(\bar{\mathbb{R}},\mathcal{B}_{\bar{\mathbb{R}}})$ 的定义。
+
+我们综合了两本书的内容，认为这里的名称可能覆盖更加广泛。
+
+:::
+根据上面 Borel 函数和广义可测函数的定义，我们有下面的推论
+
+::: {#prp-308908}
+
+## Proposition
+
+对于函数 $f:X\to \bar{\mathbb{R}}$，若 $f(X)\in \mathbb{R}$ ，则其是 Borel 函数**当且仅当**其是广义可测函数。
+
+:::
+
+::: {.proof}
+当 $f$ 是一个 Borel 函数时，有 $f^{-1}(\mathcal{B})\in\mathcal{F}$ 。因为 $f$ 不可能取到 $-\infty$ 和 $\infty$ ，所以 $f^{-1}(\{ -\infty \})=f^{-1}(\{ \infty \})=\emptyset\in\mathcal{F}$，因此 $f^{-1}(\mathcal{B}_{\bar{\mathbb{R}}})\in\mathcal{F}$，即 $f$ 是一个广义可测函数。
+当 $f$ 是一个广义可测函数时，有 $f^{-1}(\mathcal{B}_{\bar{\mathbb{R}}})\in\mathcal{F}$，又因为 $\mathcal{B}\subset \mathcal{B}_{\bar{\mathbb{R}}}$，所以有
+
+$$
+f^{-1}(\mathcal{B})\subset f^{-1}(\mathcal{B}_{\bar{\mathbb{R}}})\subset \mathcal{F}
+$$
+
+:::
+
+::: {.callout-note title="广义可测函数和 Borel 函数"}
+
+- 广义可测函数的概念来自《测度论与概率论基础》(程士宏) ，在《mathematical statistics》(Jun Shao) 中并没有提到。
+- 在考虑两个函数是否相等时，仅需要考虑定义域是否相同，以及映射关系是否相同即可，不需要考虑值域是否相同，因为值域仅表达函数输出值在值域内。因此，从此意义上来说，Borel 函数就是一个广义可测函数。
+然而并没有这么简单，因为在定义 Borel 或可测函数时，我们还需要考虑到装配在值域上的一个 $\sigma$ -field 结构。幸运地是，Borel 和可测函数所涉及的值域结构是有联系的，其最终结果就是 [308908](#308908)，在函数的值域能够被限制在 $\mathbb{R}$ 时，两者是同一个东西。
+- 然而，当某个函数其值域无法被限制在 $\mathbb{R}$ 时 ($\exists x \in X\implies f(x)\in\{ -\infty,\infty \}$)，则其只能是广义可测函数而非 Borel 函数。当我们能够将其值域限制在 $\mathbb{R}$ 中时，其定义域一定不再是 $X$ 了。
+- 一般来说，在概率论中，我们很难遇到是广义可测函数而非 Borel 函数的情况（无穷大值是有意义的）；即便遇到，如果无穷大值所占的测度为 0，则无穷大值存在与否一般对结论也没有影响。
+
+:::
+根据 @thm-inverse-image，我们有下面的可测映射的判定定理:
+
+::: {#thm-measurable-func-decision}
+
+## 可测映射判定定理
+
+设 $\mathcal{E}$ 是 $Y$ 上的任意集合系，则 $f$ 是 $(X,\mathcal{F})$ 到 $(Y,\sigma(\mathcal{E}))$ 上的可测映射当且仅当
+
+ $$
+f^{-1}(\mathcal{E})\subset \mathcal{F}
+$$
+
+:::
+
+因为 $\mathcal{B}$ 或 $\mathcal{B}_{\bar{\mathbb{R}}}$ 的结构非常复杂，因此使用定义去验证是不是可测函数是非常难的。但是利用上述定理，我们可以有下面的简单判定方法：
+
+::: {#thm-measurable-func-decision2}
+
+## 可测函数的简单判别方法
+
+已知 $f$ 是 $(X,\mathcal{F})$ 到 $(\bar{\mathbb{R}},\mathcal{B}_{\bar{\mathbb{R}}})$（或 $(\mathbb{R},\mathcal{B})$）上的映射，则下面的说法等价：
+1. $f$ 是广义可测函数（或 Borel 函数）；
+2. $\{ f<a \}\in\mathcal{F},\quad\forall a\in\mathbb{R}$;
+3. $\{ f\leq a \}\in\mathcal{F},\quad\forall a\in\mathbb{R}$;
+4. $\{ f> a \}\in\mathcal{F},\quad\forall a\in\mathbb{R}$;
+5. $\{ f\geq a \}\in\mathcal{F},\quad\forall a\in\mathbb{R}$;
+
+:::
+
+::: {.proof}
+我们先证明 $f$ 是 Borel 函数的情况。
+因为 $\{ f<a \}=f^{-1}((-\infty,a))$，所以 1 蕴含 2。又因为 $\sigma(\{ (-\infty,a)|a\in\mathbb{R} \})=\mathcal{B}$，所以根据 @thm-measurable-func-decision，2 也蕴含 1。其他条件证明类似。
+当 $f$ 是广义可测函数时，证明过程类似，只是将 $\mathcal{B}$ 的定义换成 [09224b](#09224b) 即可。
+:::
+
+::: {.callout-note title="在面对广义可测函数时，是 $\{ f&lt;a \}=f^{-1}([-\infty,a))$ 而非 $f^{-1}((-\infty,a))$"}
+
+:::
+基于此，我们有以下推论
+
+::: {#cor-07-measurable-functions-11}
+
+## Corollary
+
+如果 $f,g$ 是广义可测函数（或 Borel 函数），则
+
+ $$
+\{ f<g \},\{ f\leq g \},\{ f=g \}\in\mathcal{F}
+$$
+
+特别的，$\{ f=a \}\in\mathcal{F},\forall a\in \bar{\mathbb{R}}$。
+
+:::
+::: {.proof}
+注意到
+
+$$
+\{ f<g \}=\bigcup_{\gamma \in\mathbb{Q}}(\{ f<\gamma \}\cap \{ g>\gamma \})
+\in\mathcal{F}
+$$
+
+同理可以得到 $\{ f>g \}\in\mathcal{F}$，而 $\{ f\leq g \}={f>g}^{c}\in\mathcal{F}$，$\{ f=g \}=\{ f\leq g \}\cap{f\geq g}\in\mathcal{F}$。
+因为我们仅利用了 @thm-measurable-func-decision2 进行证明，而它对于广义可测函数和 Borel 函数均可用，自然本定理的内容对于广义可测函数和 Borel 函数都是成立的。
+:::
+
+# 可测函数的运算
+
+## 算数运算
+
+::: {#thm-f90039}
+
+## 可测函数的算数运算
+
+若 $f,g$ 是广义可测函数（或 Borel 函数），则
+1. $\forall a\in \bar{\mathbb{R}}$ (或 $\mathbb{R}$)，$af$ 是广义可测函数（或 Borel 函数）;
+2. 若 $f+g$ 有意义，则其是广义可测函数（如果 $f,g$ 是 Borel 函数，则 $f+g$ 一定有意义并且它是 Borel 函数）；
+3. $fg$ 是广义可测函数（Borel 函数）;
+4. 若 $g(x)\neq 0,\forall x \in X$，则 $f/g$ 是广义可测函数（Borel 函数）。
+
+:::
+
+::: {.proof}
+(1) 若 $a=-\infty,0,\infty$ 时，有
+
+$$
+af=\left\{
+\begin{matrix}
+&-\infty \mathbb{1}_{\{ f>0 \}}+\infty \mathbb{1}_{\{ f>0 \}}\infty,&a=\infty \\
+&0,&a=0,\\
+&\infty \mathbb{1}_{\{ f>0 \}}+(-\infty) \mathbb{1}_{\{ f>0 \}}\infty,&a=-\infty \\
+\end{matrix}
+\right.
+$$
+
+容易验证，这三个函数都是可测的。
+当 $0<a<\infty$ 时，有 $\{ af>b \}=\{ f>b / a \}$ ，由 @thm-measurable-func-decision2 可知 $af$ 是可测的; 当 $0>a>-\infty$ 时情况类似。1 得证。
+(2) 若 $f+g$ 有意义，则 $\forall a\in\mathbb{R}$，我们可以将 $\{ f+g<a \}$ 分成三部分，有
+
+$$
+\{ f+g<a \}=A_{1}\cup A_{2}\cup A_{3},
+$$
+
+其中
+
+$$
+\begin{align}
+A_{1}&=\{ f+g<a,f+g=-\infty \} \\
+&=\{ f+g<a,\min\{f,g\}=-\infty,\max\{ f,g \}<\infty \} \\
+&=\{ f=-\infty,g<\infty \}\cup \{ f<\infty,g=-\infty \} \\
+A_{2}&=\{ f+g<a,f+g=\infty \} \\
+&=\{ f+g<a,\max\{ f,g \}=\infty,\min\{ f,g \}>-\infty \} \\
+&=\emptyset \\
+A_{3}&=\{ f+g<a,-\infty<f+g<\infty \} \\
+&=\{ f<a-g \}\cap \{ -\infty<f,g<\infty \} \\
+&=\bigcup_{\gamma \in\mathbb{Q}}\left[ \{ f<\gamma \} \cap \{ g<a-\gamma \} \right]\cap \{ -\infty<f,g<\infty \} 
+\end{align}
+$$
+
+容易证明，这三个数据集都属于 $\mathcal{F}$，因此可知 $f+g$ 可测。当 $f,g$ 都是 Borel 函数时，$A_{1}$ 和 $A_{2}$ 都是空集，自然也是成立的。2 得证。
+(3) 对于任意的 $a\in\mathbb{R}$，我们有 $\{ fg<a \}=A_{1}\cup A_{2}\cup A_{3}$，其中
+
+$$
+\begin{align}
+A_{1}&=\{ fg<a \}\cap \{ fg=-\infty \} \\
+&=\{ fg=-\infty \} \\
+&=\{ f=-\infty,\infty\geq g>0 \}\cup \{ f=\infty,-\infty\leq g<0 \}\cup
+\{ \infty\geq f>0,g=-\infty \}\cup \{ -\infty\leq f<0,g=\infty \} \\
+&\in\mathcal{F} \\
+A_{2}&=\{ fg<a \}\cap \{ fg=\infty \}=\emptyset\in\mathcal{F} \\
+A_{3}&=\{ fg<a \}\cap \{ -\infty<fg<\infty \}=B_{1}\cup B_{2}
+\end{align}
+$$
+
+进而我们有
+
+$$
+\begin{align}
+B_{1}&=\{ fg<a \}\cap \{ g=0 \}=\left\{\begin{matrix}
+\emptyset\in\mathcal{F},&a\leq 0\\
+\{ g=0 \}\in\mathcal{F},&a>0
+\end{matrix}\right. \\
+B_{2}&=\{ fg<a \}\cap \{ g\neq 0 \}\\
+&=\{ fg<a \}\cap(\{ g>0 \}\cup \{ g<0 \}) \\
+&=[\{ f<ag^{-1} \}\cap \{ g>0 \}]\cup[\{ f>ag^{-1} \}\cap \{ g<0 \}] \\
+&=\left[ \{ g>0 \} \cap \bigcup_{\gamma \in\mathbb{Q}}\{ f<\gamma,\gamma g<a \}\right] \cup
+\left[ \{ g<0 \}\cap \bigcup_{\gamma \in\mathbb{Q}} \{ f>\gamma,\gamma g<a \}\right] \in\mathcal{F}
+\end{align}
+$$
+
+当 $f,g$ 是 Borel 函数的时候，只有 $A_{3}$。3 得证。
+(4) 我们首先证明 $g^{-1}$ 是可测函数（或 Borel 函数）, 然后利用 3 即可证明。同样的，我们有
+
+$$
+\{ g^{-1} < a \}=A_{1}\cup A_{2}\cup A_{3}
+$$
+
+其中，
+
+$$
+\begin{align}
+A_{1}& = \{ g^{-1} < a \}\cap \{ g=\pm\infty \}
+=\left\{\begin{matrix}
+&\{ g=\pm\infty \},&a>0 \\
+&\emptyset,&a\geq 0
+\end{matrix}\right. \\
+A_{2}&=\{ g^{-1}<a \}\cap \{ g=0\}=\emptyset \\
+A_{3}&=\{ g^{-1}<a \}\cap \{ -\infty <g<\infty\}\cap
+\{ g\neq 0 \}
+=B_{1}\cup B_{2} \\
+B_{1}&=\{ g^{-1}<a \}\cap\{0>g>-\infty\}
+=\{ ag>1 \}\in \mathcal{F} \\
+B_{2}&=\{ g^{-1}<a \}\cap\{0<g<\infty\}
+=\{ ag<1 \}\in \mathcal{F} \\
+\end{align}
+$$
+
+ 其中 $A_{2}=\emptyset$ 是根据题设得到的，$B_{1}$ 和 $B_{2}$ 的结论也可以根据 1 来得到。
+:::
+
+## 极限运算
+
+::: {#thm-07-measurable-functions-13}
+
+## 可测函数的极限运算
+
+若 $\{ f_{n},n=1,2,\dots \}$ 是广义可测函数列（或 Borel 函数列），则
+
+ $$
+\inf_{n}f_{n},\quad\sup_{n}f_{n},\quad \mathop{\lim\inf}_{n},\quad
+\mathop{\lim\sup}_{n}
+$$
+
+依然是广义可测函数（或 Borel 函数）。
+
+:::
+::: {.proof}
+$\forall a\in\mathbb{R}$，有
+
+$$
+\begin{align}
+&\{ \inf_{n}f_{n}\geq a \}=\bigcap_{n=1}^{\infty}\{ f_{n}\geq a \} \\
+&\{ \sup_{n}f_{n}\leq a \}=\bigcap_{n=1}^{\infty}\{ f_{n}\leq a \} \\
+\end{align}
+$$
+
+$$
+\begin{align}
+\{ \mathop{\lim\inf}_{n}f_{n}> a \} =&\{\sup_{n}\inf_{m\geq n}f_{m}>a \}\\
+=&\bigcup_{k=1}^{\infty}\bigcup_{n=1}^{\infty}
+\left\{  \inf_{m\geq n}f_{m}>a+\frac{1}{k}  \right\} \\
+=&\bigcup_{k=1}^{\infty}\bigcup_{n=1}^{\infty}\bigcap_{m=n}^{\infty}
+\left\{  f_{m}>a+\frac{1}{k}  \right\} \\
+\{ \mathop{\lim\sup}_{n}f_{n}< a \} =&\{\inf_{n}\sup_{m\geq n}f_{m}<a \}\\
+=&\bigcup_{k=1}^{\infty}\bigcup_{n=1}^{\infty}
+\left\{  \sup_{m\geq n}f_{m}<a-\frac{1}{k}  \right\} \\
+=&\bigcup_{k=1}^{\infty}\bigcup_{n=1}^{\infty}\bigcap_{m=n}^{\infty}
+\left\{  f_{m}>a-\frac{1}{k}  \right\} \\
+\end{align}
+$$
+
+其中我们用到了
+
+$$
+\begin{align}
+\{ \sup_{n}g_{n}>a \}&=\bigcup_{k=1}^{\infty}\bigcup_{n=1}^{\infty}\left\{  g_{n}>a+\frac{1}{k}  \right\} \\
+\{ \inf_{n}g_{n}<a \}&=\bigcup_{k=1}^{\infty}\bigcup_{n=1}^{\infty}\left\{  g_{n}<a-\frac{1}{k}  \right\}
+\end{align}
+$$
+
+这是因为
+
+$$
+\begin{align}
+x \in\{ \sup_{n}g_{n}>a \}&\iff
+\exists k\in\mathbb{N},\sup_{n}g_{n}(x)>a+\frac{1}{k}\iff
+\exists k\in\mathbb{N},\exists n,g_{n}(x)>a+\frac{1}{k}\\
+&\iff \exists k\in\mathbb{N},x \in\bigcup_{n=1}^{\infty}\left\{  g_{n}>a+\frac{1}{k}  \right\}\iff
+\bigcup_{k=1}^{\infty}\bigcup_{n=1}^{\infty}\left\{  g_{n}>a+\frac{1}{k}  \right\} \\
+\end{align}
+$$
+
+同理，$\inf$ 的情况也可以类似推得。
+基于上面的推导，我们可知，这些极限都是广义可测函数或 Borel 函数。
+
+（注意到，$a\in\mathbb{R}$ 对于广义还是 Borel 函数都是一样的，两者的区别在于 $\{ f<a \}$ 这样的集合包不包含 $\{ f=-\infty \}$。然而，根据 @thm-measurable-func-decision2，包含了就是广义可测函数，不包含就是 Borel 函数，因此正好一一对应成立）
+:::
+
+## 简单函数和典型方法
+
+接下来，我们将研究一种特殊的 Borel 函数，即**简单函数**，其是构成任意可测函数的“基石”。
+
+::: {#def-finite-measurable-partition}
+
+## 有限可测分割
+
+若存在 $A_{i}\in\mathcal{F},i=1,\dots,n$，满足
+
+$$
+A_{i}\cap A_{j}=\emptyset,\forall i\neq j,\quad
+\bigcup_{i=1}^{n}A_{i}=X
+$$
+
+则称 $\{ A_{i},i=1,\dots,n \}$ 是空间 $(X,\mathcal{F})$ 的一个有限可测分割。
+
+:::
+
+::: {#def-07-measurable-functions-15}
+
+## 简单函数
+
+对于某个函数 $f:X\to \mathbb{R}$，存在一个有限可测分割 $\{ A_{i},i=1,\dots n \}$ 和实数集合 $\{ a_{i}\in\mathbb{R},i=1,\dots,n \}$ 使得
+
+$$
+f=\sum\limits_{i=1}^{n}a_{i}I_{A_{i}}
+$$
+
+则称其为**简单函数**。
+
+:::
+为了能够更加明确地叙述简单函数与可测函数之间的联系，我们还需要定义一些函数相关的概念。
+
+::: {#def-07-measurable-functions-16}
+
+## 有界可测函数
+
+对于可测函数 $f$，若存在 $M>0$ 使得 $|f(x)|<M,\forall x \in X$，则称该函数是有界的。
+
+:::
+显然，**有界可测函数必是 Borel 函数**。
+
+::: {#def-07-measurable-functions-17}
+
+## 正部和负部
+
+对于可测函数 $f$ ，定义其正部 $f^{+}$ 和负部 $f^{-}$ 为
+
+$$
+\begin{align}
+&f^{+}(x)=\left( f(x) \right) ^{+}=\left\{\begin{matrix}
+
+f(x),&f(x)>0 \\
+0,&f(x) \leq 0
+\end{matrix}\right. \\
+
+&f^{-}(x)=\left( f(x) \right) ^{-}=\left\{\begin{matrix}
+-f(x),&f(x)<0 \\
+0,&f(x) \geq 0
+\end{matrix}\right. \\
+\end{align}
+
+$$
+
+:::
+显然，**可测函数的正部和负部是非负可测函数，并且有 $f=f^{+}-f^{-}$**。
+
+::: {#def-07-measurable-functions-18}
+
+## 一致收敛
+
+对于均定义在 $X$ 上 的 $\{ f_{n},n=1,2,\dots \}$ 和 $f$，若 $\forall\epsilon>0$，存在 $N\in\mathbb{N}^{+}$，$\forall n>N$ 满足
+
+$$
+\sup_{x \in X}|f_{n}(x)-f(x)|<\epsilon
+$$
+
+则称 $f_{n}$ 一致（均匀）收敛于 $f$，或称 $f_{n}\to f$ 是一致成立的。
+
+:::
+现在，我们有下面的定理
+
+::: {#thm-simple-func-converge}
+
+## 简单函数逼近
+
+1. 简单函数是可测的，其线性组合也是可测的。
+2. 对于任何非负可测函数 $f$，存在非负简单函数列 $\{ f_{n},n=1,2,\dots \}$，使得 $f_{n}\uparrow f$；如果 $f$ 是非负有界可测的，则 $f_{n}\uparrow f$ 对 $x \in X$ 一致成立。
+3. 对于任何可测函数 $f$，存在简单函数列 $\{ f_{n},n=1,2,\dots \}$，使得 $f_{n}\to f$；如果 $f$ 是有界可测的，则 $f_{n}\to f$ 对 $x \in X$ 一致成立。
+
+:::
+
+::: {.proof}
+(1) 1 的证明比较简单，略。
+(2) 我们构造这样的可测函数列
+
+$$
+f_{n}=\sum\limits_{k=0}^{n2^{n}-1} \frac{k}{2^{n}}I_{\left\{  \frac{k}{2^{n}}\leq f<\frac{k+1}{2^{n}}  \right\}}+nI_{\{ f\geq n \}}
+$$
+
+易知 $f_{n}$ 非负非降，并且有
+
+$$
+\begin{align}
+&0\leq f(x)-f_{n}(x)\leq 1/2^{n},&f(x)<n \\
+&n=f_{n}(x)\leq f(x),&f(x)\geq n
+\end{align}
+$$
+
+因此，$f_{n}\uparrow f$ 成立。当 $f$ 有界时，假设其 $|f|<M$，则当 $n>M$ 时，有
+
+$$
+0\leq f(x)-f_{n}(x)\leq 1/2^{n},\quad \forall x \in X，
+$$
+
+即 $f_{n}\uparrow f$ 是一致成立的。
+(3) 我们利用 $f=f^{+}-f^{-}$，然后分别找到 $f^{+}$ 和 $f^{-}$ 的简单函数列 $\{ f^{+}_{n} \}$ 和 $\{ f^{-}_{n} \}$，则有 $f_{n}=f_{n}^{+}-f_{n}^{-}$ 是简单函数，并且 $f_{n}\to f$。并且也容易证明，当 $f$ 有界时，$f^{+},f^{-}$ 也有界，进而可以证明收敛是一致成立的。
+:::
+
+以上定理非常重要，因为其提供了一种证明关于可测函数的命题的统一方法论，可以称之为**典型方法**。
+
+::: {.callout-important title="典型方法"}
+为了证明一个关于可测函数的命题，我们可以将其分为以下几个步骤：
+1. 证明该命题对于最简单的函数——指示函数成立；
+2. 证明该命题对于非负简单函数——指示函数的线性组合成立；
+3. 证明该命题对于非负可测函数——非降非负简单函数列的极限成立；
+4. 证明该命题对于一般可测函数——两个非负可测函数的差成立。
+
+:::
+<span id="typical-method"></span>
+
+在下一节中，@thm-composite-func 的证明就是典型方法的一个例子。
+
+## 复合函数
+
+::: {#thm-07-measurable-functions-20}
+
+## 复合映射的可测性
+
+$g$ 是 $(X,\mathcal{F})$ 到 $(Y,\mathcal{T})$ 的可测映射，$f$ 是 $(Y,\mathcal{T})$ 到 $(Z,\mathcal{Z})$ 的可测映射，则 $f\circ g:=f(g)$ 是 $(X,\mathcal{F})$ 到 $(Z,\mathcal{Z})$ 的可测映射。
+
+:::
+::: {.proof}
+略。
+:::
+
+::: {#thm-composite-func}
+
+## 复合可测映射的存在性
+
+$g$ 是 $(X,\mathcal{F})$ 到 $(Y,\mathcal{T})$ 的可测映射，$h$ 是 $(X,g^{-1}(\mathcal{T}))$ 上的广义可测函数（或 Borel 函数）的**充分必要条件**是存在 $(Y,\mathcal{T})$ 上的广义可测函数（或 Borel 函数）$f$ 使得 $h=f\circ g$。
+:::
+
+::: {.callout-note title="两个定理的图示"}
+
+::: {.callout-note title="Excalidraw drawing pending export"}
+原 Obsidian 图形已保留为附件：[center](../../../assets/attachments/advanced-probability/excalidraw/measurable-functions-2024-04-24-230705.excalidraw.md)。
+:::
+
+- 第二个定理的充分性是第一个定理的特例（$\mathcal{F}=g^{-1}(\mathcal{T})$，$(Z,\mathcal{Z})=(\bar{\mathbb{R}},\mathcal{B}_{\bar{\mathbb{R}}})$）。
+- 第二个定理中，$g$ 和 $f$ 的地位是不同的，$g$ 一直是条件。
+
+:::
+::: {.proof}
+我们只需要证明必要性即可。
+(1) 首先考虑 $h$ 是 $(X,g^{-1}(\mathcal{T}))$ 上的简单函数，即存在 $X$ 的有限分割 $\{ A_{i}\in g^{-1}(\mathcal{T}),=1,\dots,n \}$ 和 $\{ a_{i}\in\mathbb{R},i=1,\dots,n \}$，使得
+
+$$
+h=\sum\limits_{i=1}^{n}a_{i}I_{A_{i}}.
+$$
+
+<span id="db41c3"></span>
+
+因为 $A_{i}\in g^{-1}(\mathcal{T})$，所以一定存在 $C_{i}\in \mathcal{T}$ 使得 $A_{i}=g^{-1}(C_{i})$。$\{ C_{i},i=1,\dots ,n \}$ 不一定是两两不交的，所以我们可以构造新的一列两两不交的集合 $\{ B_{i},i=1,\dots , \}$ ，使得
+
+$$
+B_{i}=C_{i}\setminus \bigcup_{j=1}^{i}C_{j},
+$$
+
+进一步有
+
+$$
+A_{i}=A_{i}\setminus \bigcup_{j=1}^{i}A_{j}=
+g^{-1}(C_{i})\setminus \bigcup_{j=1}^{i}g^{-1}(C_{j})
+=g^{-1}\left( C_{i}\setminus \bigcup_{j=1}^{i}C_{j} \right)
+=g^{-1}B_{i}.
+$$
+
+现在我们可以定义一个新的简单函数，其定义在 $(Y,\mathcal{T})$ 上，
+
+$$
+f=\sum\limits_{i=1}^{n}a_{i}I_{B_{i}}
+=\sum\limits_{i=1}^{n}a_{i}I_{B_{i}}+0I_{Y\setminus \bigcup_{i=1}^{n}B_{i}}
+$$
+
+第二个等号表示如果 $\bigcup_{i=1}^{n}B_{i}\subset Y$ 的话，则我们可以如此定义，保证函数值没有发生变化，并且保证严格遵守简单函数的定义。然后，我们有
+
+$$
+h(x)=\sum\limits_{i=1}^{n}a_{i}I_{A_{i}}(x)
+=\sum\limits_{i=1}^{n}a_{i}I_{g^{-1}B_{i}}(x)
+=\sum\limits_{i=1}^{n}a_{i}I_{B_i}(g(x))=f(g(x)).
+$$
+
+这证明了当 $h$ 是简单函数时，结论是成立的，并且 $g$ 也是简单函数。
+
+当 $h$ 是广义可测函数时，存在简单函数列 $\{ h_{n},n=1,\dots \}$ 满足
+
+$$
+\lim_{ n \to \infty } h_{n}=h.
+$$
+
+<span id="58b581"></span>
+
+对于每个简单函数 $h_{n}$ ，依据前面的结论，我们可以找到 $(Y,\mathcal{T})$ 上的简单函数 $f_{n}$，满足
+
+$$
+h_{n}=f_{n}\circ g.
+$$
+
+<span id="0f8852"></span>
+
+令
+
+$$
+f(y)=\left\{\begin{matrix}
+\lim_{ n \to \infty } f_{n}(y)，&\text{if exists} \\
+0,&\text{otherwise}
+\end{matrix}\right.
+$$
+
+(注意到 if exists 的条件，如果面向广义可测函数，则该条件是极限存在或= $\pm\infty$ ；如果面向 Borel 函数，则该条件是极限有界) 。则 $f$ 是 $(Y,\mathcal{T})$ 上的可测函数，且
+
+$$
+h(x)=\lim_{ n \to \infty } h_{n}(x)=\lim_{ n \to \infty } 
+f_{n}(g(x))=f(g(x)).
+$$
+
+这里需要注意，不是所有的 $y\in Y$ 都令 $f_{n}(y)$ 收敛，但是 $y\in g(X)$ 内的点一定令 $f_{n}(y)$ 收敛。因为
+
+$$
+\forall y\in g(X), \exists x \in X,g(x)=y \implies
+f_{n}(y)=f_{n}(g(x))=h_{n}(x)\to h(x)
+$$
+
+以上结论由式 [58b581](#58b581) 和式 [0f8852](#0f8852) 保证。
+:::
+
+## 连续函数
+
+::: {#thm-d0017d}
+
+## 连续函数的可测性
+
+假设 $\Omega \in\mathbb{R}^{p}$ 是一个 Borel set， $f:\Omega\to \mathbb{R}$ 是一个连续函数，则 $f$ 是 Borel 函数。
+
+:::
+
+::: {.proof}
+我们只需要证明 $f^{-1}(-\infty,x)\in \mathcal{B},\forall x \in \mathbb{R}$ 即可。这是显然的，因为 $(-\infty,x)$ 是一个开集，根据连续函数的性质：开集的原像一定是开集，所以 $f^{-1}(-\infty,x)$ 也是开集。再根据 1.1 测度空间和概率空间 (`1.1 测度空间和概率空间#^14d5de`)，可以知道 $f^{-1}(-\infty,x)\in\mathcal{B}$。
+:::
+
+# 函数类
+
+这里我们介绍两个在程士宏老师的《测度论与概率论基础》一书中提及的概念，其基本上是单调系和 $\lambda$ -class 在函数上的推广，其有助于去证明一些关于可测函数的相关定理。
+
+::: {#def-func-monoton}
+
+## 函数单调类
+
+$\mathcal{M}$ 是由 $X$ 上的非负广义可测函数组成的一个集合，其满足以下条件：
+(1) $\forall f,g\in\mathcal{M},\forall a,b\in \mathbb{R},a,b\geq 0\implies af+bg\in\mathcal{M}$;
+(2) $\forall f_{n}\in\mathcal{M},f_{n}\uparrow f\implies f\in\mathcal{M}$;
+则称 $\mathcal{M}$ 是 $X$ 上的函数单调类。
+
+:::
+
+::: {#def-07-measurable-functions-24}
+
+## 函数 $\lambda$ 类
+
+$\mathcal{L}$ 是由 $X$ 上的非负广义可测函数组成的一个集合，其满足以下条件：
+(1) $\mathcal{L}$ 是一个函数单调类；
+(2) $\mathbb{1}\in\mathcal{L}$;
+则称 $\mathcal{L}$ 是 $X$ 上的函数 $\lambda$ 类。
+
+:::
+利用典型方法，我们可以证明以上两个函数类满足下面的定理
+
+::: {#thm-d702d8}
+
+## 函数单调类定理
+
+$\mathcal{A}$ 是一个 field，$\mathcal{M}$ 是一个单调类，若 $\forall A\in\mathcal{A}$ 均有 $I_{A}\in\mathcal{M}$ ，则一切 $(X,\sigma(\mathcal{A}))$ 上的非负可测函数均属于 $\mathcal{M}$ 。
+
+:::
+
+::: {#thm-07-measurable-functions-26}
+
+## 函数 $\lambda$ 类定理
+
+$\mathcal{T}$ 是一个 $\pi$ -class，$\mathcal{L}$ 是一个 $\lambda$ 类，若 $\forall A\in\mathcal{A}$ 均有 $I_{A}\in\mathcal{L}$ ，则一切 $(X,\sigma(\mathcal{T}))$ 上的非负可测函数均属于 $\mathcal{L}$ 。
+
+:::
+::: {.proof}
+略。
+:::
+
+# 随机变量的分布
+
+::: {#def-rv-dist}
+
+## 诱导测度和分布
+
+假设 $(X,\mathcal{F},\nu)$ 是一个测度空间，$f$ 是从 $(X,\mathcal{F})$ 到 $(Y,\mathcal{T})$ 的可测映射，则我们可以定义 **$f$ 诱导的测度 (induced measure by $f$ )**，记为 $\nu \circ f^{-1}$，其在 $(Y,\mathcal{T})$ 上，满足
+
+ $$
+\nu \circ f^{-1}(B)=\nu(f\in B)=\nu(f^{-1}(B)),\quad \forall B\in\mathcal{T}.
+$$
+
+**$\nu\circ f^{-1}$ 是测度**由 @thm-inverse-image 保证。
+
+若 $(X,\mathcal{F},\nu)$ 是一个概率空间，$f$ 是一个随机变量，则 $\nu \circ f^{-1}$ 被称为**随机变量 $f$ 的分布或分布率（distribution or law）**。一般我们使用 $\nu_{f}$ 来表示。
+
+根据 @def-dist-func，我们可以定义 $\nu_{f}$ 的分布函数 $F_{f}$，我们称其为**随机变量 $f$ 的分布函数**(cumulative distribution function，c.d.f)，记作 $f\sim F_{f}$，称为 $f$ 服从 $F_{f}$。
+
+:::
+
+::: {.callout-tip title="Hint: 只有定义在可测空间 $(\mathbb{R},\mathcal{B})$ 上的测度才会被成为分布，因为只有这样的测度会一一对应于一个分布函数。"}
+
+:::
+在概率论中，我们会主要关注分布和分布函数，这是因为：
+- 就像在 [一开始](#d2ad88) 提到的一样，这样的分布所对应的测度空间可能是简单的，更易于研究。比如，如果 $f$ 是可测函数，则 $(Y,\mathcal{T})$ 一般就是 $(\mathbb{R},\mathcal{B})$，测度空间其实就是 $(\mathbb{R},\mathcal{B},\nu \circ f^{-1})$ ，这个可测空间我们研究的很深入了。
+- 分布和分布函数融合了随机变量和原始概率空间两部分的信息。
+- 分布或分布函数可以看做是原始概率空间的一种抽象化描述。对于两种不同的骰子，请对应的随机变量是相同的；而不同的分布意味着原始概率空间（两个骰子）根本上的差异。所以分布更能够反应其中所蕴含的数学信息。
+
+::: {#exm-07-measurable-functions-28}
+
+## 离散分布率
+
+存在一个随机变量 $f: (X,\mathcal{F},\nu)\to(Y,\mathcal{T})$，$(Y,\mathcal{T})$ 满足以下的条件：
+
+$$
+\begin{align}
+&Y=\{ a_{1},a_{2},\dots \}，a_{i}\in\mathbb{R},\forall i,\quad a_{1}<a_{2}<\cdots \\
+&\mathcal{T}=\mathcal{P}(Y) \\
+& F(x)=\nu \circ f^{-1}((-\infty,x])=\left\{\begin{matrix}
+\sum\limits_{i=1}^{n}p_{i}, &a_{n}\leq x<a_{n+1},\quad n=1,2,\dots \\
+0,&-\infty<x<a_{1}
+\end{matrix}\right.
+\end{align}
+$$
+
+其中 $p_{i}\geq 0,\sum\limits_{i=1}^{\infty}p_{i}=1$。也就是说随机变量 $f$ 的 c.d.f $F$ 是一个 stepwise 函数，这样的 c.d.f 被称为 **discrete c.d.f**，其对应的随机变量 $f$ 被称为 **discrete random variable**。
+
+我们可以很容易构造这样的一个随机变量，比如令 $X=Y,\mathcal{F}=\mathcal{T}$，并且令
+
+$$
+\nu(A)=\sum\limits_{i:a_{i}\in A}p_{i},\quad A\in\mathcal{F},
+$$
+
+这个时候用恒等随机变量 $f(x)=x$，不难证明，其满足我们的条件。
+
+:::
+连续分布率需要学习了 [积分](08-integration.qmd) 和 [求导](11-radon-nikodym-derivative.qmd) 之后才能够精确地定义。
+
+从定义 @def-rv-dist 中我们可以知道，任意的概率空间和随机变量，都可以构造与之对应的 c.d.f。接下来，我们将证明其反面，一个重要的存在性定理。
+
+::: {#thm-6a18be}
+
+## 概率空间和随机变量的存在性
+
+对于任意的 c.d.f $F$，必存在一个概率空间 $(X,\mathcal{F},P)$ 和它上面的随机变量 $f$，使得 $f\sim F$。
+
+:::
+
+::: {.proof}
+令 $X=(0,1)\subset \mathbb{R}$，$\mathcal{F}=(0,1)\cap \mathcal{B}$，$P$ 是 $F$ 上的 L 测度，不难证明 $(X,\mathcal{F},P)$ 是一个概率空间。定义随机变量 $U:(X,\mathcal{F})\to(X,\mathcal{F})$，满足
+
+$$
+U(t)=t,
+$$
+
+即均匀分布。然后我们定义一个 $f:(X,\mathcal{F})\to(\mathbb{R},\mathcal{B})$：
+
+$$
+f(t)=F^{\leftarrow}\circ U(t)=F^{\leftarrow}(U(t)).
+$$
+
+根据 1.1 测度空间和概率空间 (`1.1 测度空间和概率空间#^0378ce`)，$\forall  x \in\mathbb{R}$
+
+$$
+\{ f<x \}=\{ t\in X|F^{\leftarrow}(U(t))\leq x \}=
+\{ t\in X|F^{\leftarrow}(t)\leq x \}=
+\{ t\in X| t\leq F(x) \}\in \mathcal{B}
+$$
+
+所以 $f$ 是一个随机变量，同时有
+
+$$
+P(\{ f<x \})=P(\{ t\in X| t\leq F(x) \})=F(x).
+$$
+
+命题得证。
+:::
+
+::: {.callout-note title="以上证明过程中所构造的随机变量涉及到统计中非常重要的一种采样方法：逆分布函数采样。"}
+:::

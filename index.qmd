@@ -7,3 +7,6 @@ This is a Quarto website for long-term notes, reading records, methods, and proj
 The source files will live under `src/` and are edited as `.qmd` files. Chinese or bilingual titles can be used inside each note's YAML front matter.
 
 Use `draft: true` in a note's YAML header when a file should stay unpublished.
+
+
+[example](02-sigma-field)

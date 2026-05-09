@@ -1,0 +1,666 @@
+---
+title: "R-N 导数"
+draft: true
+aliases:
+  - RN导数
+author:
+  - 荣志炜
+tags:
+  - R-N导数
+  - 绝对连续
+  - 换元积分法
+created: 2024-05-04 01:02
+updated: 2025-12-18 16:29
+order: 11
+---
+
+# 导数和绝对连续
+
+根据 @prp-inte-is-signed-measure，**利用积分可以由一个测度函数得到符号测度，那么我们是否可以反过来，由符号测度来得到一个测度函数吗？** 也就是，我们是否可以定义积分的逆运算（因此，仿照微积分，称其为**导数**），来实现这个过程？
+
+我们首先定义这个导数。
+
+::: {#def-11-radon-nikodym-derivative-1}
+
+## R-N 导数
+
+设 $\phi$ 是测度空间 $(X,\mathcal{F},\mu)$ 上的符号测度，若存在 a.e.意义下唯一的可测函数 $f$ 使
+
+$$
+\phi(A)=\int _{A}f \, d\mu,\quad \forall A\in\mathcal{F}, 
+$$
+
+成立，则称 $f$ 是 $\phi$ 对于 $\mu$ 的 **R-N（Radon-Nikodym）导数**（或简称为**导数**），记作 $\frac{d\phi}{d\mu}:=f$。
+
+:::
+和积分一样，我们首先需要去确定导数存在的条件，我们会发现这个条件是**绝对连续**。所以，我们先定义一下绝对连续的定义。
+
+::: {#def-11-radon-nikodym-derivative-2}
+
+## 绝对连续
+
+设 $\phi$ 和 $\mu$ 分别是可测空间 $(X,\mathcal{F})$ 上的符号测度和测度，如果
+
+$$
+\mu(A)=0\implies \phi(A)=0,\quad\forall A\in\mathcal{F},
+$$
+
+则称 **$\phi$ 对 $\mu$ 绝对连续**，记作 $\phi\ll \mu$。
+
+:::
+# Radon-Nikydom 定理
+
+接下来，我们将证明导数存在的条件，这就是著名的 @thm-RN。该定理证明过程比较长，所以这里我们将其分为几个引理和步骤来进行。我们的基本策略类似剥洋葱，为了证明更难的、更普遍的定理，我们先证明一个更简单、更特殊的定理（比如，限制在非负函数上、测度而非符号测度等），一步一步先得到一个最简单、最特殊的版本。然后去证明这个版本即可。我们将以上的过程逆向过来，就得到了下面的证明策略：
+1. 首先面对有限测度 $\phi,\mu$，若 $\phi\ll \mu$，证明可以找到非负可测函数 $f$，其在 $\mu$ 上的积分值等于 $\phi$。这通过 [cf2abb](#cf2abb) 和 [d29ced](#d29ced) 得到。
+2. 将 $\phi$ 扩展至 $\sigma$ 有限的符号测度，通过 [f52ee8](#f52ee8) 完成。
+3. 将 $\phi$ 扩展至任意符号测度，通过 [080b5b](#080b5b) 完成。
+4. 将 $\mu$ 扩展至 $\sigma$ 有限测度，通过 @thm-RN 完成。
+
+::: {#lem-cf2abb}
+
+## Lemma
+
+记
+
+$$
+\mathcal{L}=\left\{  g\in L_{1}(X,\mathcal{F},\mu)|g\geq 0,\int _{A}g \, d\mu\leq \phi(A),\forall A\in\mathcal{F}   \right\},
+$$
+
+若 $\phi$ 和 $\mu$ 都是可测空间 $(X,\mathcal{F})$ 上的有限测度，则存在 $f\in\mathcal{L}$ 使得
+
+$$
+\int _{X}f \, d\mu=\beta:=\sup\left\{  \int _{X}g \, d\mu |g\in\mathcal{L}  \right\} .
+$$
+
+:::
+
+::: {.callout-note title="$\mu$ 是有限测度的条件可以放宽至所有测度。"}
+
+:::
+::: {.proof}
+首先我们需要明确，$\phi$ 是有限测度保证了 $\beta$ 的存在，并且 $\beta<\infty$。这是因为 $\phi(X)<\infty$ 是 $\left\{  \int _{X}g \, d\mu|g\in\mathcal{L}  \right\}$ 的一个上界。
+
+取 $\{ g_{k}\in\mathcal{L},k=1,2,3,\dots \}$ 使得 $\lim_{ k \to \infty }\int _{X}g_{k} \, d\mu=\beta$。令
+
+$$
+f_{n}=\mathop{\max}_{1\leq k\leq n}g_{k},\quad
+f=\sup\{ g_{k}|k=1,2,\dots \},
+$$
+
+由于 $g_{k}\leq f$，所以有
+
+$$
+\beta=\lim_{ k \to \infty } \int _{X}g_{k} \, d\mu\leq \int _{X}f \, d\mu.  
+$$
+
+<span id="3b0cf3"></span>
+
+$\forall n=1,2,\dots;k=1,\dots,n$，记
+
+$$
+A_{n,k}=\{ f_{n}=g_{k} \},\quad
+B_{n,k}=A_{n,k}\setminus\left( \bigcup_{i=1}^{k-1}A_{n,i} \right),
+$$
+
+容易看到 $\{ B_{n,k},k=1,\dots,n \}$ 两两不交，并且 $\bigcup_{k=1}^{n}B_{n,k}=\bigcup_{k=1}^{n}A_{k}=X$，所以
+
+$$
+\begin{align}
+\int _{A}f_{n} \, d\mu
+&= \int _{A\cap\left( \bigcup_{k=1}^{n}B_{n,k} \right)}f_{n} \, d\mu \\
+&=\sum\limits_{k=1}^{n}\int _{A\cap B_{n,k}}f_{n} \, d\mu \\
+&=\sum\limits_{k=1}^{n}\int _{A\cap B_{n,k}}g_{k} \, d\mu \\
+&\leq \sum\limits_{k=1}^{n}\phi(A\cap B_{n,k}) \\
+&=\phi(A).
+\end{align}
+$$
+
+其中，倒数第二行是由于 $g_{k}\in\mathcal{L}$ 以及 $L$ 的定义得到的。注意，以上结论对于所有的 $A\in\mathcal{F}$ 成立。令上述 $n\to \infty$，由单调收敛定理，得到
+
+$$
+\int _{A}f \, d\mu=\lim_{ n \to \infty } \int _{A}f_{n} \, d\mu\leq \phi(A),  
+$$
+
+对于每个 $A\in\mathcal{F}$ 成立。这意味着 $f\in\mathcal{L}$，所以 $\int _{X}f \, d\mu\leq \beta$，结合式 [3b0cf3](#3b0cf3)，得到引理的结论。
+:::
+
+::: {#prp-d29ced}
+
+## Proposition
+
+若 $\phi,\mu$ 是可测空间 $(X,\mathcal{F})$ 上的有限测度，并且 $\phi\ll \mu$，则存在**非负的 $f\in L_{1}$** 使得下式成立
+
+$$
+\phi(A)=\int _{A}f \, d\mu,\quad\forall A\in\mathcal{F},
+$$
+
+$f$ 在 a.e.意义下是唯一的，即若还存在 $g\in L_{1}$ 使得
+
+$$
+\phi(A)=\int _{A}g \, d\mu,\quad\forall A\in\mathcal{F},
+$$
+
+则必有 $f=g$ a.e.。
+
+:::
+
+::: {.proof}
+我们取 $f$ 如 [cf2abb](#cf2abb) ，则 $\forall A\in\mathcal{F}$，令
+
+$$
+\nu(A)=\phi(A)-\int _{A}f \, d\mu, 
+$$
+
+可以证明 $\nu$ 是一个测度。现在为了证明命题，我们只需要证明 $\nu\equiv0$ 即可。我们继续定义
+
+$$
+\nu_{n}(A)=\nu(A)-\frac{1}{n}\mu(A),
+$$
+
+可以知道，$\nu_{n}$ 是符号测度。利用 @thm-hahn-decomp，得到 $\{ X_{n}^{+},X_{n}^{-} \}$，并令
+
+$$
+X^{+}=\bigcup_{n=1}^{\infty}X_{n}^{+},\quad
+X^{-}=\bigcap_{n=1}^{\infty}X_{n}^{-}.
+$$
+
+一方面，因为 $X^{-}\subset X_{n}^{-}$ 蕴含 $\nu_{n}(X^{-})\leq 0$，得到
+
+$$
+0\leq \nu(X^{-})=\nu_{n}(X^{-})+\frac{1}{n}\mu(X^{-})\leq\frac{1}{n}\mu(X^{-})\to0.
+$$
+
+<span id="2e7749"></span>
+
+另一方面，$\forall n=1,2,\dots;\forall A\in\mathcal{F}$，有
+
+$$
+\begin{align}
+\int _{A}\left[ f+\frac{1}{n}I_{X_{n}^{+}} \right] \, d\mu 
+&=\phi(A)-\nu(A)+\frac{1}{n}\mu(X_{n}^{+}\cap A) \\
+&\leq \phi(A)-\nu(X_{n}^{+}\cap A)+\frac{1}{n}\mu(X_{n}^{+}\cap A) \\
+&=\phi(A)-\nu_{n}(X_{n}^{+}\cap A) \\
+&\leq \phi(A).
+\end{align}
+$$
+
+因此有 $f+\frac{1}{n}I_{X_{n}^{+}}\in\mathcal{L}$，所以
+
+$$
+\int _{X}f \, d\mu+\frac{1}{n}\mu(X_{n}^{+})\leq \beta=\int _{X}f \, d\mu,  
+$$
+
+这蕴含 $\mu(X_{n}^{+})=0$，进一步推出 $\mu(X^{+})=0$。再由 **$\phi$ 对 $\mu$ 的绝对连续性**，得到 $\phi(X^{+})=0$。于是
+
+$$
+0\leq \nu(X^{+})=\phi(X^{+})-\int _{X^{+}}f \, d\mu \leq \phi(X^{+})=0.
+$$
+
+上式利用到了 $f$ 的非负性。结合式 [2e7749](#2e7749)，得到
+
+$$
+\nu(X)=\nu(X^{+})+\nu(X^{-})=0,
+$$
+
+又因为 $\nu$ 是一个测度，所以可知 $\nu\equiv0$。根据 @thm-order (5) 可以直接得到唯一性。命题得证。
+:::
+
+接下来，我们可以将有限测度扩展到 $\sigma$ 有限符号测度上，并且由符号测度的 [约定](#517e57) 可以得到一个额外的结论。
+
+::: {#prp-f52ee8}
+
+## Proposition
+
+若 $\phi,\mu$ 分别是可测空间 $(X,\mathcal{F})$ 上的 **$\sigma$ 有限符号测度**和有限测度，并且 $\phi\ll \mu$，则存在**有限可测函数 $f$** 使得下式成立
+
+$$
+\phi(A)=\int _{A}f \, d\mu,\quad\forall A\in\mathcal{F},
+$$
+
+$f$ 在 a.e.意义下是唯一的，并且有
+
+$$
+\int _{X}f^{-} \, d\mu<\infty. 
+$$
+
+:::
+
+::: {.proof}
+我们首先考虑 $\phi$ 是**有限符号测度**的情况。设 $\phi=\phi^{+}-\phi^{-}$ 是其 Jordan 分解。根据 [4ee181](#4ee181) 可以知道 $\phi^{\pm}$ 都是有限测度，并且有
+
+$$
+\mu(A)=0\implies \mu(A\cap X^{\pm})=0\implies \phi(A\cap X^{\pm})=0\implies
+\phi^{\pm}(A)=0,
+$$
+
+也就是说 $\phi^{\pm}\ll \mu$，应用 [d29ced](#d29ced)，则可以得到 $f^{\pm}\in L_{1}$，使得
+
+$$
+\phi^{\pm}(A)=\int _{A}f^{\pm} \, d\mu,\quad\forall A\in\mathcal{F}. 
+$$
+
+因为 $\phi,\mu$ 是有限的，这必然意味着 $f^{\pm}$ 是 a.e.有限的。令 $f=f^{+}-f^{-}$，容易证明，$f$ 是符合命题结论的 a.e.有限可测函数。
+
+再考虑 $\phi$ 是 $\sigma$ 有限符号测度的情况。因此，我们可以找到一个 $(X,\mathcal{F})$ 上的可测分割 $\{ A_{n},n=1,2,\dots \}$，均有 $\lvert \phi(A_{n}) \rvert<\infty$。则再可测空间 $(A_{n},A_{n}\cap \mathcal{F})$ 上 $\phi$ 是有限符号测度，可以使用上面已经证明的结论，得到 $f_{n}$，使得对于 $A\in A_{n}\cap \mathcal{F}$，有
+
+$$
+\phi(A)=\int _{A}f_{n} \, d\mu. 
+$$
+
+我们令
+
+$$
+f=\sum\limits_{n=1}^{\infty}f_{n}I_{A_{n}},
+$$
+
+则对于 $\forall A\in\mathcal{F}$，根据 @cor-measurable-seperate 有
+
+$$
+\phi(A)=\sum\limits_{n=1}^{\infty}\phi(A\cap A_{n})=\sum\limits_{n=1}^{\infty}\int _{A\cap A_{n}}f \, d\mu=\int _{A}f \, d\mu.  
+$$
+
+此外，根据 [约定](#517e57)，我们有
+
+$$
+\begin{align}
+\int _{X}f^{-} \, d\mu
+&=\sum\limits_{n=1}^{\infty}\int _{A_{n}}f^{-} \, d\mu \\
+&=-\sum\limits_{n=1}^{\infty}\int _{A_{n}\cap \{ f<0 \}}f \, d\mu \\
+&=-\sum\limits_{n=1}^{\infty}\phi(A_{n}\cap \{ f<0 \}) \\
+&=-\phi(f<0)<\infty,
+\end{align}
+$$
+
+最后的不等式就来自于 [约定](#517e57)。
+
+注意到，$f$ 再每个 $A_{n}$ 上均是 a.e.唯一的，所以其在 $X$ 上也是 a.e. 唯一的。同样的道理，因为 $f$ 在每个 $A_{n}$ 上都是 a.e.有限的，则
+
+$$
+\mu(\lvert f \rvert=\infty)=\sum\limits_{n=1}^{\infty}
+\mu(\lvert f \rvert =\infty \cap A_{n})=0,
+$$ 
+
+即 $f$ 在 $X$ 上也是 a.e.有限的。命题得证。
+:::
+
+接下来，我们将 $\sigma$ 有限扩展到任意测度。
+
+::: {#prp-080b5b}
+
+## Proposition
+
+若 $\phi,\mu$ 分别是可测空间 $(X,\mathcal{F})$ 上的 **符号测度**和有限测度，并且 $\phi\ll \mu$，则存在**可测函数 $f$** 使得下式成立
+
+$$
+\phi(A)=\int _{X}f \, d\mu,\quad\forall A\in\mathcal{F},
+$$
+
+$f$ 在 a.e.意义下是唯一的，并且有
+
+$$
+\int _{X}f^{-} \, d\mu<\infty. 
+$$
+
+:::
+
+::: {.proof}
+这里证明的基本思想，是找到那个令 [f52ee8](#f52ee8) 成立的尽可能大的子集，然后再证明在该子集的补集对结论的影响非常小，结合两个部分，最终得到我们的结论。
+(1) 证明下面的集合系是一个 $\sigma$ -ring，
+
+$$
+\mathcal{G}=\left\{  A\in\mathcal{F}|\exists \{ A_{n}\in\mathcal{F} \}\text{ disjoint}, \bigcup_{n=1}^{\infty}A_{n}=A,\lvert \phi(A_{n}) \rvert <\infty,\forall n \right\}.
+$$
+
+我们只需要证明，包含 $\emptyset$，对于可列不交并运算封闭，对于差运算封闭即可。这些显然容易证明。
+(2) 记 $\gamma=\sup\{ \mu(A)|A\in\mathcal{G} \}$，则存在 $B\in\mathcal{G},\mu(B)=\gamma$.
+利用上确界的性质，取一列 $\{ B_{n}\in\mathcal{G} \}$，使得 $\lim_{ n \to \infty }\mu(B_{n})=\gamma$。
+注意，因为 $\mu$ 是有限测度，所以 $0\leq \gamma<\infty$。
+令 $B=\bigcup_{n=1}^{\infty}B_{n}$，则 $B\in\mathcal{G}$（因为 $\mathcal{G}$ 是 $\sigma$ -ring），而且有
+
+$$
+\gamma\geq \mu(B)\geq \mu(B_{n})\to \gamma.
+$$
+
+即 $\mu(B)=\gamma$。
+
+::: {.callout-note title="证明 $\sigma$ -ring 的目的就在于能够证明这个“极大”集合 $B$ 依然在 $\mathcal{G}$ 中。"}
+
+:::
+(3) 取 $B\in\mathcal{G}$ 如 (2)，则存在 $(B,B\cap \mathcal{F},\mu)$ 上 a.e.唯一的有限可测函数 $g$，满足定理的要求。这个可以直接根据 [f52ee8](#f52ee8) 得到。
+
+(4) 在可测空间 $(B^{c},B^{c}\cap \mathcal{F},\mu)$ 上，对于任何的 $C\in B^{c}\cap\mathcal{F}$ 有
+
+$$
+\phi(C)=\int _{C}\infty \, d\mu =\left\{\begin{matrix}
+0,&\mu(C)=0, \\
+\infty,&\mu(C)>0.
+\end{matrix}\right.
+$$
+
+由 $\phi$ 对 $\mu$ 的绝对连续性，可以直接得到第一行。现在我们需要证明第二行，也就是需要证明 $\mu(C)>0\implies \phi(C)=\infty$。
+使用反证法，若 $\exists C\in B^{c}\cap \mathcal{F}$ 使得 $\mu(C)>0$ 但是 $\phi(C)<\infty$，则 $B\cup C\in\mathcal{G}$，并且有
+
+$$
+\mu(B\cup C)=\mu(B)+\mu(C)>\mu(B)=\gamma.
+$$
+
+这与 $\gamma$ 的定义矛盾。
+(5) 命题证明完成。
+这样，我们就可以设计一个函数 $f=gI_{B}+\infty I_{B^{c}}$，则 $f$ 可测且由 [f52ee8](#f52ee8) 可知
+
+$$
+\int _{X}f^{-} \, d\mu=\int _{B}g^{-} \, d\mu<\infty,  
+$$
+
+并且有
+
+$$
+\begin{align}
+\phi(A)&=\phi(A\cap B)+\phi(A\cap B^{c}) \\
+&=\int _{A\cap B}g \, d\mu+\int _{A\cap B^{c}}\infty \, d\mu \\
+&=\int _{A\cap B}f \, d\mu+\int _{A\cap B^{c}}f \, d\mu \\
+&=\int _{A}f \, d\mu. 
+\end{align}
+$$
+
+由上述证明过程，可以知道，$f$a.e.唯一。并且，如果 $\phi$ 是 $\sigma$ 有限时有 $\mathcal{G}=\mathcal{F}$，所以 $f$ a.e.有限。
+
+:::
+
+::: {.callout-important title="极大子集法"}
+当我们需要将一个性质扩展到更大的空间时，一个可能的方式是这样的：
+1. 首先，我们需要找到满足这个性质的最大子集。这通常需要通过构造 sup 或一个单调增的集合序列来完成。
+2. 证明这个最大子集是满足我们需要的条件的。
+3. 证明这个最大子集的补集是无关紧要的，比如测度为 0 或不会对结论产生影响。
+
+[80fe51](#80fe51)、[cf2abb](#cf2abb)、[d29ced](#d29ced) 和 [080b5b](#080b5b) 的证明中，都使用到了类似的思想。
+
+:::
+接下来，我们将进行最后一步，将 $\mu$ 的有限测度推广到 $\sigma$ 有限。
+
+::: {#thm-rn}
+
+## Radon-Nikydom 定理
+
+设 $\phi$ 和 $\mu$ 分别是 $(X,\mathcal{F})$ 上的**符号**测度和 **$\sigma$ 有限**测度。如果 $\phi\ll \mu$，则存在 $(X,\mathcal{F},\mu)$ 上的 a.e.意义下唯一的可测函数 $f$ 使得下式成立
+
+$$
+\phi(A)=\int _{X}f \, d\mu,\quad\forall A\in\mathcal{F},\qquad
+\int _{X}f^{-} \, d\mu<\infty.
+
+$$
+
+若 $\phi$ 是 **$\sigma$ 有限的**，则 $f$ a.e.**有限**。
+
+:::
+
+::: {.proof}
+设 $\{ A_{n} \}$ 是 $(X,\mathcal{F},\mu)$ 上的一个可测分割，并且 $\mu(A_{n})<\infty$。则由 [080b5b](#080b5b) 可知，对于每个 $(A_{n},A_{n}\cap \mathcal{F},\mu)$，存在 a.e. 唯一的可测函数 $f_{n}$，使得有
+
+$$
+\phi(A)=\int _{A}f_{n} \, d\mu;\quad
+\int _{A}f_{n}^{-} \, d\mu<\infty. 
+$$
+
+取 $f=\sum\limits_{n=1}^{\infty}f_{n}I_{A_{n}}$，并且根据 [约定](#517e57) ，则有
+
+$$
+\begin{align}
+\int _{X}f^{-} \, d\mu &=\sum\limits_{n=1}^{\infty}\int _{A_{n}}f^{-} \, d\mu \\
+&=-\sum\limits_{n=1}^{\infty}\int _{A_{n}\cap \{ f<0 \}}f_{n} \, d\mu \\
+&=\sum\limits_{n=1}^{\infty}\phi(A_{n}\cap \{ f<0 \}) \\
+&=-\phi(f<0)<\infty.
+\end{align}
+$$
+
+此外，还有 $\forall A\in\mathcal{F}$，
+
+$$
+\begin{align}
+\phi (A)=\sum\limits_{n=1}^{\infty}\phi(A\cap A_{n})=
+\sum\limits_{n=1}^{\infty}\int _{A\cap A_{n}}f \, d\mu =\int _{A}f \, d\mu. 
+\end{align}
+$$
+
+$f$ 的 a.e.唯一性由 $f_{n}$ 的 a.e.唯一性得到。当 $\phi$ 是 $\sigma$ 有限时，$f_{n}$a.e.有限，则 $f$a.e.有限。
+:::
+
+- @thm-RN 中，**$\phi$ 和 $\mu$ 是在同一个可测空间上的**。
+- 在数理统计中，我们一般很难遇到 $\phi$ 是符号测度的情况，一般来说 $\phi$ 都是概率测度（有限测度）。这里需要注意到是另外两个条件：**$\mu$ 的 $\sigma$ 有限性和绝对连续性**。
+
+$\mu$ 的 $\sigma$ 有限性是必要的，下面的例子说明了这一点。
+
+::: {#exm-11-radon-nikodym-derivative-8}
+
+## $\sigma$ 有限的必要性
+
+设 $X=\mathbb{R},\mathcal{F}=\{ A\subset X|A \text{ or } A^{c}\text{ 至多可数} \}$，令
+
+$$
+\mu(A)=\left\{\begin{matrix}
+\#(A),&\#(A)<\infty, \\
+\infty,&\#(A)=\infty.
+\end{matrix}
+\right.
+$$
+
+显然，$\mu$ 不是 $\sigma$ 有限的。
+此外，若 $A$ 至多可数，令 $\phi(A)=0$，若 $A^{c}$ 至多可数，则 $\phi(A)=1$。容易证明，$\phi$ 是一个有限测度（自然是一个符号测度）。
+可以证明：不存在可测函数 $f$，使得
+
+$$
+\int _{A}f \, d\mu=\phi(A),\quad \forall A \in\mathcal{F}.
+$$
+
+:::
+::: {.proof}
+若存在这样的 $f$，则有 $\forall x \in X$
+
+$$
+0=\phi(\{ x \})=\int _{\{ x \}}f \, d\mu
+=f(x)\mu(\{ x \})=f(x),
+$$
+
+也就是 $f\equiv0$。也就有
+
+$$
+\phi(X)=\int _{X}f \, d\mu=\int _{X}0 \, d\mu=0,  
+$$
+
+但这与 $\phi(X)=1$ 存在矛盾。
+:::
+
+@thm-RN 定理对于概率论的最重要的贡献在于更加严谨地定义了**随机变量的概率密度函数**。我们利用 [7_可测函数](07-measurable-functions.qmd#e13501)，基于随机变量将各种各样的原始概率空间限制在其诱导测度空间中，诱导测度作为 $\phi$，通用的 Lebesgue 测度或 counting 测度作为 $\mu$，应用 @thm-RN ，得到 R-N 导数，就是该随机变量的概率密度函数。更加详细的介绍请见 [17_统计分布与密度函数](17-statistical-distributions-and-density-functions.qmd)。
+
+# R-N 导数的性质
+
+::: {#prp-rn}
+
+## R-N 导数的性质
+
+假设 $\mu$ 是 $(X,\mathcal{F})$ 上 $\sigma$ 有限的测度，下面提到的其他测度或符号测度也均在 $(X,\mathcal{F})$ 上，则有下面的性质
+(1) 若 $\lambda$ 是一个测度，且 $\lambda\ll \mu$。只要 $\int _{X}f \, d\lambda$ 和 $\int _{X}f\frac{d\lambda}{d\mu} \, d\mu$ 之一积分存在，则另一个也一定积分存在，并且有
+
+$$
+\int_{A} f \, d\lambda =\int_{A} f\frac{d\lambda}{d\mu} \, d\mu,
+\quad\forall A\in\mathcal{F}. 
+$$
+
+(2) 若 $\lambda_{1},\lambda_{2}$ 都是符号测度，并且有 $\lambda_{1},\lambda_{2}\ll \mu$，则有 $\lambda_{1}+\lambda_{2}\ll \mu$，并且
+
+$$
+\frac{d(\lambda_{1}+\lambda_{2})}{d\mu}=
+\frac{d\lambda_{1}}{d\mu}+\frac{d\lambda_{2}}{d\mu}\quad a.e.\ \mu.
+$$
+
+(3) (Chain rule) 若 $\tau$ 是一个符号测度，$\lambda$ 是一个 $\sigma$ -finite 测度，有 $\tau\ll \lambda\ll \mu$，则
+
+$$
+\frac{d\tau}{d\mu}=\frac{d\tau}{d\lambda}\frac{d\lambda}{d\mu}\quad
+a.e.\ \mu,
+$$
+
+特别的，如果 $\lambda\ll \mu,\mu\ll \lambda$ ($\lambda,\mu$ 等价), 则
+
+$$
+\frac{d\lambda}{d\mu}=\left( \frac{d\mu}{d\lambda} \right)^{-1},
+\quad a.e.\ \mu \text{ or }\lambda.
+$$ 
+
+(4) 若 $(X_{i},\mathcal{F}_{i},\mu_{i}),i=1,2$ 是测度空间，$\mu_{i}$ 是 $\sigma$ 有限的。令 $\lambda_{i},i=1,2$ 是 $(X_{i},\mathcal{F}_{i})$ 上的 $\sigma$ 有限测度，并且有 $\lambda_{i}\ll \mu_{i}$。则有 $\lambda_{1}\times \lambda_{2}\ll \mu_{1}\times \mu_{2}$，并且
+
+$$
+\frac{d(\lambda_{1}\times \lambda_{2})}{d(\mu_{1}\times \mu_{2})}
+=\frac{d\lambda_{1}}{d\mu_{1}}\frac{d\lambda_{2}}{d\mu_{2}},
+\quad a.e.\ \mu_{1}\times \mu_{2}
+$$
+
+:::
+
+::: {.callout-note title="换元积分法"}
+将结合性质 1 和 @thm-inte-by-subs，我们就可以得到普通微积分中的那个换元积分法的完整形式。
+
+:::
+::: {.proof}
+(1) 我们基于 [典型方法](07-measurable-functions.qmd#typical-method) 进行证明。首先，假设 $f=\sum\limits_{i=1}^{n}a_{i}I_{A_{i}}$，则 $\forall A\in\mathcal{F}$ 有
+
+$$
+\int _{A}f \, d\lambda=\sum\limits_{i=1}^{n}a_{i}\lambda(A_{i}\cap A)
+=\sum\limits_{i=1}^{n}a_{i}\int _{A\cap A_{i}}\frac{d\lambda}{d\mu} \, d\mu
+=\int _{A}f\frac{d\lambda}{d\mu} \, d\mu. 
+$$
+
+并且前 3 项一定存在，他们之间的等号关系也是一定的。由 @thm-linear，第三项积分存在蕴含最后一项积分存在，并且两者相等。（其实，直接由两个积分都是非负函数积分，所以一定是积分存在的。）
+然后，假设 $f\geq 0$，则可以找到简单函数 $f_{n}\uparrow f$。因此，有
+
+$$
+\begin{align}
+\int _{A}f \, d\lambda&=\lim_{ n \to \infty } \int _{A}f_{n} \, d\lambda \\
+&=\lim_{ n \to \infty } \int _{A}f_{n}\frac{d\lambda}{d\mu} \, d\mu \\
+&=\int _{A}\lim_{ n \to \infty } f_{n}\frac{d\lambda}{d\mu} \, d\mu \\
+&=\int _{A}f\frac{d\lambda}{d\mu} \, d\mu,
+\end{align}
+$$
+
+其中，第二行源于上面已经得到的结论，第三行源于 @thm-mct（$\lambda$ 是测度蕴含 $\frac{d\lambda}{d\mu}\geq 0$）。由于 $f\geq 0$ 和 $f\frac{d\lambda}{d\mu}>0$，两个积分的存在性是显然的。
+最后，假设 $f$ 是普通可测函数。则 $\int _{X}f \, d\lambda$ 积分存在等价于
+
+$$
+\min\{\int _{X}f^{+} \, d\lambda, \int _{X}f^{-} \, d\lambda \}<\infty,
+$$
+
+等价于
+
+$$
+\min\{\int _{X}f^{+}\frac{d\lambda}{d\mu} \, d\mu,
+\int _{X}f^{-} \frac{d\lambda}{d\mu} \, d\mu \}<\infty,
+$$
+
+ 这等价于 $\int _{X}f\frac{d\lambda}{d\mu} \, d\mu$ 积分存在。同时，我们也容易证明等式成立。证毕。
+
+**令 $\phi(A)=\int _{A}f \, d\lambda$，容易知道 $\phi$ 是一个符号测度，并且有 $\phi\ll \lambda\ll \mu$。根据 @thm-RN ，可以得到 $\frac{d\phi}{d\mu}$。基于命题内容和 @thm-order (5) 可知，$\frac{d\phi}{d\mu}=f\frac{d\lambda}{d\mu}$ 。**
+
+(2) 容易证明 $\lambda_{1}+\lambda_{2}$ 是符号测度并且对 $\mu$ 绝对连续。则根据 @thm-RN ，$\forall A\in\mathcal{F}$ 有
+
+$$
+\begin{align}
+\int_{A} \frac{d(\lambda_{1}+\lambda_{2})}{d\mu} \, d\mu 
+&=\lambda_{1}(A)+\lambda_{2}(A) \\
+&=\int _{A}\frac{d\lambda_{1}}{d\mu} \, d\mu+\int _{A}\frac{d\lambda_{2}}{d\mu} \, d\mu \\
+&=\int _{A}\frac{d\lambda_{1}}{d\mu}+\frac{d\lambda_{2}}{d\mu} \, d\mu,
+\end{align}
+$$
+
+由此，可以推出 $\frac{d(\lambda_{1}+\lambda_{2})}{d\mu}=\frac{d\lambda_{1}}{d\mu}+\frac{d\lambda_{2}}{d\mu}$ a.e. $\mu$.
+
+(3) 令 $f=\frac{d\tau}{d\lambda}$，则根据 (1) 的结论，$\forall A\in\mathcal{F}$， 有
+
+$$
+\int _{A}\frac{d\tau}{d\mu} \, d\mu= \tau(A)=\int _{A}f \, d\lambda=\int _{A}f\frac{d\lambda}{d\mu} \, d\mu,  
+$$
+
+这意味着 $\frac{d\tau}{d\mu}=\frac{d\tau}{d\lambda}\frac{d\lambda}{d\mu}$ a.e. $\mu$。
+
+当 $\lambda\ll \mu,\mu\ll \lambda$ 时，有
+
+$$
+\begin{align}
+&\frac{d\lambda}{d\lambda}=\mathbb{1}
+=\frac{d\lambda}{d\mu}\frac{d\mu}{d\lambda}\quad
+a.e.\ \lambda, \\
+&\frac{d\mu}{d\mu}=\mathbb{1}
+=\frac{d\lambda}{d\mu}\frac{d\mu}{d\lambda}\quad
+a.e.\ \mu,
+\end{align}
+$$
+
+(4) 证明涉及到 [有限乘积空间](13-finite-product-spaces.qmd) 的内容，将在学习乘积空间后证明。我们可以进行下面的证明。
+
+当 $\lambda_{1},\lambda_{2}$ 都是测度时，$\frac{d\lambda_{1}}{d\mu_{1}},\frac{d\lambda_{2}}{d\mu_{2}}\geq0$，因此 $\frac{d\lambda_{1}}{d\mu_{1}}\frac{d\lambda_{2}}{d\mu_{2}}\geq 0$，在乘积空间中积分存在。因此，我们可以使用 @thm-fubini，对于 $\forall A_{1}\in\mathcal{F}_{1},A_{2}\in\mathcal{F}_{2}$，有
+
+$$
+\begin{align}
+\int _{A_{1}\times A_{2}}\frac{d\lambda_{1}}{d\mu_{1}}
+\frac{d\lambda_{2}}{d\mu_{2}}\, d(\mu_{1}\times \mu_{2})
+&=\int _{A_{1}}d\mu_{1}\frac{d\lambda_{1}}{d\mu_{1}}
+\int _{A_{2}}\frac{d\lambda_{2}}{d\mu_{2}}d\mu_{2} \\
+&=\lambda_{1}(A_{1})\lambda_{2}(A_{2}) \\
+&=\lambda_{1}\times \lambda_{2}(A_{1}\times A_{2})\\
+&=\int _{A_{1}\times A_{2}}\frac{d(\lambda_{1}\times \lambda_{2})}{d(\mu_{1}\times \mu_{2})} \, d(\mu_{1}\times \mu_{2}), 
+\end{align}
+$$
+
+然后，我们构造 $\mathcal{H}=\left\{  A\in\mathcal{F}_{1}\times \mathcal{F}_{2}|\int _{A}\frac{d\lambda_{1}}{d\mu_{1}}\frac{d\lambda_{2}}{d\mu_{2}} \, d(\mu_{1}\times \mu_{2})=\int _{A}\frac{d(\lambda_{1}\times \lambda_{2})}{d(\mu_{1}\times \mu_{2})} \, d(\mu_{1}\times \mu_{2})\right\}$，容易证明，$\mathcal{H}$ 是一个 $\sigma$ -field。因此 $\mathcal{H}=\mathcal{F}_{1}\times \mathcal{F}_{2}$，完成了 $\lambda_{1},\lambda_{2}$ 都是测度时的证明。
+:::
+
+# R-N 导数与微积分导数
+
+现在, 其实我们有两种导数:
+- R-N 导数, 通过测度论积分定义, 这里我们仅讨论其中最常用的相对于 L 测度的 R-N 导数 (称为 L 导数);
+- 微积分导数, 通过极限定义 (称为普通导数).
+
+在初等概率论中, 我们其实使用的比较多的是普通导数, 并且使用它根据分布函数来定义了密度函数. 但是现在, 当我们学习了 R-N 导数后, 我们也根据它定义了一个新版本的密度函数, 那么, 当密度函数相同时, 两者是否相同呢? 现在我们来回答这个问题.
+
+::: {#prp-54d0e5}
+
+## R-N 导数和微积分导数
+
+假设在概率空间 $(\Omega,\mathcal{F},P)$ 上, 存在一个随机变量 $X:\Omega\to \mathbb{R}$. 假设 $PX^{-1}\ll m$ ($m$ 表示 L 测度) 并且 $F(x)=PX^{-1}(-\infty , x]$ 关于 $x$ 可微, 因此, 我们有普通导数版本的密度函数:
+
+$$
+f_{c}=\frac{dF}{dx},
+$$
+
+以及 R-D 导数版本的密度函数:
+
+$$
+f_{r}=\frac{dF}{dm}=\frac{dPX^{-1}}{dm}.
+$$
+
+则我们有
+
+$$
+f_{c}=f_{r}.
+$$
+
+:::
+
+::: {.proof}
+我们有
+
+$$
+\begin{align}
+f_{c}&=\lim_{ \Delta x \to 0 } \frac{F(x+\Delta x)-F(x-\Delta x)}{2\Delta x}\\
+&=\lim_{ \Delta x \to 0 } \frac{\int _{(x-\Delta x,x+\Delta x)}f_{r}dm }{2\Delta x},
+\end{align}
+$$
+
+这意味着
+
+$$
+\inf_{x-\Delta x<t<x+\Delta x}f_{r}(t)\leq f_{c}(x)
+\leq \sup_{x-\Delta x<t<x+\Delta x}f_{r}(t).
+$$
+
+当 $\Delta\to0$, 得到 $f_{c}(x)=f_{r}(x)$.
+:::

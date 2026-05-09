@@ -1,0 +1,736 @@
+---
+title: "Lebesgue 分解"
+draft: true
+aliases:
+  - Lebesgue分解
+author:
+  - 荣志炜
+tags:
+  - Lebesgue分解
+  - 奇异性
+  - 连续型随机变量
+  - 离散型随机变量
+  - 奇异型随机变量
+created: 2024-05-04 01:02
+updated: 2025-11-28 16:15
+order: 12
+---
+
+# 背景
+
+计算 R-N 导数一个非常重要的条件是**绝对连续性**，但是并不是所有的符号测度和测度满足这样的性质。本节的内容主要讲述了这样的一个结论：**对于任意一个 $\sigma$ 有限符号测度，我们都可以将其分成两个部分，一个部分满足绝对连续性，另一个部分满足奇异性。**
+
+# 绝对连续性和奇异性
+
+首先，我们将首先定义**奇异性**。
+
+::: {#def-singular}
+
+## 符号测度的奇异性
+
+对于可测空间 $(X,\mathcal{F})$ 上的符号测度 $\phi$ 和 $\psi$，两者被称为**相互奇异的**，如果满足
+
+$$
+\exists N\in\mathcal{F}\implies \lvert \phi \rvert (N^{c})=\lvert \psi \rvert (N)=0.
+$$
+
+其中 $\lvert \phi \rvert,\lvert \psi \rvert$ 表示符号测度的 @def-total-variation 。记作 $\phi\perp \psi$。
+
+:::
+
+奇异性是通过符号测度的全变差进行定义的，但是，我们也可以直接使用符号测度本身来进行验证。下面是奇异性的等价定义。
+
+::: {#lem-singular-2}
+
+## 奇异性的等价定义
+
+对于任意符号测度 $\phi,\psi$，$\phi \perp \psi$ 当且仅当
+
+$$
+\exists N\in\mathcal{F},\forall A\in\mathcal{F},
+\phi(A\cap N^{c})=\psi(A\cap N)=0.
+$$
+
+:::
+
+::: {.proof}
+首先，我们证明必要性。若 $\phi \perp \psi$，则取 $N\in\mathcal{F}$ ，有
+
+$$
+\lvert \phi \rvert (N^{c})=0
+\implies
+\phi^{\pm}(N^{c})=0\implies
+\phi^{\pm}(A\cap N^{c})=0\implies \phi(A\cap N^{c})=0.
+$$
+
+同理可以证明对于 $\lvert \psi \rvert$ 成立。
+
+接下来，我们证明充分性。取 $N\in\mathcal{F}$ 有
+
+$$
+\phi(A\cap N^{c})=\psi(A\cap N)=0,
+$$
+
+取 $\phi$ 的 Hahn 分解 $\{ X^{+},X^{-} \}$，则
+
+$$
+\phi(X^{+}\cap N^{c})=\phi(X^{-}\cap N^{c})=0\implies
+\phi^{\pm}(N^{c})=0\implies
+\lvert \phi \rvert (N^{c})=0,
+$$
+
+$\psi$ 的情况可以得到类似证明。
+
+:::
+
+类似奇异性，我们也可以将绝对连续性推广到两个符号测度上。
+
+::: {#def-12-lebesgue-decomposition-3}
+
+## 绝对连续性的推广
+
+若两个符号测度 $\phi$ 和 $\psi$ 满足 $\lvert \phi \rvert\ll \lvert \psi \rvert$，则称 $\phi$ 对 $\psi$ 绝对连续，记作 $\phi\ll \psi$。
+
+:::
+下面的引理说明，绝对连续和独立性是两个对立的概念。
+
+::: {#lem-12-lebesgue-decomposition-4}
+
+## 绝对连续和独立性
+
+设 $\phi$ 和 $\psi$ 都是符号测度，若 $\phi\ll \psi$ 且 $\phi \perp \psi$，则
+
+$$
+\phi\equiv0
+$$
+
+:::
+::: {.proof}
+取 $N\in\mathcal{F}$ 满足 $\lvert \phi \rvert(N^{c})=\lvert \psi \rvert(N)=0$，则 $\forall A\in\mathcal{F}$，
+
+$$
+\lvert \phi \rvert (A\cap N^{c})\leq \lvert \phi \rvert (N^{c})=0.
+$$
+
+根据绝对连续性，又有
+
+$$
+\lvert \psi \rvert (N)=0\implies
+\lvert \psi \rvert (A\cap N)=0\implies
+\lvert \phi \rvert (A\cap N)=0,
+$$
+
+从而得到
+
+$$
+\lvert \phi \rvert (A)=\lvert \phi \rvert (A\cap N^{c})+
+\lvert \phi \rvert (A\cap N)=0,\quad\forall A\in\mathcal{F},
+$$
+
+等价于 $\phi\equiv0$。
+:::
+
+# Lebesgure 分解定理
+
+接下来，我们将证明 @thm-leb-decomp。我们将其分为 3 个步骤进行，对应下面的三个命题。
+
+::: {#prp-leb-decomp-finite}
+
+## Proposition
+
+对于有限测度空间 $(X,\mathcal{F},\mu)$ 上的**有限测度** $\phi$，存在**有限测度** $\phi_{c}$ 和 $\phi_{s}$ 使得下面的分解成立：
+
+$$
+\phi=\phi_{c}+\phi_{s};\quad
+\phi_{c}\ll \mu;\quad
+\phi_{s}\perp \mu.
+$$
+
+:::
+
+::: {.proof}
+注意到，$\phi\ll \mu+\phi$，所以 $\frac{d\phi}{d(\mu+\phi)}$ 存在，并且 $\forall A\in\mathcal{F}$ 有
+
+$$
+0\leq \int _{A}\frac{d\phi}{d(\mu+\phi)} \, d(\mu+\phi)=\phi(A)\leq \mu(A)+\phi(A)=\int _{A}1 \, d(\mu+\phi), 
+$$
+
+这意味着
+
+$$
+0\leq \frac{d\phi}{d(\mu+\phi)}\leq 1,\ a.e..
+$$
+
+令 $N=\left\{  x \in X|\frac{d\phi}{d(\mu+\phi)}(x)=1  \right\}$，则 $\forall A\in\mathcal{F}$，令
+
+$$
+\phi_{c}(A)=\phi(A\cap N^{c}),\quad
+\phi_{s}(A)=\phi(A\cap N).
+$$
+
+显然，$\phi_{c}$ 和 $\phi_{s}$ 是两个有限测度。现在我们来证明以上两个测度命题的条件。
+
+$\phi=\phi_{c}+\phi_{s}$ 显然成立。假设 $A\in\mathcal{F},\mu(A)=0$，则
+
+$$
+\begin{align}
+\int _{A\cap N^{c}}\left[ 1-\frac{d\phi}{d(\mu+\phi)} \right] \, d(\mu+\phi)
+=(\mu+\phi)(A\cap N^{c})-\phi(A\cap N^{c})=\mu(A\cap N^{c})=0,
+\end{align}
+$$
+
+但是根据 $N$ 的定义，我们知道 $A\cap N^{c}$ 上 $\frac{d\phi}{d(\mu+\phi)}<1$ a.e.，这意味着 $1-\frac{d\phi}{d(\mu+\phi)}>0$ a.e.，这意味着 $(\mu+\phi)(A\cap N^{c})=0$，从而有
+
+$$
+\phi_{c}(A)=\phi(A\cap N^{c})\leq (\mu+\phi)(A\cap N^{c})=0,
+$$
+
+这就证明了绝对连续性。
+
+此外，我们有
+
+$$
+\phi(N)=\int _{N}\frac{d\phi}{d(\mu+\phi)} \, d(\mu+\phi)=
+\int _{N}1 \, d(\mu+\phi)=\mu(N)+\phi(N), 
+$$
+
+即 $\mu(N)=0$。此外，还有
+
+$$
+\phi_{s}(N^{c})=\phi(N^{c}\cap N)=\phi(\emptyset)=0.
+$$
+
+独立性得到验证。
+
+:::
+
+::: {.callout-important title="通过 R-N 导数构造随机变量"}
+@thm-rn 提供了一种构造随机变量的方式，这样构造的随机变量自动满足一些条件，比如**其积分等于某个设定好的符号测度**。
+
+以上证明过程中就涉及到这样的方法，之后我们还会看到，条件随机变量 (`条件随机变量`) 也是通过类似的方式定义的。
+
+使用该方法时需要注意，我们需要构造出两个测度。测度的构造可能非常 trival，比如 $\phi$ 可能是由 $\mu$ 来构造出来的。
+
+:::
+
+::: {#prp-leb-decomp-sigma-finite}
+
+## 对于测度空间 $(X,\mathcal{F},\mu)$ 上的 **$\sigma$ 有限测度** $\phi$，存在 **$\sigma$ 有限测度** $\phi_{c}$ 和 $\phi_{s}$ 使得下面的分解成立：
+
+$$
+\phi=\phi_{c}+\phi_{s};\quad
+\phi_{c}\ll \mu;\quad
+\phi_{s}\perp \mu.
+$$
+:::
+
+::: {.proof}
+去 $(X,\mathcal{F})$ 上的一个可测分割 $\{ A_{n} \}$，使之**同时**满足
+
+$$
+\phi(A_{n})<\infty,\quad \mu(A_{n})<\infty,
+$$
+
+则对于 $(A_{n},A_{n}\cap \mathcal{F})$ 运用 @thm-leb-decomp-finite，得到有限测度 $\phi_{nc},\psi_{nc}$ 满足
+
+$$
+\phi=\phi_{nc}+\psi_{ns},\quad
+\phi_{nc}\ll \mu,\quad
+\phi_{ns}\perp \mu.
+$$
+
+$\forall A\in\mathcal{F}$， 令
+
+$$
+\phi_{c}(A)=\sum\limits_{n=1}^{\infty}\phi_{nc}(A\cap A_{n}),\quad
+\phi_{s}(A)=\sum\limits_{n=1}^{\infty}\phi_{ns}(A\cap A_{n}).
+$$
+
+容易证明，以上满足命题的内容。（取 $N=\bigcup_{n=1}^{\infty}N_{n}$）
+:::
+
+::: {#thm-leb-decomp}
+
+## Lebesgue 分解
+
+对于 **$\sigma$ 有限**测度空间 $(X,\mathcal{F},\mu)$ 上的 **$\sigma$ 有限符号测度** $\phi$，存在 **$\sigma$ 有限符号测度** $\phi_{c}$ 和 $\phi_{s}$ 使得下面的分解成立，并且**这个分解是唯一的**：
+
+$$
+\phi=\phi_{c}+\phi_{s};\quad
+\phi_{c}\ll \mu;\quad
+\phi_{s}\perp \mu.
+$$
+
+:::
+
+::: {.proof}
+我们首先证明存在性。基于 @thm-jordan-decomp 得到 $\phi=\phi^{+}-\phi^{-}$，并且其中 $\phi^{+}$ 是 $\sigma$ 有限测度，$\phi^{-}$ 是**有限测度**。利用 @prp-leb-decomp-sigma-finite，我们可以得到 $\phi^{+}_{c},\phi^{+}_{s},\phi^{-}_{c},\phi^{-}_{s}$，满足
+
+$$
+\begin{align}
+&\phi^{+}=\phi^{+}_{s}+\phi^{+}_{c},\quad
+\phi^{+}_{c}\ll \mu,\quad
+\phi^{+}_{s}\perp \mu; \\
+&\phi^{-}=\phi^{-}_{s}+\phi^{-}_{c},\quad
+\phi^{-}_{c}\ll \mu,\quad
+\phi^{-}_{s}\perp \mu.
+\end{align}
+$$
+
+其中 $\phi^{+}_{c},\phi^{+}_{s}$ 是 $\sigma$ 有限测度，$\phi^{-}_{c},\phi^{-}_{s}$ 是有限测度。进一步，我们构造两个符号测度
+
+$$
+\phi_{s}=\phi^{+}_{s}-\phi^{-}_{s},\quad
+\phi_{c}=\phi^{+}_{c}-\phi^{-}_{c},
+$$
+
+不难证明，前两个式子是成立的。
+
+设 $N_{\pm}\in\mathcal{F}$ 是使 $\phi^{\pm}_{s}(N_{\pm}^c)=\mu(N_{\pm})=0$ 成立的集合。令 $N=N_{+}\cup N_{-}$，则 $\mu(N)=0$。此外，有
+
+$$
+\phi_{s}^{\pm}(N^{c})=\phi_{s}^{\pm}(N_{+}^{c}\cap N_{-}^{c})\leq \phi_{s}^{\pm}(N_{\pm}^{c})=0,
+$$
+
+因此，$\forall A\in\mathcal{F}$，有 $\phi_{s}^{\pm}(A\cap N^{c})=0$，自然有
+
+$$
+\phi_{s}(A\cap N^{c})=\phi^{+}_{s}(A\cap N^{c})-\phi^{-}_{s}(A\cap N^{c})=0,
+$$
+
+根据 @def-singular-2，奇异性得证。
+
+::: {.callout-note}
+注意，这里我们不能使用 @def-singular 来证明，因为其中依赖于全变差，而全变差依赖于 Jordan 分解，**所以我们必须先证明 $\phi^{+}_{s},\phi^{-}_{s}$ 是 Jordan 分解**才行，这显然不是很容易。
+
+使用 @def-singular-2 则不需要考虑这个问题，其只涉及到符号测度本身，所以这也是这个引理的关键用途。
+
+:::
+其次，我们来证明唯一性。假设存在两个分解，使用 $\phi_{c1},\phi_{s1}$ 和 $\phi_{c2},\phi_{s2}$ 来表示。现在我们来证明
+
+$$
+\phi_{c1}=\phi_{c2},\quad
+\phi_{s1}=\phi_{s2}.
+$$
+
+我们来假设 $N_{1},N_{2}$ 分别是两个分解中验证独立性成立的集合，因此有
+
+$$
+\mu(N_{i})=0,\quad
+\phi_{si}(A\cap N_{i}^{c})=0,\quad
+\forall i=1,2,\quad \forall A\in\mathcal{F},
+$$
+
+<span id="5e10a1"></span>
+
+取 $N=N_{1}\cup N_{2}$，则 $\mu(N)=0$，并且由绝对连续性知道 $\phi_{ci}(A\cap N)=0,\forall A\in\mathcal{F}$。并且有
+
+$$
+\begin{align}
+&\phi_{s1}(A\cap N^{c})=\phi_{s1}((A\cap N_{2}^{c})\cap N_{1}^{c})=0,\\
+&\phi_{s2}(A\cap N^{c})=\phi_{s2}((A\cap N_{1}^{c})\cap N_{2}^{c})=0.
+\end{align}
+$$
+
+这是由式 [5e10a1](#5e10a1) 得到的。这样，我们就有
+
+$$
+\begin{align}
+\phi_{c1}(A)&=\phi_{c1}(A\cap N)+\phi_{c1}(A\cap N^{c}) \\
+&=\phi_{c1}(A\cap N^{c}) \\
+&=\phi_{c1}(A\cap N^{c}) + \phi_{s1}(A\cap N^{c}) \\
+&=\phi(A\cap N^{c}) \\
+&=\phi_{c2}(A\cap N^{c}) + \phi_{s2}(A\cap N^{c}) \\
+&=\phi_{c2}(A\cap N^{c}) \\
+&=\phi_{c2}(A\cap N)+\phi_{c2}(A\cap N^{c}) \\
+&=\phi_{c2}(A),
+\end{align}
+$$
+
+$$
+\begin{align}
+\phi_{s1}(A)&=\phi_{s1}(A\cap N)+\phi_{s1}(A\cap N^{c}) \\
+&=\phi_{s1}(A\cap N) \\
+&=\phi_{s1}(A\cap N) + \phi_{c1}(A\cap N) \\
+&=\phi(A\cap N) \\
+&=\phi_{c2}(A\cap N) + \phi_{s2}(A\cap N) \\
+&=\phi_{s2}(A\cap N) \\
+&=\phi_{s2}(A\cap N)+\phi_{s2}(A\cap N^{c}) \\
+&=\phi_{s2}(A).
+\end{align}
+$$
+
+问题得证。
+:::
+
+尽管不常用到，但是我们可以进一步将以上定理中的 $\mu$ 推广至符号测度。
+
+::: {#cor-12-lebesgue-decomposition-7}
+
+## Lebesgue 分解的推广
+
+对于可测空间 $(X,\mathcal{F})$ 上 **$\sigma$ 有限符号测度** $\phi,\psi$，存在 **$\sigma$ 有限符号测度** $\phi_{c}$ 和 $\phi_{s}$ 使得下面的分解成立，并且**这个分解是唯一的**：
+
+$$
+\phi=\phi_{c}+\phi_{s};\quad
+\phi_{c}\ll \psi;\quad
+\phi_{s}\perp \psi.
+$$
+
+:::
+::: {.proof}
+因为 $\mu$ 的全变差是一个测度，所以直接借助 @thm-leb-decomp 即可得到结论。
+:::
+
+# 随机变量分类 {#12-lebesgue-decomposition-随机变量分类}
+
+## 随机变量的分解
+
+就像我们之前说道的，@thm-leb-decomp 的重要意义在于将（符号）测度分解为不同的部分。这样，我们就可以根据不同部分的比例来对测度进行分类。这就解释了在初等概率论中随机变量的分类问题。
+
+假设我们有一个概率空间 $(X,\mathcal{F},P)$，$f$ 是其中的一个随机变量，利用 @thm-inverse-image，我们可以得到一个**有限测度空间** $(\mathbb{R},\mathcal{B},Pf^{-1})$，我们也知道一个在 $(\mathbb{R},\mathcal{B})$ 上的 $\sigma$ 有限测度——Lebesgue 测度（这里我们使用 $m$ 表示）。利用 @thm-leb-decomp，我们得到：
+
+$$
+Pf^{-1}=\mu_{1}+\mu_{s},\quad
+\mu_{1}\ll m,\quad
+\mu_{s}\perp m.
+$$
+
+然后，我们对 $\mu_{s}$ 进一步进行分解，取出其中单点测度大于 0 的部分：
+
+$$
+\begin{align}
+&D=\{ x \in\mathbb{R}|\mu_{s}(\{ x \})>0 \}; \\
+&\mu_{2}(A)=\mu_{s}(A\cap D),\quad\forall A\in\mathcal{F}; \\
+&\mu_{3}=\mu_{s}-\mu_{2}.
+\end{align}
+$$
+
+这样，我们就得到了一个**三测度分解**：
+
+$$
+Pf^{-1}=\mu_{1}+\mu_{2}+\mu_{3},
+$$
+
+并且我们有下面的结论：
+- **$\mu_{1},\mu_{2},\mu_{3}$ 都是有限测度**；
+- **$D$ L 可测，且至多可数**。
+
+::: {.proof}
+我们来证明 $D$ 至多可数。令
+
+$$
+D_{i}=\left\{  x | \frac{1}{2^{i}}<\mu_{s}(\{ x \})\leq\frac{1}{2^{i-1}}  \right\},i=1,2,\dots
+$$
+
+显然 $\#D_{i}<\infty$ (不然，利用可列可加性，$\mu_{s}(D_{i})=\infty$ )，并且 $\bigcup_{i=1}^{\infty}D_{i}=D$，因此 $D$ 至多可数。
+
+在已知 $D$ 至多可数的前提下，其 $L$ 可测是容易证明的。
+:::
+
+因为是有限测度，所以我们还可以进行一下归一化：令 $\alpha_{i}=\mu_{i}(\mathbb{R})$，令
+
+$$
+\tilde{\mu}_{i}=\left\{\begin{matrix}
+\mu_{i}/\mu_{i}(\mathbb{R}),&\mu_{i}(\mathbb{R})>0, \\
+\nu,&\mu_{i}(\mathbb{R})=0,
+\end{matrix}\right.
+$$
+
+其中 $\nu$ 是任意一个概率测度（其系数 $\alpha_{i}=0$，所以不会造成任何影响，只是用来占位用）。因此，分解式可以整理为下面的形式
+
+$$
+Pf^{-1}=\alpha_{1}\tilde{\mu}_{1}+\alpha_{2}\tilde{\mu}_{2}+\alpha_{3}\tilde{\mu}_{3},
+$$
+
+并且有下面的结论：
+- $\tilde{\mu}_{i}$ 都是概率测度；
+- $\alpha_{i}\geq 0$ 且 $\alpha_{1}+\alpha_{2}+\alpha_{3}=1$；
+- 当 $\alpha_{1}>0$ 时，$\tilde{\mu}_{1}\ll m$；$\alpha_{2}>0$ 时，$\tilde{\mu}_{2}(D)=1$；$\alpha_{3}>0$ 时，$\tilde{\mu}_{3}\perp m$，并且 $\forall x \in\mathbb{R},\tilde{\mu}_{3}(\{ x \})=0$。
+
+现在，我们就可以根据这个来进行分类。
+- 当 $\alpha_{1}=1$ 时，$Pf^{-1}$ 只有第一部分 $\tilde{\mu}_{1}$，此时称 $f$ 是一个**连续型随机变量**。
+- 当 $\alpha_{2}=1$ 时，$Pf^{-1}$ 只有第二部分 $\tilde{\mu}_{2}$，此时称 $f$ 是一个**离散型随机变量**。
+- 当 $\alpha_{3}=1$ 时，$Pf^{-1}$ 只有第三部分 $\tilde{\mu}_{3}$，此时称 $f$ 是一个**奇异型随机变量**。
+- 更多情况下，是以上三种随机变量的混合。
+
+现在，我们针对这 3 种特殊的随机变量进行讨论。
+
+## 连续性随机变量
+
+此时，
+
+$$
+Pf^{-1}=\tilde{\mu}_{1} \ll m,
+$$
+
+因此，可以根据 @thm-rn 得到一个 Lebesgue 可测函数 $p=\frac{d(Pf^{-1})}{dm}$，我们称之为**概率密度函数 (probability density function, pdf)**，满足下面的关系：
+
+$$
+P(f\in A)=(Pf^{-1})(A)=\tilde{\mu}_{1}(A)=\int _{A}p \, dm,\quad
+\forall A\in\mathcal{B}.
+$$
+
+特殊地，当 $A=(a,b]$ 是一个区间时，有
+
+$$
+P(a<f\leq b)=\int _{a}^{b}p \, dm, 
+$$
+
+注意，以上是一个 Lebesgue 积分，而根据 [8_积分](08-integration.qmd#08-integration-5-lebesgue-积分和-riemann-积分) 中讨论的内容我们知道，在很多情况下，其可以被替换为 Riemann 积分。这时候，我们得到了初等概率论中对于连续性随机变量的做法。
+
+根据 @thm-inte-by-subs 的内容，我们有
+
+$$
+\mathbb{E}(g\circ f)=\int g\circ f \, dP =\int g(x) \, d(Pf^{-1})=
+\int g(x)\frac{d(Pf^{-1})}{dm}\, dm=\int g(x)p \, dm,  
+$$
+
+其中第 2 个等号根据 @thm-inte-by-subs ，第三个等号根据 @prp-rn (1)。如果我们将 Lebesgue 积分换成 Riemann 积分后，就是我们初等概率论中学习的随机变量函数的期望计算公式。
+
+## 离散型随机变量
+
+此时，
+
+$$
+Pf^{-1}=\tilde{\mu}_{2},
+$$
+
+并且存在一个至多可列集 $D=\{ x_{1},x_{2},\dots \}\subset \mathbb{R}$，$Pf^{-1}(D)=1$。
+
+然后，我们可以定义
+
+$$
+p_{n}:=P(f=x_{n})=\tilde{\mu}_{2}(\{ x_{n} \}),\quad n=1,2,\dots
+$$
+
+已知了 ${p_{n}}$ 之后，我们就完全确定了概率测度 $Pf^{-1}$，其就称为**离散型随机变量的概率分布**。这与初等概率论中的做法非常相似。
+
+注意到，此时 $Pf^{-1}\perp m$，因此不存在 $\frac{dPf^{-1}}{dm}$。但是，我们其实可以将 $m$ 替换为另外的一个测度，从而实现 R-N 导数的计算，从而也得到一个“概率密度函数”。
+
+我们定义测度 $n$ 满足
+
+$$
+\begin{align}
+&n({x})=1,\quad \forall x \in D;\quad n(D^{c})=0.
+\end{align}
+$$
+
+（实际上，我们可以按照 1.1 测度空间和概率空间 (`1.1 测度空间和概率空间#4 分布函数`) 中的方式先定义一个准分布函数，进而去定义一个 $(\mathbb{R},\mathcal{B})$ 上的测度，满足上述性质）
+我们姑且称之为**计数测度**。不难证明 $\tilde{\mu}_{2}\ll n$，所以我们可以去计算
+
+$$
+\begin{align}
+Pf^{-1}(\{ x \})=\int _{\{ x \}} \frac{d(Pf^{-1})}{dn}\, dn 
+=\frac{d(Pf^{-1})}{dn}(x)n(\{ x \})=
+\left\{\begin{matrix}
+\frac{d(Pf^{-1})}{dn}(x),&x \in D, \\
+0,&x \not\in D.
+\end{matrix}\right.
+\end{align}
+$$
+
+根据我们之前的讨论，我们可以得到
+
+$$
+\frac{d(Pf^{-1})}{dn}(x)=\left\{\begin{matrix}
+p_{n},&x=x_{n} \in D, \\
+h(x),&x \not\in D,
+\end{matrix}\right.
+$$
+
+其中 $h(x)$ 是任意一个 $(\mathbb{R},\mathcal{B})$ 上的随机变量。容易知道，$\frac{d(Pf^{-1})}{dn}(x)$ 对于 $n$ 来说 a.e. 唯一确定（对于 $n$ 来讲，$D^{c}$ 是 0 测度集）。
+
+我们惊喜地发现，我们之前定义的**概率分布**就是**相对于计数测度的概率密度函数**，不过我们依然习惯称之为**概率分布 (probability mass function, pmf)**。
+
+此时，积分运算为
+
+$$
+\mathbb{E}(g\circ f)=\int g\circ f \, dP=\int g(x) \, d(Pf^{-1})
+=\int g(x)\frac{d(Pf^{-1})}{dn} \, dn 
+=\sum\limits_{n=1}^{\infty}g(x_{n})p_{n},
+$$
+
+可见与初等概率论中学习的内容一致。
+
+## 奇异型随机变量
+
+最经典、最著名的例子是基于 **Cantor 集（康托尔集）** 构造的随机变量，其累积分布函数（CDF）被称为 **Cantor 函数**（也称为“魔鬼阶梯”，Devil's Staircase）。
+
+### 1. 构造背景：Cantor 集
+
+首先回顾 **Cantor 集** $C$ 的构造（三分集）：
+1. 取区间 $[0, 1]$，去掉中间的开区间 $(1/3, 2/3)$。
+2. 对剩下的两个闭区间 $[0, 1/3]$ 和 $[2/3, 1]$，分别去掉中间的 $1/3$。
+3. 无限重复此过程。
+
+剩下的点集即为 Cantor 集 $C$。其具有如下两个性质：
+* **Lebesgue 测度为 0**：$m(C) = 0$。
+* **不可数**：$C$ 中的点与实数一样多（势为 $\aleph_1$）。
+
+### 2. 随机变量的构造 (投硬币法)
+
+我们可以通过一个概率过程来定义这个随机变量 $X$。假设有一枚均匀的硬币，抛掷结果记为 $Z_n$，其中 $n=1,2,\dots$：
+
+$$
+P(Z_n = 0) = \frac{1}{2}, \quad P(Z_n = 1) = \frac{1}{2}
+$$
+
+各次抛掷相互独立。定义随机变量 $X$ 为：
+
+$$
+X = \sum_{n=1}^{\infty} \frac{2Z_n}{3^n}
+$$
+
+这个公式实际上是在确定 $X$ 的 **三进制小数表示**。
+* $Z_n$ 决定了第 $n$ 位的数字。
+* 如果 $Z_n=0$，该位是 0；如果 $Z_n=1$，该位是 $2$。
+* 因为三进制表示中只包含 0 和 2，从来没有 1，这正是 Cantor 集元素的特征。
+
+因此，$X$ 的取值范围（支撑集）几乎必然落在 Cantor 集 $C$ 上。
+
+### 3. 验证奇异性
+
+我们要验证 $X$ 对应的概率测度 $\mu_X = PX^{-1}$ 满足奇异型随机变量的定义（即上述 $\alpha_3=1$ 的情况）。我们需要验证三点：
+1. **$\mu_X$ 是无原子的，即非离散**。
+2. **$\mu_X$ 与 Lebesgue 测度 $m$ 奇异（$\mu_X \perp m$）**。
+3. **$\mu_X$ 并非绝对连续（即没有概率密度函数）**。
+
+::: {.proof}
+
+**我们首先来验证其非离散性。**
+
+对于任意一点 $x \in [0, 1]$，要使 $X=x$，必须是每一次投硬币的结果 $Z_n$ 都完全符合 $x$ 的三进制展开。
+由于 $P(Z_n) = 1/2$，我们要匹配一个无限长的特定序列，其概率为：
+
+$$
+P(X=x) = \lim_{n \to \infty} \left(\frac{1}{2}\right)^n = 0
+$$
+
+因此，$\forall x, \mu_X(\{x\}) = 0$。**它没有离散部分 ($\alpha_2=0$)**。
+
+**然后我们来验证与 L 测度奇异。**
+
+由构造可知，$X$ 的取值几乎必然落在 Cantor 集 $C$ 上，即：
+
+$$
+\mu_X(C) = P(X \in C) = 1
+$$
+
+然而，我们知道 Cantor 集的 Lebesgue 测度是 0：
+
+$$
+m(C) = 0
+$$
+
+根据 @def-singular，取 $N=C$，则 $\mu_X(N^c)=0$ 且 $m(N)=0$。即 $\mu_X \perp m$。
+
+**最后我们来验证其非绝对连续。**
+
+如果 $\mu_X$ 绝对连续，则必须存在密度函数 $f$，使得 $F_X(x) = \int_{-\infty}^x f(t)dt$。让我们看 $X$ 的分布函数 $F_X(x)$（即 Cantor 函数）：
+* 在 Cantor 集被挖去的区间上（比如 $(1/3, 2/3)$），$X$ 取不到值，所以 $F_X(x)$ 是**常数**（平的）。
+* 这些被挖去的区间的总长度是 1 (因为 $m(C^c)=1$)。
+* 这意味着 $F_X'(x) = 0$ 在几乎所有点（a.e. $m$）都成立。
+
+如果存在密度函数 $f(x)$，则 $f(x) = F_X'(x) = 0$ a.e.。那么积分应该是：
+
+$$
+\int_0^1 f(x) dm = \int_0^1 0 \, dm = 0
+$$
+
+但实际上这是一个概率分布，总概率必须是 1：
+
+$$
+F_X(1) - F_X(0) = 1
+$$
+
+**矛盾**。这说明它没有概率密度函数。**它没有绝对连续部分 ($\alpha_1=0$)**。
+
+::: {.callout-note}
+实际上，我们已知其与 L 测度奇异，就可以知道其相对于 L 测度非绝对连续。
+
+:::
+:::
+
+对于这个 Cantor 分布的随机变量 $X$：
+1. **连续性**：它的 CDF $F_X(x)$ 是连续函数（没有跳跃）。
+2. **导数为 0**：它的 CDF 在几乎所有点导数都为 0。
+3. **增长性**：尽管导数几乎处处为 0，它却顽强地从 0 增加到了 1。
+
+这就是一个纯粹的**奇异型随机变量** ($\alpha_3=1$)。
+
+::: {.callout-note title="Abstract: Cantor 函数 (Devil's Staircase)"}
+这是一个连续但非绝对连续的函数。它把 [0,1] 区间上的测度集中在了一个“看不见”的集合（Cantor 集）上。
+
+* 如果你站在 $m$ (Lebesgue) 测度的角度看，这个随机变量落在任何 $m$ 测度大于 0 的集合上的概率都是 0（除去那个测度为 0 的 Cantor 集）。
+* 如果你站在 $Pf^{-1}$ (概率) 测度的角度看，$m$ 测度简直“太大了”，充满了无数概率为 0 的“废地”。
+
+:::
+## 混合型随机变量
+
+这里我们介绍一个混合了连续型和离散型的随机变量分布。
+
+假设存在一个 $(\Omega,\mathcal{F},P)$ 上的随机变量 $X$, 其 c.d.f 是 $F_{X}$, 并且存在一个 $c\in\mathbb{R}$ 使得 $F_{X}(c)<1$. 此外, 其相对于 $L$ 测度还存在有一个 p.d.f $f_{X}$. 基于此, 我们创建一个新的随机变量
+
+$$
+Y=\min\{ X,c \},
+$$
+
+我们可以知道 $Y$ 的 c.d.f 是
+
+$$
+F_{Y}(x)=\left\{\begin{matrix}
+1,&x\geq c \\
+F_{X}(x),&x<c.
+\end{matrix}\right.
+$$
+
+这个 $c.d.f$ 在 $c$ 点存在一个间断点, 因此 $PY^{-1}\not\ll L$ 测度, 也就是无法得到一个相对于 $L$ 测度的 p.d.f; 同样, 也很容易证明 $Y$ 不是一个离散型随机变量.
+
+其实, 我们很容易得到下面的结果:
+
+$$
+\begin{align}
+F_{Y}(x)&=[F_{X}(x)I_{X<c}(x)+cI_{X\geq c}]+(1-c)I_{x\geq c} \\
+&=c\left[ \frac{1}{c}F_{X}(x)I_{X<c}(x)+I_{X\geq c} \right]
++(1-c)I_{X\geq c},
+\end{align}
+$$
+
+据此我们可以得到:
+
+$$
+PY^{-1}=c\mu_{1}+(1-c)\mu_{2}
+$$
+
+其中 $\mu_{1}$ 是分布函数为 $\frac{1}{c}F_{X}(x)I_{X<c}(x)+I_{X\geq c}$ 的概率测度, 其相对于 $L$ 测度有 p.d.f
+
+$$
+f_{1}=f_{X}I_{X<c}.
+$$
+
+而
+
+$$
+\mu_{2}(A)=\left\{\begin{matrix}1, c \in B \\ 0, c \not\in B\end{matrix}\right.,
+\quad
+\forall B\in\mathcal{B}.
+$$
+
+显然, $\mu_{2}$ 是一个离散分布, 其对应的 $D=\{ x \}$, 并且有 $p(x)=1$.
+
+但是我们需要注意, **将其视为一个混合分布是相对于 $L$ 测度而言的, 相对于其他的 $\sigma$ 有限测度, 可能会有不同的结果**. 比如, 我们很容易知道
+
+$$
+PY^{-1}\ll m+\mu_{2},
+$$
+
+其中 $m$ 是 $L$ 测度, 因此我们有
+
+$$
+\frac{dPY^{-1}}{d(m+\mu_{2})}=\left\{\begin{matrix}
+0, &x> c; \\
+1-F_{X}(c),&x=c; \\
+f_{X}(x),&x<c.
+\end{matrix}\right.
+$$

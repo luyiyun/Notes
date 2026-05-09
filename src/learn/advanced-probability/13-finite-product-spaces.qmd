@@ -1,0 +1,1664 @@
+---
+title: "有限乘积空间"
+draft: true
+aliases:
+  - 有限乘积空间
+author:
+  - 荣志炜
+tags:
+  - 乘积空间
+  - 随机向量
+  - 投影
+  - 可测矩形
+  - 柱集
+  - Fubini定理
+  - Tulcea定理
+  - 分部积分
+  - 多维L-S测度
+  - 截口
+  - 测度转移函数
+  - n元分布函数
+  - 边缘分布函数
+created: 2025-11-28 16:33
+updated: 2026-03-02 20:45
+order: 13
+---
+
+# 引言
+
+在之前的学习中，我们将目光局限在单个样本空间 $X$、单个测度 $\mu$ 以及单维可测函数 $f:X\to \mathbb{R}$ 上。然而，概率论与数理统计的进一步发展——如独立性、条件概率、随机过程等——必然要求我们将视野拓展至多个可测空间的情形。我们将讨论如何将单个空间推广至有限个、可数无穷个，乃至不可数无穷个空间的乘积。这将为后续理解条件期望、随机过程等核心概念奠定坚实的测度论基础。
+
+值得注意的是，积分与微分的抽象定义本身并不依赖于空间的维度，因此其概念可以自然地延拓至乘积空间。本章的核心任务，**在于探究“分量空间”（Subspace）上的测度与积分操作，如何与“乘积空间”（Product Space）上的对应操作建立联系**（例如 Fubini 定理）。
+
+本节内容将主要围绕以下两个维度展开：
+
+## 乘积测度空间的构造理论
+
+首先，我们需要从理论层面解决如何“拼接”多个空间的问题。我们将按照以下步骤，从有限个空间出发，逐步构建乘积空间及其上的分析工具：
+
+1. **乘积 $\sigma$ 代数的构造**：基于一组可测空间 $\{(X_{k},\mathcal{F}_{k})\}_{k=1}^{n}$，如何在乘积样本空间 $\prod_{k=1}^{n}X_{k}$ 上构造一个合适的 $\sigma$ 代数 $\bigotimes_{k=1}^{n}\mathcal{F}_{k}$，从而形成**乘积可测空间**。
+2. **乘积空间上的可测映射**：定义定义域为乘积空间的可测映射 $f:\prod X_k \to \mathbb{R}$，并重点研究两类特殊的映射——**投影（Projection）** 与 **截口（Section）** ，它们是连接高维与低维的桥梁。
+3. **乘积测度与积分**：在乘积可测空间上定义**乘积测度** $P = \mu_1 \times \dots \times \mu_n$，从而构成完整的**乘积测度空间**。在此基础上，我们将讨论该空间上的积分计算（即多重积分与累次积分的关系）。
+4. **经典实例**：重点介绍 $(\mathbb{R}^{n},\mathcal{B}^{n},m)$，即 $n$ 维 Lebesgue-Stieltjes 测度空间。这是后续应用中最常接触的乘积空间模型。
+
+## “乘积空间上的函数”与“随机向量”
+
+在第一部分中，我们讨论的可测映射形式为 $f: (\prod X_{k}, \prod \mathcal{F}_{k}) \to \mathbb{R}$，即**定义域为高维空间，值域为一维实数**的函数（例如联合概率密度函数）。
+
+然而，在统计学与概率论中，我们更常遇到的是**随机向量**。随机向量的形式为 $f = (f_{1},\dots,f_{n}): (X,\mathcal{F}) \to \mathbb{R}^{n}$，即**定义域为抽象单空间，值域为高维空间**的映射。
+
+这两者虽然定义方向不同，但存在着深刻的内在联系：
+
+**区别**：我们无法直接套用实值函数的积分定义来处理随机向量（因为其积分结果是一个向量而非标量），但我们可以通过分量定义其期望。
+
+**联系**：当我们计算关于随机向量的函数的期望 $\mathbb{E}[g(f_1, \dots, f_n)]$ 时，可以通过 **变量代换公式** （@thm-inte-by-subs） 将其转化为乘积空间上的积分：
+
+$$
+\int_{X} g(f_{1},\dots,f_{n}) \, d\mu = \int_{\mathbb{R}^n} g(x_{1},\dots,x_{n}) \, d(\mu \circ f^{-1})
+$$
+
+其中，$\mu \circ f^{-1}$ 正是随机向量在 $(\mathbb{R}^{n},\mathcal{B}^{n})$ 上诱导出的分布测度。
+
+因此，为了完整处理多维问题，我们还需要专门讨论关于随机向量的以下内容：
+
+1. **随机向量的定义与可测性**：明确值域为 $\mathbb{R}^n$ 的映射成为随机向量的充要条件。
+2. **随机向量的分布**：研究由随机向量诱导出的 $\mathbb{R}^n$ 上的概率测度。
+3. **随机向量的积分**：定义期望向量，并建立其与分量积分的关系。
+4. **随机向量的密度函数**：基于 Radon-Nikodym 导数，讨论多维分布的绝对连续性及联合密度函数的存在性。
+
+# 乘积可测空间
+
+我们将讨论如何将多个可测空间 $(X_{k},\mathcal{F}_{k})$ 考虑到一起进行讨论。首先，我们将定义**集合的乘积**，其实就是笛卡尔乘积。
+
+::: {#def-13-finite-product-spaces-1}
+
+## 乘积空间
+
+设 $\{ X_{K},k=1,\dots,n \}$，其中 $n\geq 2$，每个 $X_{k}$ 都是一个非空集合。我们定义
+
+$$
+\prod\limits_{k=1}^{n}X_{k}:=\{
+(x_{1},\dots,x_{n})|x_{k}\in X_{k},k=1,\dots,n \}
+$$
+
+称为这些**集合的乘积**。如果我们将这些集合称为空间，则这个乘积也被称为**乘积空间**。
+
+:::
+接下来，我们将讨论可测空间的乘积，除了空间外，还需要讨论对应的 $\sigma$ 代数。一个自然的想法是将乘积空间的定义方式扩展到 $\sigma$ 代数上，但这会存在一些问题，即这样构造的集合系其实不是一个 $\sigma$ 代数。
+
+::: {#def-13-finite-product-spaces-2}
+
+## 可测矩形
+
+设 $\{ (X_{k},\mathcal{F}_{k}),k=1,\dots ,n \}$ 是一组可测空间，则称任意一个下面的集合
+
+$$
+\prod\limits_{k=1}^{n}A_{k},\quad
+A_{k}\in\mathcal{F}_{k},
+$$
+
+为由 $\{ \mathcal{F}_{k} \}$ 确定的**可测矩形**。可测矩形组成的集合记作
+
+$$
+\mathcal{L}=\left\{ \prod\limits_{k=1}^{n}A_{k}|A_{k}\in X_{k},k=1,2,\dots,n \right\}.
+
+
+$$
+
+:::
+关于可测矩形，以及其组成的集合系，我们有下面的结论。
+
+::: {#prp-measurable-rect-is-semi-ring}
+
+## 可测矩形集合系是半环
+
+$\mathcal{L}$ 是半环，并且 $\prod\limits_{k=1}^{n}X_{k}\in\mathcal{L}$。
+
+:::
+
+::: {.proof}
+容易证明 $\prod\limits_{k=1}^{n}X_{k}\in\mathcal{L}$。
+假设 $\prod\limits_{k=1}^{n}A_{k},\prod\limits_{k=1}^{n}B_{k}\in\mathcal{L}$，则
+
+$$
+\prod\limits_{k=1}^{n}A_{k}\cap\prod\limits_{k=1}^{n}B_{k}
+=\prod\limits_{k=1}^{n}(A_{k}\cap B_{k})\in\mathcal{L},
+$$
+
+因此，$\mathcal{L}$ 是一个 $\pi$ -class。
+假设 $\prod\limits_{k=1}^{n}A_{k},\prod\limits_{k=1}^{n}B_{k}\in\mathcal{L}$，并且有
+
+$$
+\prod\limits_{k=1}^{n}A_{k}\subset\prod\limits_{k=1}^{n}B_{k}.
+$$
+
+上式蕴含
+
+$$
+A_{k}\subset B_{k},\quad k=1,\dots,n,
+$$
+
+则会有
+
+$$
+\begin{align}
+\prod\limits_{k=1}^{n}B_{k} \setminus\prod\limits_{k=1}^{n}A_{k}&=
+\left[ B_{1}\times\left( \prod\limits_{k=2}^{n}B_{k}\setminus
+\prod\limits_{k=2}^{n}A_{k}
+\right) \right]\cup
+\left[ (B_{1}\setminus A_{1})\times \prod\limits_{k=2}^{n}A_{k} \right] \\
+&=\left[ (B_{1}\setminus A_{1})\times \prod\limits_{k=2}^{n}A_{k} \right]
+\cup
+\left[ B_{1}\times(B_{2}\setminus A_{2})\times \prod\limits_{k=3}^{n}A_{k} \right]\cap
+\left[ B_{1}\times B_{2}\times\left( \prod\limits_{k=3}^{n}B_{k}\setminus
+\prod\limits_{k=3}^{n}A_{k}\right) \right] \\
+&=\dots \\
+&=\bigcup_{i=1}^{n}\left[
+\prod\limits_{j=1}^{i-1}B_{j}\times
+(B_{i}\setminus A_{i})\times
+\prod\limits_{l=i+1}^{n}A_{l}
+\right]\in\mathcal{L}.
+\end{align}
+$$
+
+命题得证。
+
+:::
+
+::: {#def-13-finite-product-spaces-4}
+
+## $\sigma$ -field 的乘积
+
+设 $\{ (X_{k},\mathcal{F}_{k}),k=1,\dots ,n \}$ 是一组可测空间，其中
+
+$$
+\mathcal{L}=\left\{ \prod\limits_{k=1}^{n}A_{k}|A_{k}\in X_{k},k=1,2,\dots,n \right\},
+$$
+
+也就是说 $L$ 是由可测矩形组成的集合，然后称由其生成的 $\sigma$ -field
+
+$$
+\prod\limits_{k=1}^{n}\mathcal{F}_{k}:=\sigma(\mathcal{L}),
+$$
+
+为 **$\{ \mathcal{F}_{k} \}$ 的乘积**。
+**Caution: 注意，$\prod\limits_{k=1}^{n}\mathcal{F}_{k}$ 和 $\prod\limits_{k=1}^{n}X_{k}$ 从记号上来看都是集合的乘积，但是我们需要注意这两个拥有本质的区别。**
+- $\prod\limits_{k=1}^{n}X_{k}$ 本质上是集合的乘积，所以其就是一个笛卡尔积。
+- $\prod\limits_{k=1}^{n}\mathcal{F}_{k}$ 本质上是集合系的乘积，其是一个笛卡尔积的集合生成的 $\sigma$ 代数。
+
+:::
+这里我们证明一个小命题
+
+::: {#thm-law-of-association-sigma-field}
+
+## $\sigma$ -field 乘积的结合律
+
+$$
+(\mathcal{F}_{1}\times \mathcal{F}_{2})\times \mathcal{F}_{3}
+= \mathcal{F}_{1}\times (\mathcal{F}_{2}\times \mathcal{F}_{3})
+= \prod\limits_{n=1}^{3}\mathcal{F}_{n} 
+
+$$
+
+:::
+
+::: {.proof}
+容易证明 $\prod\limits_{n=1}^{3}\mathcal{F}_{n} \subset (\mathcal{F}_{1}\times \mathcal{F}_{2})\times \mathcal{F}_{3}$，现在我们来证明反方向。
+
+固定 $A_{3}\in\mathcal{F}_{3}$ 为全集，则令
+
+$$
+\mathcal{E}=\sigma(\{ A_{1}\times A_{2}\times A_{3}|A_{1}\in\mathcal{F}_{1},A_{2}\in\mathcal{F}_{2} \}),
+$$
+
+容易知道 $\mathcal{E}\subset \prod\limits_{n=1}^{3}\mathcal{F}_{n}$。现在我们需要证明，$\mathcal{E}=\mathcal{F}_{1}\times \mathcal{F}_{2}\times A_{3}$。如此，$(\mathcal{F}_{1}\times \mathcal{F}_{2})\times \mathcal{F}_{3}$ 的可测矩形都在 $\prod\limits_{n=1}^{3}\mathcal{F}_{n}$ 中，也就证明了反方向。
+
+怎么证明 $\mathcal{E}=\mathcal{F}_{1}\times \mathcal{F}_{2}\times A_{3}$ 呢？我们首先设计一个
+
+$$
+\mathcal{G}=\{ A\in\mathcal{F}_{1}\times \mathcal{F}_{2}|A\times A_{3}\in\mathcal{E} \},
+$$
+
+显然，$\mathcal{G}\subset \mathcal{F}_{1}\times \mathcal{F}_{2}$，并且有 $\mathcal{G}\supset\{ A_{1}\times A_{2}|A_{1}\in\mathcal{F}_{1},A_{2}\in\mathcal{F}_{2} \}$。现在我们只需要证明 $\mathcal{G}$ 是一个 $\sigma$ field，则有
+
+$$
+\mathcal{G}\supset\sigma(\{ A_{1}\times A_{2}|A_{1}\in\mathcal{F}_{1},A_{2}\in\mathcal{F}_{2} \})=\mathcal{F}_{1}\times \mathcal{F_{2}}.
+$$
+
+(1) 显然 $\emptyset\in\mathcal{G}$;
+(2) $A\in\mathcal{G}\implies A\times A_{3}\in\mathcal{E}\implies A^{c}\times A_{3}=(A\times A_{3})^{c}\in\mathcal{E}\implies A^{c}\in\mathcal{G}$；
+(3) $A_{n}\in\mathcal{G}\implies A_{n}\times A_{3}\in\mathcal{E}\implies \bigcup_{n=1}^{\infty}A_{n}\times A_{3}=\bigcup_{n=1}^{\infty}(A_{n}\times A_{3})\in\mathcal{E}\implies \bigcup_{n=1}^{\infty}A_{n}\in\mathcal{G}$.
+因此，$\mathcal{G}$ 是一个 $\sigma$ field，这意味着 $\mathcal{G}=\mathcal{F}_{1}\times \mathcal{F}_{2}$，也就是说，
+
+$$
+\forall A\in\mathcal{F}_{1}\times \mathcal{F}_{2}\implies A\times A_{3}\in\mathcal{E},
+$$
+
+即
+
+$$
+\mathcal{F}_{1}\times \mathcal{F}_{2}\times A_{3}\subset \mathcal{E},
+$$
+
+问题得证。
+:::
+
+我们在后续扩展乘积空间的内容时，可以先从两个出发，然后一步一步增加，这样其实对应的是 $(\mathcal{F}_{1}\times \mathcal{F}_{2})\times \mathcal{F}_{3}$ 的过程；根据 @thm-law-of-association-sigma-field ，其等价于 $\prod\limits_{n=1}^{3}\mathcal{F}_{n}$。
+
+::: {#def-13-finite-product-spaces-6}
+
+## 可测空间的乘积
+
+我们称
+
+$$
+\left( \prod\limits_{k=1}^{n}X_{k},\prod\limits_{k=1}^{n}\mathcal{F}_{k} \right)
+$$
+
+是**可测空间 $\{ (X_{k},\mathcal{F}_{k})|k=1,\dots,n \}$ 的乘积**，有时候也简称为**乘积空间**。若这些可测空间都是同一个，则我们可以使用 $(X^{n},\mathcal{F}^{n})$ 来表示。
+
+:::
+# 乘积空间上的映射
+
+基于乘积空间，我们需要意识到，**定义域是乘积空间的函数是一个多元函数**：
+
+$$
+f:\prod\limits_{k=1}^{n}X_{k}\to\Omega,\quad
+(x_{1},x_{2},\dots,x_{n})\mapsto a,\ a\in\Omega.
+$$
+
+## 投影
+
+首先，我们将讨论一个特殊的映射——投影
+
+::: {#def-project}
+
+## 投影
+
+定义映射 $\pi_{k}:\prod\limits_{i=1}^{n}X_{i}\to X_{k}$ 为
+
+$$
+\pi_{k}(x_{1},\dots,x_{n})=x_{k},
+$$
+
+称其为 **$\prod\limits_{i=1}^{n}X_{k}$ 到 $X_{k}$ 的投影**。
+
+:::
+
+投影是一类非常重要的函数，特别是其与乘积空间映射的可测性密切相关。这样，我们证明乘积空间上的可测性时就不需要在乘积空间上进行验证，而是在每个空间中验证即可，这降低了难度。
+
+::: {#prp-project}
+
+## 投影的性质
+
+设 $\{ (X_{k},\mathcal{F}_{k}),k=1,\dots,n \}$ 都是可测空间，
+(1) 投影 $\pi_{k}$ 都是可测映射；
+(2) $\prod\limits_{k=1}^{n}\mathcal{F}_{k}$ 是使 $\pi_{1},\dots,\pi_{n}$ 都可测的最小 $\sigma$ -field，即
+
+$$
+\prod\limits_{k=1}^{n}\mathcal{F}_{k}=\sigma\left(
+\bigcup_{k=1}^{n}\pi_{k}^{-1}\mathcal{F}_{k} \right).
+$$
+
+:::
+
+::: {.proof}
+(1) $\forall A_{k}\in\mathcal{F}_{k}$，有
+
+$$
+\pi_{k}^{-1}(A_{k})=\prod\limits_{i=1}^{k-1}X_{i}\times A_{k}\times
+\prod\limits_{j=k+1}^{n}X_{j}\in\mathcal{L}\subset \prod\limits_{k=1}^{n}\mathcal{F}_{k}.
+$$
+
+所以 (1) 成立。
+(2) 上面的内容还说明
+
+$$
+\bigcup_{k=1}^{n}\pi_{k}^{-1}\mathcal{F}_{k}\subset \mathcal{L}
+\implies
+\sigma\left(\bigcup_{k=1}^{n}\pi_{k}^{-1}\mathcal{F}_{k} \right)
+\subset\sigma(\mathcal{L})=\prod\limits_{k=1}^{n}\mathcal{F}_{k},
+$$
+
+又因为 $\forall A_{k}\in\mathcal{F}_{k}$，
+
+$$
+\prod\limits_{k=1}^{n}A_{k}=\bigcap_{k=1}^{n}\pi_{k}^{-1}(A_{k})\in
+\sigma\left(\bigcup_{k=1}^{n}\pi_{k}^{-1}\mathcal{F}_{k}\right),
+$$
+
+所以
+
+$$
+\prod\limits_{k=1}^{n}\mathcal{F}_{k}=\sigma(\mathcal{L})\subset
+\sigma \left( \bigcup_{k=1}^{n}\pi_{k}^{-1}\mathcal{F}_{k} \right) .
+$$
+
+问题得证。
+:::
+
+我们可以继续投影的概念推广，
+
+::: {#def-13-finite-product-spaces-9}
+
+## 多维投影
+
+对于任何的 $1\leq k_{1}<\dots<k_{i}\leq n$，我们将映射
+
+$$
+\pi_{k_{1},\dots,k_{i}}(x_{1},\dots,x_{n})=(x_{k_{1}},\dots,x_{k_{i}})
+$$
+
+称为 $\prod\limits_{k=1}^{n}X_{k}$ 到 $\prod\limits_{j=1}^{i}X_{k_{j}}$ 的（多维）投影。
+
+:::
+通过 @thm-vector-measurable，不难验证：
+
+::: {#prp-13-finite-product-spaces-10}
+
+## 多维投影的可测性
+
+投影 $\pi_{k_{1},\dots,k_{i}}$ 是从 $\left( \prod\limits_{k=1}^{n}X_{k},\prod\limits_{k=1}^{n}\mathcal{F}_{k} \right)$ 到 $\left( \prod\limits_{j=1}^{i}X_{k_{j}},\prod\limits_{j=1}^{i}\mathcal{F}_{k_{j}} \right)$ 的可测映射。
+
+:::
+## 截口
+
+这里我们将讨论一类非常常用的可测集合和可测映射——截口，其在后面讨论乘积空间中的测度时非常有用。
+
+::: {#def-13-finite-product-spaces-11}
+
+## 截口集合
+
+$\forall A\subset \prod\limits_{k=1}^{n}X_{k}$，给定 $(x_{1},\dots,x_{i})\in\prod\limits_{k=1}^{i}X_{k},1\leq i\leq n$，则称 $\prod\limits_{i+1}^{n}X_{k}$ 的子集
+
+$$
+A|_{x_{1},\dots,x_{k}}=\{ (x_{i+1},\dots,x_{n})|(x_{1},\dots,x_{n})\in A \}
+$$
+
+是 $A$ 在 $(x_{1},\dots,x_{i})$ 处的**截口**（集合）。
+
+:::
+下面是一个在二维空间中的例子：
+
+
+::: {.callout-note title="Excalidraw drawing pending export"}
+原 Obsidian 图形已保留为附件：[Drawing 2024-06-15 22.11.23.excalidraw](../../../assets/attachments/advanced-probability/excalidraw/finite-product-spaces-2024-06-15-221123.excalidraw.md)。
+:::
+
+
+我们同样可以定义函数的截口
+
+::: {#def-13-finite-product-spaces-12}
+
+## 截口函数
+
+对于映射 $f:\prod\limits_{k=1}^{n}X_{k}\to Y$，存在 $1\leq i\leq n$ 和 $(x_{1},\dots,x_{i})\in\prod\limits_{k=1}^{i}X_{k}$，定义
+
+$$
+f|_{x_{1},\dots,x_{i}}(x_{i+1},\dots,x_{n}):=
+f(x_{1,}\dots,x_{i},x_{i+1},\dots,x_{n}),
+$$
+
+为映射 $f$ 在 $(x_{1},\dots,x_{i})$ 处的**截口**（函数）。
+**Note: 类似的，我们也可以对于 $1\leq k_{1}<\dots<k_{i}\leq n$ 和 $(x_{k_{1}},\dots,x_{k_{i}})$ 来定义截口（函数或集合），方法与上面一致，只是过程麻烦一些而已。**
+
+:::
+我们首先证明一下截口的一些简单性质。
+
+::: {#prp-13-finite-product-spaces-13}
+
+## 截口的性质
+
+设 $A,A_{n}\subset X_{1}\times X_{2}$，则
+
+$$
+A^{c}|_{x_{1}}=(A|_{x_{1}})^{c},\quad
+\left( \bigcup_{n=1}^{\infty}A_{n} \right)|_{x_{1}}=\bigcup_{n=1}^{\infty}(A_{n}|_{x_{1}}).
+$$
+
+:::
+::: {.proof}
+
+$$
+x_{2}\in A^{c}|_{x_{1}}\iff
+(x_{1},x_{2})\in A^{c} \iff
+(x_{1},x_{2})\not\in A\iff
+x_{2}\not\in A|_{x_{1}}\iff
+x_{2}\in(A|_{x_{1}})^{c}.
+$$
+
+$$
+\begin{align}
+x_{2}\in\left( \bigcup_{n=1}^{\infty}A_{n} \right)|_{x_{1}}
+&\iff
+(x_{1},x_{2})\in\bigcup_{n=1}^{\infty}A_{n}\iff
+\exists n,(x_{1},x_{2})\in A_{n} \\
+&\iff
+\exists n,x_{2}\in A_{n}|_{x_{1}}\iff
+x_{2}\in\bigcup_{n=1}^{\infty}(A_{n}|_{x_{1}}).
+\end{align}
+$$
+
+:::
+
+接下来，我们来证明截口的可测性。
+
+::: {#thm-section-measurable}
+
+## 截口的可测性
+
+设 $(\{ (X_{k},\mathcal{F}_{k}),k=1,\dots,n \})$ 都是可测空间，对任意 $1\leq k_{1}<\dots<k_{i}\leq n$ 和 $(x_{k_{1}},\dots, x_{k_{i}})\in\prod\limits_{j=1}^{i}X_{k_{j}}$，
+(1) 集合 $A\in\prod\limits_{k=1}^{n}X_{k}$ 在 $(x_{k_{1}},\dots, x_{k_{i}})$ 处的截口是 $\mathcal{F}|_{k_{1},\dots,k_{i}}:=\prod\limits_{k\not\in\{ k_{1},\dots,k_{i} \}}^{}\mathcal{F}_{k}$ 中的集合。
+(2) 乘积空间 $\left( \prod\limits_{k=1}^{n}X_{k},\prod\limits_{k=1}^{n}\mathcal{F}_{k} \right)$ 上的可测函数 $f$ 在 $(x_{k_{1}},\dots, x_{k_{i}})$ 处的截口是 $\mathcal{F}|_{k_{1},\dots,k_{i}}$ 可测函数。
+
+:::
+
+::: {.proof}
+(1) 我们首先设置
+
+$$
+\mathcal{E}=\{ A\in \prod\limits_{k=1}^{n}X_{k}|A|_{x_{k_{1}},\dots,x_{k_{i}}}\in
+\mathcal{F}|_{k_{1},\dots,k_{i}}\},
+$$
+
+当 $A$ 是一个可测矩形时，可以知道 $A|_{x_{k_{1}},\dots,x_{k_{i}}}$ 要么也是可测矩形，要么是 $\emptyset$，所以 $A|_{x_{k_{1}},\dots,x_{k_{i}}}\in\mathcal{F}|_{k_{1},\dots, k_{i}}$，也就是说
+
+$$
+\mathcal{E}\in\mathcal{L}.
+$$
+
+此外，容易证明
+
+$$
+A^{c}|_{x_{k_{1}},\dots,x_{k_{i}}}=(A|_{x_{k_{1}},\dots,x_{k_{i}}})^{c},
+$$
+
+若对于 $A_{n}\in\prod\limits_{k=1}^{n}X_{k}$，我们也容易证明
+
+$$
+\left( \bigcup_{n=1}^{\infty}A_{n} \right)|_{x_{k_{1}},\dots,x_{k_{i}}}=
+\bigcup_{n=1}^{\infty}(A_{n}|_{x_{k_{1}},\dots,x_{k_{i}}}).
+$$
+
+这意味着 $\mathcal{E}$ 是一个 $\sigma$ -field，所以 $\mathcal{E}\supset\prod\limits_{k=1}^{n}X_{k}$，证明完成。
+
+(2) 首先对于指示函数 $I_{A}$，其截口
+
+$$
+I_{A}|_{x_{1},\dots,x_{i}}=I_{A|_{x_{1},\dots,x_{i}}},
+$$
+
+根据 (1) 可以知道，这个截口可测。进而，就可以使用 [典型方法](07-measurable-functions.qmd#typical-method) 来证明该结论。
+:::
+
+# 乘积空间上的测度 {#13-finite-product-spaces-乘积空间上的测度}
+
+现在我们需要建立在乘积可测空间上的测度。因为我们之间关于测度的知识是普适的，所以我们可以直接指定乘积可测空间上某个集合函数为测度，自然相关的结论与之前是一致的。
+
+但是，这样做并没有让我们对于**乘积可测空间**这种特殊的可测空间的特殊性有任何了解。其特殊点在于其是**通过多个可测空间构造**而来，因此，一个必然存在的特殊性在于**乘积可测空间上的测度与构造它的单个可测空间上的测度**之间关系。根据后面要介绍的内容我们可以知道，在乘积可测空间上，**存在一个测度，与构造它的单个可测空间上的测度存在非常深刻的联系**（因为测度构造的任意性，不可能所有的测度都与构造可测空间上的测度存在联系）。
+
+后面的内容我们将主要只涉及到二维乘积可测空间，在明白了它的内容后，将其扩展到一般多维乘积可测空间是容易的。
+
+接下来，我们将首先讨论比较普适的结果，也就是通过测度转移函数来联系一维测度与多维测度。
+
+### 测度转移函数
+
+::: {#def-measure-transform-func}
+
+## 测度转移函数
+
+定义在 $\Omega \times \mathcal{F}$ 上的广义实值函数 $p$ 被称为**从可测空间 $(\Omega,\mathcal{T})$ 到 $(X,\mathcal{F})$ 的测度转移函数** （简称为**转移函数**），如果：
+(1) $\forall\omega \in\Omega,p(\omega,\cdot)$ 是 $\mathcal{F}$ 上的测度；
+(2) $\forall A\in\mathcal{F},p(\cdot,A)$ 是 $\mathcal{T}$ 上的可测函数。
+若 $\exists \{ A_{n},n=1,2,\dots \}\subset \mathcal{F}$ 是可测分割，并且使得 $p(\omega,A_{n})<\infty$ 对每个 $\omega \in\Omega$ 成立，则称转移函数为 **$\sigma$ 有限的**。若对于每个 $\omega \in\Omega$ 均有 $p(\omega,X)=1$，则称 $p$ 是**概率转移函数**。
+
+:::
+
+接下来，我们的目标是可以通过转移函数来建立乘积可测空间上的测度。当然，首先我们需要先建立一个引理，其说明：**利用测度转移函数的测度分量可以去针对一个二元可测函数进行积分，这样就将这个分量积分掉后，依然会是一个可测函数**。
+
+::: {#lem-measure-transform-func-integrate}
+
+## Lemma
+
+若 $p$ 是从可测空间 $(X_{1},\mathcal{F}_{1})$ 到 $(X_{2},\mathcal{F}_{2})$ 的 **$\sigma$ 有限转移函数**，则对任何 $(X_{1}\times X_{2},\mathcal{F}_{1}\times \mathcal{F}_{2})$ 上的**非负**可测函数 $f$ ，函数
+
+$$
+g_{f}(\cdot):=\int _{X_{2}}f(\cdot,x_{2})p(\cdot,dx_{2})
+$$
+
+是 $(X_{1},\mathcal{F}_{1})$ 上的可测函数。
+
+:::
+
+::: {.proof}
+我们整体上的思路依然是典型方法。
+
+**步骤 1：指示函数**
+
+首先，我们**需要**证明 $\forall A\in\mathcal{F}_{1}\times \mathcal{F}_{2}$，函数
+
+$$
+\begin{align}
+g_{I_{A}}(x_{1})&=\int _{X_{2}}I_{A}(x_{1},x_{2})p(x_{1},dx_{2}) \\
+&=\int _{X_{2}}I_{A|_{x_{1}}}(x_{2})p(x_{1},dx_{2}) \\
+&=p(x_{1},A|_{x_{1}}),\quad \forall x_{1}\in X_{1},
+\end{align}
+$$
+
+是 $\mathcal{F}_{1}$ 可测的。
+
+注意到，以上第二行等式源于截口的定义。根据 @thm-section-measurable，$A|_{x_{1}}\in\mathcal{F}_{2}$，因此可以执行第二行的积分，得到第三行的结果。注意第三行中的点是同一个值。
+
+因为 $p$ 是 $\sigma$ 有限的，所以存在 $\mathcal{F}_{2}$ 的可测分割 $\{ A_{n} \}$，使得 $p(x_{1},A_{n})<\infty$ 对每个 $x_{1}\in X_{1}$ 和 $n=1,\dots$ 成立。所以有
+
+$$
+g_{I_{A}}(x_{1})=p\left( x_{1},(A|_{x_{1}})\cap\left( \bigcup_{n=1}^{\infty}A_{n} \right) \right)=\sum\limits_{n=1}^{\infty}p(x_{1},(A|_{x_{1}})\cap A_{n}).
+$$
+
+也就是说，要证明 $g_{I_{A}}$ 可测，只需要证明 $p(x_{1},(A|_{x_{1}})\cap A_{n})$ 可测。也只需要证明 $p(x_{1},A)<\infty$ 对每个 $x_{1}\in X_{1}$ 都成立的假设下来证明 $p(x_{1},A|_{x_{1}})$ 对于 $\mathcal{F}_{1}$ 可测。
+
+首先，注意
+
+$$
+\mathcal{E}:=\{ A\in\mathcal{F}_{1}\times \mathcal{F}_{2}|p(x_{1},A|_{x_{1}})\ \text{is measurable function w.r.t }x_{1} \}
+$$
+
+是一个 $\lambda$ -class。这是因为
+(1) $p(x_{1},(X_{1}\times X_{2})|_{x_{1}})=p(x_{1},X_{2})$ 是可测函数，所以 $X_{1}\times X_{2}\in\mathcal{E}$；
+(2) 若 $A\supset B \in\mathcal{E}$，则
+
+$$
+p(x_{1},(A\setminus B)|_{x_{1}})
+=p(x_{1},A|_{x_{1}}\setminus B|_{x_{1}})=p(x_{1},A|_{x_{1}})-
+p(x_{1},B|_{x_{1}}),
+$$
+
+第二个等号源于 $p(x_{1},A)$ 关于 $A$ 是一个测度。因此可知 $p(x_{1},(A\setminus B)|_{x_{1}})$ 可测，$A\setminus B\in\mathcal{E}$；
+(3) 若 $A_{n}\in\mathcal{E},A_{n}\uparrow A$，则
+
+$$
+p(x_{1},A|_{x_{1}})=p\left( x_{1},\left( \bigcup_{n=1}^{\infty}A_{n} \right) |_{x_{1}} \right)=
+p\left( x_{1}, \bigcup_{n=1}^{\infty}(A_{n} |_{x_{1}}) \right)
+=\lim_{ n \to \infty } p(x_{1},A_{n}|x_{1})
+$$
+
+可测，所以 $A\in\mathcal{E}$。
+其次，需要注意到当 $A=A_{1}\times A_{2},A_{1}\in\mathcal{F}_{1},A_{2}\in\mathcal{F}_{2}$ 时，
+
+$$
+p(x_{1},A|_{x_{1}})=p(x_{1},A_{2})I_{A_{1}}(x_{1})
+$$
+
+关于 $\mathcal{F}_{1}$ 可测（$p$ 的有限性在此处应用），所以
+
+$$
+\mathcal{E}\supset \mathcal{L},
+$$
+
+由 1.1 测度空间和概率空间 (`1.1 测度空间和概率空间#^dae17c`) 和 @prp-measurable-rect-is-semi-ring 可知，
+
+$$
+\mathcal{E}\supset\sigma(\mathcal{L})=\mathcal{F}_{1}\times \mathcal{F}_{2},
+$$
+
+接下来，我们利用**非负简单函数逼近**的方法，将结论推广到一般情况。
+
+**步骤 2：非负简单函数**
+
+对于任意 $(X_{1}\times X_{2}, \mathcal{F}_{1}\times \mathcal{F}_{2})$ 上的非负简单函数 $\varphi$，其具有形式：
+
+$$
+\varphi(x_{1},x_{2}) = \sum_{i=1}^{n} a_{i} I_{A_{i}}(x_{1},x_{2}),
+$$
+
+其中 $a_{i} \ge 0$，且 $A_{i} \in \mathcal{F}_{1}\times \mathcal{F}_{2}$。
+根据积分的线性性质，有
+
+$$
+\begin{align}
+g_{\varphi}(x_{1}) &= \int_{X_{2}} \left( \sum_{i=1}^{n} a_{i} I_{A_{i}}(x_{1},x_{2}) \right) p(x_{1}, dx_{2}) \\
+&= \sum_{i=1}^{n} a_{i} \int_{X_{2}} I_{A_{i}}(x_{1},x_{2}) p(x_{1}, dx_{2}) \\
+&= \sum_{i=1}^{n} a_{i} g_{I_{A_{i}}}(x_{1}).
+\end{align}
+$$
+
+由步骤 1 可知，每一个 $g_{I_{A_{i}}}$ 都是 $\mathcal{F}_{1}$ 可测的。由于可测函数的线性组合依然是可测函数，因此 $g_{\varphi}$ 是 $\mathcal{F}_{1}$ 可测的。
+
+**步骤 3：非负可测函数**
+
+对于任意非负可测函数 $f: X_{1}\times X_{2} \to [0, \infty]$，存在一个非负简单函数序列 $\{ \varphi_{n} \}_{n=1}^{\infty}$ 使得
+
+$$
+0 \le \varphi_{n}(x_{1},x_{2}) \uparrow f(x_{1},x_{2}), \quad \forall (x_{1},x_{2}) \in X_{1}\times X_{2}.
+$$
+
+此时，对于固定的 $x_{1} \in X_{1}$，函数 $f(x_{1}, \cdot)$ 是定义在 $X_{2}$ 上的非负可测函数，且 $\varphi_{n}(x_{1}, \cdot) \uparrow f(x_{1}, \cdot)$。由于 $p(x_{1}, \cdot)$ 是 $(X_{2}, \mathcal{F}_{2})$ 上的一个测度，应用 @thm-mct，我们有：
+
+$$
+\begin{align}
+g_{f}(x_{1}) &= \int_{X_{2}} f(x_{1},x_{2}) p(x_{1}, dx_{2}) \\
+&= \int_{X_{2}} \lim_{n \to \infty} \varphi_{n}(x_{1},x_{2}) p(x_{1}, dx_{2}) \\
+&= \lim_{n \to \infty} \int_{X_{2}} \varphi_{n}(x_{1},x_{2}) p(x_{1}, dx_{2}) \\
+&= \lim_{n \to \infty} g_{\varphi_{n}}(x_{1}).
+\end{align}
+$$
+
+根据步骤 2，每一个 $g_{\varphi_{n}}$ 都是 $\mathcal{F}_{1}$ 可测的。因为可测函数序列的极限（若存在）依然是可测函数，所以 $g_{f}$ 是 $\mathcal{F}_{1}$ 可测的。
+
+综上所述，命题得证。
+
+:::
+
+接下来，我们来证明使用转移函数可以生成一个乘积测度，这个乘积测度有这样的性质：
+1. 可测矩形上的测度值等于**转移函数函数项**上的积分；
+2. 基于该乘积测度的积分，也与**转移函数测度项**上的积分存在关系。
+
+::: {#thm-transform-func-generate-measure}
+
+## 转移函数生成乘积测度
+
+给定 $(X_{1},\mathcal{F}_{1})$ 到 $(X_{2},\mathcal{F}_{2})$ 的 **$\sigma$ 有限转移函数** $p$，
+(1) 对 $(X_{1},\mathcal{F}_{1})$ 上的任何测度 $\mu_{1}$，存在乘积空间 $(X_{1}\times X_{2},\mathcal{F}_{1}\times \mathcal{F}_{2})$ 上的测度 $\mu$，使得对于任何 $A_{1}\in\mathcal{F}_{1},A_{2}\in\mathcal{F}_{2}$ 有
+
+$$
+\mu(A_{1}\times A_{2})=\int _{A_{1}}p(x_{1},A_{2})\mu_{1}(dx_{1});
+$$
+
+(2) 若 $(X_{1}\times X_{2},\mathcal{F}_{1}\times \mathcal{F}_{2})$ 上的可测函数 $f$ 的积分存在，则
+
+$$
+\int _{X_{1}\times X_{2}}f \, d\mu=\int _{X_{1}}\mu_{1}(dx_{1})\int _{X_{2}}f(x_{1},x_{2})p(x_{1},dx_{2}),
+$$
+
+其中 $\int _{X_{2}}f(x_{1},x_{2})p(x_{1},dx_{2})$ 是 $(X_1,\mathcal{F}_{1},\mu_{1})$ 上的积分存在的可测函数;
+(3) 如果 $\mu_{1}$ 是 $\sigma$ 有限的，则使 (1) 成立的测度 $\mu$ 唯一且 $\sigma$ 有限。
+
+:::
+
+::: {.callout-note}
+(1) 可以看做是 (2) 的特殊情况，即当 $f=I_{A_{1}\times A_{2}}$ 的时候。
+
+:::
+::: {.proof}
+(1) 由 @lem-measure-transform-func-integrate 的证明过程可知
+
+$$
+p(x_{1},A|_{x_{1}})=\int _{X_{2}}I_{A}(x_{1},x_{2})p(x_{1},dx_{2})
+$$
+
+关于 $\mathcal{F}_{1}$ 可测，并且非负。所以其也积分存在，因此定义
+
+$$
+\mu(A)=\int _{X_{1}}p(x_{1},A|_{x_{1}})\mu_{1}(dx_{1}),
+$$
+
+我们现在证明 $\mu$ 是测度。
+第一，容易证明 $\mu(\emptyset)=0$。
+第二，也容易证明 $\mu(A)\geq 0$。
+第三，对于两两不交的 $\{ A_{n} \}$，有
+
+$$
+\begin{align}
+\mu\left( \bigcup_{n=1}^{\infty}A_{n} \right)
+&=\int _{X_{1}}p\left( x_{1},\left( \bigcup_{n=1}^{\infty}A_{n} \right)|_{x_{1}} \right) \mu_{1}(dx_{1}) \\
+&=\sum\limits_{n=1}^{\infty}\int _{X_{1}}p(x_{1},A_{n}|_{x_{1}}) \mu_{1}(dx_{1}) \\
+&=\sum\limits_{n=1}^{\infty}\mu_{A_{n}}.
+\end{align}
+$$
+
+进而，我们得到
+
+$$
+\begin{align}
+\mu(A_{1}\times A_{2})&=\int _{X_{1}}p(x_{1},(A_{1}\times A_{2})|_{x_{1}}) \mu_{1}(dx_{1}) \\
+&=\int _{X_{1}}p(x_{1},A_{2})I_{A_{1}}(x_{1}) \mu_{1}(dx_{1}) \\
+&=\int _{A_{1}}p(x_{1},A_{2}) \mu_{1}(dx_{1}).
+\end{align}
+$$
+
+(2) 以 $\mathcal{M}$ 记使下式成立的非负可测函数组成的集合，
+
+$$
+\int _{X_{1}\times X_{2}}f \, d\mu =
+\int _{X_{1}}\mu_{1}(dx_{1})\int _{X_{2}}f(x_{1},x_{2})p(x_{1},dx_{2}) ,
+$$
+
+容易证明 $\mathcal{M}$ 是一个 @def-func-monoton（线性性质可以根据积分的性质得到，单调性直接通过 @thm-mct 得到）。此外，当 $f=I_{A},A\in\mathcal{F}_{1}\times \mathcal{F}_{2}$ 时，有
+
+$$
+\begin{align}
+\int _{X_{1}\times X_{2}}f \, d\mu
+&=\mu(A)=\int _{X_{1}}p(x_{1},A|_{x_{1}})\mu_{1}(dx_{1}) \\
+&=\int _{X_{1}}\mu_{1}(dx_{1})\int _{X_{2}}I_{A|_{x_{1}}}(x_{2})p(x_{1},dx_{2})\\
+&=\int _{X_{1}}\mu_{1}(dx_{1})\int _{X_{2}}I_{A}(x_{1},x_{2})p(x_{1},dx_{2})\\
+&=\int _{X_{1}}\mu_{1}(dx_{1})\int _{X_{2}}f(x_{1},x_{2})p(x_{1},dx_{2}),
+\end{align}
+$$
+
+从而得到 $I_{A}\in\mathcal{M}$。利用 [7_可测函数](07-measurable-functions.qmd#d702d8)，进一步可以知道 $(X_{1}\times X_{2},\mathcal{F}_{1}\times \mathcal{F}_{2})$ 上的所有非负可测函数都在 $\mathcal{M}$ 中，满足其性质。
+
+然后针对任何积分存在的可测函数 $f$，有
+
+$$
+\int _{X_{1}\times X_{2}}f^{\pm} \, d\mu=
+\int _{X_{1}}\mu_{1}(dx_{1})\int _{X_{2}}f^{\pm}(x_{1},x_{2})p(x_{1},dx_{2}).
+$$
+
+<span id="509e64"></span>
+
+根据约定，我们设 $\int _{X_{1}\times X_{2}}f^{-}d\mu<\infty$，则记
+
+$$
+A_{1}=\left\{ x_{1}\in X_{1}|\int _{X_{2}}f^{-}(x_{1},x_{2})p(x_{1},dx_{2})<\infty \right\},
+$$
+
+由 @lem-measure-transform-func-integrate，$A_{1}$ 可测；又因为 $\int _{X_{1}\times X_{2}}f^{-}d\mu<\infty$ 和式 [509e64](#509e64) 可知 $\mu_{1}(A^{c}_{1})=0$。从而有
+
+$$
+\begin{align}
+\int _{X_{1}\times X_{2}}f \, d\mu
+&= \int _{X_{1}\times X_{2}}f^{+} \, d\mu- \int _{X_{1}\times X_{2}}f^{-} \, d\mu \\
+&= \int _{X_{1}}\mu_{1}(dx_{1})\int _{X_{2}}f^{+}(x_{1},x_{2})p(x_{1},dx_{2})-
+\int _{X_{1}}\mu_{1}(dx_{1})\int _{X_{2}}f^{-}(x_{1},x_{2})p(x_{1},dx_{2}) \\
+&= \int _{A_{1}}\mu_{1}(dx_{1})\int _{X_{2}}f^{+}(x_{1},x_{2})p(x_{1},dx_{2})-
+\int _{A_{1}}\mu_{1}(dx_{1})\int _{X_{2}}f^{-}(x_{1},x_{2})p(x_{1},dx_{2}) \\
+&=\int _{A_{1}}\left\{ \int _{X_{2}}[f^{+}(x_{1},x_{2})-f^{-}(x_{1},x_{2})] \, p(x_{1},dx_{2}) \right\} \, \mu_{1}(dx_{1}) \\
+&=\int _{X_{1}}\mu_{1}(dx_{1})\int _{X_{2}}f(x_{1},x_{2})p(x_{1},dx_{2}) ,
+\end{align}
+$$
+
+注意，需要先将 $X_{1}$ 换成 $A_{1}$，这样才能保证减法有意义。这样，就证明了 (2)。
+
+(3) 若 $\mu_{1}$ 和 $p$ 均 $\sigma$ 有限，则取 $(X_{1},\mathcal{F}_{1})$ 的可测分割 $\{ A_{1,n} \}$ 和 $(X_{2},\mathcal{F}_{2})$ 的可测分割 $\{ A_{2,m} \}$，分别使 $\mu_{1}(A_{1,n})<\infty,p(x_{1},A_{2,m})<\infty$。令
+
+$$
+B_{n,m,l}=\{ x_{1}\in A_{1,n}|l-1\leq p(x_{1},A_{2,m})<l \},
+$$
+
+则 $\{ B_{n,m,l}\times A_{2,m},n,m,l=1,2,\dots \}$ 构成了 $(X_{1}\times X_{2},\mathcal{F}_{1}\times \mathcal{F}_{2})$ 的可测分割，而且
+
+$$
+\mu(B_{n,m,l}\times A_{2,m})=\int _{B_{n,m,l}}p(x_{1},A_{2,m})\mu_{1}(dx_{1}) \leq l\mu_{1}(A_{1,n})<\infty.
+$$
+
+因此，$\mu$ 是 $\sigma$ 有限的。又因为 $\mathcal{L}$ 是半环，$\mathcal{F}_{1}\times \mathcal{F_{2}}=\sigma(\mathcal{L})$，再根据 1.1 测度空间和概率空间 (`1.1 测度空间和概率空间#^c7783b`)，可知这样的测度唯一。
+:::
+
+该定理需要注意的有以下几点：
+- (1) 中只针对可测矩形进行讨论；
+- (2) 中需要注意顺序，先进行转移函数上测度的积分，然后再进行单纯测度积分；
+- 通过类似的方式，我们可以逐步建立更高维度空间上的乘积空间测度，只是此时，转移函数会越来越复杂。
+
+证明了以上定理后的一个很自然的想法是：对于任意测度空间 $(X_{1},\mathcal{F}_{1},\mu_{1})$ 和 $(X_{1}\times X_{2},\mathcal{F}_{1}\times \mathcal{F}_{2},\mu)$，是否能够找到对应的转移函数 $p(x_{1},A_{2}):X_{1}\times \mathcal{F}_{2}\to [0,\infty]$ 使得下式成立：
+
+$$
+\mu(A_{1}\times A_{2})=\int _{A_{1}}p(x_{1},A_{2}) \mu_{1}(dx_{1}),
+$$
+
+这显然需要依赖于 [RN导数](11-radon-nikodym-derivative.qmd) 来探索条件，这里不再深入讨论，在讨论条件概率时可能会再继续深入研究。
+
+## Fubini 定理和 Tonelli 定理
+
+这时候我们将视角放在转移函数 $p(x_{1},A_{2})$ 上，其实可以看出这个东西是比较复杂的。其实，我们可以考虑它的一个特殊情况 $p(x_{1},A_{2})=\mu_{2}(A_{2})$，即转移函数与 $x_{1}$ 完全无关。此时
+
+$$
+\mu(A_{1}\times A_{2})=\int _{A_{1}}p(x_{1},A_{2})\mu_{1}(dx_{1})
+=\mu_{2}(A_{2})\int _{A_{1}}\mu_{1}(dx_{1})
+=\mu_{1}(A_{1})\mu_{2}(A_{2}),
+$$
+
+也就是说，**乘积空间的测度是将各个子空间的测度乘在一起得到的**。这就引出了下面的定理。
+
+::: {#thm-fubini}
+
+## Fubini 定理
+
+设 $(X_{1},\mathcal{F}_{1},\mu_{1})$ 和 $(X_{2},\mathcal{F}_{2},\mu_{2})$ 是 **$\sigma$ 有限测度**，则
+(1) 在乘积可测空间 $(X_{1}\times X_{2},\mathcal{F}_{1}\times \mathcal{F}_{2})$ 上存在**唯一的**测度 $\mu$，使得对于任何 $A_{1}\in\mathcal{F}_{1}$ 和 $A_{2}\in\mathcal{F}_{2}$ 有
+
+$$
+\mu(A_{1}\times A_{2})=\mu_{1}(A_{1})\mu_{2}(A_{2}),
+$$
+
+该测度是 **$\sigma$ 有限的**；
+(2) 对 $(X_{1}\times X_{2},\mathcal{F}_{1}\times \mathcal{F}_{2},\mu)$ 上任何**积分存在的可测函数** $f$ 有
+
+$$
+\int _{X_{1}\times X_{2}}f \, d\mu =
+\int _{X_{1}}\mu_{1}(dx_{1})\int _{X_{2}}f(x_{1},x_{2})\mu_{2}(dx_{2})
+=\int _{X_{2}}\mu_{2}(dx_{2})\int _{X_{1}}f(x_{1},x_{2})\mu_{1}(dx_{1}),
+$$
+
+其中 $\int _{X_{2}}f(x_{1},x_{2})\mu_{2}(dx_{2})$ 和 $\int _{X_{1}}f(x_{1},x_{2})\mu_{1}(dx_{1})$ 分别是 $(X_{1},\mathcal{F}_{1},\mu_{1})$ 和 $(X_{2},\mathcal{F}_{2},\mu_{2})$ 上积分存在的可测函数.
+
+:::
+
+根据以上的定理，我们可以有下面的定义：
+
+::: {#def-13-finite-product-spaces-19}
+
+## 乘积测度和乘积测度空间
+
+@thm-fubini 中定义的 $\mu$ 被称为**乘积测度**，记作 $\mu_{1}\times \mu_{2}$。对应的测度空间 $(X_{1}\times X_{2},\mathcal{F}_{1}\times \mathcal{F}_{2},\mu_{1}\times \mu_{2})$ 被称为**乘积测度空间**。以上概念可以比较简单的推广至任意有限维度。
+**Note: 注意**
+这个乘积测度空间是我们最常使用的测度空间。注意，**只有这样的测度才被称为乘积测度，包含该测度的测度空间才被称为乘积测度空间**。
+
+:::
+::: {.proof}
+令 $p(x_{1},A_{2})=\mu_{2}(A_{2})$，直接利用 @thm-transform-func-generate-measure ，我们可以知道，存在唯一的 $\sigma$ 有限测度 $\mu_{1}\times \mu_{2}$ 成立
+
+$$
+(\mu_{1}\times \mu_{2})(A_{1}\times A_{2})=\mu_{1}(A_{1})\mu_{2}(A_{2}),
+$$
+
+<span id="8ad7a0"></span>
+
+并且满足
+
+$$
+\int _{X_{1}\times X_{2}}f \, d(\mu_{1}\times \mu_{2})
+=\int _{X_{1}}\mu_{1}(dx_{1})\int _{X_{2}}f(x_{1},x_{2})\mu_{2}(dx_{2}).
+$$
+
+<span id="b513fe"></span>
+
+此时，仅凭借式 [8ad7a0](#8ad7a0) 就已经证明了 (1)。
+
+将 $\mu_{1}$ 和 $\mu_{2}$ 的位置颠倒，即对 $\mu_{2}$ 和 $p(x_{2},A_{1})=\mu_{1}(A_{1})$，利用 @thm-transform-func-generate-measure，存在唯一的 $\sigma$ 有限测度 $\mu_{2}\times \mu_{1}$ 满足
+
+$$
+(\mu_{2}\times \mu_{1})(A_{2}\times A_{1})=
+\mu_{1}(A_{1})\mu_{2}(A_{2}),
+$$
+
+<span id="eq-1"></span>
+
+并且满足
+
+$$
+\int _{X_{2}\times X_{1}}f \, d(\mu_{2}\times \mu_{1})
+=\int _{X_{2}}\mu_{2}(dx_{2})\int _{X_{1}}f(x_{1},x_{2})\mu_{1}(dx_{1}).
+$$
+
+<span id="67064e"></span>
+
+结合公式 [8ad7a0](#8ad7a0) 和 [eq-1](#eq-1) 可以得到
+
+$$
+(\mu_{1}\times \mu_{2})(A_{1}\times A_{2})=
+(\mu_{2}\times \mu_{1})(A_{2}\times A_{1}),
+$$
+
+设 $\tilde{A}=\{ (x_{2},x_{1})|(x_{1},x_{2})\in A \}$，则对于 $\forall A\in\mathcal{F}_{1}\times \mathcal{F}_{2}$，我们可以证明
+
+$$
+(\mu_{1}\times \mu_{2})(A)=(\mu_{2}\times \mu_{1})(\tilde{A}).
+$$
+
+（利用外测度来证明）。然后，通过典型方法，不难证明
+
+$$
+\int _{X_{1}\times X_{2}}fd(\mu_{1}\times \mu_{2})=
+\int _{X_{2}\times X_{1}}fd(\mu_{2}\times \mu_{1}),
+$$
+
+再结合式 [b513fe](#b513fe) 和 [67064e](#67064e)，就证明了 (2)。
+
+::: {.callout-note title="通过唯一性直接可以得到测度相等"}
+其实，通过 @thm-transform-func-generate-measure 中的乘积测度的唯一性，应该就直接可以推导出
+
+$$
+\mu_{1}\times \mu_{2}=\mu_{2}\times \mu_{1},
+$$
+
+因此直接就可以证明 (2)。
+
+:::
+:::
+
+@thm-fubini 有一个非常直接的推论，也就是 Tonelli 定理
+
+::: {#cor-tonelli}
+
+## Tonelli 定理
+
+设 $(X_{1},\mathcal{F}_{1},\mu_{1})$ 和 $(X_{2},\mathcal{F}_{2},\mu_{2})$ 是 **$\sigma$ 有限测度**，则对于 $(X_{1}\times X_{2},\mathcal{F}_{1}\times \mathcal{F}_{2},\mu_{1}\times \mu_{2})$ 上任何**非负可测函数** $f$ 有
+
+$$
+\int _{X_{1}\times X_{2}}f \, d\mu =
+\int _{X_{1}}\mu_{1}(dx_{1})\int _{X_{2}}f(x_{1},x_{2})\mu_{2}(dx_{2})
+=\int _{X_{2}}\mu_{2}(dx_{2})\int _{X_{1}}f(x_{1},x_{2})\mu_{1}(dx_{1}).
+$$
+
+:::
+
+@thm-fubini 中存在两个非常重要的条件：**$\sigma$ 有限**和**重积分存在**。如果两个条件之一不存在，则都有可能存在问题。比如下面的两个例子。
+
+::: {#exm-13-finite-product-spaces-21}
+
+## Example
+
+设 $X_{1}=X_{2}=[0, 1),\quad\mathcal{F}_{1}=\mathcal{F}_{2}=[0,1)\cap \mathcal{B}_{\mathbb{R}}$。其中，$\mu_{1}$ 是 L 测度，$\mu_{2}=\#$。所以前者是 $\sigma$ 有限，后者则不然。我们取集合
+
+$$
+D=\{ (x_{1},x_{2})|x_{1}=x_{2},x_{1},x_{2}\in[0,1) \},
+$$
+
+则有
+
+$$
+\begin{align}
+(\mu_{1}\times \mu_{2})(D)&=\int _{[0,1)}\mu_{2}(D|_{x_{1}})\mu_{1}(dx_{1})=1 \\
+&\neq 0=\int _{[0,1)}\mu_{1}(D|_{x_{2}})\mu_{2}(d_{x2})=(\mu_{2}\times \mu_{1})(D).
+\end{align}
+$$
+**Example: 设 $X_{1}=X_{2}=[0, 1),\quad\mathcal{F}_{1}=\mathcal{F}_{2}=[0,1)\cap \mathcal{B}_{\mathbb{R}}$，$\mu_{1},\mu_{2}$ 都是 L 测度，现在两者都是 $\sigma$ 有限的。对于函数**
+
+$$
+f(x_{1},x_{2})=\left\{\begin{matrix}
+(x_{1}^{2}-x_{2}^{2})/ (x_{1}^{2}+x_{2}^{2})^{2},\quad &x_{1}^{2}+x_{2}^{2}>0; \\
+0,&x_{1}=x_{2}=0.
+\end{matrix}\right.
+$$
+
+容易证明 $f$ 的重积分并不存在。则此时，其累次积分是
+
+$$
+\int _{0}^{1}dx_{1}\int _{0}^{1}fdx_{2} =
+\frac{\pi}{4}\neq-\frac{\pi}{4}=
+\int _{0}^{1}dx_{2}\int _{0}^{1}fdx_{1}.
+$$
+
+:::
+@thm-transform-func-generate-measure 和 @thm-fubini 可以推广到任意有限维乘积空间，也就是下面的两个定理。
+
+::: {#thm-transform-func-generation-plus}
+
+## 转移函数生成乘积测度 plus
+
+给定可测空间 $\{ (X_{k},\mathcal{F}_{k}),k=1,\dots,n \}$。若对每个 $k=2,\dots,n$，$p_{k}$ 是从 $\left( \prod\limits_{i=1}^{k-1}X_{k},\prod\limits_{i=1}^{k-1}\mathcal{F}_{i} \right)$ 到 $(X_{k},\mathcal{F}_{k})$ 的 **$\sigma$ 有限转移函数**，则有
+(1) 对于 $(X_{1},\mathcal{F}_{1})$ 上的任何测度 $\mu_{1}$，存在 $\left( \prod\limits_{k=1}^{n}X_{k},\prod\limits_{k=1}^{n}\mathcal{F}_{k} \right)$ 上的测度 $\mu$ 使
+
+$$
+\mu\left( \prod\limits_{k=1}^{n}A_{k} \right)=
+\int _{A_{1}}\mu_{1}(dx_{1})\int _{A_{2}} p_{2}(x_{1},dx_{2})
+\cdots
+\int _{A_{n}}p_{n}(x_{1},\dots,x_{n-1},dx_{n}),
+$$
+
+(2) 对任何 $\left( \prod\limits_{k=1}^{n}X_{k},\prod\limits_{k=1}^{n}\mathcal{F}_{k},\mu \right)$ 上的积分存在的可测函数 $f$，有
+
+$$
+\int _{\prod\limits_{k=1}^{n}X_{k}}f \, d\mu=
+\int _{X_{1}}\mu_{1}(dx_{1})\int _{X_{2}}p_{2}(x_{1},dx_{2})\cdots
+\int _{X_{n}}f(x_{1},\dots,x_{n})p_{n}(x_{1},\dots,x_{n-1},dx_{n}),
+$$
+
+(3) 若 $\mu_{1}$ 是 $\sigma$ 有限的，则使 (1) 成立的测度 $\mu$ 唯一且 $\sigma$ 有限。
+
+:::
+
+::: {#thm-fubini-plus}
+
+## Fubini 定理 plus
+
+设 $(X_{k},\mathcal{F}_{k},\mu_{k}),k=1,\dots,n$ 是 $\sigma$ 有限测度空间。
+(1) 存在 $\left( \prod\limits_{k=1}^{n}X_{k},\prod\limits_{k=1}^{n}\mathcal{F}_{k} \right)$ 上唯一的测度 $\mu$ 使
+
+$$
+\mu\left( \prod\limits_{k=1}^{n}A_{k} \right)=
+\prod\limits_{k=1}^{n}\mu_{k}(A)
+$$
+
+对一切 $A_{k}\in\mathcal{F}_{k}$ 成立。该测度 $\mu$ 记为 $\prod\limits_{k=1}^{n}\mu_{k}$，是 $\sigma$ 有限的，称为 $\mu_{1},\dots,\mu_{k}$ 的乘积测度；
+(2) 对 $\left( \prod\limits_{k=1}^{n}X_{k},\prod\limits_{k=1}^{n}\mathcal{F}_{k},\prod\limits_{k=1}^{n}\mu_{k} \right)$ 上任何积分存在的可测函数 $f$ 和 $1,\dots,n$ 的任意重新排列 $k_{1},\dots,k_{n}$，有
+
+$$
+\int _{\prod\limits_{k=1}^{n}X_{k}}f \, d\mu=
+\int _{X_{k_{1}}}\mu_{k_{1}}(dx_{k_{1}})
+\int _{X_{k_{2}}}\mu_{k_{2}}(dx_{k_{2}})
+\cdots
+\int _{X_{k_{n}}}f(x_{1},\dots,x_{n})\mu_{k_{n}}(dx_{k_{n}}).
+$$
+
+:::
+
+::: {.callout-note}
+我感觉，通过利用 @thm-law-of-association-sigma-field，可以利用二维的结论得到上面多维的结论。
+
+:::
+## 分部积分公式
+
+作为 @thm-fubini 的一个推论，我们可以得到 L-S 积分的分布积分公式。
+
+::: {#cor-partial-integration}
+
+## 分部积分公式
+
+对任何准分布函数 $F,G$ 和任何实数 $a\leq b$，有
+
+$$
+\int _{(a,b]}F(x)G(dx)=FG|_{a}^{b}-
+\int _{(a,b]}G(x-0)F(dx),
+$$
+
+其中 $FG|_{a}^{b}=F(b)G(b)-F(a)G(a)$。
+
+:::
+
+针对上述内容，我们需要注意以下几点：
+- 仅针对 L-S 积分；
+- 微积分中的分布积分公式是
+
+$$
+ \int_{a}^{b} Fg \, dx=\int _{a}^{b}F \, dG
+ =FG|_{a}^{b}-\int _{a}^{b}G \, dF
+ = FG|_{a}^{b}-\int _{a}^{b}Gf \, dx,
+
+>
+$$
+
+其中 $F,G$ 是 $f,g$ 的原函数。所以说，这里的原函数对应于 @thm-partial-integration 中的准分布函数 $F,G$。这就产生一个问题：准分布函数是单调的，但是原函数则没有这个限制，这是为什么？
+
+注意，如果我们将视角放在原函数的导函数或者说准分布函数的密度函数上，认为此两者是一样的，则**原函数是其实是从左往右的面积函数**，**准分布函数是从下到上的密度函数**。自然会有这样的区别。换句话说，准分布函数和原函数本身也不应该是对应关系的，两者的定义是完全不一样的。
+
+微积分中的分部积分公式还有另外一个区别在于 $G(x-0)$。其实，如果 $G$ 是连续的，则是没有区别的。但是，对于普遍的 L-S 积分，$G$ 不是连续的，并且其单点集还可能是有意义的，积分值可能不为 0。
+
+::: {.proof}
+以 $\mu_{F},\mu_{G}$ 分别表示 $F,G$ 对应的 L-S 测度，则我们有
+
+$$
+\begin{align}
+\int _{(a,b]}F(x)G(dx) &= \int _{(a,b]}\left\{ F(a)+\int _{(a,x]}F(dy) \right\} \, G(dx) \\
+&=F(a)[G(b)-G(a)]+\int _{(a,b]}G(dx)\int _{(a,x]}F(dy) \\
+&=F(a)[G(b)-G(a)]+\int _{\{ (x,y),a<y\leq x\leq b \}} \, d(\mu_{G}\times \mu_G(dx) \\
+&=F(a)[G(b)-G(a)]+\int _{(a,b]}[G(b)-G(y-0)]F(dy) \\
+&=F(a)[G(b)-G(a)]+G(b)[F(b)-F(a)]-\int _{\{ (x,y),a<y\leq x\leq b \}} \, d(\mu_{a}^{b}-\int _{a}^{b}Gf \, dx.
+\end{align}
+$$
+
+:::
+
+# 多维 Lebesgue-Stieltjes 测度
+
+在 [定义](#13-finite-product-spaces-定义) 和 [准分布函数与测度](#13-finite-product-spaces-准分布函数与测度) 中, 我们定义了在 $\mathbb{R}$ 上的准分布函数, 并基于此可以定义在 $\mathbb{R}$ 上的特殊测度 $L-S$ 测度。它实际上是传统积分理论的重建，是之后**实变函数论**的基础。
+
+以上方式也同样可以扩展到高维 $\mathbb{R}^{n}$ 上, 即我们可以通过下面的过程来定义一个在 $\mathbb{R}^{n}$ 上的测度和可测空间:
+1. 定义一个 $F:\mathbb{R}^{n}\to \mathbb{R}$ 上满足 " 右连续 " 和 " 非降 ";
+2. 利用 $F$ ,仿照 @thm-dist2measure,来定义一个适用于 " 区间 " 上的 $\sigma$ 有限测度 $\mu$, 而这些 " 区间 " 的集合 $\mathcal{L}_{\mathbb{R}^{n}}$ 恰好组成一个 semi-ring 或 ring;
+3. 利用 @thm-measure-extension, 我们可以将这个 $\mu$ 唯一扩张到 $\sigma(\mathcal{L}_{\mathbb{R}^{n}})$ 中, 一般来说这个 $\sigma(\mathcal{L}_{\mathbb{R}^{n}})$ 已经足够大能够囊括我们后续主要的研究范畴了.
+
+显然, 我们还有很多细节**Lebesgue-Stieljes 测度**需要解决. 比如:
+1. 在 $\mathbb{R}^{n}$ 上," 区间 " 该如何定义? 这些区间的集合真的能够组成一个半环吗?
+2. 作为一个多变量函数, 其 " 右连续 " 和 " 非降 " 该如何定义?
+3. $F(b)-F(a)$ 的方式定义的是一个测度吗?
+4. 这个 $\sigma$ -field $\sigma(\mathcal{L}_{\mathbb{R}^{n}})$ 是什么样的结构? 其与一维的 $\mathcal{B}$ 有什么样的关系?
+
+在本节, 我们将逐一解决以上问题。
+
+## 高维区间
+
+我们首先来定义高维区间。
+
+::: {#def-high-dim-interval}
+
+## 高维区间
+
+设 $a=(a_{1},\dots,a_{n}),b=(b_{1},\dots,b_{n})\in\mathbb{R}^{n}$，并且有 $a_{i}\leq b_{i},\forall i$，这记作 $a\leq b$。如果 $a_{i}<b_{i},\forall i$，则记为 $a<b$。我们将
+
+$$
+(a,b]=\{x \in\mathbb{R}^{n}|a<x\leq b \}
+$$
+
+当作 $\mathbb{R}^{n}$ 中左开右闭的**区间**。
+
+:::
+
+在一维中, 区间组成的集合是一个 ring. 在这里有所不同, 高维区间组成的集合是一个 semi-ring, 也就是下面的命题：
+
+::: {#prp-13-finite-product-spaces-26}
+
+## Proposition
+
+$\mathcal{L}_{\mathbb{R}^{n}}:=\{ (a,b] |a,b\in\mathbb{R}^{n}\}$ 是 $\mathbb{R}^{n}$ 上的半环。
+
+:::
+::: {.proof}
+至于差运算, 注意到 $(a,b]=\prod\limits_{i=1}^{n}(a_{i},b_{i}]$, 则我们可以有下面的推断过程:
+假设 $\prod\limits_{k=1}^{n}A_{k},\prod\limits_{k=1}^{n}B_{k}\in\mathcal{L}$，并且有
+
+$$
+\prod\limits_{k=1}^{n}A_{k}\subset\prod\limits_{k=1}^{n}B_{k}.
+$$
+
+上式蕴含
+
+$$
+A_{k}\subset B_{k},\quad k=1,\dots,n,
+$$
+
+则会有
+
+$$
+\begin{align}
+\prod\limits_{k=1}^{n}B_{k} \setminus\prod\limits_{k=1}^{n}A_{k}&=
+\left[ B_{1}\times\left( \prod\limits_{k=2}^{n}B_{k}\setminus
+\prod\limits_{k=2}^{n}A_{k}
+\right) \right]\cup
+\left[ (B_{1}\setminus A_{1})\times \prod\limits_{k=2}^{n}A_{k} \right] \\
+&=\left[ (B_{1}\setminus A_{1})\times \prod\limits_{k=2}^{n}A_{k} \right]
+\cup
+\left[ B_{1}\times(B_{2}\setminus A_{2})\times \prod\limits_{k=3}^{n}A_{k} \right]\cap
+\left[ B_{1}\times B_{2}\times\left( \prod\limits_{k=3}^{n}B_{k}\setminus
+\prod\limits_{k=3}^{n}A_{k}\right) \right] \\
+&=\dots \\
+&=\bigcup_{i=1}^{n}\left[
+\prod\limits_{j=1}^{i-1}B_{j}\times
+(B_{i}\setminus A_{i})\times
+\prod\limits_{l=i+1}^{n}A_{l}
+\right]\in\mathcal{L}.
+\end{align}
+$$
+
+其中 $B_{i}\setminus A_{i}$ 是两个区间之差, 得到的至多也是两个区间的并, 因此满足半环的定义, 命题得证。
+:::
+
+## 高维（准）分布函数
+
+::: {#def-high-dim-distribution}
+
+## 多维准分布函数
+
+$\mathbb{R}^{n}$ 上的实值函数 $F$ 被称为准分布函数，如果满足
+(1) $\forall i=1,\dots,n,\forall x_{1},\dots,x_{i-1},x_{i+1},\dots,x_{n}\in\mathbb{R}$，
+
+$$
+F(x_{1},\dots,x_{i-1},\cdot,x_{i+1},\dots,x_{n})
+$$
+
+作为第 $i$ 个变量的函数右连续；
+(2) （n 重差分非负性）$\forall a=(a_{1},\dots,a_{n}),b=(b_{1},\dots,b_{n})\in\mathbb{R}^{n}$，记
+
+$$
+C=\{ c=(c_{1},\dots,c_{n})|c_{i}=a_{i}\text{ or }b_{i}, i=1,\dots,n \}.
+$$
+
+又对 $c=(c_{1},\dots,c_{n})\in C$，记 $n(c)=\#\{ i|c_{i}=a_{i} \}$，则当 $a\leq b$ 时有
+
+$$
+\sum\limits_{c\in C}^{}(-1)^{n(c)}F(c)\geq 0.
+$$
+
+:::
+
+::: {#def-multi-dist-func}
+
+## n 元分布函数
+
+若准分布函数 $F$ 满足
+
+$$
+\lim_{ x_{1},\dots,x_{n} \to \infty } F(x_{1},\dots,x_{n})=1,\quad
+\lim_{ x_{1},\dots,x_{n} \to -\infty } F(x_{1},\dots,x_{n})=0,
+$$
+
+则我们称其为 **多维分布函数**。
+
+:::
+
+::: {.callout-note title="n 重差分非负性"}
+@def-high-dim-distribution 中的条件 (2) 叫做 **$n$ - 重差分非负性**（或**体积非负性**）。那个求和公式 $\sum_{c \in C} (-1)^{n(c)} F(c) \ge 0$ 实际上是在计算一个**超长方体（Hyper-rectangle） $(a, b]$ 的体积（或概率）**。
+
+* 对于一维情况 ($n=1$)，该公式就是 $F(b) - F(a) \ge 0$。
+* 对于二维情况 ($n=2$)，该公式就是 $F(b_1, b_2) - F(a_1, b_2) - F(b_1, a_2) + F(a_1, a_2) \ge 0$。
+
+这是 [分布函数](06-distribution-function.qmd) 中单调性的推广。比如对于一维函数, 其单调性使用一次增量非负来定义:
+
+$$
+\Delta_{(a,b]}F:= F(b)-F(a)\geq 0.
+$$
+
+对于二维函数, 则可以使用二次增量非负来定义:
+
+$$
+\begin{align}
+\Delta_{(a,b]}F:=& \Delta_{(a_{2},b_{2}]}[\Delta_{(a_{1},b_{1}]}F] \\
+=&\Delta_{(a_{1},b_{1}]}[\Delta_{(a_{2},b_{2}]}F] \\
+=&(F(b_{1},b_{2})-F(a_{1}, b_{2}))-(F(b_{1},a_{2})-F(a_{1},a_{2})) \\
+=&F(b_{1},b_{2})-F(a_{1},b_{2})-F(b_{1},a_{2})+F(a_{1},a_{2}) \geq 0.
+\end{align}
+$$
+
+或者这样理解, 如果函数 $n$ 是 $n$ 次可微, 则其单调性由
+
+$$
+\frac{\partial^{n}F}{\partial x_{1}\dots \partial x_{n}}\geq 0
+$$
+
+<span id="ca6c8d"></span>
+
+来定义, 只是使用增量替代偏导数来适用范围扩展至不可微点.
+
+:::
+
+::: {#prp-n-dist-semi-ring-measure}
+
+## 如果 $F$ 是准分布函数，则
+
+$$
+\mu_{F}((a,b]):=\left\{\begin{matrix}
+\sum\limits_{c\in C}^{}(-1)^{n(c)}F(c),\quad &a<b, \\
+0,&a\geq b.
+\end{matrix}\right.
+$$
+
+是半环 $\mathcal{L}_{\mathbb{R}^{n}}$ 上的测度。
+:::
+
+::: {.proof}
+非负性由准分布函数和 $\mu_{F}$ 的定义保证，我们只需要证明可列可加性即可。**TODO:**
+:::
+
+## 多维 L-S 测度 {#13-finite-product-spaces-多维-l-s-测度}
+
+进而，我们就可以来定义多维上的 L-S 测度了。
+
+::: {#def-13-finite-product-spaces-29}
+
+## 多维 L-S 测度
+
+以 $\lambda_{F}$ 记半环 $\mathcal{L}_{\mathbb{R}^{n}}$ 上的测度 $\mu_{F}$ 生成的外测度，则 $\lambda_{F}$ 是 $\mathcal{F}_{\lambda_{F}}$ 上的测度，称之为 **(n 维) L-S 测度**。特别的，如果对于每个 $(x_{1},\dots,x_{n})\in\mathbb{R}^{n}$ 有
+
+$$
+F(x_{1},\dots,x_{n})=x_{1}\cdots x_{n},
+$$
+
+则称其对应的 L-S 测度为 **L 测度**。
+
+:::
+注意到，我们定义 **L-S 测度空间**的时候，实际上有两种定义方式：
+- 第一种方式，是通过**多维（准）分布函数**。仿照一维 L-S 测度空间的生成方式：定义一个 $\pi$ -class $\{ (-\infty,(x_{1},\dots,x_{n})] \}$ (或者半环 $\{ (a,b] \}$)，在其上通过一个**高维准分布函数**来定义一个**高维测度**，然后利用**外测度**方式将其扩展到 $\mathcal{B}^{n}$ 上。
+- 第二种方式，通过**测度转移函数**。先构造一个**一维测度**，然后再定义一个个**测度转移函数**，通过 @thm-transform-func-generate-measure **逐个维度**的将**高维测度**建立起来。
+
+两种方案都具有非常高的灵活度。第一种方案的灵活度来自于**多维准分布函数**，其直接就进入高维空间了；第二种方式的灵活度来自于**测度转移函数**，是一种“自下而上”的构建方式，从单个维度逐步进入高维空间。
+
+这时候，有一个问题：**两种方案到底哪个具有更高的灵活度？是否某种方案所生成的测度类型是另一种方案无法生成的？** 这个问题不好回答，或者说无法回答，因为两者可能聚焦于不同的问题。
+- 第一种方案不会受到 **$\sigma$ 有限**的限制（@thm-transform-func-generate-measure 要求测度转移函数 $\sigma$ 有限），但是其只聚焦于 $\mathbb{R}^{n}$ 空间，不适合于其他**抽象空间**（因为需要能够定义区间）。
+- 第二种方案则适用于**任何抽象空间**，但是测度的建立依赖于积分，所以会受到 **$\sigma$ 有限**的限制。
+
+但是，如果我们聚焦于 L 测度，则不难有下面的推论：
+
+::: {.callout-note title="cor: $L$ 测度的分解性"}
+对于 $\mathbb{R}^{n}$ 上的 $L$ 测度 $m^{n}$，其是唯一满足以下条件的测度：
+
+$\forall A_{i}\subset \mathbb{R},i=1,\dots,n$，有
+
+$$
+m^{n}\left( \prod\limits_{i=1}^{n}A_{i} \right)=\prod\limits_{i=1}^{n}m(A_{i})
+$$
+
+其中 $m$ 是一维空间上的 $L$ 测度。
+
+:::
+::: {.proof}
+首先，通过将多个 $L$ 测度相乘可以构造一个在 $\mathbb{R}^{n}$ 上的集函数，通过 @thm-fubini 可知存在一个唯一的高维测度是它的扩展。现在我们的目标就是证明它就是高维空间上的 $L$ 测度。
+
+首先，容易证明两者在 $\mathcal{L}_{\mathbb{R}^{n}}$ 是等价的。因为 $\mathcal{L}_{\mathbb{R}^{n}}$ 是个半环，所以直接利用 @cor-measure-extension-2，可以知道，将其上的测度扩展到 $\sigma(\mathcal{L}_{\mathbb{R}^{n}})$ 具有唯一性。因此，我们只需要证明 $\sigma(\mathcal{L}_{\mathbb{R}^{n}})=\mathcal{B}^{n}$ 即可，而这不难证明。
+:::
+
+另外一个非常重要的例子是**随机变量 $f_{1},\dots,f_{n}$ 所生成的诱导测度 $Pf^{-1}_{1},\dots,Pf^{-1}_{n}$ 的乘积测度 $\prod\limits_{i=1}^{n}Pf^{-1}_{i}$** 和这些随机变量组成**随机向量 $f=(f_{1},..,f_{n})$ 的诱导测度 $Pf^{-1}$**。显然 $Pf^{-1}$ 是通过第一种方式得到的，$\prod\limits_{i=1}^{n}Pf^{-1}_{i}$ 是通过第二种方式得到的。显然，**只有当 $f_{1},\dots,f_{n}$ 相互独立时两者才相等**，因为 $Pf^{-1}$ 一般有更丰富的变换，这在 @thm-indepent-distribution 中有详细叙述。
+
+# 随机向量
+
+在 [乘积空间上的测度](#13-finite-product-spaces-乘积空间上的测度) 中我们提到, 乘积测度空间上的很多内容我们不需要过多讨论 (比如定义积分), 其本质上和前面定义的内容是兼容的.但是, 对于随机向量这是不兼容的, 我们需要重新构建这方面的内容.
+
+## 定义和可测性
+
+::: {#def-13-finite-product-spaces-30}
+
+## 随机向量
+
+对于概率测度空间 $(\Omega,\mathcal{F}),P$, 我们定义可测映射
+
+$$
+f:(\Omega,\mathcal{F}) \to (\mathbb{R}^{n},\mathcal{B}^{n})
+$$
+
+为**随机向量**. 此外, 令
+
+$$
+f_{k}=f\circ\pi_{k},\quad k=1,\dots,n,
+$$
+
+其中 $\pi_{k}$ 是 $\mathbb{R}^{n}$ 到第 $k$ 个 $\mathbb{R}$ 的投影, 则称 $f_{k}$ 是 $f$ 的第 $k$ 个**分量**. 容易证明, $f=(f_{1},\dots,f_{k})$.
+
+:::
+利用 @prp-project (2), 容易证明
+
+::: {#thm-vector-measurable}
+
+## 值域为乘积空间的映射的可测性判定
+
+设 $(\Omega,\mathcal{T})$ 和 $\{ (X_{k},\mathcal{F}_{k}),k=1,\dots,n \}$ 是可测空间，$f=(f_{1},\dots,f_{n})$ 是 $\Omega$ 到 $\prod\limits_{k=1}^{n}X_{k}$ 的一个映射。则 $f$ 是 $(\Omega,\mathcal{T})$ 到 $\left( \prod\limits_{k=1}^{n}X_{k},\prod\limits_{k=1}^{n}\mathcal{F}_{k} \right)$ 的可测映射**当且仅当**对于每个 $k=1,\dots,n$，$f_{k}$ 是 $(\Omega,\mathcal{T})$ 到 $(X_{k},\mathcal{F}_{k})$ 的可测映射。
+
+并且有这样的关系（该关系不依赖于可测性）：
+
+$$
+\sigma(f)=\sigma((f_{1},\dots,f_{n}))=\sigma\left( \bigcup_{i=1}^{n}\sigma(f_{i}) \right),
+$$
+
+如果用 $X$ 表示随机变量，则是
+
+$$
+\sigma(X_{1},\dots,X_{n})=\sigma\left( \bigcup_{i=1}^{n}\sigma(X_{i}) \right).
+$$
+
+:::
+
+::: {.proof}
+
+$$
+\begin{align}
+f^{-1}\left( \prod\limits_{k=1}^{n}\mathcal{F}_{k} \right)
+&=f^{-1}\sigma\left( \bigcup_{k=1}^{n}\pi_{k}^{-1}\mathcal{F}_{k} \right) \\
+&=\sigma\left( f^{-1}\left( \bigcup_{k=1}^{n}\pi_{k}^{-1}\mathcal{F}_{k} \right) \right) \\
+&=\sigma\left( \bigcup_{k=1}^{n}f^{-1}(\pi_{k}^{-1}\mathcal{F}_{k}) \right) \\
+&=\sigma\left( \bigcup_{k=1}^{n}(\pi_{k}\circ f)^{-1}\mathcal{F}_{k} \right)\\
+&=\sigma\left( \bigcup_{k=1}^{n}f_{k}^{-1}\mathcal{F}_{k} \right).
+\end{align}
+$$
+
+由上述关系可以知道，若 $f_{i}$ 可测，则 $f$ 可测。
+
+反过来，若 $f$ 是可测映射，由于投影的可测性，结合 @thm-composite-func，可知所有 $f_{i}$ 都是可测的。
+
+证毕.
+:::
+
+换句话说, **$f=(f_{1},\dots,f_{n})$ 是 $n$ 维随机向量当且仅当 $f_{k},k=1,\dots,n$ 都是随机变量**。
+
+## 随机向量生成的 $\sigma$ 代数
+
+有时候，我们会关注随机向量生成的 $\sigma$ 代数，这里我们进行更加细致地讨论。根据 @thm-vector-measurable，我们知道
+
+$$
+\sigma(X_{1},\dots,X_{n})=\sigma\left( \bigcup_{i=1}^{n}\sigma(X_{i}) \right).
+$$
+
+所以，有时候我们需要证明某个集合系 $\mathcal{G}$ 是 $\sigma(X_{1},\dots,X_{n})$，只需要证明两点就可以：
+
+1. $\mathcal{G}\supset\bigcup_{i=1}^{n}\sigma(X_{i})$；
+2. $\mathcal{G}$ 是一个 $\sigma$ 代数。
+
+但是有时候，以上两点不是特别容易用，所以我们有如下几个命题。
+
+::: {#thm-multi-sigma-generate-1}
+
+## 递归生成 $\sigma$ 代数
+
+$$
+\sigma(X_{1},\dots,X_{n})=\sigma((X_{1},\dots,X_{n-1}),X_{n}) 
+=\sigma(\sigma(X_{1},\dots,X_{n-1})\cup\sigma(X_{n}))
+ $$
+
+:::
+
+::: {.proof}
+因为 $\sigma(X_{i})\subset\sigma(X_{1},\dots,X_{n-1}),\forall i\leq n-1$，所以有
+
+$$
+\sigma(X_{1},\dots,X_{n})\subset\sigma((X_{1},\dots,X_{n-1}),X_{n}).
+$$
+
+又因为 $\sigma(X_{1},\dots,X_{n-1})\subset\sigma(X_{1},\dots,X_{n})$ 和 $\sigma(X_{n})\subset\sigma(X_{1},\dots,X_{n})$，所以有
+
+$$
+\sigma((X_{1},\dots,X_{n-1}),X_{n})\subset\sigma(X_{1},\dots,X_{n}).
+$$
+
+:::
+
+::: {#thm-multi-sigma-generate-2}
+
+## $\pi$ 系生成 $\sigma$ 代数
+
+令 $\mathcal{G}=\{ A_{1}\cap A_{2} |A_{1}\in\sigma(X_{1}),A_{2}\in\sigma(X_{2})\}$，则有
+
+$$
+\sigma(\mathcal{G})=\sigma(X_{1},X_{2}). 
+$$
+
+:::
+
+::: {.proof}
+显然 $\sigma(\mathcal{G})\subset\sigma(X_{1},X_{2})$，现在我们来证明反方向。
+
+令 $A_{2}=\Omega$，则可知
+
+$$
+\sigma(X_{1})\subset\sigma(\mathcal{G}),
+$$
+
+令 $A_{1}=\Omega$，则可知
+
+$$
+\sigma(X_{2})\subset\sigma(\mathcal{G}),
+$$
+
+因此有 $\sigma(\mathcal{G})\subset\sigma(X_{1},X_{2})$。问题得证。
+:::
+
+## 积分
+
+注意到 [8_积分](08-integration.qmd) 中定义的积分本质上是函数值的权重和, 但对于随机向量, 函数值是一个向量, 因此相应的积分结果也应该是向量. 这里, 我们直接给出随机向量积分的定义.
+
+::: {#def-vector-integrate}
+
+## 随机向量的积分
+
+对于随机向量 $f=(f_{1},\dots,f_{n})$, 其积分被定义为
+
+$$
+\int f =\left( \int f_{1},\dots,\int f_{n} \right).
+$$
+
+当位于概率测度空间中时, 积分也被称为期望, 表示为
+
+$$
+\mathbb{E}f=(\mathbb{E}f_{1},\dots,\mathbb{E}f_{n}).
+$$
+
+:::
+
+这样的推广是合理的, 相当于我们在积分定义时将**其中所用到的标量加法和乘法**扩展至**线性空间中的向量加法和数乘**。
+
+## 分布
+
+在前面的学习中知道, 我们可以使用分布的概念来描述随机变量 (及测度) 所包含的信息. 分布的概念一般包含两层函数: **随机变量诱导的测度**及**分布函数**. **随机向量**也可以如此.
+
+对于**随机向量**$f=(f_{1},\dots,f_{n})$，它是一个普通概率空间 $(X,\mathcal{F},P)\to(\mathbb{R}^{n},\mathcal{B}^{n})$ 的可测映射。其对应的诱导测度空间是 $(\mathbb{R}^{n},\mathcal{B}^{n},Pf^{-1})$, 这是一个典型的**乘积测度空间**, 因此刚才关于乘积测度空间上的内容便有了用武之地.
+
+与 [分布函数](06-distribution-function.qmd) 中类似, 我们可以从两个方向来定义分布函数.
+
+首先，是从**分布函数**应该满足的性质开始 (测度空间未知, 通过分布函数来生成测度)。这里我们直接沿用 @def-multi-dist-func 的定义即可。
+
+其次，是从**随机变量的诱导测度**出发 (定义测度相关联的分布函数):
+
+::: {#def-n-dist-rv}
+
+## 随机向量的分布函数
+
+设 $f=(f_{1},\dots,f_{n})$ 是 $(X,\mathcal{F},P)$ 上的随机向量，则对每个 $(x_{1},\dots,x_{n})\in\mathbb{R}^{n}$，令
+
+$$
+F(x_{1},\dots,x_{n})=P(f_{1}\leq x_{1},\dots,f_{n}\leq x_{n}),
+$$
+
+则 $F$ 称为随机向量 $f$ 的**分布函数**，或称为 $n$ 个随机变量 $f_{1},\dots,f_{n}$ 的**联合分布函数**，记作 $f\sim F$。
+
+:::
+
+虽然两个定义从不同的角度出发得到, 但是两者实际上是相同的对象. 我们有如下的定理:
+
+::: {#thm-13-finite-product-spaces-36}
+
+## n 元分布函数对应定理（Correspondence Theorem）
+
+(1) $n$ 维随机向量 $f$ 的分布函数是一个 $n$ 元分布函数。
+(2) 任意一个给定的 $n$ 元分布函数，一定存在一个概率空间 $(X,\mathcal{F},P)$，在其上定义有随机向量 $f\sim F$。
+
+:::
+::: {.proof}
+（1）由概率测度的下连续性和有界性，我们很容易可以证明得到 @def-high-dim-distribution 的第一条和 @def-multi-dist-func。因此，我们只需要证明 **n 重差分非负性**即可。
+
+为了证明这个，我们可以应用 @thm-inclusion-exclusion，或者使用**差分算子**来进行讨论。下面我们使用第二种方案。
+
+定义针对第 $i$ 个坐标的差分算子 $\Delta_i$ 为：
+
+$$
+ \Delta_{a_i, b_i} F(x_1, \dots, x_n) = F(x_1, \dots, b_i, \dots, x_n) - F(x_1, \dots, a_i, \dots, x_n) 
+$$
+
+这其实就是 $P(X \in \dots \times (a_i, b_i] \times \dots)$，只考虑第 $i$ 个维度的限制。现在，我们考虑 $n$ 维矩形
+
+$$
+R = (a_1, b_1] \times \dots \times (a_n, b_n].
+$$
+
+随机向量 $X$ 落在 $R$ 中的事件，就是所有分量 $X_i$ 都落在 $(a_i, b_i]$ 中。这就相当于对分布函数 $F$ 在所有 $n$ 个维度上依次做差分：
+
+$$
+\begin{aligned}
+P(a < X \le b) &= P(a_1 < X_1 \le b_1, \dots, a_n < X_n \le b_n) \\
+&= \Delta_{a_n, b_n} \left( \dots \left( \Delta_{a_1, b_1} F(x_1, \dots, x_n) \right) \dots \right)
+\end{aligned}
+$$
+
+**让我们展开这个差分运算。** 每个算子 $\Delta_{a_i, b_i}$ 都是两项之差：(代入 $b_i$) - (代入 $a_i$)。如果你把 $n$ 个这样的算子乘起来（即连续作用）, 就会得到
+
+$$
+ \prod_{i=1}^n (\text{代入 } b_i - \text{代入 } a_i) 
+$$
+
+展开这个括号，你会得到 $2^n$ 项。每一项都是 $F$ 在某个点 $c$ 的值，其中 $c$ 的第 $i$ 个分量要么是 $b_i$，要么是 $a_i$。
+* 如果选择了“代入 $b_i$”，该项系数贡献一个正号 $(+1)$。
+* 如果选择了“代入 $a_i$”，该项系数贡献一个负号 $(-1)$。
+
+因此，对于任意一个顶点 $c$，如果它有 $k$ 个分量取自 $a$（即 $n(c)=k$），那么它的总符号就是 $k$ 个 $(-1)$ 相乘，即 $(-1)^k$。这就推导出了定义中的公式：
+
+$$
+ P(a < X \le b) = \sum_{c \in C} (-1)^{n(c)} F(c) 
+$$
+
+而根据概率测度的非负性，可知上面这个式子是 $\geq 0$ 的。
+
+（2）利用 @prp-n-dist-semi-ring-measure，我们可以定义半环上的测度，然后利用 @thm-measure-extension 得到唯一扩张的测度，容易证明这样的概率测度是唯一的，并且满足 @def-n-dist-rv 中的公式。
+
+:::
+
+因为**随机向量可以表示为多个随机变量的组合**, 那么自然的一个问题是: 这些**随机变量的分布**与**随机向量的分布**之间是否存在联系? 为了能够去探讨这个问题, 我们需要先定义**边缘分布** (也就是分量的分布).
+
+::: {#def-margin-dist}
+
+## 边缘分布函数
+
+设 $f=(f_{1},\dots,f_{n})$ 是 $(X,\mathcal{F},P)$ 上的随机向量，对任意给定的指标 $i_{1},\dots,i_{k},k\leq n$，则称 $(f_{i_{1}},\dots,f_{i_{k}})$ 的联合分布函数叫做 **$f$ 的第 $i_{1},\dots,i_{k}$ 个分量的边缘分布函数**。特别的，第 $i$ 个分量 $f_{i}$ 的边缘分布函数记作 $F_{i}$（$=Pf_{i}^{-1}((-\infty,x])$）。
+
+:::
+
+结合 [多维 L-S 测度](#13-finite-product-spaces-多维-l-s-测度) 中的讨论可以知道, 正常情况下使用 $\{ F_{i},i=1,\dots,n \}$ 是无法确定 $F$ 的，除非是在**独立**这一特殊的条件下，这个我们将在 @thm-indepent-distribution 中进行讨论。
+
+::: {.callout-note}
+这里有一个非常容易混淆的点。**一维测度的乘积来确定高维测度**这样的内容在本章的内容中出现了两次：
+- 通过一维测度空间中的测度来生成高维测度空间中的测度；
+- 通过边缘分布来确定联合分布。
+
+这不仅让我们想象两者之间是否存在一些联系？在完成了 @thm-indepent-distribution 的证明后，我们知道，当**独立性成立**的前提下，两者是同一个事情。
+
+:::
+
+::: {#thm-inclusion-exclusion}
+
+## 容斥原理
+
+（集合论形式）设 $A_1, A_2, \dots, A_n$ 为有限集合，则这 $n$ 个集合的并集的元素个数为：
+
+$$
+\left| \bigcup_{i=1}^n A_i \right| = \sum_{1 \le i \le n} |A_i| - \sum_{1 \le i < j \le n} |A_i \cap A_j| + \sum_{1 \le i < j < k \le n} |A_i \cap A_j \cap A_k| - \dots + (-1)^{n-1} |A_1 \cap \dots \cap A_n|
+$$
+
+（概率论形式）设 $(\Omega, \mathcal{F}, P)$ 为概率空间，$A_1, A_2, \dots, A_n \in \mathcal{F}$ 为一系列事件。则这些事件中至少有一个发生的概率（即并集的概率）为：
+
+$$
+P\left( \bigcup_{i=1}^n A_i \right) = \sum_{1 \le i \le n} P(A_i) - \sum_{1 \le i < j \le n} P(A_i \cap A_j) + \dots + (-1)^{n-1} P\left( \bigcap_{i=1}^n A_i \right)
+$$
+:::
+
+## 密度
+
+仿照一维的情况，我们可以直接应用 @thm-rn 来定义高维的密度函数。假设对于某个高维随机变量 $f=(f_{1},\dots,f_{n})$，存在某个在 $(\mathbb{R}^{n},\mathcal{B}^{n})$ 上的 $\sigma$ 有限测度 $\mu$ 使得
+
+$$
+Pf^{-1}\ll \mu.
+$$
+
+此时，我们可以运用 @thm-rn ，定义某个可测函数 $\frac{dPf^{-1}}{d\mu}: (\mathbb{R}^{n},\mathcal{B}^{n})\to(\mathbb{R},\mathcal{B})$，满足
+
+$$
+\int _{A}\frac{dPf^{-1}}{d\mu} \, d\mu=Pf^{-1}(A)=P(f\in A),\quad
+\forall A\in\mathcal{B^{n}}.
+$$
+
+可测函数 $\frac{dPf^{-1}}{d\mu}$ 被称为 **$f$ 相对于 $\mu$ 的密度函数**，可见，**其是一个输入 $n$ 个值，输出 1 个值的函数**。当然, 我们也可以去定义**单个随机变量的边缘概率密度**, 也就是其**边缘分布的 R-N 导数**。基于此，我们就可以去证明 @prp-rn 。
+
+下面, 我们将证明下面的一个推论, 其描述了**联合概率密度**和**边缘概率密度**之间的关系.
+
+::: {#prp-comb-margin-density}
+
+## 联合密度和边缘密度
+
+若 $p(x,y)$ 是 $n$ 和 $m$ 维随机向量 $X,Y$ 相对于 $\lambda \times \mu$ 的联合概率密度函数, 则有
+
+$$
+\int p(x,y) \, \lambda(dx)=\frac{PY^{-1}(dy)}{\mu(dy)}\ a.s.,
+$$
+
+和
+
+$$
+\int p(x,y) \, \mu(dy)=\frac{PX^{-1}(dx)}{\lambda(dx)}\ a.s..
+$$
+
+此外, 该结论可以推广至有限维联合概率密度.
+
+:::
+
+::: {.proof}
+$\forall B\in\mathcal{B}^{m}$, 则我们有 (利用了 @prp-rn（1）)
+
+$$
+\begin{align}
+PY^{-1}(B)=\int _{B} PY^{-1}(dy)
+=\int _{B}\frac{PY^{-1}(dy)}{\mu(dy)} \, \mu(dy),
+\end{align}
+$$
+
+此外, 我们还有
+
+$$
+\begin{align}
+PY^{-1}(B)&=P(X,Y)^{-1}(\mathbb{R}^{n}\times B) \\
+&=
+\int _{\mathbb{R}^{n}\times B}p(x,y) \, (\lambda \times \mu)(dxdy) \\
+&=\int _{B}\mu(dy)\int _{\mathbb{R}^{n}}f(x,y)\lambda(dx),
+\end{align}
+$$
+
+其中最后一行是因为 @thm-fubini. 联立两个等式, 我们得到
+
+$$
+\int p(x,y) \, \lambda(dx)=\frac{PY^{-1}(dy)}{\mu(dy)}\ a.s..
+$$
+
+使用类似的方法可以得到另外一个等式的结果.
+:::

@@ -1,0 +1,1570 @@
+---
+title: "矩"
+draft: true
+author:
+  - 荣志炜
+tags:
+  - 矩
+  - 矩母函数
+  - 特征函数
+  - 矩不等式
+  - 柯西分布
+  - 卡方分布
+  - F分布
+  - t分布
+created: 2024-06-13 00:35
+updated: 2026-04-29 12:48
+order: 18
+---
+
+在本节中，我们讨论随机变量的另外两种“特征”：矩和特征函数（矩母函数）。
+
+# 矩的定义
+
+::: {#def-18-moments-1}
+
+## 矩
+
+随机变量 $X$, 若 $\lvert \mathbb{E}X^{k} \rvert<\infty,k\in\mathbb{N}^{+}$, 则称 $\mathbb{E}X^{k}$ 是 $X$ 或 $P_{X}$ 的 $k$ 阶矩.
+**Definition: 绝对矩**
+随机变量 $X$, 若 $\mathbb{E}\lvert X \rvert^{a}<\infty,a\in\mathbb{R}$, 则称 $\mathbb{E}\lvert X \rvert^{a}$ 是 $X$ 或 $P_{X}$ 的 $a$ 阶绝对矩.
+**Definition: 中心矩**
+随机变量 $X$, 若 $\lvert \mathbb{E}X \rvert<\infty$ 并且 $\mathbb{E}(X-\mathbb{E}X)^{k},k\in\mathbb{N}^{+}$, 则称 $\mathbb{E}(X-\mathbb{E}X)^{k}$ 是 $X$ 或 $P_{X}$ 的 $k$ 阶中心矩. 二阶中心距就是方差, 记作 $Var(X)$.
+
+:::
+在进行下一步的讨论之前, 我们先证明一个引理
+
+::: {#lem-18-moments-2}
+
+## 低阶矩的存在性
+
+如果 $\mathbb{E}\lvert X \rvert^{a}<\infty, a\in\mathbb{R}^{+}$, 则
+$$
+\forall t\in(0,a),\ \mathbb{E}\lvert X \rvert ^{t}<\infty.
+$$
+特别地, 对任意 $k\in\mathbb{N}^{+}$ 且 $k<a$, 有
+$$
+\lvert \mathbb{E}X^{k} \rvert <\infty.
+$$
+
+:::
+::: {.proof}
+$$
+\lvert X \rvert ^{t}
+=\lvert X \rvert ^{t}\mathbf{1}_{\{\lvert X \rvert \leq 1\}}
++\lvert X \rvert ^{t}\mathbf{1}_{\{\lvert X \rvert > 1\}}
+\leq \mathbf{1}_{\{\lvert X \rvert \leq 1\}}
++\lvert X \rvert ^{a}\mathbf{1}_{\{\lvert X \rvert > 1\}}
+\leq 1+\lvert X \rvert ^{a}.
+$$
+因此
+$$
+\mathbb{E}\lvert X \rvert ^{t}\leq 1+\mathbb{E}\lvert X \rvert ^{a}<\infty.
+$$
+再令 $t=k$, 就得到当 $k\in\mathbb{N}^{+}$ 且 $k<a$ 时, $\mathbb{E}\lvert X \rvert ^{k}<\infty$. 由
+$$
+\lvert \mathbb{E}X^{k} \rvert \leq \mathbb{E}\lvert X \rvert ^{k}<\infty,
+$$
+可知 $k$ 阶矩存在.
+:::
+以上引理告诉我们:
+- 如果某个高阶绝对矩存在, 则任意更低阶的绝对矩一定存在;
+- 特别地, 若更低的阶数还是正整数, 则对应的通常矩也一定存在;
+- 对中心矩, 只要将上面的 $X$ 换成 $X-\mathbb{E}X$, 就能得到完全类似的结论.
+
+在各种矩中, 最重要的是两个:
+- 一阶矩, 即期望, 也称为**均值 (mean)**, 其标记了随机变量分布的中心位置;
+- 二阶中心距, 即**方差 (variance)**, 其标记了随机变量分布离散性质. 其平方根被称作**标准差 (standard deviation)**, 也是非常重要的数字特征.
+
+我们可以进一步将以上两者推广到随机向量上.
+
+::: {#def-18-moments-3}
+
+## 随机向量的均值和方差
+
+对于随机向量 $X=(X_{1},\dots,X_{n})$, 我们定义其**均值**就是他的 @def-vector-integrate
+$$
+\mathbb{E}X=(\mathbb{E}X_{1},\dots,\mathbb{E}X_{n}).
+$$
+方差的定义被扩展为**方差 - 协方差矩阵**:
+$$
+Var(X)=\mathbb{E}[(X-\mathbb{E}X)(X-\mathbb{E}X)]^{T}.
+$$
+这是一个 $n\times n$ 的对称矩阵, 对角线上是 $Var(X_{i})$. 其第 $(i,j),i\neq j$ 上的元素 $\mathbb{E}[(X_{i}-\mathbb{E}X_{i})(X_{j}-\mathbb{E}X_{j})]$ 被称为 $X_{i}$ 与 $X_{j}$ 的协方差, 记作 $Cov(X_{i},X_{j})$.
+**Proposition: 线性变换下的均值与方差**
+令 $c\in\mathbb{R}^{k\times n}$, $X=(X_{1},\dots,X_{n})$ 是一个随机向量, $Y=cX$ 是一个 $k$ 维随机向量, 则有
+$$
+\mathbb{E}Y=c\mathbb{E}X,\quad
+Var(Y)=cVar(X)c^{T}.
+$$
+当 $c\in\mathbb{R}^{n}$ 时, $Var(Y)$ 是一个普通的方差标量且总是 $\geq 0$, 因此得到 $Var(X)$ 是半正定的.
+
+:::
+# 常见分布的均值和方差
+
+接下来, 我们根据 [17_统计分布与密度函数](17-statistical-distributions-and-density-functions.qmd) 中的定义, 计算几个常见统计分布的均值和方差.
+
+::: {#lem-18-moments-4}
+
+## 卡方分布的负次矩公式
+
+若 $Y\sim \chi^{2}_{n}$, 则对任意 $s<n/2$, 有
+$$
+\mathbb{E}(Y^{-s})=\frac{\Gamma\left( \frac{n}{2}-s \right)}{2^{s}\Gamma\left( \frac{n}{2} \right)}.
+$$
+当 $s\geq n/2$ 时, 上式积分在 $0$ 点附近发散, 因而 $\mathbb{E}(Y^{-s})=\infty$.
+
+:::
+::: {.proof}
+由 [17_统计分布与密度函数](17-statistical-distributions-and-density-functions.qmd#17-statistical-distributions-and-density-functions-卡方分布) 中的密度函数可知
+$$
+\mathbb{E}(Y^{-s})
+=\frac{1}{\Gamma\left( \frac{n}{2} \right)2^{n/2}}
+\int_{0}^{\infty}y^{\frac{n}{2}-s-1}e^{-y/2}\,dy.
+$$
+令 $u=y/2$, 则
+$$
+\mathbb{E}(Y^{-s})
+=\frac{1}{\Gamma\left( \frac{n}{2} \right)2^{s}}
+\int_{0}^{\infty}u^{\frac{n}{2}-s-1}e^{-u}\,du
+=\frac{\Gamma\left( \frac{n}{2}-s \right)}{2^{s}\Gamma\left( \frac{n}{2} \right)},
+$$
+这要求 $\frac{n}{2}-s>0$. 当 $s\geq n/2$ 时, 被积函数在 $0$ 点附近的阶数不大于 $y^{-1}$, 因此积分发散.
+:::
+
+## 柯西分布
+
+::: {#prp-18-moments-5}
+
+## 柯西分布的均值与方差
+
+若 $X\sim C(\mu,\sigma)$, 则 $\mathbb{E}X$ 和 $Var(X)$ 都不存在.
+
+:::
+::: {.proof}
+先考虑标准柯西分布 $Y\sim C(0,1)$, 其密度函数为
+$$
+f_{Y}(y)=\frac{1}{\pi(1+y^{2})}.
+$$
+于是
+$$
+\int_{0}^{\infty}y f_{Y}(y)\,dy
+=\frac{1}{\pi}\int_{0}^{\infty}\frac{y}{1+y^{2}}\,dy
+=\infty.
+$$
+由于密度函数关于 $0$ 对称, 负半轴上的一阶矩也同样发散, 因而 $\mathbb{E}Y$ 不存在.
+
+若进一步有 $\mathbb{E}X$ 存在, 由于 $X=\sigma Y+\mu$, 就会推出
+$$
+\mathbb{E}Y=\frac{\mathbb{E}X-\mu}{\sigma}
+$$
+存在, 这与上面的结论矛盾, 因而 $\mathbb{E}X$ 不存在.
+
+同理, 若 $Var(X)$ 存在, 则
+$$
+Var(Y)=\frac{Var(X)}{\sigma^{2}}
+$$
+也存在, 这又推出 $\mathbb{E}Y$ 存在, 仍然矛盾. 因而 $Var(X)$ 也不存在.
+:::
+
+## 卡方分布
+
+::: {#prp-18-moments-6}
+
+## 卡方分布的均值与方差
+
+若 $Y\sim \chi^{2}_{n}$, 则
+$$
+\mathbb{E}Y=n,\quad Var(Y)=2n.
+$$
+
+:::
+::: {.proof}
+由卡方分布的密度函数,
+$$
+\mathbb{E}Y
+=\frac{1}{\Gamma\left( \frac{n}{2} \right)2^{n/2}}
+\int_{0}^{\infty}y^{n/2}e^{-y/2}\,dy.
+$$
+令 $u=y/2$, 则
+$$
+\mathbb{E}Y
+=\frac{2\Gamma\left( \frac{n}{2}+1 \right)}{\Gamma\left( \frac{n}{2} \right)}
+=n.
+$$
+同理,
+$$
+\mathbb{E}(Y^{2})
+=\frac{1}{\Gamma\left( \frac{n}{2} \right)2^{n/2}}
+\int_{0}^{\infty}y^{n/2+1}e^{-y/2}\,dy
+=\frac{4\Gamma\left( \frac{n}{2}+2 \right)}{\Gamma\left( \frac{n}{2} \right)}
+=n(n+2).
+$$
+因此
+$$
+Var(Y)=\mathbb{E}(Y^{2})-(\mathbb{E}Y)^{2}=n(n+2)-n^{2}=2n.
+$$
+:::
+
+## F 分布
+
+::: {#prp-18-moments-7}
+
+## F 分布的均值与方差
+
+若 $Y\sim F_{n,m}$, 则
+$$
+\mathbb{E}Y=
+\begin{cases}
+\dfrac{m}{m-2}, & m>2, \\
+\infty, & m\leq 2,
+\end{cases}
+$$
+且
+$$
+Var(Y)=
+\begin{cases}
+\dfrac{2m^{2}(n+m-2)}{n(m-2)^{2}(m-4)}, & m>4, \\
+\text{不存在}, & m\leq 4.
+\end{cases}
+$$
+
+:::
+::: {.proof}
+根据 [17_统计分布与密度函数](17-statistical-distributions-and-density-functions.qmd#17-statistical-distributions-and-density-functions-f-分布) 的定义, 可设
+$$
+Y=\frac{U/n}{V/m}=\frac{mU}{nV},
+\quad U\sim \chi^{2}_{n},\ V\sim \chi^{2}_{m},
+$$
+且 $U,V$ 相互独立.
+
+由于 $Y\geq 0$, 可用 Tonelli 定理交换积分次序. 当 $m>2$ 时,
+$$
+\mathbb{E}Y
+=\frac{m}{n}\mathbb{E}(UV^{-1})
+=\frac{m}{n}\mathbb{E}U\cdot \mathbb{E}(V^{-1})
+=\frac{m}{n}\cdot n\cdot \frac{1}{m-2}
+=\frac{m}{m-2}.
+$$
+当 $m\leq 2$ 时, 由上面的引理知 $\mathbb{E}(V^{-1})=\infty$, 因而 $\mathbb{E}Y=\infty$.
+
+当 $m>4$ 时,
+$$
+\mathbb{E}(Y^{2})
+=\frac{m^{2}}{n^{2}}\mathbb{E}(U^{2}V^{-2})
+=\frac{m^{2}}{n^{2}}\mathbb{E}(U^{2})\mathbb{E}(V^{-2}).
+$$
+又由上一小节,
+$$
+\mathbb{E}(U^{2})=n(n+2),\quad
+\mathbb{E}(V^{-2})=\frac{1}{(m-2)(m-4)},
+$$
+因此
+$$
+\mathbb{E}(Y^{2})
+=\frac{m^{2}(n+2)}{n(m-2)(m-4)}.
+$$
+所以
+$$
+\begin{align}
+Var(Y)
+&=\mathbb{E}(Y^{2})-(\mathbb{E}Y)^{2} \\
+&=\frac{m^{2}(n+2)}{n(m-2)(m-4)}-\frac{m^{2}}{(m-2)^{2}} \\
+&=\frac{2m^{2}(n+m-2)}{n(m-2)^{2}(m-4)}.
+\end{align}
+$$
+若 $m\leq 4$, 则 $\mathbb{E}(V^{-2})=\infty$, 从而 $\mathbb{E}(Y^{2})=\infty$, 因此方差不存在.
+:::
+
+## t 分布
+
+::: {#prp-18-moments-8}
+
+## t 分布的均值与方差
+
+若 $Y\sim t_{n}$, 则
+$$
+\mathbb{E}Y=
+\begin{cases}
+0, & n>1, \\
+\text{不存在}, & n=1,
+\end{cases}
+$$
+且
+$$
+Var(Y)=
+\begin{cases}
+\dfrac{n}{n-2}, & n>2, \\
+\text{不存在}, & n\leq 2.
+\end{cases}
+$$
+
+:::
+::: {.proof}
+根据 [17_统计分布与密度函数](17-statistical-distributions-and-density-functions.qmd#17-statistical-distributions-and-density-functions-t-分布) 的定义, 可设
+$$
+Y=\frac{Z}{\sqrt{V/n}},
+\quad Z\sim N(0,1),\ V\sim \chi^{2}_{n},
+$$
+且 $Z,V$ 相互独立.
+
+由于 $Z$ 关于 $0$ 对称, 而 $\sqrt{V/n}>0$ a.s., 所以 $Y$ 也关于 $0$ 对称. 因此只要 $\mathbb{E}|Y|<\infty$, 就有 $\mathbb{E}Y=0$.
+
+由独立性,
+$$
+\mathbb{E}|Y|
+=\sqrt{ n }\mathbb{E}|Z|\mathbb{E}(V^{-1/2}).
+$$
+因为正态分布的绝对一阶矩有限, 所以 $\mathbb{E}|Y|<\infty$ 当且仅当 $\mathbb{E}(V^{-1/2})<\infty$. 根据上面的引理, 这等价于 $n>1$. 因而
+$$
+\mathbb{E}Y=
+\begin{cases}
+0, & n>1, \\
+\text{不存在}, & n=1.
+\end{cases}
+$$
+
+进一步, 当 $n>2$ 时,
+$$
+\mathbb{E}(Y^{2})
+=n\mathbb{E}(Z^{2})\mathbb{E}(V^{-1})
+=n\cdot 1\cdot \frac{1}{n-2}
+=\frac{n}{n-2}.
+$$
+此时由于 $\mathbb{E}Y=0$, 所以
+$$
+Var(Y)=\mathbb{E}(Y^{2})=\frac{n}{n-2}.
+$$
+若 $n\leq 2$, 则由引理知 $\mathbb{E}(V^{-1})=\infty$, 因而 $\mathbb{E}(Y^{2})=\infty$, 所以方差不存在.
+:::
+
+# 矩不等式
+
+关于矩的不等式可以说是最重要的内容之一, 特别是在后面的统计理论证明中用处非常大. 这部分的不等式大体上可以分为两个部分.
+
+## 协方差不等式
+
+第一部分是一系列的**积分不等式**, 其直接承袭自 [9_Lp空间](09-lp-spaces.qmd), 这里我将只提供引用.
+
+- @thm-holder-inequality
+- @thm-cauchy-schwarz-inequality
+- @thm-liapounov-inequality
+- @thm-minkowski-inequality
+- @thm-essen-bahr-inequality
+- @thm-jensen-inequality (可能更适合放在这里)
+
+利用 @thm-cauchy-schwarz-inequality, 我们还可以得到下面的一些常用形式.
+
+::: {#thm-covariance-inequality}
+
+## 协方差不等式
+
+对于随机变量 $X,Y$, 并且 $\mathbb{E}X^{2},\mathbb{E}Y^{2}<\infty$, 则有
+$$
+Cov(X,Y)^{2}\leq Var(X)Var(Y).
+$$
+等号成立当且仅当 $aX+bY+c=0$ a.s., 其中 $a,b,c\in\mathbb{R},a,b$ 不全为 0.
+
+:::
+
+::: {.proof}
+构造 $Z=(X,Y)$, 因为 $Var(Z)$ 是半正定的, 所以
+$$
+\det Var(Z) = Var(X)Var(Y) - Cov(X, Y)^{2} \geq 0.
+$$
+另一个证明的方法是直接使用 @thm-cauchy-schwarz-inequality. 并且根据它, 等号成立当且仅当存在 $\alpha,\beta\geq 0$ 且两者不全为 0, 成立
+$$
+\alpha \lvert X-\mathbb{E}X \rvert =\beta \lvert Y-\mathbb{E}Y \rvert,
+$$
+进一步得到
+$$
+aX+bY+c=0\ a.s.,
+$$
+其中 $a,b$ 不全为 0.
+:::
+
+协方差不等式的可以用于构建一个重要的统计概念 -- 相关系数
+
+::: {#def-correlation-coefficient}
+
+## 相关系数
+
+对于随机变量 $X,Y$, 并且 $\mathbb{E}X^{2},\mathbb{E}Y^{2}<\infty$, 我们称
+$$
+\rho_{xy}=\frac{Cov(X,Y)}{\sqrt{ Var(X)Var(Y) }}
+$$
+为 $X,Y$ 的**相关系数**.
+根据 @thm-covariance-inequality, $\rho_{xy}\in[-1,1]$.
+- 当 $\phi_{xy}=\pm1$ 时, 当且仅当 $aX+bY+c=0$ a.s., 也称两个随机变量**完全相关**.
+- 当 $\phi_{xy}=0$ 时, 称两个随机变量**不相关**.
+
+容易证明, 两两独立的随机变量不相关; 正态随机变量不相关**当且仅当**独立.
+
+:::
+
+利用 @thm-jensen-inequality, 我们还可以得到关于 KL 散度的相关推论.
+
+::: {#prp-kl-divergence}
+
+## KL 散度的非负性
+
+假设存在测度空间 $(\Omega,\mathcal{F},\mu)$, 其中 $\mu$ 是 $\sigma$ 有限的. 令 $f,g$ 是其中的两个正可积函数, 并且有 $\int f \, d\mu\geq\int g \, d\mu>0$, 则有
+$$
+\int f\log\left( \frac{f}{g} \right) \, d\mu\geq 0. 
+$$
+等号成立当且仅当 $f=g$ a.e..
+
+对于两个随机向量 $X,Y$ ,存在有限的期望, 并且对于某个 $\sigma$ 有限测度 $\mu$ 其存在密度函数 $f_{X},f_{Y}$, 定义
+$$
+KL(X\| Y)=\mathbb{E}_{X}\left[ \log \frac{f_{X}}{f_{Y}} \right],
+$$
+根据上述结论, 可知
+$$
+KL(X\|Y)\geq 0,
+$$
+并且等号成立当且仅当 $f_{X}=f_{Y}$ a.e..
+
+:::
+
+::: {.proof}
+令 $\int f \, d\mu=C$, 并定义一个新的概率测度 $P$ 为
+$$
+P(A)=\int_{A}\frac{f}{C}  \, d\mu,\quad
+\forall A \in \mathcal{F}.
+$$
+因为 $\mu$ 是 $\sigma$ 有限的, 所以我们知道
+$$
+\frac{dP}{d\mu}=\frac{f}{C}\ a.e..
+$$
+
+现在我们有
+$$
+\begin{align}
+\int f\log\left( \frac{f}{g} \right) \, d\mu
+&=\int f (-\log)\left( \frac{g}{f} \right)\, d\mu \\
+&=C\int (-\log)\left( \frac{g}{f} \right) \, dP \\
+&\geq C(-\log) \int \left( \frac{g}{f} \right) \, dP \\
+&=C(-\log) \int \left( \frac{g}{f} \right)\frac{f}{C} \, d\mu \\
+&=C\log\left( \frac{\int f \, d\mu }{\int g \, d\mu } \right) \\
+&\geq 0.
+\end{align}
+$$
+我们反着进行讨论: 倒数三行的可积性保证了倒数第四行的可积性, 根据 @thm-jensen-inequality 保证了倒数第五行的积分存在性和不等式成立, 再根据 @prp-rn (1) 保证了第一行积分存在和等号成立 (这一条需要使用到 $\mu$ 的 $\sigma$ 有限性).
+
+等号成立意味着第 3,6 行的等号成立. 因为 $-\log(t)$ 是一个 strict convex, 所以第 3 行等号成立蕴含
+$$
+-\log\left( \frac{g}{f} \right)=-\mathbb{E}\log \frac{g}{f}\ a.e.,
+$$
+这是一个常数, 所以这意味着
+$$
+g=af\ a.e.,
+$$
+其中 $a> 0$ 是一个常数. 第 6 行等号成立则可以得到 $a=1$.
+
+当 $f=g$ a.e.时, 很容易得到等号成立.
+:::
+
+## 集中不等式
+
+第二类不等式, 是被称为**集中不等式**的内容, 其描述了一个随机变量是否集中在某个取值附近. 这样的不等式其实很多, 我们这里仅介绍一些常用到的, 更多的内容可以参见 [wiki](https://en.wikipedia.org/wiki/Concentration_inequality). 这里我们会按照所需条件的强弱排序进行介绍 (从弱到强), 一般而言, 需要的条件越强, 所给出的结果越紧.
+
+### Markov 不等式
+
+::: {#thm-markov-inequality}
+
+## Markov 不等式
+
+假设存在随机变量 $X$ 满足 $X\geq 0$ a.e., 则 $\forall a>0$
+$$
+P(X\geq a)\leq \frac{\mathbb{E}(X)}{a}.
+$$
+若存在一个严格递增的非负函数 $f$, 此时不需要 $X\geq 0$ 的条件, 则有
+$$
+P(X\geq a)=P(f(X)\geq f(a))\leq \frac{\mathbb{E}f(X)}{f(a)}.
+$$
+
+:::
+
+::: {.proof}
+$$
+\begin{align}
+aP(X\geq a)&=\int _{X\geq a}a \, dP \leq \int _{X\geq a}X \, dP
+\leq \int X \, dP=\mathbb{E}X. 
+\end{align}
+$$
+:::
+
+### Chebyshev 不等式
+
+::: {#thm-chebyshev-general}
+
+## 广义 Chebyshev 不等式
+
+假设存在随机变量 $X$, 存在一个函数 $f$ 满足如下 3 个条件:
+-  $f(t)=f(-t)$,
+- $f(t)\geq 0$,
+-  $f$ 在 $[0,\infty)$ 上是非降的.
+则对 $\forall t>0$, 有
+$$
+f(t)P(\lvert X \rvert \geq t)\leq \int _{\lvert X \rvert \geq t}f(X) \, dP
+\leq \mathbb{E}f(X).
+$$
+
+:::
+
+::: {.proof}
+因为 $f(t)\geq 0$, 所以 $\mathbb{E}f(X)$ 一定积分存在.
+$$
+\begin{align}
+\int _{\lvert X \rvert \geq t}f(X) \, dP\geq
+\int _{\lvert X \rvert \geq t}f(t) \, dP
+=f(t)P(\lvert X \rvert >t)
+\end{align}
+$$
+第二个不等号非常简单.
+:::
+
+我们最常见到的可能是它的特殊版本.
+
+::: {#thm-chebyshev-special}
+
+## Chebyshev 不等式
+
+假设 $\mathbb{E}X<\infty,Var(X)<\infty$, 则对 $\forall t>0$ 有
+$$
+P(\lvert X-\mathbb{E}X \rvert \geq t)\leq \frac{Var(X)}{t^{2}}.
+$$
+
+:::
+
+::: {.proof}
+取 $f(t)=t^{2}$, 随机变量为 $X-\mathbb{E}X$, 然后应用上面的一般形式即可.
+:::
+
+我们将 @thm-chebyshev-general 中的 $f(t)=t$, 则直接就得到了 @thm-markov-inequality.
+
+其实, 我们还可以令 $f(t)=\lvert t \rvert^{2}p,p>0$, 这样就可以利用不同阶的中心矩来限制 $P(\lvert X-\mathbb{E}X \rvert\geq t)$ (尾部概率) 的大小.
+
+### Hoeffding 不等式
+
+这个不等式是关于多个独立随机变量的内容, 其与机器学习 (比如 Random Forest) 的结果非常相关.
+
+::: {#thm-hoeffding-inequality}
+
+## Hoeffding 不等式
+
+假设存在独立的随机变量 $X_{1},\dots,X_{n}$, 对于其中的每一个满足条件 $a_{i}\leq X_{i}\leq b_{i}$ a.e., 定义
+$$
+c_{i}=b_{i}-a_{i},\quad C=\max\{ c_{1},\dots,c_{n} \}.
+$$
+令 $S_{n}=\sum\limits_{i=1}^{n}X_{i},E_{n}=\mathbb{E}[S_{n}]$, 则有如下结论:
+$$
+P(S_{n}-E_{n}>t)\leq \exp\left( -\frac{2t^{2}}{\sum\limits_{i=1}^{n}c_{i}^{2}} \right),
+$$
+$$
+P(E_{n}-S_{n}>t)\leq \exp\left( -\frac{2t^{2}}{\sum\limits_{i=1}^{n}c_{i}^{2}} \right),
+$$
+$$
+
+P(\lvert S_{n}-E_{n} \rvert >t)\leq
+2\exp\left( -\frac{2t^{2}}{\sum\limits_{i=1}^{n}c_{i}^{2}} \right)
+\leq 2\exp\left( -\frac{2t^{2}}{nC^{2}} \right).
+$$
+
+:::
+
+::: {.proof}
+我们首先需要证明 [Hoeffding lemma](https://en.wikipedia.org/wiki/Hoeffding%27s_lemma), 也就是对于满足 $a\leq X\leq b$ 的随机变量, 有
+$$
+\mathbb{E}[\exp(\lambda(X-\mathbb{E}X))]\leq
+\exp\left( \frac{\lambda^{2}(b-a)^{2}}{8} \right),\quad
+\lambda \in\mathbb{R}.
+$$
+因为我们总是可以将 $X$ 替换为 $X-\mathbb{E}X$, 所以不失一般性, 我们假设 $\mathbb{E}X=0,a\leq 0\leq b$. 因为 $e^{\lambda x}$ 是一个 convex function, 令
+$$
+t=\frac{b-x}{b-a},\quad
+1-t=\frac{x-a}{b-a},
+$$
+所以有
+$$
+e^{\lambda x}=e^{\lambda(ta+(1-t)b)}
+\leq te^{\lambda a}+(1-t)e^{\lambda b}.
+$$
+两边取期望得到
+$$
+\mathbb{E}[e^{\lambda X}]
+\leq \frac{b}{b-a}e^{\lambda a}-\frac{a}{b-a}e^{\lambda b}.
+$$
+令
+$$
+p=-\frac{a}{b-a},\quad h=\lambda(b-a),
+$$
+则
+$$
+\frac{b}{b-a}=1-p,\quad
+\lambda a=-ph,\quad
+\lambda b=(1-p)h.
+$$
+因此
+$$
+\mathbb{E}[e^{\lambda X}]
+\leq (1-p)e^{-ph}+pe^{(1-p)h}
+=e^{L(h)},
+$$
+其中
+$$
+L(h)=-ph+\log(1-p+pe^{h}).
+$$
+容易验证
+$$
+L(0)=L'(0)=0,
+$$
+并且
+$$
+L''(h)=\frac{p(1-p)e^{h}}{(1-p+pe^{h})^{2}}.
+$$
+由 $(u+v)^{2}\geq 4uv$ 可知
+$$
+(1-p+pe^{h})^{2}\geq 4p(1-p)e^{h},
+$$
+从而
+$$
+L''(h)\leq \frac{1}{4},\quad \forall h\in\mathbb{R}.
+$$
+因此由 Taylor 展开可知, 对某个 $\theta\in(0,1)$,
+$$
+L(h)=L(0)+hL'(0)+\frac{1}{2}h^{2}L''(\theta h)
+\leq \frac{h^{2}}{8}.
+$$
+于是
+$$
+\mathbb{E}[e^{\lambda X}]
+\leq e^{L(h)}
+\leq \exp\left( \frac{h^{2}}{8} \right)
+=\exp\left( \frac{\lambda^{2}(b-a)^{2}}{8} \right).
+$$
+Lemma 得到证明.
+
+::: {.callout-note title="Taylor 定理（拉格朗日余项）"}
+若函数 $f$ 在 $x_{0}$ 的某个邻域内具有直到 $n+1$ 阶导数, 则对该邻域内任意 $x$, 存在某个 $\xi$ 介于 $x_{0}$ 和 $x$ 之间, 使得
+$$
+f(x)=\sum_{k=0}^{n}\frac{f^{(k)}(x_{0})}{k!}(x-x_{0})^{k}
++\frac{f^{(n+1)}(\xi)}{(n+1)!}(x-x_{0})^{n+1}.
+$$
+在这里我们取的是 $n=1,\ x_{0}=0,\ x=h$, 因而存在某个 $\theta\in(0,1)$ 使得
+$$
+L(h)=L(0)+hL'(0)+\frac{1}{2}h^{2}L''(\theta h).
+$$
+再结合 $L(0)=L'(0)=0$ 和 $L''(\theta h)\leq \frac14$, 就得到
+$$
+L(h)\leq \frac{h^{2}}{8}.
+$$
+
+:::
+然后, 我们来证明 Hoeffding 不等式. 我们先来证明它的一半,
+$$
+\begin{align}
+P(S_{n}-E_{n} >t)&\leq
+\exp(-st)\mathbb{E}[\exp(s(S_{n}-E_{n}))] \\
+&=\exp(-st)\mathbb{E}\left[ \prod\limits_{i=1}^{n}\exp(s(X_{i}-\mathbb{E}X_{i})) \right] \\
+&=\exp(-st)\prod\limits_{i=1}^{n}\mathbb{E}[\exp(s(X_{i}-\mathbb{E}X_{i}))] \\
+&\leq \exp(-st)\prod\limits_{i=1}^{n}\exp\left( \frac{s^{2}(b_{i}-a_{i})^{2}}{8} \right) \\
+&=\exp \left( -st+\frac{1}{8}s^{2}\sum\limits_{i=1}^{n} (b_{i}-a_{i})^{2}\right).
+\end{align}
+$$
+其中第一行使用了 $f(t)=\exp(-st),s>0$ 的 @thm-markov-inequality, 第三行使用到了独立性, 第四行使用到了 Lemma.
+可以看到这个 $s>0$ 是任取的, 所以我们就取到使指数部分最小的那个 s, 也就是
+$$
+s=\frac{4t}{\sum\limits_{i=1}^{n}(b_{i}-a_{i})^{2}},
+$$
+代入后最终得到了单侧的不等式
+$$
+P(S_{n}-E_{n}>t)\leq \exp\left( -\frac{2t^{2}}{\sum\limits_{i=1}^{n}(b_{i}-a_{i})^{2}} \right).
+$$
+对于双侧的不等式, 我们有
+$$
+\begin{align}
+P(\lvert S_{n}-E_{n} \rvert >t)&=
+P(S_{n}-E_{n}>t)+P(S_{n}-E_{n}< -t) \\
+&=P(S_{n}-E_{n}>t)+P((-S_{n})-(-E_{n})> t),
+\end{align}
+$$
+这时候我们令 $Y_{i}=-X_{i}$, 再把它用一次上面的结论, 同样可以得到
+$$
+P((-S_{n})-(-E_{n})> t)=
+P\left( \sum\limits_{i=1}^{n}Y_{i}-\sum\limits_{i=1}^{n}\mathbb{E}Y_{i} \right) \leq
+\exp\left( -\frac{2t^{2}}{\sum\limits_{i=1}^{n}(b_{i}-a_{i})^{2}} \right),
+$$
+就得到了双侧的不等式.
+:::
+
+Hoeffding 不等式在机器学习中的核心价值, 在于它给出了**经验平均值偏离真实平均值**的一个指数级上界. 当损失函数、分类正确率、奖励信号等随机变量都被自然地限制在某个有界区间内时, 该不等式就可以直接控制
+$$
+\frac{1}{n}\sum_{i=1}^{n}X_{i}-\mathbb{E}X_{i}
+$$
+出现大偏差的概率. 这正是泛化误差分析、PAC 学习、在线学习与多臂老虎机算法中最常见的基础工具之一: 它说明了只要样本足够多, 经验风险就会以非常快的速度集中到真实风险附近. 从这个角度看, Hoeffding 不等式实际上回答了机器学习里一个最基本的问题: **我们根据有限样本得到的结论, 到底有多可靠?**
+
+### Hajek-Renyi 不等式
+
+::: {#thm-hajek-renyi-inequality}
+
+## Hajek-Renyi 不等式
+
+假设 $Y_{1},\dots,Y_{n}$ 是独立的随机变量, 并且存在有限的方差, 则下列不等式成立
+$$
+P\left( \max_{1\leq l\leq n}c_{l}\left\lvert  \sum\limits_{i=1}^{l}(Y_{i}-\mathbb{E}Y_{i})  \right\rvert >t \right)
+\leq \frac{1}{t^{2}}\sum\limits_{i=1}^{n}c_{i}^{2}Var(Y_{i}),\quad
+\forall t>0,
+$$
+其中 $c_{i}$ 是任意满足 $c_{1}\geq c_{2}\geq\dots\geq c_{n}$ 的正常数.
+
+:::
+
+::: {.proof}
+我们令 $T_{k}=\sum\limits_{i=1}^{k}[Y_{i}-\mathbb{E}Y_{i}]$, 然后令
+$$
+\begin{align}
+&A_{k}=\{ c_{k}\lvert T_{k} \rvert >t \}, \quad \\
+&B_{1} = A_{1},\ B_{k}=\bigcup_{j=1}^{k-1}A_{j},\quad \\
+&C_{k}=A_{k} / B_{k-1},\quad
+k=1,\dots,n
+\end{align}
+$$
+利用这些定义,我们可以得到
+$$
+\begin{align}
+\sum\limits_{k=1}^{n}\mathbb{E}[c_{k}^{2}T_{k}^{2}I_{C_{k}}]
+&\geq \sum\limits_{k=1}^{n}\mathbb{E}[t^{2}I_{C_{k}}] \\
+&=t^{2}\sum\limits_{k=1}^{n}P(C_{k}) \\
+&=t^{2}P\left( \bigcup_{k=1}^{n}A_{k} \right) \\
+&=t^{2}P\left\{ \max_{1\leq k\leq n}c_{k}\lvert T_{k} \rvert >t \right\}.
+\end{align}
+$$
+现在我们只需要证明
+$$
+\sum\limits_{k=1}^{n}\mathbb{E}[c_{k}^{2}T_{k}^{2}I_{C_{k}}]\leq \sum\limits_{k=1}^{n}c_{k}^{2}Var(Y_{i})
+$$
+即可.
+现在我们令 $D_{0}=\Omega, D_{k}=B_{k}^{c},k=1,\dots,n$, 则有
+$$
+B_{k-1}\subset B_{k}\implies D_{k-1}\supset D_{k}
+\implies D_{k-1}-D_{k}=B_{k} -B_{k-1}=A_{k} / B_{k-1}=C_{k},
+$$
+因此有 $I_{C_{k}}=I_{D_{k-1}}-I_{D_{k}}$. 据此, 我们有下面的推导
+$$
+\begin{align}
+\sum\limits_{k=1}^{n}\mathbb{E}[c_{k}^{2}T_{k}^{2}I_{C_{k}}]
+&=\sum\limits_{k=1}^{n}c_{k}^{2}\mathbb{E}[T_{k}^{2}I_{C_{k}}] \\
+&=\sum\limits_{k=1}^{n}c_{k}^{2}\mathbb{E}[T_{k}^{2}(I_{D_{k-1}}-I_{D_{k}})] \\
+&\leq c_{1}^{2}\mathbb{E}[T_{1}^{2}]+
+\sum\limits_{k=2}^{n}c_{k}^{2}
+\mathbb{E}[T_{k}^{2}-T_{k-1}^{2}]I_{D_{k-1}}-
+c_{n}^{2}\mathbb{E}[T_{n}^{2}I_{D_{n}}] \\
+&\leq c_{1}^{2}\mathbb{E}[T_{1}^{2}]+
+\sum\limits_{k=2}^{n}c_{k}^{2}
+\mathbb{E}[T_{k}^{2}-T_{k-1}^{2}]I_{D_{k-1}} \\
+&\leq c_{1}^{2}\mathbb{E}[T_{1}^{2}]+
+\sum\limits_{k=2}^{n}c_{k}^{2}
+\left\{ 
+\mathbb{E}[(Y_{k}-\mathbb{E}Y_{k})^{2}I_{D_{k-1}}]
++\mathbb{E}[(Y_{k}-\mathbb{E}Y_{k})T_{k-1}I_{D_{k-1}}] 
+\right\} \\
+&= c_{1}^{2}\mathbb{E}[T_{1}^{2}]+
+\sum\limits_{k=2}^{n}c_{k}^{2}
+\left\{ 
+\mathbb{E}[(Y_{k}-\mathbb{E}Y_{k})^{2}I_{D_{k-1}}] 
+\right\} \\
+&\leq \sum\limits_{k=1}^{n}c_{k}^{2}Var(Y_{k}).
+\end{align}
+$$
+其中第 3 行使用到了 $c_{k}\geq c_{k-1}$ 的条件, 第 4 行是因为 $c_{n}^{2}\mathbb{E}[T_{n}^{2}I_{D_{n}}]\geq 0$, 第 5 行是因为
+$$
+\begin{align}
+T_{k}^{2}-T_{k-1}^{2}
+&=(T_{k}-T_{k-1})(T_{k}+T_{k-1}) \\
+&=(Y_{k}-\mathbb{E}Y_{k})(Y_{k}-\mathbb{E}Y_{k})T_{k-1},
+\end{align}
+$$
+第 6 行是因为 $Y_{k}$ 与 $T_{k-1}$ 独立所以有
+$$
+\mathbb{E}[(Y_{k}-\mathbb{E}Y_{k})T_{k-1}I_{D_{k-1}}]
+=\mathbb{E}[Y_{k}-\mathbb{E}Y_{k}]\mathbb{E}[T_{k-1}I_{D_{k-1}}]=0.
+$$
+这样, 我们就完成了证明.
+:::
+
+::: {.callout-note title="Summary: Hajek-Renyi 与 Hoeffding 的对比"}
+
+| 角度 | Hajek-Renyi 不等式 | Hoeffding 不等式 |
+| --- | --- | --- |
+| 控制对象 | $\max_{1\leq l\leq n} c_l \left\lvert \sum_{i=1}^l (Y_i-\mathbb{E}Y_i) \right\rvert$，也就是整个前缀和过程的最大偏差 | 固定样本和或样本均值的偏差，如 $\left\lvert \sum_{i=1}^n (X_i-\mathbb{E}X_i)\right\rvert$ |
+| 假设条件 | 独立, 且存在有限方差 | 独立, 且每个随机变量几乎处处有界 |
+| 尾部上界 | 二阶矩型, 本质上是 $t^{-2}$ 级别 | 指数型, 本质上是 $\exp(-ct^2)$ 级别 |
+| 结论强弱 | 条件更弱, 但数值上界通常更松 | 条件更强, 但集中速度更快、界更锋利 |
+| 适合的问题 | 控制所有前缀和同时不太大, 常用于强大数定律、路径分析、序列收敛 | 控制经验均值与真实均值的偏差, 常用于泛化误差、PAC 学习、在线学习、多臂老虎机 |
+| 二者关系 | 更像是“最大偏差”的方差工具 | 更像是“固定时刻偏差”的指数集中工具 |
+
+一个直观的理解是: 若我们关心“到第 $n$ 步为止有没有哪一步偏得特别厉害”, Hajek-Renyi 更自然; 若我们关心“最终经验平均值离真实均值有多远”, Hoeffding 往往更有力. 当随机变量有界时, 两者都可用, 但 Hoeffding 通常给出更紧的结果.
+
+:::
+### Kolmogorov 不等式
+
+::: {#thm-kolmogorov-inequality}
+
+## Kolmogorov 不等式
+
+当 Hajek-Renyi 不等式中 $c_{i}=1,\forall i=1,\dots,n$ 时, 有
+$$
+P\left( \max_{1\leq l\leq n}\left\lvert  \sum\limits_{i=1}^{l}(Y_{i}-\mathbb{E}Y_{i})  \right\rvert >t \right)
+\leq \frac{1}{t^{2}}\sum\limits_{i=1}^{n}Var(Y_{i}),\quad
+\forall t>0,
+$$
+
+:::
+
+# 矩母函数和特征函数
+
+我们已经了解了矩的相关内容, 但是我们发现实际上我们无法通过矩, 特别是单个矩来确定两个分布是否存在不同, 所以这里我们引入基于矩的全新的函数, 它们类似傅里叶变换, 提供了理解概率分布的全新视角.
+
+## 定义
+
+::: {#def-mgf}
+
+## 矩母函数
+
+设 $X$ 是一个 $k$ 维随机向量, 则我们定义 $X$ 或 $P_{X}$ 的**矩母函数 (m.g.f.)** 为
+$$
+\psi_{X}(t)=\mathbb{E}e^{t^{T}X},\quad t\in\mathbb{R}^{k}.
+$$
+
+:::
+
+::: {#def-characteristic-function}
+
+## 特征函数
+
+设 $X$ 是一个 $k$ 维随机向量, 则我们定义 $X$ 或 $P_{X}$ 的**特征函数 (ch.f.)** 为
+$$
+\phi_{X}(t)=\mathbb{E}e^{it^{T}X}
+=\mathbb{E}\cos t^{T}X+i\mathbb{E}\sin t^{T}X
+,\quad t\in\mathbb{R}^{k}.
+$$
+注意, ch. f.是一个复值函数.
+
+:::
+
+::: {#def-cumulant-generating-function}
+
+## cumulant generating function
+
+如果 $0<\psi_{X}(t)<\infty$，则可以构造
+$$
+\kappa_{X}(t)=\log \psi_{X}(t),
+$$
+其被称为 $X$ 或 $P_{X}$ 的 cumulant generating function。
+
+:::
+
+## 性质
+
+根据以上的定义, 我们可以得到关于矩母函数和特征函数的诸多性质:
+
+::: {#prp-mgf-cf-properties}
+
+## 矩母函数与特征函数的基本性质
+
+对于随机向量 $X=(X_{1},\dots,X_{k})$,
+(1) $\psi_{X}(0)=\phi_{X}(0)=1$.
+(2) ch. f 都是 well defined, bounded, uniformly continue.
+(3) m.g.f.都是非负的, 并且可能存在除了 0 点之外全都是 $\infty$ 的情况.
+(4) 若 $Y=A^{T}X+c$, 则有
+$$
+\psi_{Y}(u)=e^{c^{T}u}\psi_{X}(Au),\quad
+\phi_{Y}(u)=e^{ic^{T}u}\phi_{X}(Au).
+$$
+(5) 若 m.g.f.在 $0$ 点的某个邻域上有限, 则 $X$ 拥有有限的任意阶矩和绝对矩, 并且有如下的等式:
+$$
+\mathbb{E}(X_{1}^{r_{1}}\dots X_{k}^{r_{k}})
+=\frac{\partial^{r_{1}+\dots+r_{k}}\psi_{X}(t)}{\partial t_{1}^{r_{1}}\dots \partial t_{k}^{r_{k}}}(0).
+$$
+特别的, 有
+$$
+\frac{\partial \psi_{X}(t)}{\partial t}(0)=\mathbb{E}X,\quad
+\frac{\partial^{2}\psi_{X}(t)}{\partial t\partial t^{T}}(0)
+=\mathbb{E}[XX^{T}].
+$$
+更加普遍的说, 我们有下面的等式:
+$$
+\psi_{X}(t)=
+\sum\limits_{r_{1},\dots,r_{k}\in \mathbb{N}}^{}
+
+\frac{t_{1}^{r_{1}}\dots t_{k}^{r_{k}}}{r_{1}!\dots r_{k}!}
+\mathbb{E}[X_{1}^{r_{1}}\dots X_{k}^{r_{k}}]
+
+$$
+(6) 若 $X$ 的矩有限, 也可以通过对 ch. f.求导得到. 即若存在 $r_{1},\dots,r_{k}\in\mathbb{N}^{+}$,
+$$
+\mathbb{E}\lvert X_{1}^{r_{1}}\dots X_{k}^{r_{k}} \rvert <\infty,
+$$
+则有
+$$
+i^{r_{1}+\dots+r_{k}}\mathbb{E}(X_{1}^{r_{1}}\dots X_{k}^{r_{k}}e^{it^{T}X})
+=\frac{\partial^{r_{1}+\dots+r_{k}}\phi_{X}(t)}{\partial t_{1}^{r_{1}}\dots \partial t_{k}^{r_{k}}},
+$$
+令 $t=0$, 得到
+$$
+i^{r_{1}+\dots+r_{k}}\mathbb{E}(X_{1}^{r_{1}}\dots X_{k}^{r_{k}})
+=\frac{\partial^{r_{1}+\dots+r_{k}}\phi_{X}(0)}{\partial t_{1}^{r_{1}}\dots \partial t_{k}^{r_{k}}},
+$$
+特别的, 有
+$$
+\frac{\partial \phi_{X}(t)}{\partial t}(0)=i\mathbb{E}X,\quad
+\frac{\partial^{2} \phi_{X}(t)}{\partial t\partial t^{T}}(0)=
+-\mathbb{E}[XX^{T}].
+$$
+(7) 假设 $X$ 的 ch. f.$\phi_{X}(t)$ 的某个偶数阶导数在 $t=0$ 的值
+$$
+\left\lvert \frac{\partial^{p} \phi_{X}(t)}{\partial t^{p}}(0) \right\rvert
+<\infty,
+$$
+则 $\mathbb{E}X^{p}<\infty$. 也就是说 (6) 和 (7) 是一对逆命题的关系.
+(8) 若 $X,Y$ 是独立的, 则 $\phi_{X+Y}(t)=\phi_{X}(t)\phi_{Y}(t),\quad \psi_{X+Y}(t)=\psi_{X}(t)\psi_{Y}(t)$.
+
+:::
+
+::: {.proof}
+(1) 略.
+(2) 通过 $\cos$ 和 $\sin$ 的有界性可以直接推导出 well defined 和 bounded. 又因为两者的 uniformly continue 特性可以推导出 ch. f.的 uniformly continue.
+(3) 柯西分布就是一个例子.
+(4) 略.
+(5)
+这里, 我们直接使用 [高维函数的 Taylor 展开](https://en.wikipedia.org/wiki/Taylor_series#Taylor_series_in_several_variables), 注意其中的自变量是 $t=(t_{1},\dots,t_{k})$ 而不是 $X$
+$$
+\begin{align}
+\psi_{X}(t)&=\mathbb{E}e^{t^{T}X} \\
+&=\mathbb{E}\left\{  
+\sum\limits_{r_{1},\dots,r_{k}\in \mathbb{N}}^{}
+\frac{t_{1}^{r_{1}}\dots t_{k}^{r_{k}}}{r_{1}!\dots r_{k}!}
+\frac{
+\partial^{r_{1}+\dots+r_{k}}(e^{t^{T}X})}{\partial t_{1}^{r_{1}}\dots \partial t_{k}^{r_{k}}}
+\right\} \\
+&= 
+\sum\limits_{r_{1},\dots,r_{k}\in \mathbb{N}}^{}
+\frac{t_{1}^{r_{1}}\dots t_{k}^{r_{k}}}{r_{1}!\dots r_{k}!}
+\mathbb{E}[X_{1}^{r_{1}}\dots X_{k}^{r_{k}}e^{t^{T}X}]
+\\
+\end{align}
+$$
+
+然后求对应的导数的时候, 我们就得到了想要的结果. 注意, m.g.f. 在小邻域中有界, 才能够进行 Taylor 展开.
+(6) 直接对 $e^{it^{T}X}$ 求导, 得到
+$$
+g(t)=\frac{\partial^re^{it^{T}X}}{\partial t_1^{r_1}\cdots\partial t_k^{r_k}}=i^{r}X_1^{r_1}\cdots X_k^{r_k}e^{it^{T}X},
+$$
+其中 $r=r_{1}+\dots+r_{k}$.
+因为
+$$
+\lvert g(t) \rvert \leq \lvert X_1^{r_1}\cdots X_k^{r_k} \rvert, 
+$$
+而右侧可积, 直接利用 [积分和微分的交换性](08-integration.qmd#08-integration-积分和微分的交换性), 得到
+$$
+\frac{\partial^r\phi_X(t)}{\partial t_1^{r_1}\cdots\partial t_k^{r_k}}
+=i^{r}\mathbb{E}\left(X_1^{r_1}\cdots X_k^{r_k}e^{it^{T}X}\right)
+$$
+和
+$$
+\frac{\partial^r\phi_X(t)}{\partial t_1^{r_1}\cdots\partial t_k^{r_k}}(0)
+=i^{r}\mathbb{E}\left(X_1^{r_1}\cdots X_k^{r_k}\right).
+$$
+(7) 我们先证明 $p=2$ 的情况.
+$$
+\begin{align}
+\frac{\partial^{p} \phi_{X}(t)}{\partial t^{p}}(0)
+&=\lim_{ h \to 0 } \frac{\phi_{X}(h)-2\phi_{X}(0)+\phi_{X}(-h)}{h^{2}} \\
+&=\lim_{ h \to 0 } \mathbb{E}_{X}\left[\frac{e^{ihx}-2+e^{-ihx}}{h^{2}}\right] \\
+&=-2\lim_{ h \to 0 } \mathbb{E}_{X}\left[ \frac{1-\cos hx}{h^{2}} \right] 
+\end{align}
+$$
+导数的存在性保证了最后一行极限的存在性, 而应用 [Fatou 引理](08-integration.qmd#08-integration-fatou-引理) 得到
+$$
+\begin{align}
+2\lim_{ h \to 0 } \mathbb{E}_{X}\left[ \frac{1-\cos hx}{h^{2}} \right]
+&\geq 2\mathbb{E}_{X}\left[ \lim_{ h \to 0 } \frac{1-\cos hx}{h^{2}} \right] \\
+&=\mathbb{E}_{X}x^{2}=\mathbb{E}X^{2}.
+\end{align}
+$$
+这意味着二阶矩的有限性. 现在, 我们来证明其他偶数阶矩的有限性, 使用的方法是数学归纳法.
+
+假设命题的断言对于某个偶数 $k$ 成立 ,并且现在对于 $k+2$ 阶导数在 0 的值有限. $k+2$ 阶导数有限意味着 $k$ 阶导数存在并且在 $0$ 附近连续. 结合命题断言成立, 我们知道 $k$ 阶矩存在且有限, 利用 (6) 的结论, 得到
+$$
+(-1)^{\frac{k}{2}}\mathbb{E}X^{k}=\frac{\partial^{k}\phi_{X}(t)}{\partial t^{k}}(0).
+$$
+
+然后, 我们可以构造一个新的测度
+$$
+G(A)=\frac{\mathbb{E}[I_{A}X^{k}]}{\mathbb{E}X^{k}},
+$$
+并得到 $G_{X}$ 分布对应的 ch. f.为
+$$
+\begin{align}
+\phi_{G_{X}}(t)&=\int e^{itx} \, dG_{X}=\int e^{itX} \, dG \\
+&=\frac{1}{\mathbb{E}X^{k}}\int e^{itx}x^{k} \, dP_{X} \\
+&=\frac{(-1)^{\frac{k}{2}}}{\mathbb{E}X^{k}}\frac{\partial^{k}\phi_{X}(t)}{\partial t^{k}}.
+\end{align}
+$$
+第二行运用了 @prp-rn (1), 第三行则运用了 [积分和微分的交换性](08-integration.qmd#08-integration-积分和微分的交换性). 对上式求二阶导, 得到
+$$
+\frac{\partial^{2}\phi_{G_{X}}(t)}{\partial t^{2}}(0)=
+\frac{(-1)^{\frac{k}{2}}}{\mathbb{E}X^{k}}\frac{\partial^{k+2}\phi_{X}(t)}{\partial t^{k+2}}(0),
+$$
+根据归纳假设, 上述导数存在, 根据我们之前证明的内容, 这意味着分布 $G_{X}$ 的二阶矩有限, 即
+$$
+\mathbb{E}_{G_{X}}x^{2}=\frac{1}{\mathbb{E}X^{k}}\int x^{2}x^{k} \, dP_{X}
+=\frac{1}{\mathbb{E}X^{k}}\mathbb{E}X^{k+2}.
+$$
+因此, 只要 $\mathbb{E}X^{k}\neq 0$, 我们就证明了我们想要证明的结论.
+
+而当 $\mathbb{E}X^{k}=0$ 时, 由 @thm-order (3) 可知
+$$
+X=0\ a.e.,\quad
+\phi_{X}(t)=1.
+$$
+这显然也是符合定理的.
+:::
+
+接下来, 我们将介绍这两个函数最重要的性质, 就是其与分布的一一对应.首先，我们先证明一个公式：
+
+::: {#lem-cf-inversion-formula}
+
+## 特征函数反演公式
+
+设 $X$ 是一个 $k$ 维随机向量, 则对任意矩形区间 $(a,b]=\prod_{j=1}^{k}(a_{j},b_{j}]$, 有
+$$
+P_{X}((a,b])=\lim_{ c \to \infty } \int _{-c}^{c}\dots \int _{-c}^{c}
+\frac{\phi_{X}(t_{1},\dots,t_{k})}{(2\pi)^{k}}
+\prod\limits_{j=1}^{k}\frac{e^{-it_{j}a_{j}}-e^{-it_{j}b_{j}}}{it_{j}}
+dt_{1}\dots dt_{k}. 
+$$
+
+:::
+
+::: {.proof}
+首先, 我们需要定义一个特殊的积分函数:
+$$
+S(c)=\int _{0}^{c}\frac{\sin x}{x} \, dx , c > 0.
+$$
+在 [反常积分反例](08-integration.qmd#counterexample-inte) 中我们证明了 $\lim_{ c \to \infty }S(c)=\frac{\pi}{2}$. 我们进一步有
+$$
+\begin{align}
+\int _{0}^{c}\frac{\sin tx}{x} \, dx
+&=sgn(t)\int _{0}^{c}\frac{\sin \lvert t \rvert x}{\lvert t \rvert x} \, d(\lvert t \rvert x)  \\
+&=sgn(t)S(\lvert t \rvert c).
+\end{align}
+$$
+其中
+$$
+sgn(t)=\left\{\begin{matrix}
++1,\quad &t > 0 \\
+0, \quad &t=0  \\
+-1, \quad &t < 0.
+\end{matrix}\right.
+$$
+
+因此, 我们有
+$$
+\begin{align}
+\int _{-c}^{c}\frac{e^{iat}-e^{ibt}}{it} \, dt&=
+\int _{-c}^{c}\frac{\cos at-\cos bt}{it}+\frac{\sin at-\sin bt}{t}dt \\
+&=\int _{-c}^{c}\frac{\sin at-\sin bt}{t}dt \\
+&=2[sgn(a)S(\lvert a \rvert c)-sgn(b)S(\lvert b \rvert c)].
+\end{align}
+$$
+由于 $\frac{\cos t}{t}$ 是奇函数, 所以关于它的积分是 0; $\frac{\sin t}{t}$ 是偶函数, 其在 $[-c,c]$ 上的积分是 $[0,c]$ 上的两倍.
+
+现在, 我们来整理 inverse formula 的内容
+$$
+\begin{align}
+I_{c}=&\int _{-c}^{c}\dots \int _{-c}^{c}
+\frac{\phi_{X}(t_{1},\dots,t_{k})}{(2\pi)^{k}}
+\prod\limits_{j=1}^{k}\frac{e^{-it_{j}a_{j}}-e^{-it_{j}b_{j}}}{it_{j}}
+dt_{1}\dots dt_{k} \\
+=&\frac{1}{(2\pi)^{k}}\int _{-c}^{c}\dots \int _{-c}^{c}
+\int _{\mathbb{R}^{k}} e^{itx} dP_{X}
+\prod\limits_{j=1}^{k}\frac{e^{-it_{j}a_{j}}-e^{-it_{j}b_{j}}}{it_{j}}
+dt_{1}\dots dt_{k} \\
+=&\frac{1}{(2\pi)^{k}}\int _{\mathbb{R}^{k}} 
+\int _{-c}^{c}\dots \int _{-c}^{c}
+\prod\limits_{j=1}^{k}
+\frac{e^{it_{j}(x_{j}-a_{j})}-e^{it_{j}(x_{j}-b_{j})}}{it_{j}}
+dt_{1}\dots dt_{k}dP_{X} \\
+=&\frac{1}{(2\pi)^{k}}\int _{\mathbb{R}^{k}} dP_{X}
+\prod\limits_{j=1}^{k}
+\int _{-c}^{c}
+\frac{e^{it_{j}(x_{j}-a_{j})}-e^{it_{j}(x_{j}-b_{j})}}{it_{j}}dt_{j} \\
+=&\frac{1}{\pi^{k}}\int _{\mathbb{R}^{k}}
+\left[ \prod\limits_{j=1}^{k}
+(sgn(x_{j}-a_{j})S(\lvert x_{j}-a_{j} \rvert c)
+-sgn(x_{j}-b_{j})S(\lvert x_{j}-b_{j} \rvert c))
+\right]dP_{X}.
+\end{align}
+$$
+其中由于 $e^{itx}$ 的有界性, 应用 @thm-fubini-plus 来推导出第 3,4 行. 然后同样因为有界性, 可以应用 @cor-fct 将极限和积分换序, 得到
+$$
+\begin{align}
+\lim_{ c \to \infty } I_{c}
+&=\frac{1}{\pi^{k}}\int _{\mathbb{R}^{k}}
+\left[ \prod\limits_{j=1}^{k}
+\lim_{ c \to \infty } (sgn(x_{j}-a_{j})S(\lvert x_{j}-a_{j} \rvert c)
+-sgn(x_{j}-b_{j})S(\lvert x_{j}-b_{j} \rvert c))
+\right]dP_{X}.
+\end{align}
+$$
+注意到
+$$
+\begin{align}
+\lim_{ c \to \infty } (sgn(x_{j}-a_{j})S(\lvert x_{j}-a_{j} \rvert c)
+-sgn(x_{j}-b_{j})S(\lvert x_{j}-b_{j} \rvert c))
+=\left\{\begin{matrix}
+0, & x_{j}<a_{j},  \\
+\frac{\pi}{2}, & x_{j}=a_{j}, \\
+\pi, &a_{j}< x_{j} < b_{j}, \\
+\frac{\pi}{2}, & x_{j}=b_{j}, \\
+0, & x_{j} > b_{j},
+\end{matrix}\right.
+\end{align}
+$$
+所以有
+$$
+\lim_{ c \to \infty } I_{c}=\frac{1}{\pi^{k}}\pi^{k}P(a_{1}<X_{1}<b_{1},\dots,a_{k}<X_{k}<b_{k})=P(a<X<b).
+$$
+:::
+
+::: {#thm-cf-mgf-determine-distribution}
+
+## 特征函数、矩母函数与分布的唯一确定性
+
+$X,Y$ 是两个位于同一概率空间上的 $k$ 维的随机向量, 则有
+(1) $\phi_{X}(t)=\phi_{Y}(t)\iff P_{X}=P_{Y}$.
+(2) 当 $\psi_{X},\psi_{Y}$ 在 $0$ 的邻域上有限时, $\psi_{X}(t)=\psi_{Y}(t)\iff P_{X}=P_{Y}$.
+
+:::
+
+::: {.proof}
+由右侧推导至左侧是显而易见的, 这是由定义所保证的. 现在我们主要讨论从左侧到右侧的推导过程.
+
+(1) 根据 @lem-cf-inversion-formula, $\phi_{X}=\phi_{Y}$ 蕴含 $P_{X},P_{Y}$ 在所有矩形区间 $(a,b]$ 上取值相同. 再根据 @cor-measure-extension-2 中的唯一性, 保证了分布一定是相等的.
+
+(2) 我们首先证明 $k=1$ 的情况. 根据不等式
+$$
+e^{\lvert s \rvert x}<e^{sx}+e^{-sx},
+$$
+在加上 $\psi_{X}$ 在邻域中有界, 可以得到 $\psi_{\lvert X \rvert}$ 也在邻域中有界, 我们假设这个邻域是 $(-c,c)$. 根据 @prp-mgf-cf-properties (5), $\lvert X \rvert$ 的所有阶矩均存在且有界. 然后利用下面的不等式 (可以利用复函数的 Taylor 展开来证明)
+$$
+\left\lvert  e^{itx}\left[  e^{iax}-\sum\limits_{j=0}^{n}\frac{(iax)^{j}}{j!}  \right]   \right\rvert \leq \frac{\lvert ax \rvert ^{n+1}}{(n+1)!},
+$$
+可以得到 (利用了 $\lvert \mathbb{E}X \rvert\leq \mathbb{E}\lvert X \rvert$)
+$$
+\begin{align}
+\left\lvert  \phi_{X}(t+a)-\sum\limits_{j=0}^{n}\frac{a^{j}}{j!}\mathbb{E}[(iX)^{j}e^{itX}]   \right\rvert 
+\leq \mathbb{E} \left\lvert  e^{itx}\left[  e^{iax}-\sum\limits_{j=0}^{n}\frac{(iax)^{j}}{j!}  \right]   \right\rvert
+\leq 
+\frac{\lvert a \rvert ^{n+1}\mathbb{E}\lvert X \rvert ^{n+1}}{(n+1)!},
+\end{align}
+$$
+结合 @prp-mgf-cf-properties (6) 中的公式, 得到
+$$
+\left\lvert  \phi_{X}(t+a)-\sum\limits_{j=0}^{n}\frac{a^{j}}{j!}\mathbb{E}[(iX)^{j}e^{itX}]   \right\rvert 
+=\left\lvert  \phi_{X}(t+a)-\sum\limits_{j=0}^{n}\frac{a^{j}}{j!}\frac{\partial^{j}\phi_{X}(t)}{\partial t^{j}}   \right\rvert 
+\leq \frac{\lvert a \rvert ^{n+1}\mathbb{E}\lvert X \rvert ^{n+1}}{(n+1)!},
+$$
+
+<span id="eq-cf-taylor-remainder-bound"></span>
+
+式 [eq-cf-taylor-remainder-bound](#eq-cf-taylor-remainder-bound) 表明右侧的值当 $a\in(-c,c)$ 时随 $n$ 的增大会 $\to0$, 因此, 最终我们有下面的展开表达:
+$$
+\phi_{X}(t+a)=\sum\limits_{j=0}^{\infty}\frac{a^{j}}{j!}
+\frac{\partial^{j}\phi_{X}(t)}{\partial t^{j}}, \quad \lvert a \rvert < c.
+$$
+
+<span id="eq-cf-local-power-series"></span>
+
+显然, 我们也可以将相同的推导过程应用到 $Y$ 上, 得到类似的表达式.
+
+$\psi_{X}=\psi_{Y}<\infty$ 在 $0$ 的邻域中, 蕴含 $X,Y$ 拥有相同的矩 (所有阶), 根据 @prp-mgf-cf-properties (6), 这蕴含 $\phi_{X}^{(j)}(0)=\phi_{Y}^{(j)}(0),j=1,2,\dots$, 加上式 [eq-cf-local-power-series](#eq-cf-local-power-series), 得到
+$$
+\phi_{X}(a)=\phi_{Y}(a),\quad a \in (-c, c),
+$$
+自然有
+$$
+\phi_{X}^{(j)}(a) = \phi_{Y}^{(j)}(a),\quad a \in (-c, c).
+$$
+
+$\forall \epsilon>0,\epsilon<c$, 自然有 $c-\epsilon,-c+\epsilon \in(-c, c)$, 因此有
+$$
+\phi_{X}(c+a-\epsilon)=\sum\limits_{j=0}^{\infty}\frac{a^{j}}{j!}\phi_{X}^{(j)}(c-\epsilon)
+=\sum\limits_{j=0}^{\infty}\frac{a^{j}}{j!}\phi_{Y}^{(j)}(c-\epsilon)
+=\phi_{Y}(c+a-\epsilon),\quad a\in(-c, c)
+$$
+和
+$$
+\phi_{X}(-c+a+\epsilon)=\sum\limits_{j=0}^{\infty}\frac{a^{j}}{j!}\phi_{X}^{(j)}(-c+\epsilon)
+=\sum\limits_{j=0}^{\infty}\frac{a^{j}}{j!}\phi_{Y}^{(j)}(-c+\epsilon)
+=\phi_{Y}(-c+a+\epsilon), \quad a\in(-c, c)
+$$
+因为 $\epsilon$ 的任意小性质, 得到了
+$$
+\phi_{X}(a)=\phi_{Y}(a),\quad a \in (-2c, 2c).
+$$
+重复以上步骤, 最终我们得到
+$$
+\phi_{X}(a)=\phi_{Y}(a),\quad a \in \mathbb{R},
+$$
+利用 (1) 的结论, 我们得到了 $P_{X}=P_{Y}$.
+
+若 $k\geq 2$. 我们使用反证法, 假设 $P_{X}\neq P_{Y}$, 根据 (1) 的结论,
+$$
+\phi_{X}(a)\neq \phi_{Y}(a),\quad \exists a\in\mathbb{R},
+$$
+这等价于
+$$
+\phi_{a^{T}X}(1)\neq \phi_{a^{T}Y}(1),
+$$
+这意味着 $P_{a^{T}X}\neq P_{a^{T}Y}$.
+
+但是
+$$
+\psi_{X}(t)=\psi_{Y}(t)<\infty, t\in \text{neighborhood of 0}
+\implies
+\psi_{a^{T}X}(t)=\psi_{a^{T}Y}(t)<\infty, t\in \text{neighborhood of 0}
+$$
+再根据 $k=1$ 的证明结果可知
+$$
+P_{a^{T}X}=P_{a^{T}Y},
+$$
+产生矛盾, 因此有
+$$
+P_{X}=P_{Y}.
+$$
+:::
+
+# 常见分布的矩母函数和特征函数
+
+我们在计算的时候, 除了直接去根据定义进行计算外, 还可以去利用 @prp-mgf-cf-properties (4) 和 (8) 来根据已知的矩母函数和特征函数进行计算.
+
+有时候, 我们可以很简单的计算得到矩母函数或特征函数, 但是计算其分布函数或密度函数很难. 则我们可以利用 @thm-cf-mgf-determine-distribution, 根据矩母函数或特征函数来确定随机变量服从的分布, 或者说确定两个随机变量分布是一样的.
+
+## 正态分布
+
+::: {#prp-normal-mgf-cf}
+
+## 正态分布的矩母函数与特征函数
+
+若 $X$ 是一个 $k$ 维随机向量, 且 $X\sim N(\mu,\Sigma)$, 则有
+$$
+\psi_{X}(t)=e^{t^{T}\mu+\frac{1}{2}t^{T}\Sigma t},\quad
+
+\phi_{X}(t)=e^{it^{T}\mu-\frac{1}{2}t^{T}\Sigma t}.
+
+$$
+特别的, 当 $X$ 是一个一维随机变量, 且 $X\sim N(\mu,\sigma^{2})$ 时, 有
+$$
+\psi_{X}(t)=e^{\mu t+\frac{1}{2}\sigma^{2}t^{2}},\quad
+\phi_{X}(t)=e^{i \mu t-\frac{1}{2}\sigma^{2}t^{2}}.
+$$
+
+:::
+
+::: {.proof}
+
+我们首先证明对于一维标准正态分布时的情况, 即 $X\sim N(0,1)$, 则有
+$$
+\begin{align}
+\psi_{X}(t)&=\mathbb{E}e^{tX} \\
+&=\int e^{tx}\frac{1}{\sqrt{ 2\pi }} e^{-\frac{x^{2}}{2}} dx \\
+&=\frac{1}{\sqrt{ 2\pi }}\int \exp\left[ -\frac{1}{2}
+(x^{2}-2tx)\right] \, dx  \\
+&=e^{\frac{t^{2}}{2}}\frac{1}{\sqrt{ 2\pi }}\int \exp\left[ -\frac{1}{2}
+(x-t)^{2}\right] dx \\
+&=e^{\frac{t^{2}}{2}}.
+\end{align}
+$$
+利用相似的手法, 可以得到
+$$
+\begin{align}
+\phi_{X}(t)&=\mathbb{E}e^{itX} \\
+&=\int e^{itx}\frac{1}{\sqrt{ 2\pi }} e^{-\frac{x^{2}}{2}} dx \\
+&=e^{-\frac{t^{2}}{2}}.
+\end{align}
+$$
+利用 @prp-mgf-cf-properties (4), 我们可以得到一般标准正态分布的结果, 即 $Y\sim N(\mu,\sigma^{2})$, 则有 $Y=\sigma X+\mu$, 因此有
+$$
+\begin{align}
+&\psi_{Y}(t)=\psi_{X}(\sigma t)e^{\mu t}=e^{\mu t+\frac{1}{2}\sigma^{2}t^{2}}, \\
+&\phi_{Y}(t)=\phi_{X}(\sigma t)e^{i \mu t}=e^{i \mu t-\frac{1}{2}\sigma^{2}t^{2}}.
+\end{align}
+$$
+
+对于高维的情况, 即 $X$ 是一个 $k$ 维随机向量, 并且有 $X\sim N(0,I_{k})$, 使用类似的方式可以得到
+$$
+\psi_{X}(t)=e^{\frac{1}{2}t^{T}t},\quad
+\phi_{X}(t)=e^{-\frac{1}{2}t^{T}t}.
+$$
+当 $X\sim N(\mu, \Sigma)$ 时, 有
+$$
+\psi_{X}(t)=e^{t^{T}\mu+\frac{1}{2}t^{T}\Sigma t},\quad
+\phi_{X}(t)=e^{it^{T}\mu-\frac{1}{2}t^{T}\Sigma t}.
+$$
+
+:::
+
+## 柯西分布
+
+::: {#prp-cauchy-mgf-cf}
+
+## 柯西分布的矩母函数与特征函数
+
+若 $X\sim C(\mu,\sigma)$, 则
+$$
+\psi_{X}(0)=1,\quad \psi_{X}(t)=\infty,\ t\neq 0,
+$$
+且
+$$
+\phi_{X}(t)=e^{i\mu t-\sigma\lvert t \rvert}.
+$$
+
+:::
+
+::: {.proof}
+我们首先来计算 m.g.f., 当 $X\sim C(0,1)$ 时,
+$$
+\begin{align}
+\psi_{X}(t)&=\mathbb{E}e^{tX} \\
+&=\int e^{tx}\frac{1}{\pi(1+x^{2})} \, dx
+\end{align}
+$$
+注意到, 当 $t>0$ 时, $\lim_{ x \to +\infty }\frac{e^{tx}}{1+x^{2}}\to \infty$, 因此, $\forall\epsilon>0,\exists a>0, \forall x>a\implies \frac{e^{tx}}{1+x^{2}}>\epsilon$, 这意味着
+$$
+\int _{0}^{\infty}\frac{e^{tx}}{(1+x^{2})} \, dx =+\infty,
+$$
+也容易得到
+$$
+0< \int _{-\infty}^{0}\frac{e^{tx}}{(1+x^{2})} \, dx < \infty ,
+$$
+所以有
+$$
+\psi_{X}(t) = \infty,\quad t>0.
+$$
+当 $t<0$ 时, 容易得到 $\lim_{ x \to -\infty }\frac{e^{tx}}{(1+x^{2})}\to +\infty$, 所以利用相同的思路得到
+$$
+\psi_{X}(t) = \infty,\quad t < 0.
+$$
+也就是说 $X$ 的 p.m.f 在 0 之外的点上全是 $\infty$. 据此容易证明, 当 $X\sim C(\mu,\sigma)$ 时, 结论是一样的.
+
+至于 ch. f., 我们需要计算以下这个积分:
+$$
+\int e^{itx}\frac{1}{\pi(1+x^{2})} \, dx, 
+$$
+这个积分需要使用复变函数论中的留数法进行计算, 详见 留数法 (`留数法`).
+
+:::
+
+## 卡方分布
+
+::: {#prp-chi-square-mgf-cf}
+
+## 卡方分布的矩母函数与特征函数
+
+若 $X\sim \chi_{n}^{2}$, 则
+$$
+\psi_{X}(t)=\frac{1}{(1-2t)^{n/2}},\quad t<\frac{1}{2},
+$$
+以及
+$$
+\phi_{X}(t)=\frac{1}{(1-2it)^{n/2}},\quad t\in\mathbb{R}.
+$$
+
+:::
+
+::: {.proof}
+根据 [17_统计分布与密度函数](17-statistical-distributions-and-density-functions.qmd#17-statistical-distributions-and-density-functions-卡方分布) 中的定义, 可设
+$$
+X=Z_{1}^{2}+\cdots+Z_{n}^{2},
+\quad Z_{1},\dots,Z_{n}\overset{\text{i.i.d.}}{\sim}N(0,1).
+$$
+先考虑 $Y=Z_{1}^{2}$. 当 $t<1/2$ 时,
+$$
+\begin{align}
+\psi_{Y}(t)
+&=\mathbb{E}e^{tZ_{1}^{2}} \\
+&=\frac{1}{\sqrt{ 2\pi }}
+\int_{\mathbb{R}} \exp\left( tx^{2}-\frac{x^{2}}{2} \right)\,dx \\
+&=\frac{1}{\sqrt{ 2\pi }}
+\int_{\mathbb{R}} \exp\left( -\frac{1-2t}{2}x^{2} \right)\,dx \\
+&=\frac{1}{\sqrt{ 1-2t }}.
+\end{align}
+$$
+因此由独立性和 @prp-mgf-cf-properties (8), 得到
+$$
+\psi_{X}(t)=\prod_{j=1}^{n}\psi_{Y}(t)
+=\frac{1}{(1-2t)^{n/2}},\quad t<\frac{1}{2}.
+$$
+
+将上式中的 $t$ 替换为 $it$, 就得到
+$$
+\phi_{Y}(t)=\psi_{Y}(it)=\frac{1}{\sqrt{ 1-2it }},
+$$
+从而
+$$
+\phi_{X}(t)=\prod_{j=1}^{n}\phi_{Y}(t)
+=\frac{1}{(1-2it)^{n/2}}.
+$$
+:::
+
+## F 分布
+
+::: {#prp-f-mgf-cf}
+
+## F 分布的矩母函数与特征函数
+
+若 $X\sim F_{n,m}$, 则其矩母函数在通常意义下不存在. 更具体地,
+$$
+\psi_{X}(0)=1,\quad \psi_{X}(t)=\infty,\ t>0,
+$$
+而当 $t<0$ 时,
+$$
+\psi_{X}(t)=
+\frac{\Gamma\left( \frac{n+m}{2} \right)}{\Gamma\left( \frac{m}{2} \right)}
+U\left( \frac{n}{2},1-\frac{m}{2},-\frac{m}{n}t \right).
+$$
+其特征函数为
+$$
+\phi_{X}(t)=
+\frac{\Gamma\left( \frac{n+m}{2} \right)}{\Gamma\left( \frac{m}{2} \right)}
+U\left( \frac{n}{2},1-\frac{m}{2},-\frac{im}{n}t \right),\quad t\in\mathbb{R},
+$$
+其中 $U(a,b,z)$ 是 Tricomi 合流超几何函数.
+
+:::
+
+::: {.proof}
+根据 [17_统计分布与密度函数](17-statistical-distributions-and-density-functions.qmd#17-statistical-distributions-and-density-functions-f-分布) 中的密度函数, 记
+$$
+\alpha=\frac{n}{2},\quad \beta=\frac{m}{2},
+\quad c=\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}
+\left( \frac{n}{m} \right)^{\alpha},
+$$
+则
+$$
+f_{X}(x)=cx^{\alpha-1}\left( 1+\frac{n}{m}x \right)^{-(\alpha+\beta)}I_{(0,\infty)}(x).
+$$
+由于 $f_{X}(x)\sim Cx^{-\beta-1}$ 当 $x\to\infty$, 所以当 $t>0$ 时
+$$
+e^{tx}f_{X}(x)\to\infty,
+$$
+从而 $\psi_{X}(t)=\infty$.
+
+当 $t<0$ 时, 令 $s=-t>0$, 并作变量替换 $y=\frac{n}{m}x$, 得到
+$$
+\begin{align}
+\psi_{X}(t)
+&=\mathbb{E}e^{-sX} \\
+&=\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}
+\int_{0}^{\infty}e^{-\frac{m}{n}sy}y^{\alpha-1}(1+y)^{-(\alpha+\beta)}\,dy.
+\end{align}
+$$
+再利用 Tricomi 函数的积分表示
+$$
+U(a,b,z)=\frac{1}{\Gamma(a)}
+\int_{0}^{\infty}e^{-zy}y^{a-1}(1+y)^{b-a-1}\,dy,
+\quad \Re z>0,
+$$
+就得到
+$$
+\psi_{X}(t)=
+\frac{\Gamma(\alpha+\beta)}{\Gamma(\beta)}
+U\left( \alpha,1-\beta,\frac{m}{n}s \right),
+$$
+也就是
+$$
+\psi_{X}(t)=
+\frac{\Gamma\left( \frac{n+m}{2} \right)}{\Gamma\left( \frac{m}{2} \right)}
+U\left( \frac{n}{2},1-\frac{m}{2},-\frac{m}{n}t \right),\quad t<0.
+$$
+
+将上面的实参数延拓到纯虚参数, 就得到特征函数公式
+$$
+\phi_{X}(t)=
+\frac{\Gamma\left( \frac{n+m}{2} \right)}{\Gamma\left( \frac{m}{2} \right)}
+U\left( \frac{n}{2},1-\frac{m}{2},-\frac{im}{n}t \right).
+$$
+:::
+
+## t 分布
+
+::: {#prp-t-mgf-cf}
+
+## t 分布的矩母函数与特征函数
+
+若 $X\sim t_{n}$, 则其矩母函数在通常意义下不存在. 更具体地,
+$$
+\psi_{X}(0)=1,\quad \psi_{X}(t)=\infty,\ t\neq 0.
+$$
+其特征函数为
+$$
+\phi_{X}(t)=
+\frac{(\sqrt{ n }\lvert t \rvert )^{n/2}}
+{2^{n/2-1}\Gamma\left( \frac{n}{2} \right)}
+K_{n/2}(\sqrt{ n }\lvert t \rvert),\quad t\in\mathbb{R},
+$$
+其中 $K_{\nu}$ 是第二类修正 Bessel 函数.
+
+:::
+
+::: {.proof}
+由 [17_统计分布与密度函数](17-statistical-distributions-and-density-functions.qmd#17-statistical-distributions-and-density-functions-t-分布) 中的密度函数可知, 当 $\lvert x \rvert\to\infty$ 时,
+$$
+f_{X}(x)\sim C\lvert x \rvert^{-(n+1)}.
+$$
+因此当 $t>0$ 时, $e^{tx}f_{X}(x)$ 在 $+\infty$ 处不可积; 当 $t<0$ 时, $e^{tx}f_{X}(x)$ 在 $-\infty$ 处不可积. 所以
+$$
+\psi_{X}(t)=\infty,\quad t\neq 0.
+$$
+
+接下来求特征函数. 根据 [17_统计分布与密度函数](17-statistical-distributions-and-density-functions.qmd#17-statistical-distributions-and-density-functions-t-分布) 的定义, 可设
+$$
+X=\frac{Z}{\sqrt{ V/n }},
+\quad Z\sim N(0,1),\ V\sim \chi_{n}^{2},
+$$
+且 $Z,V$ 相互独立. 因此
+$$
+\phi_{X}(t)
+=\mathbb{E}\left[ \mathbb{E}\left( e^{itZ/\sqrt{ V/n }}\mid V \right) \right]
+=\mathbb{E}\left[ e^{-\frac{nt^{2}}{2V}} \right].
+$$
+再代入 $V\sim \chi_{n}^{2}$ 的密度函数, 得到
+$$
+\phi_{X}(t)
+=\frac{1}{2^{n/2}\Gamma(n/2)}
+\int_{0}^{\infty}
+v^{\frac{n}{2}-1}
+\exp\left( -\frac{v}{2}-\frac{nt^{2}}{2v} \right)\,dv.
+$$
+利用积分公式
+$$
+\int_{0}^{\infty}x^{\nu-1}e^{-\beta x-\gamma/x}\,dx
+=2\left( \frac{\gamma}{\beta} \right)^{\nu/2}
+K_{\nu}(2\sqrt{ \beta\gamma }),
+\quad \beta,\gamma>0,
+$$
+取
+$$
+\nu=\frac{n}{2},\quad \beta=\frac{1}{2},\quad \gamma=\frac{nt^{2}}{2},
+$$
+便得到
+$$
+\phi_{X}(t)=
+\frac{(\sqrt{ n }\lvert t \rvert )^{n/2}}
+{2^{n/2-1}\Gamma\left( \frac{n}{2} \right)}
+K_{n/2}(\sqrt{ n }\lvert t \rvert).
+$$
+:::

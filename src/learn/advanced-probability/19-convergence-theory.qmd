@@ -1,0 +1,2494 @@
+---
+title: "收敛理论"
+draft: true
+aliases: []
+author:
+  - 荣志炜
+tags:
+  - 收敛
+  - 渐进
+  - 几乎处处收敛
+  - 几乎一致收敛
+  - 依测度收敛
+  - 依概率收敛
+  - 依分布收敛
+  - 弱收敛
+  - 平均收敛
+  - 均方收敛
+  - 一致可积
+  - 收敛速度
+  - 大O记号
+  - 依概率有限
+  - 概率列紧
+  - Levy-Cramer连续定理
+  - 大数定律
+  - 中心极限定理
+  - 函数变换
+  - slutsky定理
+  - delta-method
+created: 2024-05-17 15:25
+updated: 2026-05-07 12:22
+order: 19
+---
+
+# 引言 {#19-convergence-theory-引言}
+
+收敛理论 (或渐进理论) 研究随机变量的极限行为, 以及在极限时的分布情况. 这在统计分析中非常重要. 鉴于该部分内容实在太多, 我们分成几个部分进行介绍. 在本节中, 我们将主要介绍各种类型的可测函数收敛, 以及这些收敛之间的强弱关系.
+
+在本章中, 因为大多涉及到随机向量的定义, 所以我们利用 $\lvert f \rvert$ 来统一表示范数的概念. 也就是说, 如果 $f=(f_{1},f_{2},\dots,f_{k})$, 则有
+$$
+\lvert f \rvert_{p} =\left( \sum\limits_{i=1}^{k}\lvert f_{i} \rvert ^{p} \right)^{\frac{1}{p}},
+$$
+默认是 $p=2$. 至于 @def-lp 中关于积分范数的定义, 我们使用
+$$
+\lVert f \rVert_{p}=\left( \int \lvert f \rvert^{p}_{p} \, d\mu \right)^{\frac{1}{p}}=\left( \int \sum\limits_{i=1}^{k}\lvert f_{i} \rvert ^{p} \right)^{\frac{1}{p}}
+=\left( \sum\limits_{i=1}^{k}\int \lvert f_{i} \rvert ^{p}  \right)^{\frac{1}{p}},
+$$
+当 $f$ 是一个随机向量时, 上述积分范数的定义将与 [8_积分](08-integration.qmd) 中的一致.
+
+# 收敛定义
+
+## 几乎处处收敛
+
+::: {#def-19-convergence-theory-1}
+
+## 几乎处处收敛
+
+设 $\{ f_{n},n=1,2,\dots \}$ 和 $f$ 都是测度空间中 $(\Omega,\mathcal{F},\mu)$ 上的**可测函数**或**随机向量**, 若
+$$
+
+\mu(\lim_{ n \to \infty }f_{n}\neq f )=0,
+$$
+则称可测函数列 $\{ f_{n},n=1,2,\dots \}$ **几乎处处以 $f$ 为极限**, 记作 $f_{n}\overset{ a.e. }{ \longrightarrow }f$. 若 $f$ **a.e.有限**(或者 $f\in\mathbb{R}^{k}$ a.e.) 并且 $f_{n}\overset{ a.e. }{ \longrightarrow }f$, 则称 $\{ f_{n},n=1,2,3,\dots \}$ **几乎处处收敛至 $f$**. 如果 $\mu$ 是一个概率测度, 则我们也称 $\{ f_{n} \}$ **几乎必然收敛至 $f$**, 记作 $f_{n}\overset{ a.s. }{ \longrightarrow }f$.
+
+:::
+之后, 如果不做特殊说明, $f_{n}\overset{ a.e. }{ \longrightarrow }f$ 均代表**几乎处处收敛至 $f$**, 也就是 $f\in\mathbb{R}^{k}$ a.e.的。
+
+::: {.callout-note title="为什么我们要限制 $\lvert f \rvert=\infty$?"}
+当存在 $\lvert f \rvert=\infty$ 时, $\lim_{ n \to \infty }f_{n}(x)=f(x)=\infty$ 并不代表 $f_{n}$ 会收敛至 $f$, 因为无穷大的差可能也是无穷大. 为了避免这种情况, $\lvert f \rvert=\infty$ 的点不能太多, 最好是一个零测集.
+
+:::
+很多时候, 我们直接利用定义来证明几乎处处收敛是比较难的, 下面我们将介绍它的一个等价的测度表示, 可以用于证明:
+
+::: {#prp-ae-convergence-equivalent}
+
+## 几乎处处收敛的等价命题
+
+$f_{n}\overset{ a.e. }{ \longrightarrow }f$ 当且仅当
+$$
+\mu(\mathop{\lim\sup}_{ n \to \infty } \{ \lvert f_{n}-f \rvert >\epsilon \})=
+\mu\left( \bigcap_{m=1}^{\infty}
+\bigcup_{n=m}^{\infty}\{ \lvert f_{n}-f \rvert \geq\epsilon \} \right)
+=0,\quad
+\forall\epsilon>0.
+$$
+
+:::
+
+::: {.callout-note title="约定"}
+注意, 这里将 $f_{n}(x)-f(x)$ 没有定义的点也计入到 $\{ \lvert f_{n}-f \rvert>\epsilon \}$ 中.
+
+:::
+<span id="note-ae-convergence-convention"></span>
+
+::: {.proof}
+我们首先来证明下面的一个等式
+$$
+\{ \lim_{ n \to \infty } f_{n}\neq f \}\cup \{ \lvert f \rvert =\infty \}
+=\bigcup_{k=1}^{\infty}\bigcap_{m=1}^{\infty}\bigcup_{n=m}^{\infty}
+\left\{  \lvert f_{n}-f \rvert \geq \frac{1}{k}  \right\}.
+$$
+
+<span id="eq-ae-convergence-set-identity"></span>
+
+首先, 我们证明左边 $\subset$ 右边.
+若 $\lvert f(x) \rvert=\infty$, 则不论 $f_{n}(x)$ 是有限还是无限, $\lvert f_{n}(x)-f(x) \rvert$ 都是 $\infty$ 或无定义, 包含在 $\left\{  \lvert f_{n}-f \rvert>\frac{1}{k}  \right\}$ 中, 所以有
+$$
+\{ \lvert f \rvert =\infty \} \subset
+\bigcup_{k=1}^{\infty}\bigcap_{m=1}^{\infty}\bigcup_{n=m}^{\infty}
+\left\{  \lvert f_{n}-f \rvert \geq \frac{1}{k}  \right\}.
+$$
+若 $\lvert f(x) \rvert<\infty$, 利用极限的定义, 可以知道
+$$
+\begin{align}
+&x \in \{ \lim_{ n \to \infty }f_{n}\neq f  \}\implies \\
+&\exists k\in \mathbb{N}^{+},\forall m\in\mathbb{N}^{+},\exists
+n\geq m, \lvert f_{n}(x)-f(x) \rvert \geq \frac{1}{k} \implies \\
+&x \in \bigcup_{k=1}^{\infty}\bigcap_{m=1}^{\infty}
+\bigcup_{n=m}^{\infty}\left\{  \lvert f_{n}-f \rvert \geq \frac{1}{k}  \right\}.
+\end{align}
+$$
+然后, 我们证明左边 $\supset$ 右边. 根据定义和 [约定](#note-ae-convergence-convention) , 我们可以得到
+$$
+\left\{  \lvert f_{n}-f \rvert >\frac{1}{k} \right\}=
+\left\{  \lvert f_{n}-f \rvert >\frac{1}{k},\lvert f \rvert <\infty \right\}
+\cup \{ \lvert f \rvert =\infty \},
+$$
+所以, 我们可以得到右侧等于
+$$
+\left( \bigcup_{k=1}^{\infty}\bigcap_{m=1}^{\infty}
+\bigcup_{n=m}^{\infty}\left\{  \lvert f_{n} -f \rvert>\frac{1}{k}  \right\} \cap \{ \lvert f \rvert <\infty \} \right) \cup
+\{ \lvert f \rvert =\infty \},
+$$
+若 $x$ 在第一项中, 则蕴含
+$$
+x \in \{ \lim_{ n \to \infty } f_{n}\neq f \},
+$$
+这意味着左边 $\supset$ 右边,
+
+通过等式 [eq-ae-convergence-set-identity](#eq-ae-convergence-set-identity) 可以很容易得到几乎处处收敛至 $f$.
+
+:::
+
+## 几乎一致收敛
+
+::: {#def-19-convergence-theory-3}
+
+## 几乎一致收敛
+
+设 $\{ f_{n},n=1,2,\dots \}$ 和 $f$ 都是测度空间中 $(\Omega,\mathcal{F},\mu)$ 上的**可测函数**或**随机向量**, 若 $\forall\epsilon>0,\exists A\in\mathcal{F},\mu(A)<\epsilon$ 使得
+$$
+\lim_{ n \to \infty } \sup\limits_{x\not\in A} 
+\lvert f_{n}(x)-f(x) \rvert = 0, 
+$$
+则称 $\{ f_{n} \}$ **几乎一致收敛至 $f$**, 记作 $f_{n}\overset{ a.u. }{ \longrightarrow }f$.
+
+:::
+关于它等价的测度集合表示是
+
+::: {#prp-au-convergence-equivalent}
+
+## 几乎一致收敛的等价命题
+
+$f_{n}\overset{ a.u. }{ \longrightarrow }f$ 当且仅当
+$$
+\lim_{ m \to \infty } \mu \left( \bigcup_{n=m}^{\infty}  \{ \lvert f_{n}-f \rvert \geq\epsilon \}\right) =0,
+\quad \forall\epsilon>0.
+$$
+
+:::
+
+::: {.proof}
+我们先来证明必要性. 假设 $f_{n}\overset{ a.u. }{ \longrightarrow }f$, 则使用 $\epsilon-\delta$ 语言将定义写为
+$$
+\begin{align}
+&\forall\delta>0,\exists A\in\mathcal{F},\mu(A)<\delta, \\
+&\forall\epsilon>0,\exists m\in\mathbb{N}^{+},\forall n>m,\forall x \not\in A, \\
+&\lvert f_{n}(x)-f(x) \rvert <\epsilon,
+\end{align}
+$$
+也就是
+$$
+\begin{align}
+&\forall\delta>0,\exists A\in\mathcal{F},\mu(A)<\delta, \\
+&\forall\epsilon>0,\exists m\in\mathbb{N}^{+},\forall n>m,\\
+&A^{c}\subset\{ \lvert f_{n}(x)-f(x) \rvert <\epsilon \},
+\end{align}
+$$
+也就是
+$$
+\begin{align}
+&\forall\delta>0,\exists A\in\mathcal{F},\mu(A)<\delta, \\
+&\forall\epsilon>0,\exists m\in\mathbb{N}^{+},\\
+&\bigcup_{n=m}^{\infty}\{ \lvert f_{n}(x)-f(x) \rvert \geq\epsilon \} \subset A,
+\end{align}
+$$
+也就是
+$$
+\begin{align}
+&\forall\delta>0,\exists A\in\mathcal{F}, \forall\epsilon>0,\exists m\in\mathbb{N}^{+},\\
+&\mu\left( \bigcup_{n=m}^{\infty}\{ \lvert f_{n}-f \rvert \geq\epsilon \} \right)\leq \mu(A)<\delta.
+\end{align}
+$$
+$m$ 越大, $\mu\left( \bigcup_{n=m}^{\infty}\{ \lvert f_{n}-f \rvert \geq\epsilon \} \right)$ 越小, 再令 $\delta\to0$, 得到
+$$
+\lim_{ m \to \infty } \mu\left( \bigcup_{n=m}^{\infty}\{ \lvert f_{n}-f \rvert \geq\epsilon \} \right) = 0.
+$$
+然后, 我们证明充分性. 若命题中的条件成立, 则
+$$
+\begin{align}
+&\forall k\in\mathbb{N}^{+},\forall \delta>0,\exists m_{k}(\delta),\forall m>m_{k}(\delta) \\
+&\mu\left( \bigcup_{n=m_{k(\delta)}}^{\infty}\left\{  \lvert f_{n}-f \rvert \geq \frac{1}{k}  \right\} \right)<\frac{\delta}{2^{k}},
+\end{align}
+$$
+令
+$$
+A=\bigcup_{k=1}^{\infty}\bigcup_{n=m_{k(\delta)}}^{\infty}\left\{  \lvert f_{n}-f \rvert \geq \frac{1}{k}  \right\},
+$$
+则有
+$$
+\begin{align}
+\mu(A)\leq \sum\limits_{k=1}^{\infty}
+\mu\left( \bigcup_{n=m_{k(\delta)}}^{\infty}\left\{  \lvert f_{n}-f \rvert \geq \frac{1}{k}  \right\} \right) <\delta.
+\end{align}
+$$
+因此, $\forall k\in\mathbb{N}^{+},\exists m_{k}(\delta),\forall n>m_{k}(\delta),\forall x \in A^{c}=\bigcap_{k=1}^{\infty}\bigcap_{n=m_{k}(\delta)}^{\infty}\left\{  \lvert f_{n}-f \rvert <\frac{1}{k}  \right\}$, 有
+$$
+\begin{align}
+\lvert f_{n}(x)-f(x) \rvert <\frac{1}{k}.
+\end{align}
+$$
+这就是
+$$
+\lim_{ n \to \infty } \sup\limits_{x \not\in A} 
+\lvert f_{n}(x)-f(x) \rvert = 0
+$$
+的定义. 证毕
+:::
+
+## 依测度收敛
+
+::: {#def-convergence-in-measure}
+
+## 依测度收敛
+
+设 $\{ f_{n},n=1,2,\dots \}$ 和 $f$ 都是测度空间中 $(\Omega,\mathcal{F},\mu)$ 上的**可测函数**或**随机向量**, 若
+$$
+\lim_{ n \to \infty } \mu(\lvert f_{n}-f \rvert >\epsilon)
+=0,\quad \forall \epsilon>0,
+$$
+则称 $\{ f_{n} \}$ **依测度收敛至 $f$**, 记作 $f_{n}\overset{ \mu }{ \longrightarrow }f$. 若 $\mu$ 是一个概率测度 $P$, 也可以叫做**依概率收敛**, 记作 $f_{n}\overset{ P }{ \longrightarrow }f$.
+
+:::
+
+依测度收敛是统计中非常重要的收敛模式, 一个重要的例子就是弱大数律, 我们后面将会介绍.
+
+::: {#prp-convergence-in-measure-components}
+
+## 依测度收敛的等价命题
+
+若 $f_{n},f$ 均为 $k$ 维随机向量, 则有 $f_{n}\overset{ \mu }{ \longrightarrow }f$ 当且仅当 $f_{n[i]}\overset{ \mu }{ \longrightarrow }f_{[i]},\forall i=1,\dots,k$, 其中 $f_{[i]}$ 表示 $f$ 的第 $[i]$ 个分量.
+
+:::
+
+::: {.proof}
+注意到
+当随机变量是高维时, 则 $g_{n}=\lvert f_{n}-f \rvert=\left( \sum\limits_{i=1}^{k}\lvert f_{n[i]}-f_{[i]} \rvert^{2} \right)^{\frac{1}{2}}$, 进而有
+$$
+g_{n}>\epsilon\implies
+g_{n}^{2}>\epsilon^{2}\implies
+\exists i\in\{ 1,\dots,k \},
+\lvert f_{n[i]}-f_{[i]} \rvert^{2}>\frac{\epsilon^{2}}{k},
+$$
+因此有
+$$
+\begin{align}
+P(g_{n}\geq\epsilon)&=
+\sum\limits_{i=1}^{k}P\left( \lvert f_{n[i]}-f_{[i]} \rvert >\frac{\epsilon}{\sqrt{ k }} \right),
+\end{align}
+$$
+:::
+
+## 依分布收敛 (弱收敛)
+
+::: {#def-19-convergence-theory-7}
+
+## 依分布收敛 (弱收敛)
+
+$\{ F_{n} \}$ 和 $F$ 都是非降实值函数, 若
+$$
+F_{n}\to F
+$$
+对 $F$ 的每个连续点成立, 则称 $\{ F_{n} \}$ **弱收敛至 $F$**, 记作 $F_{n}\overset{ \omega }{ \longrightarrow }F$.
+准分布函数是非降右连续的实值函数, 因此其也可以讨论弱收敛的讨论.
+
+假设 $\{ P_{n} \}$ 和 $P$ 分别是对应分布函数 $\{ F_{n} \}$ 和 $F$ 的概率测度, 且 $F_{n}\overset{ \omega }{ \longrightarrow }F$, 则称 $\{ P_{n} \}$ 弱收敛至 $P$, 记作 $P_{n}\overset{ \omega }{ \longrightarrow }P$.
+
+假设存在**随机向量**序列 $\{ X_{n} \}$ 和分布函数 $F$, 并且有
+$$
+
+X_{n}\sim F_{n},F_{n}\overset{ \omega }{ \longrightarrow }F,
+$$ 
+则称 $\{ X_{n} \}$ **依分布收敛至 $F$** , 记作 $X_{n}\overset{ d }{ \longrightarrow }F$; 若存在**随机向量** $X\sim F$, 则也可以称 $\{ X_{n} \}$ **依分布收敛至 $X$**, 记作 $X_{n}\overset{ d }{ \longrightarrow }X$.
+**Note: 无论是随机变量还是随机向量, $F$ 都是一维的, 所以后面在计算 $F$ 的距离时使用 $\lvert \cdot \rvert$ 即可.**
+
+:::
+在 [6_分布函数](06-distribution-function.qmd) 中, 针对一维分布函数, 我们介绍了 @def-left-inv 的概念. 注意到, 左连续逆也是一个非降实值函数 (只是左连续的), 因此也可以有弱收敛的概念, 并且有下面的一个引理 (后面会用).
+
+::: {#lem-left-inverse-weak-convergence}
+
+## 左连续逆的弱收敛
+
+若 $\{ F_{n} \},F$ 都是一维分布函数, 则有
+$$
+F_{n}\overset{ \omega }{ \longrightarrow }F
+\implies
+F_{n}^{\leftarrow}\overset{ \omega }{ \longrightarrow }F^{\leftarrow}.
+$$
+
+:::
+
+::: {.proof}
+根据 @prp-left-inv (5), 我们可以得到: $\forall t\in(0,1)$, 并且 $F^{\leftarrow}$ 在 $t$ 上连续, 有
+$$
+F(x-\epsilon)<t,\quad F(x+\epsilon)>t,\quad \forall\epsilon>0.
+$$
+
+<span id="eq-quantile-neighborhood-inequalities"></span>
+
+其中 $F^{\leftarrow}(t)=x$ .注意到, 因为 $F$ 的单调性, 其不连续点的总数量是至多可数的. 所以针对任意的 $\epsilon$, 我们肯定能够找到 $0<\epsilon'\leq\epsilon$ 使得在两个点 $x-\epsilon',x+\epsilon'$ 上 $F$ 是连续的. 此时, 根据依分布收敛的定义,有
+$$
+\lim_{ n \to \infty } F_{n}(x-\epsilon')=F(x-\epsilon')<t,\quad
+\lim_{ n \to \infty } F_{n}(x+\epsilon')=F(x+\epsilon')>t.
+$$
+因此, 有
+$$
+\exists N,\forall n>N,\quad
+ F_{n}(x-\epsilon')<t,F_{n}(x+\epsilon')>t.
+$$
+这蕴含
+$$
+x-\epsilon\leq x-\epsilon'\leq F_{n}^{\leftarrow}(t)\leq x+\epsilon'\leq x+\epsilon,
+$$
+即
+$$
+\lvert F^{\leftarrow}(t)-F_{n}^{\leftarrow}(t) \rvert \leq \epsilon.
+$$
+
+<span id="eq-quantile-inverse-bound"></span>
+
+综合来看, 我们得到了
+$$
+\forall\epsilon>0,\exists N,\forall n>N,
+\lvert F^{\leftarrow}(t)-F_{n}^{\leftarrow}(t) \rvert \leq \epsilon,
+$$
+这其实就是 $F_{n}^{\leftarrow}(t)\to F^{\leftarrow}(t)$.
+
+::: {.callout-note title="证明要点"}
+整个证明过程中, 有这样几个要点需要注意到:
+1. 对于固定的一个连续点 $t$, 使用新的符号 $x=F^{\leftarrow}(t)$, 这样就可以非常自然地得到式 [eq-quantile-inverse-bound](#eq-quantile-inverse-bound), 便于进行后面的讨论.
+2. 要更加关注 $x\pm\epsilon$ 的影响, 而不是 $t\pm \epsilon$.
+3. 需要能够意识到, 不论 $F(x)>t$ 或 $F(x)=t$ 时, 都可以得到式 [eq-quantile-neighborhood-inequalities](#eq-quantile-neighborhood-inequalities). 特别是当 $F(x)=t$ 时, 需要使用到 $t$ 是连续点的条件.
+4. 单调函数的不连续点至多可数, 所以我们可以将 $\epsilon$ 放缩一下, 保证 $x\pm\epsilon$ 都是 $F$ 的连续点, 从而利用弱收敛的条件.
+
+:::
+:::
+需要注意到, 对于依分布收敛, 我们只需要 $F_{n}$ 与 $F$ 收敛即可, 这意味着 $X_{n}$ 和 $X$ 可以完全不一样, 甚至不在同一个概率空间中都可以.
+
+尽管我们在定义时只要求在连续点收敛, 但是如果 $F$ 在所有的点都是连续的, 则我们可以有以下更强的结论.
+
+::: {#prp-19-convergence-theory-9}
+
+## Polya 定理
+
+如果 $\{ F_{n} \},F$ 都是 ($k$ 元) 分布函数, $F_{n}\overset{ \omega }{ \longrightarrow }F$, 并且 $F$ 在 $\mathbb{R}^{k}$ 上是连续的, 则有 $F_{n}$ 一致收敛至 $F$, 即
+$$
+\lim_{ n \to \infty } \sup\limits_{x \in\mathbb{R}^{k}}\lvert F_{n}(x)-F(x) \rvert =0. 
+$$
+
+:::
+::: {.proof}
+我们首先来证明一维时的特殊情况. 因为 $F$ 是连续的, 所以对于任意的正整数 $m$, 我们可以找到一系列的点 $-\infty=x_{0}<x_{1}<\dots<x_{m}=+\infty$ 满足
+$$
+F(x_{i})=\frac{i}{m}.
+$$
+再根据 $F_{n},F$ 的单调性, 我们有 $\forall x \in (x_{i-1},x_{i})$,
+$$
+\begin{align}
+&F_{n}(x)-F(x)\leq F_{n}(x_{i})-F(x_{i-1})=F_{n}(x_{i})-F(x_{i})+\frac{1}{m}, \\
+&F_{n}(x)-F(x)\geq F_{n}(x_{i-1})-F(x_{i})=F_{n}(x_{i-1})-F(x_{i-1})-\frac{1}{m},
+\end{align}
+$$
+所以, 我们有
+$$
+\sup\limits_{x \in\mathbb{R}} \lvert F_{n}(x)-F(x) \rvert 
+\leq \max\limits_{i=0,1,\dots,m}\lvert F_{n}(x_{i})-F(x_{i}) \rvert +
+\frac{1}{m},
+$$
+由弱收敛的条件我们可知 $\max\limits_{i=0,1,\dots,k}\lvert F_{n}(x_{i})-F(x_{i}) \rvert\to0,n\to \infty,\forall m$, 此时, 又因为 $m$ 的任意性, 我们就得到了最终想要证明的结果.
+
+:::
+下面, 我们介绍一个与弱收敛相关的非常重要的定理, 在分析时非常常用:
+
+::: {#thm-helly-selection}
+
+## Helly selection theorem
+
+对于任何分布函数序列 $F_{n}$, 其存在一个子列 $\{ F_{n_{k}} \}$ 和**一个非降右连续的函数**（不一定是分布函数） $F$ 满足
+$$
+\lim_{ k \to \infty } F_{n_{k}}(x)=F(x),\quad x \in C_{F},
+$$
+其中 $C_{F}$ 是 $F$ 的连续点.
+
+:::
+
+::: {.proof}
+首先我们介绍一个叫做 **diagonal method** 的技巧, 对于下面的可数个序列 (每一行看做一个序列)
+$$
+\begin{matrix}
+x_{1,1} & x_{1,2} & \dots \\
+x_{2,1} & x_{2,2} & \dots \\
+\vdots & \vdots & \vdots \\
+x_{n,1} & x_{n,2} & \dots \\
+\vdots & \vdots & \vdots \\
+\end{matrix}
+$$
+若每一个序列都是 bounded, 则我们可以找到增长的整数列 $\{ n_{k} \}$, 使得对于每个 $r=1,2,\dots$, $\lim_{ k \to \infty }x_{r,n_{k}}$ 都是存在的.
+
+我们可以这样去操作, 首先对于第一行, 我们可以找到一个子列, 其坐标我们表示为 $\{ n_{1s} \}$, 使得
+$$
+\lim_{ s \to \infty } x_{1,n_{1s}} \text{ exists}.
+$$
+将这个坐标用于第二行, 我们得到了第二行的一个子列, 但是这个子列不一定会收敛. 但是这个子列依然是 bounded, 因此我们依然可以再从中选择出一个子列, 其坐标我们表示为 $\{ n_{2s} \}$, 使得
+$$
+\lim_{ s \to \infty } x_{2,n_{2s}} \text{ exists}.
+$$
+将以上过程继续下去, 我们就得到了一系列的坐标:
+$$
+\begin{matrix}
+n_{11} & n_{12} & \dots \\
+n_{21} & n_{22} & \dots \\
+\vdots & \vdots & \vdots \\
+\end{matrix}
+$$
+其中每一行都是一个递增的整数列 (也就是一个子列的坐标), 并且**每一行都是前一行的子列**. 现在我们令 $n_{k}=n_{k,k}$, 则 $\{ n_{r},n_{r+1},\dots \}$ 正好是坐标矩阵第 $r$ 行的子列（并且它是递增的）, 因此, 我们可知它就是我们想要的整数列.
+
+现在对于每个有理数 $r$, 我们可以构造一个序列 $\{ F_{n}(r) \}$ 作为每一行. 应用 diagonal method, 我们得到了一个指标列 $\{ n_{k} \}$ 使得
+$$
+G(r)=\lim_{ k \to \infty } F_{n_{k}}(r)\ \text{exists}.
+$$
+定义
+$$
+F(x)=\inf\{ G(r): x<r \},
+$$
+容易知道 $F(x)$ 是非降的.
+
+$\forall x$ 和 $\epsilon>0$, 由下确界的定义有
+$$
+\exists r,\quad x < r,\quad G(r)<F(x)+\epsilon,
+$$
+若 $x\leq y<r$, 则有
+$$
+F(x)\leq F(y)\leq G(r)<F(x)+\epsilon,
+$$
+这意味着 $F$ 是右连续的.
+
+若 $F$ 在 $x$ 是连续的, 我们可以找到一个 $y<x$ 使得 $F(x)-\epsilon<F(y)$. 进而, 我们可以选择有理数 $r,s$ 使得 $y<r<x<s$ 和 $G(s)<F(x)+\epsilon$. 因此我们有
+$$
+F(x)-\epsilon<F(y)\leq G(r)\leq G(s)<F(x)+\epsilon,\quad
+F_{n_{k}}(r)\leq F_{n_{k}}(x)\leq F_{n_{k}}(s),
+$$
+令 $k\to \infty$, 我们得到
+$$
+F(x)-\epsilon< G(r) = \lim_{ k \to \infty } F_{n_{k}}(r)\leq \lim_{ k \to \infty } F_{n_{k}}(x)\leq \lim_{ k \to \infty } F_{n_{k}}(s)=G(s) < F(x)+\epsilon,
+$$
+令 $\epsilon\to0$, 我们得到了我们想要的结论.
+:::
+
+::: {.callout-important title="Helly selection theorem 的作用"}
+这个定理的核心作用，是在分布函数序列不一定整体收敛时，保证我们总能抽出一个在某个非降右连续函数连续点上收敛的子列。换句话说，它为“先找到一个候选极限”提供了存在性工具。
+
+这里需要特别注意：这个抽出来的子列，其极限对象首先只是一个**非降右连续函数**，它**不一定已经是分布函数**。也就是说，Helly selection theorem 本身只能保证“存在某种极限形状”，但还不能自动保证这个极限对应一个概率分布。
+
+在实际证明中，它最常见的用途是：
+1. 先从原序列中抽出一个收敛子列；
+2. 再分析这个子列极限具有哪些性质，并进一步判断它是否真的是分布函数；
+3. 若能进一步证明任何收敛子列的极限都必须相同，就有机会反推出整个序列收敛。
+
+因此，Helly selection theorem 是研究弱收敛存在性时最基础的“抽子列定理”之一。
+
+:::
+## 平均收敛
+
+承袭自 [9_Lp空间](09-lp-spaces.qmd) 中的讨论, 我们可以定义如下的收敛:
+
+::: {#def-19-convergence-theory-11}
+
+## 平均收敛
+
+设 $0<p<\infty$, 有**可测函数**或**随机向量** $\{ f_{n} \},f\in L_{p}$, 并且满足
+$$
+
+\lim_{ n \to \infty } \lVert f_{n}-f \rVert _{p}^{p}
+=\lim_{ n \to \infty } \int \lvert f_{n}-f \rvert _{p}^{p} \, d\mu
+=\lim_{ n \to \infty } \int \sum\limits_{i=1}^{k}\lvert f_{n[i]}-f_{[i]} \rvert ^{p} \, d\mu  =0,
+$$
+其中 $f_{n[i]}$ 和 $f_{[i]}$ 分别表示 $f_{n}$ 和 $f$ 的第 $i$ 个分量, 则称 $\{ f_{n} \}$ **($p$ 阶) 平均收敛至 $f$**, 记作 $f_{n}\overset{ L_{p} }{ \longrightarrow }f$. 当 $p=2$ 时, 也被称为**均方收敛**.
+
+:::
+根据以上定义, 我们由下面的一个等价命题
+
+::: {#prp-lp-convergence-components}
+
+## 平均收敛的等价命题
+
+对于 $k$ 维随机向量 $f_{n}$ 和 $f$, $f_{n},f\in L_{p}$, 则有 $\{ f_{n} \}$ ($p$ 阶) 平均收敛至 $f$ 当且仅当 $\{ f_{n} \}$ 的每个分量 ($p$ 阶) 平均收敛至 $f$ 的每个分量.
+
+:::
+
+# 收敛之间的关系
+
+以上介绍了 5 种收敛模式, 这些收敛模式之间存在强弱之分: 更强的收敛模式蕴含较弱的收敛模式, 或者说较弱的收敛模式需要额外的条件才能推出更强的收敛.
+
+这些收敛之间的相互关系涉及到非常多的定理和命题, 我们将尽量将其总结在本节中.
+
+
+::: {.callout-note title="Excalidraw drawing pending export"}
+原 Obsidian 图形已保留为附件：[800|center](../../../assets/attachments/advanced-probability/excalidraw/convergence-theory-2024-10-01-161536.excalidraw.md)。
+:::
+
+
+## 由强到弱
+
+::: {#thm-au-ae-equivalence}
+
+## $a.e.$ 和 $a.u.$
+
+$$
+f_{n}\overset{ a.u. }{ \longrightarrow }f\implies f_{n}\overset{ a.e. }{ \longrightarrow }f. 
+
+$$
+若测度空间是有限的, 即 $\mu(\Omega)<\infty$, 则有 $f_{n}\overset{ a.u. }{ \longrightarrow }f\iff f_{n}\overset{ a.e. }{ \longrightarrow }f$.
+
+:::
+
+::: {.proof}
+直接根据 @prp-ae-convergence-equivalent 和 @prp-au-convergence-equivalent 可以推出第一条.
+如果测度空间有限, 则根据 1.1 测度空间和概率空间 (`1.1 测度空间和概率空间#^0d834d`) 中 5 上连续性和两个等价命题, 直接可以得到 $a.e.\implies a.u.$ .
+:::
+
+::: {#thm-au-implies-in-measure}
+
+## $a.u.\implies \mu$
+
+$$
+f_{n}\overset{ a.u. }{ \longrightarrow }f\implies
+f_{n}\overset{ \mu }{ \longrightarrow }f
+$$
+
+:::
+
+::: {.proof}
+利用 @prp-au-convergence-equivalent 和 @def-convergence-in-measure 可以直接得到证明.
+:::
+
+::: {#thm-19-convergence-theory-15}
+
+## $L_{p}\implies \mu$
+
+$$
+f_{n}\overset{ L_{p} }{ \longrightarrow }f,p>0\implies
+f_{n}\overset{ \mu }{ \longrightarrow }f,\lVert f_{n} \rVert_{p} \to
+\lVert f \rVert_{p}
+$$
+
+:::
+::: {.proof}
+我们先证明当所有的随机变量都是 1 维时成立:
+我们令 $g_{n}=\lvert f_{n}-f \rvert$, $\forall\epsilon>0$, 有
+$$
+\begin{align}
+P(g_{n}\geq\epsilon)&=\int _{\{ g_{n}\geq\epsilon \}}1 \, d\mu \\
+&\leq \int _{\{ g_{n}\geq\epsilon \}}\left(\frac{g_{n}}{\epsilon}\right)^{p} \, d\mu \\
+&\leq \int \left(\frac{g_{n}}{\epsilon}\right)^{p} \, d\mu \\
+&=\frac{1}{\epsilon^{p}}\int \lvert f_{n}-f \rvert ^{p} \, d\mu 
+\end{align}
+$$
+根据上面的结果, 我们可以知道, 定理结果成立.
+
+当随机变量是高维时, 则 $g_{n}=\lvert f_{n}-f \rvert=\left( \sum\limits_{i=1}^{k}\lvert f_{n[i]}-f_{[i]} \rvert^{2} \right)^{\frac{1}{2}}$, 进而有
+$$
+g_{n}>\epsilon\implies
+g_{n}^{2}>\epsilon^{2}\implies
+\exists i\in\{ 1,\dots,k \},
+\lvert f_{n[i]}-f_{[i]} \rvert^{2}>\frac{\epsilon^{2}}{k},
+$$
+因此有
+$$
+\{ g_{n}>\epsilon \}\subset \bigcup_{i=1}^{k}\left\{  \lvert f_{n[i]}-f_{[i]} \rvert^{2}>\frac{\epsilon^{2}}{k}   \right\},
+$$
+也就是
+$$
+\begin{align}
+P(g_{n}\geq\epsilon)&\leq
+\sum\limits_{i=1}^{k}P\left( \lvert f_{n[i]}-f_{[i]} \rvert >\frac{\epsilon}{\sqrt{ k }} \right),
+\end{align}
+$$
+根据 @prp-lp-convergence-components, 平均收敛意味着每个分量的平均收敛, 进而有每个分量上的依测度收敛, 进而有得到我们的结论.
+
+至于 $\lVert f_{n} \rVert_{p} \to\lVert f \rVert_{p}$, 我们可以分情况来看. 当 $p\geq 1$ 时, 由 Minkowski 不等式得到
+$$
+\left\lvert \lVert f_{n} \rVert_{p}-\lVert f \rVert_{p} \right\rvert
+\leq \lVert f_{n}-f \rVert_{p}\to0.
+$$
+当 $0<p<1$ 时, 虽然 $\lVert \cdot \rVert_{p}$ 不是范数, 但对非负实数有 $\lvert a^{p}-b^{p} \rvert\leq \lvert a-b \rvert^{p}$, 因而
+$$
+\left\lvert \lVert f_{n} \rVert_{p}^{p}-\lVert f \rVert_{p}^{p} \right\rvert
+\leq \lVert f_{n}-f \rVert_{p}^{p}\to0.
+$$
+再由函数 $x\mapsto x^{1/p}$ 的连续性, 也可以得到 $\lVert f_{n} \rVert_{p}\to \lVert f \rVert_{p}$.
+
+:::
+
+::: {#thm-19-convergence-theory-16}
+
+## $\mu\implies d$
+
+$$
+f_{n}\overset{ \mu }{ \longrightarrow }f\implies
+f_{n}\overset{ d }{ \longrightarrow }f.
+$$
+
+:::
+::: {.proof}
+$\forall \mathbf{x}\in\mathbb{R}^{k}$, $\forall\epsilon>0$, 有
+$$
+\begin{align}
+F_{f}(\mathbf{x}-\epsilon \mathbf{1})
+&=P(f\in(-\infty,\mathbf{x}-\epsilon \mathbf{1}]) \\
+&\leq P(f_{n}\in(-\infty,\mathbf{x}])+
+P(f\in(-\infty,\mathbf{x}-\epsilon \mathbf{1}],f_{n}\not\in(-\infty,\mathbf{x}]) \\
+&\leq F_{f_{n}}(\mathbf{x})+P(\lvert f_{n}-f \rvert  >\epsilon),
+\end{align}
+$$
+其中 $\mathbf{1}=(1,\dots,1)$ 是一个 $k$ 维向量, 而第三行是因为
+$$
+f\in(-\infty,\mathbf{x}-\epsilon \mathbf{1}],f_{n}\not\in(-\infty,\mathbf{x}]\implies
+\lvert f_{n}-f \rvert >\epsilon.
+$$
+（以上内容可以通过分析单个分量，然后加总得到）
+
+令 $n\to \infty$, 配合依测度收敛, 我们得到
+$$
+F_{f}(\mathbf{x}-\epsilon \mathbf{1})\leq \mathop{\lim\inf}_{ n \to \infty } F_{f_{n}}(\mathbf{x}).
+$$
+使用相同的原理, 我们还可以得到
+$$
+F_{f}(\mathbf{x}+\epsilon \mathbf{1})\geq \mathop{\lim\sup}_{ n \to \infty } F_{f_{n}}(\mathbf{x}).
+$$
+然后令 $\epsilon\to0$ 以及 $\mathbf{x}$ 在 $F_{f}$ 的连续点时, 我们得到依分布收敛.
+:::
+
+## 反例
+
+除了上述我们介绍的蕴含关系, 其他的关于这些收敛之间的蕴含关系都是错误的, 这里我们介绍一些反例, 用于加深他们之间的理解.
+
+::: {#exm-ae-not-in-measure}
+
+## a.e. 不蕴含 a.u.
+
+定义 L 测度空间中的可测函数列
+$$
+f_{n}(x)=\left\{\begin{matrix}
+0,\lvert x \rvert \leq n, \\
+1,\lvert x \rvert >n,
+\end{matrix}\right.
+$$
+容易有 $f_{n}\overset{ a.e. }{ \longrightarrow }0$ (实际上是 $f_{n}\to0$), 但是 $f_{n}\overset{ a.u. }{ \longrightarrow }0$ 不成立.
+**Example: $a.e.$ 不蕴含 $\mu$**
+在 $(\mathbb{R},\mathcal{B}_{\mathbb{R}},m)$ 上定义
+$$
+f_{n}(x)=I_{(n,n+1]}(x).
+$$
+对任意固定的 $x\in\mathbb{R}$, 当 $n$ 充分大时都有 $x\notin(n,n+1]$, 因此
+$$
+f_{n}\overset{ a.e. }{ \longrightarrow }0.
+$$
+但是, 对任意 $0<\epsilon<1$,
+$$
+m(\lvert f_{n} \rvert>\epsilon)=m((n,n+1])=1,
+$$
+所以 $f_{n}$ 不依测度收敛到 $0$. 这个例子说明, 在无限测度空间中, $a.e.$ 收敛不一定蕴含依测度收敛.
+
+:::
+
+::: {#exm-in-measure-not-ae-au}
+
+## $\mu$ 不蕴含 $a.e.$ 或 $a.u.$
+
+在 $((0,1],\mathcal{B}_{(0,1]},m)$ 上, 对 $r=0,1,2,\dots$ 和 $k=0,1,\dots,2^{r}-1$, 定义
+$$
+f_{2^{r}+k}(x)=I_{\left( \frac{k}{2^{r}},\frac{k+1}{2^{r}} \right]}(x).
+$$
+当 $n=2^{r}+k$ 时,
+$$
+m(\lvert f_{n} \rvert>\epsilon)=2^{-r}\to0,\quad 0<\epsilon<1,
+$$
+因而 $f_{n}\overset{ \mu }{ \longrightarrow }0$.
+
+但是对任意 $x\in(0,1]$, 在每一层 $r$ 中恰好有一个 $k$ 使得 $f_{2^{r}+k}(x)=1$, 同时也有许多 $k$ 使得 $f_{2^{r}+k}(x)=0$. 因此 $\{ f_{n}(x) \}$ 会不断在 $0$ 和 $1$ 之间出现, 不会收敛到 $0$. 所以 $f_{n}\not\overset{ a.e. }{ \longrightarrow }0$.
+
+又因为 $a.u.$ 收敛一定蕴含 $a.e.$ 收敛, 所以 $f_{n}$ 也不可能几乎一致收敛到 $0$。（就是让等于 1 的点再某个固定的区间内循环往复，但是总的来说等于 1 的区间在逐渐变小）
+
+:::
+
+::: {#exm-in-distribution-not-in-probability}
+
+## $d$ 不蕴含 $\mu$
+
+令 $\Omega=\{-1,1\}$, $P(\{-1\})=P(\{1\})=\frac{1}{2}$, 并令 $X(\omega)=\omega$, $X_{n}=-X$. 此时 $X_{n}$ 和 $X$ 的分布完全相同, 因而
+$$
+X_{n}\overset{ d }{ \longrightarrow }X.
+$$
+但是对任意 $0<\epsilon<2$,
+$$
+P(\lvert X_{n}-X \rvert>\epsilon)=1,
+$$
+所以 $X_{n}$ 不依概率收敛到 $X$. 这说明依分布收敛只比较分布, 并不控制同一个概率空间中随机变量之间的距离.
+
+:::
+
+::: {#exm-in-measure-not-lp}
+
+## $\mu$ 不蕴含 $L_{p}$
+
+在 $((0,1],\mathcal{B}_{(0,1]},m)$ 上, 固定 $p>0$, 定义
+$$
+f_{n}(x)=n^{1/p}I_{\left(0,\frac{1}{n}\right]}(x).
+$$
+对任意 $\epsilon>0$, 当 $n$ 足够大时,
+$$
+m(\lvert f_{n} \rvert>\epsilon)=\frac{1}{n}\to0,
+$$
+因此 $f_{n}\overset{ \mu }{ \longrightarrow }0$.
+
+但是
+$$
+\lVert f_{n} \rVert_{p}^{p}
+=\int_{0}^{1} \lvert f_{n}(x) \rvert^{p}\,dx
+=\int_{0}^{1/n}n\,dx=1,
+$$
+所以 $f_{n}$ 不会 $L_{p}$ 收敛到 $0$. 这个例子说明, 依测度收敛只要求“偏离集合的测度变小”, 并不控制偏离幅度的大小.
+
+:::
+
+## 由弱到强
+
+尽管正常来说, 由较弱的收敛无法推导出较强的收敛, 但是如果能够增加一些特定的条件, 那么就可以成立或部分成立. @thm-au-ae-equivalence 中 $\mu(\Omega)<\infty$ 就是一个例子. 接下来, 我们将讨论其他的可能性.
+
+::: {#thm-skorohod-representation}
+
+## Skorohod, $d\implies a.u.$
+
+若随机向量 $X_{n}\overset{ d }{ \longrightarrow }X$, 则存在 $Y,Y_{1},Y_{2},\dots$ (可能定义在与 $X_{n},X$ 不同的概率空间中), 满足
+$$
+P_{Y}=P_{X},P_{Y_{n}}=P_{X_{n}},\forall n=1,2,\dots,
+$$
+和
+$$
+Y_{n}\overset{ a.s. }{ \longrightarrow }Y.
+$$
+
+:::
+
+::: {.proof}
+高维空间的情况比较困难, 我们略过, 下面只证明 1 维的情况.
+我们首先构建一个新的概率空间 $((0,1),(0,1)\cap \mathcal{B}_{\mathbb{R}},\tilde{P})$, 其中 $\tilde{P}$ 是 $L$ 测度. 令 $U$ 是该空间上的服从均匀分布的随机变量, 则令
+$$
+Y=F_{X}^{\leftarrow}(U),\quad
+Y_{n}=F_{X_{n}}^{\leftarrow}(U),\forall n=1,2,\dots,
+$$
+由 [7_可测函数](07-measurable-functions.qmd#6a18be) 中的证明可知, $X$ 和 $Y$, $X_{n}$ 和 $Y_{n}$ 拥有相同的分布, 第一条得到证明.
+根据 @lem-left-inverse-weak-convergence, 我们有
+$$
+X_{n}\overset{ d }{ \longrightarrow }X
+\implies F_{X_{n}}\overset{ \omega }{ \longrightarrow }F_{X}
+\implies F^{\leftarrow}_{X_{n}}\overset{ \omega }{ \longrightarrow }F_{X}^{\leftarrow},
+$$
+又因为左连续逆的单调性保证了其不连续点的至多可数, 其 L 测度为 0, 这保证了
+$$
+F^{\leftarrow}_{X_{n}}\overset{ \omega }{ \longrightarrow }F_{X}^{\leftarrow}
+\implies F^{\leftarrow}_{X_{n}}(U)\overset{ a.s. }{ \longrightarrow }F_{X}^{\leftarrow}(U)
+\implies Y_{n}\overset{ a.s. }{ \longrightarrow }Y.
+$$
+:::
+
+::: {#thm-weak-convergence-to-constant}
+
+## $d\implies \mu$
+
+$X_{n}\overset{ d }{ \longrightarrow }X$, 并且 $P(X=c)=1$, 其中 $c\in\mathbb{R}^{k}$ 是一个 constant vector, 则有
+$$
+X_{n}\overset{ P }{ \longrightarrow }c.
+$$
+
+:::
+
+::: {.proof}
+我们首先证明 1 维随机变量时的情况, $\forall\epsilon>0$, 我们有
+$$
+\begin{align}
+P(\lvert X_{n}-c \rvert >\epsilon)
+&=P(X_{n}<c-\epsilon)+P(X_{n}>c+\epsilon) \\
+&\leq F_{X_{n}}(c-\epsilon)-F_{X_{n}}(c+\epsilon)+1,
+\end{align}
+$$
+因为 $P(X=c)=1$, 所以 $F_{X}$ 是
+$$
+F_{X}(x)=\left\{\begin{matrix}
+0, x< c, \\ 
+1,x\geq c.
+\end{matrix}\right.
+$$
+因此, 在 $c-\epsilon,c+\epsilon$ $F_{X}$ 均连续. 令 $n\to \infty$, 我们有
+$$
+\lim_{ n \to \infty } P(\lvert X_{n}-c \rvert >\epsilon)\leq
+F_{X}(c-\epsilon)-F_{X}(c+\epsilon)+1=0,
+$$
+命题得证.
+当是 $k$ 维随机向量时, 我们可以先证明每个分量上的依分布收敛, 然后结合 1 维的结果证明每个分量上的依测度收敛, 进而证明整个向量的依测度收敛.
+:::
+
+::: {#thm-19-convergence-theory-23}
+
+## $\mu\implies a.u.$
+
+$f_{n}\overset{ \mu }{ \longrightarrow }f$ 当且仅当 $\{ f_{n} \}$ 的任意子列都存在该子列的子列 $f_{n}'$ 使得
+$$
+f_{n}'\overset{ a.u. }{ \longrightarrow }f.
+$$
+
+:::
+::: {.proof}
+我们首先证明依测度收敛成立可以推导出子列的几乎一致收敛。根据依测度收敛的定义，$\forall k=1,2,\dots$, 都可以找到一个 $n_{k}$, 使得有
+$$
+\mu\left( \lvert f_{n_{k}}-f \rvert \geq \frac{1}{k} \right)<\frac{1}{2^{k}},
+$$
+$\forall m=1,2,\dots$, 我们有
+$$
+\mu\left( \bigcup_{k=m}^{\infty}\left\{  \lvert f_{n_{k}}-f \rvert \geq \frac{1}{k}  \right\} \right)
+\leq \sum\limits_{k=m}^{\infty}\frac{1}{2^{k}}=\frac{1}{2^{m-1}},
+$$
+现在 $\forall\epsilon>0$, 我们总能找到一个 $\frac{1}{k}<\epsilon$, 此时
+$$
+\left\{  \lvert f_{n_{k}}-f \rvert \geq \frac{1}{k}  \right\}
+\supset
+\{ \lvert f_{n_{k}}-f \rvert \geq\epsilon \},
+$$
+则存在一个 $M\in\mathbb{N}^{+}$, $\forall m>M$, 有
+$$
+\mu\left( \bigcup_{k=m}^{\infty}\{ \lvert f_{n_{k}}-f \rvert \geq\epsilon \} \right)\leq \mu\left( \bigcup_{k=m}^{\infty}\{ \lvert f_{n_{k}}-f \rvert  \}\geq \frac{1}{k} \right)\leq \frac{1}{2^{m-1}},
+$$
+此时令 $m\to \infty$, 我们得到
+$$
+\lim_{ m \to \infty } \mu\left( \bigcup_{k=m}^{\infty}\{ \lvert f_{n_{k}}-f \rvert \geq\epsilon \} \right)=0,
+$$
+根据 @prp-au-convergence-equivalent 可知几乎一致收敛成立.
+
+现在我们再来证明反面.
+我们使用反证法, 假设依测度收敛不成立, 则 $\exists\epsilon_{0}>0,\delta_{0}>0$, $\forall N, \exists n_{k}>N$ 使得
+$$
+\mu(\lvert f_{n_{k}}-f \rvert \geq\epsilon_{0})\geq\delta_{0}
+$$
+也就是对于 $\{ f_{n} \}$ 的某个子列 $\{ f_{n_{k}} \}$ 成立. 则对该子列的任意一个子列 $\{ f_{n_{kj}} \}$ 我们总有
+$$
+\begin{align}
+\mu\left( \bigcup_{j=m}^{\infty}\{ \lvert f_{n_{kj}}-f \rvert\geq\epsilon_{0}  \} \right) \geq\delta_{0},\quad
+\forall m=1,2,\dots\\
+\implies \\
+\mathop{\lim\inf}_{ m \to \infty } \mu\left( \bigcup_{j=m}^{\infty}\{ \lvert f_{n_{kj}}-f \rvert\geq\epsilon_{0}  \} \right) \geq\delta_{0},
+\end{align}
+$$
+根据 @prp-au-convergence-equivalent 这与任意子列都存在一个子列的子列几乎一致收敛是矛盾的, 命题得证.
+:::
+
+::: {.callout-note title="为什么要说“任意子列的子列”"}
+由依测度收敛确实可以推出：存在某个子列几乎一致收敛到 $f$. 但是, 仅仅“存在一个好子列”太弱, 不能反推出整列依测度收敛.
+
+例如在任意概率空间上令 $f_{2n-1}=0$, $f_{2n}=1$, 并以 $0$ 为极限候选. 奇数子列恒等于 $0$, 因而几乎一致收敛到 $0$. 但是整列不依测度收敛到 $0$, 因为
+$$
+P(\lvert f_{2n}-0 \rvert>1/2)=1.
+$$
+
+所以, 要刻画整列依测度收敛, 必须要求一个更强的条件: **任意子列都能再抽出一个几乎一致收敛到 $f$ 的子列**. 这样才能排除某些坏项组成的子列一直偏离 $f$ 的情况.
+
+:::
+很多时候, 我们可能更加关注其中**依测度收敛**到**几乎一致收敛**的部分, 这一部分我们可以得到一个更加简介的推论
+
+::: {#cor-19-convergence-theory-24}
+
+## $\mu\implies a.u.$
+
+$f_{n}\overset{ \mu }{ \longrightarrow }f$ 成立, 则存在 $\{ f_{n} \}$ 的某个子列 $f_{n}'$ 使得
+$$
+f_{n}'\overset{ a.u. }{ \longrightarrow }f.
+$$
+
+:::
+接下来, 我们将介绍依测度收敛如何得到平均收敛.
+
+::: {#thm-19-convergence-theory-25}
+
+## $\mu\implies L_{p}$
+
+若 $f_{n},f\in L_{p}$, $f_{n}\overset{ \mu }{ \longrightarrow }f$, $\lVert f_{n} \rVert_{p}\to \lVert f \rVert_{p}$, 则有
+$$
+f_{n}\overset{ L_{p} }{ \longrightarrow }f.
+$$
+
+:::
+::: {.proof}
+因为 @prp-lp-convergence-components 和 @prp-convergence-in-measure-components 的存在, 我们只需要证明一维情况下该定理成立即可.
+
+$f_{n}\overset{ \mu }{ \longrightarrow }f$, 则对于 $\{ f_{n} \}$ 的任意子列, 都可以找到子列的子列 $\{ f_{n'} \}$ 使得 $f_{n'}\overset{ a.e. }{ \longrightarrow }f$.令
+$$
+g_{n'}=C_{p}(\lvert f_{n'} \rvert ^{p}+\lvert f \rvert ^{p})-\lvert f_{n'}-f \rvert ^{p},
+$$
+其中
+$$
+C_{p}=\left\{\begin{matrix}
+2^{p-1},&1\leq p\leq \infty, \\
+1,&0<p<1.
+\end{matrix}\right.
+$$
+由 @thm-minkowski-inequality 和 @thm-quasi-minkowski-inequality 可知, $g_{n'}\geq 0$, 并且根据 $f_{n'}\overset{ a.e. }{ \longrightarrow }f$ 有
+$$
+\lim_{ n' \to \infty } g_{n'}=C_{p}(\lim_{ n' \to \infty } \lvert f_{n'} \rvert ^{p}+\lvert f \rvert ^{p})-\lim_{ n' \to \infty } \lvert f_{n'}-f \rvert ^{p}=2C_{p}\lvert f \rvert ^{p},\quad a.e..
+$$
+当 $\lVert f_{n} \rVert_{p}\to \lVert f \rVert_{p}$ 成立时, 由 @thm-fatou 得到
+$$
+\begin{align}
+2C_{p} \lVert f \rVert _{p}^{p} &= 
+\int (2C_{p}\lvert f \rvert ^{p}) \, d\mu \\
+&=\int (\lim_{ n' \to \infty } g_{n'}) \, d\mu \\
+&\leq \mathop{\lim\inf}_{ n' \to \infty } \int g_{n'} \, d\mu  \\
+&=\mathop{\lim\inf}_{ n' \to \infty } \int C_{p}(\lvert f_{n'} \rvert^{p}+\lvert f \rvert ^{p} ) \, d\mu
+-\mathop{\lim\sup}_{ n' \to \infty } \int \lvert f_{n'}-f \rvert ^{p} \, d\mu \\
+&=2C_{p}\lVert f \rVert _{p}^{p}-
+\mathop{\lim\sup}_{ n \to \infty } \int \lvert f_{n'}-f \rvert^{p}  \, dx ,
+\end{align}
+$$
+两端消去相同的项, 我们得到
+$$
+\lim_{ n' \to \infty } \int \lvert f_{n'}-f \rvert  \, d\mu=0. 
+$$
+这意味着 $\{ \lVert f_{n}-f \rVert _{p} \}$ 的任意子列均存在子列的子列会 $\to0$, 那么必然意味着 $f_{n}\overset{ L_{p} }{ \longrightarrow }f$ (反证法).
+:::
+
+用上面证明中的 Fatou 思路, 我们还可以得到另一个常用的推论
+
+::: {#cor-19-convergence-theory-26}
+
+## $a.e.\implies L_{p}$
+
+若 $f_{n},f\in L_{p}$, $f_{n}\overset{ a.e. }{ \longrightarrow }f$, $\lVert f_{n} \rVert_{p}\to \lVert f \rVert_{p}$, 则有
+$$
+f_{n}\overset{ L_{p} }{ \longrightarrow }f.
+$$
+**Theorem: $a.u.$ 的充分条件**
+$\forall\epsilon>0$, $\sum\limits_{n=1}^{\infty}\mu(\lvert X_{n}-X \rvert\geq\epsilon)<\infty$, 则
+$$
+X_{n}\overset{ a.u. }{ \longrightarrow }X.
+$$
+
+:::
+::: {.proof}
+$\sum\limits_{n=1}^{\infty}\mu(\lvert X_{n}-X \rvert\geq\epsilon)<\infty$ 意味着
+$$
+\lim_{ m \to \infty } \mu\left( \bigcup_{n=m}^{\infty}\{ \lvert X_{n}-X \rvert \geq\epsilon \} \right) \leq
+\lim_{ m \to \infty } \sum\limits_{i=m}^{\infty}\mu(\lVert X_{n}-X \rVert\geq\epsilon) =0.
+$$
+根据 @prp-au-convergence-equivalent 可知命题成立.
+:::
+
+::: {#def-uniform-integrability}
+
+## 一致可积
+
+设 $\{ Z_{n},n=1,2,\dots \}$ 是一列可积随机变量. 若
+$$
+\lim_{ t \to \infty }
+\sup_{n}
+\mathbb{E}\left(
+\lvert Z_{n} \rvert I_{\{ \lvert Z_{n} \rvert>t \}}
+\right)=0,
+$$
+则称 $\{ Z_{n} \}$ 是**一致可积**的.（尾部的绝对值积分会收敛到 0）
+
+:::
+
+::: {#thm-ui-under-distribution-convergence}
+
+## 依分布收敛下的一致可积
+
+假设 $X_{n}\overset{ d }{ \longrightarrow }X$. 则对任意固定的 $r>0$,
+$$
+\lim_{ n \to \infty } \lVert X_{n} \rVert ^{r}_{r}
+=\lVert X \rVert ^{r}_{r} < \infty
+$$
+当且仅当 $\{ \lvert X_{n} \rvert_{r}^{r} \}$ 是一致可积的.
+
+:::
+
+::: {.proof}
+这里我们需要先注意几个概念之间的辨析, 因为我们使用了和书上不同的符号.
+$$
+\begin{align}
+\lVert X \rVert _{r}=(\mathbb{E}\lvert X \rvert _{r}^{r})^{\frac{1}{r}}
+=\left( \int \lvert X \rvert _{r}^{r} \, dP  \right)^{\frac{1}{r}}
+=\left( \int \sum\limits_{i=1}^{k}\lvert X_{i} \rvert ^{r} \, dP  \right)
+^{\frac{1}{r}},
+\end{align}
+$$
+其中 $\lVert \cdot \rVert$ 表示积分范数, $\lvert \cdot \rvert$ 表示向量范数.
+
+因为该命题只依赖于 $X_{n}$ 和 $X$ 的分布, 根据 @thm-skorohod-representation, 不妨假设 $X_{n}$ 和 $X$ 定义在同一个概率空间中, 并且
+$$
+X_{n}\overset{ a.s. }{ \longrightarrow }X.
+$$
+这是因为 Skorohod 表示中得到的 $Y_{n},Y$ 与原来的 $X_{n},X$ 分布相同, 所以 $\mathbb{E}\lvert X_{n} \rvert_{r}^{r}$、$\mathbb{E}\lvert X \rvert_{r}^{r}$ 以及一致可积性都不会改变.
+
+先证明充分性. 假设 $\{ \lvert X_{n} \rvert_{r}^{r} \}$ 一致可积. 由定义可知
+$$
+\begin{align}
+\sup_{n}\mathbb{E}\lvert X_{n} \rvert_{r}^{r}&=
+\sup_{n}\mathbb{E}\{ 
+\lvert X_{n} \rvert ^{r}_{r}I_{\lvert X_{n} \rvert >t}
++\lvert X_{n} \rvert ^{r}_{r}I_{\lvert X_{n} \rvert \leq t}
+\} \\
+&\leq\sup_{n}\mathbb{E}\lvert X_{n} \rvert ^{r}_{r}I_{\lvert X_{n} \rvert >t}
++t^{r} \\
+&<\infty,
+\end{align}
+$$
+因此由 Fatou 引理有
+$$
+\mathbb{E}\lvert X \rvert_{r}^{r}
+\leq \liminf_{ n \to \infty }\mathbb{E}\lvert X_{n} \rvert_{r}^{r}<\infty.
+$$
+所以只需要证明
+$$
+\limsup_{ n \to \infty }\mathbb{E}\lvert X_{n} \rvert_{r}^{r}
+\leq \mathbb{E}\lvert X \rvert_{r}^{r}.
+$$
+任取 $\epsilon>0,t>0$, 记
+$$
+A_{n}=\{ \lvert X_{n}-X \rvert_{r}\leq \epsilon \},
+\quad
+B_{n}=\{ \lvert X_{n} \rvert_{r}>t \}.
+$$
+则
+$$
+\begin{align}
+\mathbb{E}\lvert X_{n} \rvert_{r}^{r}
+&=\mathbb{E}(\lvert X_{n} \rvert_{r}^{r}I_{A_{n}^{c}\cap B_{n}})
++\mathbb{E}(\lvert X_{n} \rvert_{r}^{r}I_{A_{n}^{c}\cap B_{n}^{c}})
++\mathbb{E}(\lvert X_{n} \rvert_{r}^{r}I_{A_{n}})\\
+&\leq
+\mathbb{E}(\lvert X_{n} \rvert_{r}^{r}I_{B_{n}})
++t^{r}P(A_{n}^{c})
++\mathbb{E}(\lvert X_{n}I_{A_{n}} \rvert_{r}^{r}).
+\end{align}
+$$
+若 $0<r\leq 1$, 利用 $(a+b)^{r}\leq a^{r}+b^{r}$, 有
+$$
+\begin{align}
+\mathbb{E}(\lvert X_{n}I_{A_{n}} \rvert_{r}^{r})
+&\leq
+\mathbb{E}[(\lvert X_{n}-X \rvert_{r}^{r}+\lvert X \rvert_{r}^{r})I_{A_{n}}]\\
+&\leq \epsilon^{r}+\mathbb{E}\lvert X \rvert_{r}^{r}.
+\end{align}
+$$
+若 $r>1$, 由 Minkowski 不等式有
+$$
+\begin{align}
+\mathbb{E}(\lvert X_{n}I_{A_{n}} \rvert_{r}^{r})
+&=
+\mathbb{E}\lvert (X_{n}-X)I_{A_{n}}+XI_{A_{n}} \rvert_{r}^{r}\\
+&\leq
+\left[
+\left(\mathbb{E}\lvert (X_{n}-X)I_{A_{n}} \rvert_{r}^{r}\right)^{\frac{1}{r}}
++
+\left(\mathbb{E}\lvert XI_{A_{n}} \rvert_{r}^{r}\right)^{\frac{1}{r}}
+\right]^{r}\\
+&\leq
+\left[
+\epsilon+
+\left(\mathbb{E}\lvert X \rvert_{r}^{r}\right)^{\frac{1}{r}}
+\right]^{r}.
+\end{align}
+$$
+由于 $\epsilon$ 任意, 两种情形都给出
+$$
+\limsup_{ n \to \infty }
+\mathbb{E}(\lvert X_{n}I_{A_{n}} \rvert_{r}^{r})
+\leq \mathbb{E}\lvert X \rvert_{r}^{r}.
+$$
+又因为 $X_{n}\overset{ a.s. }{ \longrightarrow }X$, 所以 $P(A_{n}^{c})\to0$. 于是
+$$
+\begin{align}
+\limsup_{ n \to \infty }\mathbb{E}\lvert X_{n} \rvert_{r}^{r}
+&\leq
+\limsup_{ n \to \infty }
+\mathbb{E}(\lvert X_{n} \rvert_{r}^{r}I_{B_{n}})
++\mathbb{E}\lvert X \rvert_{r}^{r}\\
+&\leq
+\sup_{n}\mathbb{E}(
+\lvert X_{n} \rvert_{r}^{r}I_{\{ \lvert X_{n} \rvert_{r}>t \}})
++\mathbb{E}\lvert X \rvert_{r}^{r}.
+\end{align}
+$$
+令 $t\to\infty$, 再利用一致可积性, 得到
+$$
+\limsup_{ n \to \infty }\mathbb{E}\lvert X_{n} \rvert_{r}^{r}
+\leq \mathbb{E}\lvert X \rvert_{r}^{r}.
+$$
+结合前面的 Fatou 不等式, 便有
+$$
+\lim_{ n \to \infty }\mathbb{E}\lvert X_{n} \rvert_{r}^{r}
+=\mathbb{E}\lvert X \rvert_{r}^{r}<\infty.
+$$
+
+再证明必要性. 假设
+$$
+\lim_{ n \to \infty }\mathbb{E}\lvert X_{n} \rvert_{r}^{r}
+=\mathbb{E}\lvert X \rvert_{r}^{r}<\infty.
+$$
+仍令 $B_{n}=\{ \lvert X_{n} \rvert_{r}>t \}$, 并定义
+$$
+\xi_{n}
+=
+\lvert X_{n} \rvert_{r}^{r}I_{B_{n}^{c}}
+-\lvert X \rvert_{r}^{r}I_{B_{n}^{c}}.
+$$
+因为 $X_{n}\overset{ a.s. }{ \longrightarrow }X$, 所以 $\xi_{n}\to0$ a.s.; 同时
+$$
+\lvert \xi_{n} \rvert
+\leq t^{r}+\lvert X \rvert_{r}^{r},
+$$
+右端可积. 由控制收敛定理,
+$$
+\mathbb{E}\xi_{n}\to0.
+$$
+这与 $\mathbb{E}\lvert X_{n} \rvert_{r}^{r}\to\mathbb{E}\lvert X \rvert_{r}^{r}$ 合起来说明（注意 $\xi_{n}$ 中是 $B^{c}_{n}$，下面的是 $B_{n}$）
+$$
+\mathbb{E}(\lvert X_{n} \rvert_{r}^{r}I_{B_{n}})
+-\mathbb{E}(\lvert X \rvert_{r}^{r}I_{B_{n}})
+\to0.
+$$
+另一方面, 若 $\lvert X_{n} \rvert_{r}>t$, 则必有
+$$
+\lvert X_{n}-X \rvert_{r}>\frac{t}{2}
+\quad\text{或}\quad
+\lvert X \rvert_{r}>\frac{t}{2},
+$$
+否则由三角不等式会得到 $\lvert X_{n} \rvert_{r}\leq t$. 因此
+$$
+B_{n}\subset
+\left\{ \lvert X_{n}-X \rvert_{r}>\frac{t}{2} \right\}
+\cup
+\left\{ \lvert X \rvert_{r}>\frac{t}{2} \right\}.
+$$
+注意，$\mathbb{E}(\lvert X \rvert^{r}_{r}I_{B_{n}})$ 也和 $n$ 有关系，所以上式减号两端都是一个数列，两者可能都没有极限，于是
+$$
+\begin{align}
+&\limsup_{ n \to \infty }
+\mathbb{E}(\lvert X_{n} \rvert_{r}^{r}I_{B_{n}})\\
+&=\limsup_{ n \to \infty }
+\left[
+\mathbb{E}(\lvert X \rvert_{r}^{r}I_{B_{n}})
++
+\mathbb{E}(\lvert X_{n} \rvert_{r}^{r}I_{B_{n}})
+-\mathbb{E}(\lvert X \rvert_{r}^{r}I_{B_{n}})
+\right]\\
+&\leq
+\limsup_{ n \to \infty }
+\mathbb{E}(\lvert X \rvert_{r}^{r}I_{B_{n}})
++
+\limsup_{ n \to \infty }
+\left[
+\mathbb{E}(\lvert X_{n} \rvert_{r}^{r}I_{B_{n}})
+-\mathbb{E}(\lvert X \rvert_{r}^{r}I_{B_{n}})
+\right]\\
+&=
+\limsup_{ n \to \infty }
+\mathbb{E}(\lvert X \rvert_{r}^{r}I_{B_{n}}).
+\end{align}
+$$
+所以
+$$
+\begin{align}
+\limsup_{ n \to \infty }
+\mathbb{E}(\lvert X_{n} \rvert_{r}^{r}I_{B_{n}})
+&\leq
+\limsup_{ n \to \infty }
+\mathbb{E}(\lvert X \rvert_{r}^{r}I_{B_{n}})\\
+&\leq
+\limsup_{ n \to \infty }
+\mathbb{E}\left(
+\lvert X \rvert_{r}^{r}
+I_{\{ \lvert X_{n}-X \rvert_{r}>t/2 \}}
+\right)
++\mathbb{E}\left(
+\lvert X \rvert_{r}^{r}
+I_{\{ \lvert X \rvert_{r}>t/2 \}}
+\right).
+\end{align}
+$$
+对固定的 $t$, 第一项由控制收敛定理趋于 $0$; 第二项在 $t\to\infty$ 时也由控制收敛定理趋于 $0$. 因而
+$$
+\lim_{ t \to \infty }
+\limsup_{ n \to \infty }
+\mathbb{E}(
+\lvert X_{n} \rvert_{r}^{r}
+I_{\{ \lvert X_{n} \rvert_{r}>t \}}
+)=0.
+$$
+最后, 对任意有限个初项 $n=1,\dots,N$, 因为 $\mathbb{E}\lvert X_{n} \rvert_{r}^{r}<\infty$, 有（与上面的内容无关，直接推导）
+$$
+\lim_{ t \to \infty }
+\max_{1\leq n\leq N}
+\mathbb{E}(
+\lvert X_{n} \rvert_{r}^{r}
+I_{\{ \lvert X_{n} \rvert_{r}>t \}}
+)=0.
+$$
+结合上一式就得到（因为 $\mathop{\lim\sup}_{ n \to \infty }$ 是 $\lim_{ m \to \infty }\sup_{n\geq m}$ 的意思）
+$$
+\lim_{ t \to \infty }
+\sup_{n}
+\mathbb{E}(
+\lvert X_{n} \rvert_{r}^{r}
+I_{\{ \lvert X_{n} \rvert_{r}>t \}}
+)=0,
+$$
+即 $\{ \lvert X_{n} \rvert_{r}^{r} \}$ 一致可积.
+
+:::
+以上定理等价于
+
+::: {#thm-19-convergence-theory-29}
+
+## $d\implies L_{p}$
+
+假设 $X_{n}\overset{ d }{ \longrightarrow }X$. 则
+$$
+X_{n}\overset{ L_{r} }{ \longrightarrow }X,\quad r>0
+$$
+当且仅当 $\{ \lvert X_{n}-X \rvert_{r}^{r} \}$ 是一致可积的.
+
+:::
+::: {.proof}
+根据后面关于依分布收敛的 transformation 性质, 我们有
+$$
+X_{n}\overset{ d }{ \longrightarrow }X
+\iff
+X_{n}-X\overset{ d }{ \longrightarrow }0
+$$
+然后利用 @thm-ui-under-distribution-convergence 即可.
+:::
+
+这样, 如果我们想要在依分布收敛的基础上证明平均收敛, 只需要证明一致可积的充分条件即可, 而这样的充分条件是很多的, 比如
+
+::: {#cor-ui-moment-sufficient}
+
+## 一致可积的充分条件
+
+$\{ \lvert X_{n} \rvert^{r}_{r} \}$ 一致可积的一个充分条件是
+$$
+\sup_{n}\mathbb{E}\lvert X_{n} \rvert ^{r+\delta}_{r}
+<\infty,\quad
+\exists \delta>0.
+$$
+
+:::
+
+::: {.callout-note}
+注意，这里我们的符号基于 [引言](#19-convergence-theory-引言) 中的规范。
+**Note: 注意，$\lVert X_{n} \rVert^{r+\delta}_{r}=\left( \mathbb{E}\lvert X_{n} \rvert^{r}_{r} \right)^{\frac{r+\delta}{r}}$，其与 $\mathbb{E}\lvert X_{n} \rvert_{r}^{r+\delta}$ 还不太一样。**
+
+:::
+::: {.proof}
+我们其实就是在证明
+$$
+\lim_{ M \to \infty } \sup_{n}\mathbb{E}[\lvert X_{n} \rvert _{r}^{r}I_{\lvert X_{n} \rvert ^{r}_{r}>M}]=0.
+$$
+那我们先看看里面那个积分是什么：
+$$
+\begin{align}
+\mathbb{E}[\lvert X_{n} \rvert_ {r}^{r}I_{\lvert X_{n} \rvert ^{r}_{r}>M}] &=
+\mathbb{E}\left[ \frac{\lvert X_{n} \rvert_ {r}^{r+\delta}}{\lvert X_{n} \rvert _{r}^{\delta}}
+I_{\lvert X_{n} \rvert ^{r}_{r}>M}\right] \\
+&<M^{-\frac{\delta}{r}}\mathbb{E}\left[ \lvert X_{n} \rvert_ {r}^{r+\delta} I_{\lvert X_{n} \rvert ^{r}_{r}>M} \right] \\
+&<M^{-\frac{\delta}{r}}\mathbb{E}[\lvert X_{n} \rvert ^{r+\delta}_{r}],
+\end{align}
+$$
+其中第二行成立的原理是因为
+$$
+\lvert X_{n} \rvert ^{r}_{r}>M\implies \lvert X_{n} \rvert ^{\delta}_{r}=\left( \lvert X_{n} \rvert_ {r}^{r} \right) ^{\frac{\delta}{r}}>M^{\frac{\delta}{r}}.
+$$
+所以有
+$$
+\sup_{n}\mathbb{E}\left[ \lvert X_{n} \rvert _{r}^{r}I_{\lvert X_{n} \rvert _{r}^{r}>M} \right] 
+\leq M^{-\frac{\delta}{r}}\sup_{n}\mathbb{E}\left[ \lvert X_{n} \rvert _{r}^{r+\delta} \right] ,
+$$
+由题设，令 $\sup_{n}\mathbb{E}\left[ \lvert X_{n} \rvert_{r}^{r+\delta} \right]=C$，然后令 $M\to \infty$，我们得到
+$$
+\lim_{ M \to \infty } \sup_{n}\mathbb{E}\left[ \lvert X_{n} \rvert _{r}^{r}I_{\lvert X_{n} \rvert_ {r}^{r}>M} \right]=0.
+$$
+:::
+
+接下来了, 我们将就一个例子来讨论 @thm-ui-under-distribution-convergence 的用途之一, 这个例子基于 [15_独立和条件期望](15-independence-and-conditional-expectation.qmd#exam-prediction).
+
+::: {#exm-prediction-2}
+
+## 预测问题 (续)
+
+假设现在我们希望使用 $n$ 个随机变量组成的随机向量 $Y=(Y_{1},\dots,Y_{n})$ 来预测随机变量 $X$. 根据 [15_独立和条件期望](15-independence-and-conditional-expectation.qmd#exam-prediction) 中的结论, 若 $\mathbb{E}X^{2}<\infty$, 在均方误差的角度下, 最优预测器是
+$$
+X_{n}=\mathbb{E}(X|Y_{1},\dots,Y_{n}). 
+$$
+接下来, 我们将证明: 若假设 $\sigma(X)\subset \mathcal{F}_{\infty}=\sigma(Y_{1},\dots)$ (也就是说 **$Y_{1},\dots$ 的无限序列可以提供 $X$ 完整的信息**), 则有 $X_{n}\overset{ a.s. }{ \longrightarrow }X$.
+
+:::
+
+::: {.proof}
+根据 @def-martingale, 我们可以知道 $\{ X_{n} \}$ 实际上是一个 martingale. 根据 @thm-submartingale-convergence, 因为
+$$
+\sup_{n}\mathbb{E}\lvert X_{n} \rvert \leq 
+\sup_{n}\mathbb{E}(\mathbb{E}(\lvert X \rvert |Y_{1},\dots,Y_{n}))
+=\mathbb{E}\lvert X \rvert <\infty,
+$$
+
+<span id="eq-example-1"></span>
+
+因此, 存在某个随机变量 $Z$, 使得
+$$
+X_{n}\overset{ a.s. }{ \longrightarrow }Z.
+$$
+现在我们需要证明 $Z=X\ a.s.$. 首先, 因为 $\sigma(X)\subset \mathcal{F}_{\infty}$, 所以有
+$$
+X=\mathbb{E}(X|\mathcal{F}_{\infty})\ a.s..
+$$
+因此我们只需要证明
+$$
+Z=\mathbb{E}(X|\mathcal{F}_{\infty}),\ a.s.
+$$
+即可. 根据 @thm-prop-condi-expectation(7) 可知
+$$
+\mathbb{E}X_{n}^{2}=
+\mathbb{E}\left[ \mathbb{E}^{2}[X|Y_{1},\dots,X_{n}] \right] 
+\leq \mathbb{E}\left[ \mathbb{E}[X^{2}|Y_{1},\dots,X_{n}] \right] 
+=\mathbb{E}X^{2}<\infty,
+$$
+这是 $\{ \lvert X_{n} \rvert \}$ 一致可积（这里的 $r=1,\delta=1$）的充分条件 (@cor-ui-moment-sufficient). 再由 @thm-ui-under-distribution-convergence 可知
+$$
+\int _{A}X_{n} \, dP\to \int _{A}Z \, dP,\quad \forall A.  
+$$
+由条件期望的定义可知, 若 $A\in\sigma(Y_{1},\dots,Y_{n})$,
+$$
+\int _{A}X_{n} \, dP=\int _{A}X \, dP,  
+$$
+所以, 若 $A\in\bigcup_{j=1}^{\infty}\sigma(Y_{1},\dots,Y_{j})$, 则有
+$$
+\int _{A}Z \, dP =
+\lim_{ n \to \infty } \int _{A}X_{n} \, dP=
+\lim_{ n \to \infty } \int _{A}X \, dP =
+\int _{A}X \, dP. 
+$$
+进而容易证明 $\forall A\in\mathcal{F}_{\infty}=\sigma(\bigcup_{j=1}^{\infty}\sigma(Y_{1},\dots,Y_{j}))$,
+$$
+\int _{A}X \, dP=\int _{A}Z \, dP.  
+$$
+(证明方法就是先假设一个满足上述等式的集合 $\mathcal{F}$, 可知 $\mathcal{F}\supset \bigcup_{j=1}^{\infty}\sigma(Y_{1},\dots,Y_{j})$, 再证明 $\mathcal{F}$ 是一个 $\sigma$ -field 即可). 根据条件期望的定义, 也就是
+$$
+Z=\mathbb{E}(X|\mathcal{F}_{\infty}).
+$$
+
+:::
+
+::: {#cor-exer-120}
+
+## exercise 120
+
+$Y$ 是一个可积随机变量，$\{ \mathcal{F}_{n} \}$ 是一个 $\sigma$-field 列，则 $\{ \lvert \mathbb{E}(Y|\mathcal{F}_{n}) \rvert \}$ 一定一致可积。
+
+:::
+
+::: {.proof}
+$Y$ 可积，意味着
+$$
+\mathbb{E}\lvert Y \rvert <\infty.
+$$
+令 $Z_{n}=\mathbb{E}[Y|\mathcal{F}_{n}]$，根据 @thm-prop-condi-expectation(4)，有
+$$
+\lvert Z_{n} \rvert =\lvert \mathbb{E}[Y|\mathcal{F}_{n}] \rvert 
+\leq \mathbb{E}[\lvert Y \rvert |\mathcal{F}_{n}].
+$$
+因为 $\{ \lvert Z_{n} \rvert>M\}\in \mathcal{F}_{n}$，所以有
+$$
+\mathbb{E}[\lvert Z_{n} \rvert 1_{\{ \lvert Z_{n} \rvert >M \}}]
+\leq
+\mathbb{E}\left[ \mathbb{E}[\lvert Y \rvert |\mathcal{F}_{n}]1_{{ \lvert Z_{n} \rvert >M }} \right]
+=\mathbb{E}[\lvert Y \rvert 1_{{ \lvert Z_{n} \rvert >M }}].
+$$
+令 $A_{n,M}=\{ \lvert Z_{n} \rvert>M \}$，根据 @thm-markov-inequality，有
+$$
+P(A_{n,M})\leq \frac{\mathbb{E}\lvert Z_{n} \rvert }{M}\leq
+\frac{\mathbb{E}[\mathbb{E}[\lvert Y \rvert |\mathcal{F}_{n}]]}{M}
+=\frac{\mathbb{E}\lvert Y \rvert }{M}.
+$$
+注意，上述不等式是对 $\forall n$ 成立的。
+
+根据 [8_积分](08-integration.qmd#9b6249)，$Y$ 有绝对连续性，所以 $\forall\epsilon>0,\exists\delta>0$，使得 $\forall A,P(A)<\delta$，有
+$$
+\mathbb{E}[\lvert Y \rvert 1_{A}]<\epsilon.
+$$
+现在我们针对这个 $\delta$，找到一个 $M'$，使得
+$$
+\frac{\mathbb{E}\lvert Y \rvert }{M'}<\delta,
+$$
+显然 $P(A_{n,M})<\delta$，所以有
+$$
+\mathbb{E}[\lvert Y \rvert 1_{A_{n,M}}]<\epsilon,\ \forall n.
+$$
+也就是
+$$
+\sup_{n}\mathbb{E}\left[ \lvert Z_{n} \rvert 1_{\{ \lvert Z_{n} \rvert >M \}} \right] 
+\leq \mathbb{E}\left[ \lvert Y \rvert 1_{\{ A_{n,M} \}} \right] <\epsilon.
+$$
+这样，我们实际上就证明了一致可积性。
+
+:::
+
+实际上，上面的推导过程中，用到 $\mathbb{E}X^{2}<\infty$ 的地方有两个。第一是公式 [eq-example-1](#eq-example-1)，这个显然只需要 $\mathbb{E}\lvert X \rvert<\infty$ 即可。第二是作为一致可积的充分条件，而根据 @cor-exer-120，在我们的题设条件下也可出放宽到 $\mathbb{E}\lvert X \rvert<\infty$，所以，我们只需要 $\mathbb{E}\lvert X \rvert<\infty$ 就可以得到 @exm-prediction-2 中的结论。
+
+# 收敛速度 (渐进记号)
+
+涉及到收敛, 一个需要讨论的问题是**收敛速度的比较**. 与数学分析中类似, 我们在这里也有一套大 O 记号来定义相对之间的收敛速率.
+
+首先我们需要回忆一下对于传统序列的大 O 记号的定义:
+
+::: {#def-19-convergence-theory-33}
+
+## 序列有界阶记号
+
+若序列 $\{ a_{n} \},\{ b_{n} \}$ ($\{ b_{n} \}$ 需要满足 $\lvert b_{n} \rvert>0,\forall n$) 满足下面的关系, 则称其满足 $a_{n}=O(b_{n})$,
+$$
+\lvert a_{n} \rvert \leq c\lvert b_{n} \rvert ,\forall n, \exists c.
+$$
+
+
+上述定义等价于
+
+$$
+\exists N,c,\forall n>N,
+\lvert a_{n} \rvert \leq c\lvert b_{n} \rvert,
+$$
+因为我们只需要令 $c'=\max\left\{  c,\frac{\lvert a_{1} \rvert}{\lvert b_{1} \rvert}+1,\dots,\frac{\lvert a_{N} \rvert}{\lvert b_{N} \rvert}+1  \right\}$, 则有 $\lvert a_{n} \rvert \leq c\lvert b_{n} \rvert ,\forall n, \exists c.$
+**Definition: 序列低阶小量记号**
+
+若序列 $\{ a_{n} \},\{ b_{n} \} (\{ b_{n} \}$ 需要满足 $\lvert b_{n} \rvert>0,\forall n$) 满足下面的关系,
+$$
+\frac{a_{n}}{b_{n}}\to0,\quad n\to \infty.
+$$
+则称为 $a_{n}=o(b_{n})$.
+
+:::
+根据上面的定义我们知道,
+$$
+a_{n}=o(b_{n})\implies a_{n}=O(b_{n}).
+$$
+此外, $\{ a_{n} \}$ bounded $\iff a_{n}=O(1)$.
+
+接下来, 我们定义
+
+::: {#def-landau-prob}
+
+## 随机变量渐进记号
+
+假设 $\{ X_{1},X_{2},\dots \}$ 是一组随机**向量**, $\{ Y_{1},Y_{2},\dots \}$ 是一组随机**变量**, 它们都定义在相同的概率空间中. 我们定义
+(1) $X_{n}=O(Y_{n})$ a.s. 当且仅当 $P(\lvert X_{n} \rvert=O(\lvert Y_{n} \rvert))=1$.
+(2) $X_{n}=o(Y_{n})$ a.s.当且仅当 $\frac{X_{n}}{Y_{n}}\overset{ a.s. }{ \longrightarrow }0$.
+(3) $X_{n}=O_{p}(Y_{n})$ 当且仅当 $\forall\epsilon>0,\exists C_{\epsilon}>0,$
+$$
+\sup_{n}P(\lvert X_{n} \rvert \geq C_{\epsilon}\lvert Y_{n} \rvert )<\epsilon.
+$$
+(4) $X_{n}=o_{p}(Y_{n})$ 当且仅当 $\frac{X_{n}}{Y_{n}}\overset{ P }{ \longrightarrow }0$.
+
+:::
+
+针对以上的定义, 我讨论一些细节:
+
+首先， $o$ 和 $O$ 后面会加 $a.s.$, 也就是说其就是数列 $o$ 和 $O$ 加上 " 几乎处处 " 的概念后产生的; $o_{p}$ 和 $O_{p}$ 则不需要, 它们两个属于数列 $o$ 和 $O$ 的 " 依测度收敛 " 对应物.
+
+其次，$X_{n}=O(Y_{n})$ 表示几乎每个 $a\in\Omega$ 构成的数量 $\{ \lvert X_{n}(a) \rvert \},\{ \lvert Y_{n}(a) \rvert \}$ 都可以实现 $\lvert X_{n}(a) \rvert\leq c_{a}\lvert Y_{n} \rvert,\forall n$ , 但是不保证其所对应的 $c_{a}$ 是相同的, 所以也就是每个 $a$ 对应一个 $c_{a}$. 因此, 其定义**不是** $P\left( \bigcap_{n=1}^{\infty}\{ \lvert X_{n} \rvert\leq c\lvert Y_{n} \rvert \} \right)=1$.
+最后，对于向量 $X_{n}$, $\lvert X_{n} \rvert=\left( \sum\limits_{i=1}^{k}\lvert X_{n[i]} \rvert^{r} \right)^{1/r}$ 是向量范数, 一般默认 $r=2$; 而对于随机变量 $Y_{n}$, $\lvert Y_{n} \rvert$ 就是取绝对值.
+
+根据定义, 我们可以有下面的性质
+
+::: {#prp-19-convergence-theory-35}
+
+## 随机变量渐进性质
+
+(1) $X_{n}=o_{p}(Y_{n})\implies X_{n}=O_{p}(Y_{n})$
+(2) $X_{n}=o(Y_{n})\ a.s.\implies X_{n}=O(Y_{n})\ a.s.$.
+(3) $X_{n}=O_{p}(Y_{n}),Y_{n}=O_{p}(Z_{n})\implies X_{n}=O_{p}(Z_{n})$.
+(4) $X_{n}=O(Y_{n})\ a.s.,Y_{n}=O(Z_{n})\ a.s.\implies X_{n}=O(Z_{n})\ a.s.$.
+(5) $X_{n}=o_{p}(Y_{n}),Y_{n}=o_{p}(Z_{n})\implies X_{n}=o_{p}(Z_{n})$.
+(6) $X_{n}=o(Y_{n})\ a.s.,Y_{n}=o(Z_{n})\ a.s.\implies X_{n}=o(Z_{n})\ a.s.$.
+(7) $X_{n}\overset{ d }{ \longrightarrow }X\implies X_{n}=O_{p}(1)$, 此时 $\{ X_{n} \}$ 被称为**依概率有限 (bounded in probability)**.
+
+:::
+上面的性质说明：
+1. 随机变量的渐进记号拥有和序列渐进记号相似的性质：$o$ 蕴含 $O$。
+2. 所有的记号都有传递性。
+
+::: {.proof}
+(1)
+$$
+\begin{align}
+X_{n}=o_{p}(Y_{n})\implies \\
+\lim_{ n \to \infty } P\left( \left\lvert  \frac{X_{n}}{Y_{n}}  \right\rvert >\epsilon \right)=1,\quad \forall\epsilon>0\implies \\
+\forall\epsilon>0,\exists N_{\epsilon},\forall n>N_{\epsilon},
+P(\lvert X_{n} \rvert >\epsilon \lvert Y_{n} \rvert )<\epsilon.
+\end{align}
+$$
+对于 $n\leq N_{\epsilon}$, 因为
+$$
+\lim_{ k \to \infty } P\left( \left\lvert  \frac{X_{n}}{Y_{n}}  \right\rvert > k \right) =
+P\left( \bigcap_{k=1}^{\infty}\left\{  \left\lvert  \frac{X_{n}}{Y_{n}}  \right\rvert >k  \right\} \right)=0,
+$$
+因此, 对于固定的某个 $\epsilon>0$, 一定存在某个 $K_{n}^{\epsilon}$, 使得
+$$
+P\left( \left\lvert  \frac{X_{n}}{Y_{n}}  \right\rvert >K_{n}^{\epsilon} \right) =
+P(\lvert X_{n} \rvert >K^{\epsilon}_{n}\lvert Y_{n} \rvert )<\epsilon,
+$$
+此时, 令 $C_{\epsilon}=\max\{ K^{\epsilon}_{1},\dots,K^{\epsilon}_{N_{\epsilon}},\epsilon \}$, 可知
+$$
+\begin{align}
+P(\lvert X_{n} \rvert >C_{\epsilon}\lvert Y_{n} \rvert ) < \epsilon,\forall n\implies
+\sup_{n}P(\lvert X_{n} \rvert >C_{\epsilon}\lvert Y_{n} \rvert )\leq\epsilon,
+\end{align}
+$$
+我们只需要在刚开始设置 $\epsilon$ 稍微放大一些, 就可以得到 $X_{n}=O_{p}(Y_{n})$ 的定义了.
+(2) 直接通过数列的性质推出.
+(3) 令 $C_{3}=C_{1}C_{2}$, 则有
+$$
+\left\lvert  \frac{X_{n}}{Z_{n}}  \right\rvert =
+\left\lvert  \frac{X_{n}}{Y_{n}}  \right\rvert \left\lvert  \frac{Y_{n}}{Z_{n}}  \right\rvert \geq C_{3}
+\implies
+\left\lvert  \frac{X_{n}}{Y_{n}}  \right\rvert \geq C_{1} \quad\text{or}\quad
+\left\lvert  \frac{Y_{n}}{Z_{n}}  \right\rvert \geq C_{2},
+$$
+因此有
+$$
+P(\left\lvert  \frac{X_{n}}{Z_{n}}  \right\rvert\geq C_{3})\leq
+P(\left\lvert  \frac{X_{n}}{Y_{n}}  \right\rvert \geq C_{1})+
+P(\left\lvert  \frac{Y_{n}}{Z_{n}}  \right\rvert \geq C_{2}),
+$$
+据此, 命题是容易证明的.
+(4) (5) (6) 方式类似, 也比较容易, 略.
+
+(7) 注意到
+$$
+\begin{align}
+P(\lvert X_{n} \rvert \geq C)=F_{X_{n}}(-C)+1-F_{X_{n}}(C),
+\end{align}
+$$
+根据 $X_{n}\overset{ d }{ \longrightarrow }X$, 若 $C$ 在 $F_{X}$ 上连续, 则有
+$$
+\lim_{ n \to \infty } P(\lvert X_{n} \rvert \geq C)=P(\lvert X \rvert >C).
+$$
+则 $\forall\epsilon>0$, 我们可以找到一个 $C_{\epsilon}^{1}$, 使得
+$$
+P(\lvert X \rvert >C_{\epsilon}^{1}) < \frac{\epsilon}{2},
+$$
+进一步, 我们可以找到一个 $N_{\epsilon}$, $\forall n>N_{\epsilon}$, 使得
+$$
+P(\lvert X_{n} \rvert \geq C_{\epsilon}^{1}) < \epsilon.
+$$
+至于 $n\leq N_{\epsilon}$ 的情况, 我们为每个 $X_{n}$ 找到一个 $\hat{C}_{\epsilon}^{n}$ 使得
+$$
+P(\lvert X_{n} \rvert \geq\hat{C}_{\epsilon}^{n}) <\epsilon,\quad
+\forall n\leq N_{\epsilon},
+$$
+令 $C_{\epsilon}=\max\{ C_{\epsilon}^{1},\hat{C}_{\epsilon}^{1},\dots,\hat{C}_{\epsilon}^{N_{\epsilon}} \}$, 可知其满足 $O_{p}$ 定义中的情况, 也就是说
+$$
+X_{n}=O_{p}(1).
+$$
+:::
+
+# 弱收敛 (依分布收敛)
+
+我们针对弱收敛进行一些更多的讨论. 我们首先去补充一个类似 " 列紧 " 的定义.
+
+::: {#def-19-convergence-theory-36}
+
+## 概率列紧
+
+假设在 $(\mathbb{R}^{k},\mathcal{B}^{k})$ 上存在一个测度序列 $\{ P_{n} \}$, 我们称其为 **tight**, 如果 $\forall\epsilon>0,\exists$ 紧集 $C \subset \mathbb{R}^{k}$, 使得
+$$
+\inf_{n}P_{n}(C)>1 - \epsilon.
+$$
+
+:::
+注意, 根据 [海涅-博雷尔定理](https://zh.wikipedia.org/wiki/%E6%B5%B7%E6%B6%85-%E5%8D%9A%E9%9B%B7%E5%B0%94%E5%AE%9A%E7%90%86 "海涅-博雷尔定理"), **$\mathbb{R}^{k}$ 中的子集是紧集当且仅当是有界闭集**, 所以有下面的一个简单的推论
+
+::: {#prp-tightness-bounded-in-probability}
+
+## tightness 和 boundedness
+
+随机向量 $\{ X_{n} \}$ 对应的概率序列 $\{ P_{X_{n}} \}$ 是 tight 当且仅当 $\{ \lvert X_{n} \rvert \}$ 是有界的 ($\lvert X_{n} \rvert=O_{p}(1)$).
+
+:::
+
+::: {.proof}
+首先证明 $\implies$. $\{ P_{X_{n}} \}$ 是 tight 的, 则 $\exists$ 紧集 $C \subset \mathbb{R}^{k}$, 使得
+$$
+\forall n, P_{X_{n}}(C)>1-\epsilon,
+$$
+因为 $C$ 是有界闭的, 所以可以找到一个 constant $c_{\epsilon}$, $\{ x \in\mathbb{R}^{k}|\lvert x \rvert<c_{\epsilon} \}\supset C$, 所以有
+$$
+\begin{align}
+\forall n, P(\lvert X_{n} \rvert <c_{\epsilon})\geq P_{X_{n}}(C)>1-\epsilon
+\implies 
+\forall n,P(\lvert X_{n} \rvert \geq c_{\epsilon})\leq 1-\epsilon.
+\end{align}
+$$
+也就是 $\lvert X_{n} \rvert=O_{p}(1)$.
+然后再证明另一个方向. 当 $\lvert X_{n} \rvert=O_{p}(1)$ 时, 我们只需要令这个紧集
+$$
+C=\{ x \in\mathbb{R}^{k}|\lvert x \rvert \leq C_{\epsilon} \}
+$$
+即可.
+:::
+
+$\{ P_{n} \}$ 的 tightness 和序列的弱收敛非常相关, 这个关系可以总结为下面的性质
+
+::: {#prp-19-convergence-theory-38}
+
+## tightness 和弱收敛
+
+%%
+label: test
+%%
+假设 $\{ P_{n} \}$ 是在 $(\mathbb{R}^{k},\mathcal{B}^{k})$ 上的一个概率测度序列, 则有
+(1) $\{ P_{n} \}$ 的 tightness 的一个**充分必要条件**是对于 $\{ P_{n} \}$ 的每一个子列, 都存在一个子列的子列 $\{ P_{n_{j}} \}$ 和一个额外的 $(\mathbb{R}^{k},\mathcal{B}^{k})$ 上的概率测度 $P$ 使得
+$$
+P_{n_{j}}\overset{ \omega }{ \longrightarrow }P.
+$$
+(2) 如果 $\{ P_{n} \}$ 是 tight, 并且其**每个弱收敛子列**都收敛到相同的概率测度 $P$, 则有
+$$
+P_{n}\overset{ \omega }{ \longrightarrow }P.
+$$
+
+:::
+::: {.proof}
+(1) 首先我们证明 $\implies$. 因为 $\{ P_{n} \}$ 是 tightness, 则其子列也一定是 tightness 的 (根据定义), 所以我们只需要证明: 存在 $\{ P_{n} \}$ 的子列其可以弱收敛到某个概率测度 $P$ 即可 (这可以被视为 @thm-helly-selection 的高维版本, 比一维的版本多了一个 tightness 的条件).
+
+基本思路和 @thm-helly-selection 中的证明思路是类似的, 我们首先构造
+$$
+F_{n}(\mathbf{x})=P_{n}((-\infty,\mathbf{x}]).
+$$
+然后, 我们找到 $\mathbb{R}^{k}$ 上的所有有理数点 $\mathbf{r}$ (每个分量都是有理数), 这些点的数量是可数的. 因此可以应用 diagonal method, 找到一个整数列 $\{ n_{i} \}$ 使得
+$$
+\forall r,\quad G(\mathbf{r})=\lim_{ i \to \infty } F_{n_{i}}(\mathbf{r})\ \text{exists}.
+$$
+然后我们定义
+$$
+F(\mathbf{x})=\inf\{ G(\mathbf{r})|\mathbf{r}\in(\mathbf{x},\infty) \}
+=\inf\{ G(\mathbf{r})| r_{j}>x_{j},\forall j=1,\dots,k \},
+$$
+容易证明 $F$ 在每个分量上是非降的. 若 $x_{i}\leq y_{i}$, 则有
+$$
+\{ G(\mathbf{r})|\mathbf{r}\in((x_{1},\dots,x_{i-1},x_{i},x_{i+1},\dots,x_{k}),\infty) \}\supset
+\{ G(\mathbf{r})|\mathbf{r}\in((x_{1},\dots,x_{i-1},y_{i},x_{i+1},\dots,x_{k}),\infty) \}
+$$
+这也就意味着
+$$
+F(x_{1},\dots,x_{i-1},x_{i},x_{i+1},\dots,x_{k})\leq
+F(x_{1},\dots,x_{i-1},y_{i},x_{i+1},\dots,x_{k}).
+$$ 
+
+但是, 其作为高维分布函数, 还需要进一步证明其 " 高阶增量 ">0 才行 (1.1 测度空间和概率空间 (`1.1 测度空间和概率空间#^b233c4`)). $\forall\epsilon>0, A=(\mathbf{a},\mathbf{b}]$, $A$ 有 $2^{k}$ 个顶点 (使用 $\mathbf{x}$ 表示), 我们可以找到一个 $\delta$, 使得满足
+$$
+\mathbf{x}<\mathbf{r}<\mathbf{x}+\mathbf{z},\quad
+\mathbf{z}=(\delta,...,\delta)
+$$
+
+<span id="eq-tightness-rational-approximation"></span>
+
+的有理数点 $\mathbf{r}$ 满足下面的关系:
+$$
+\lvert F(\mathbf{x})-G(\mathbf{r}) \rvert <\frac{\epsilon}{2^{k}}.
+$$
+(找法是这样的: 首先, 我们肯定能够找到一个 $\mathbf{r}$ 满足 $\mathbf{r}\in(\mathbf{x},\infty)$ 且 $F(\mathbf{x})\leq F(\mathbf{r})\leq F(\mathbf{x})+\epsilon$, 然后令 $\delta=\min\{ r_{i}-x_{i},\forall i=1,\dots,k \}$, 利用 $F$ 在每个分量上的单调性, 可以证明这个 $\delta$ 就是我们想要找的 $\delta$.)
+
+利用同样的原理, 我们可以找到两个有理数点 $\mathbf{s},\mathbf{t}$ 满足
+$$
+\mathbf{a}<\mathbf{s}<\mathbf{a}+\mathbf{z},\quad
+\mathbf{b}<\mathbf{t}<\mathbf{b}+\mathbf{z},
+$$
+令 $B=(\mathbf{s},\mathbf{t}]$, 则我们有
+$$
+\lvert \Delta_{A}F-\Delta_{B}G \rvert < \epsilon
+$$
+其中
+$$
+\begin{align}
+&\Delta_{A}F=\sum\limits_{c\in C}^{}(-1)^{n(c)}F(c),
+\quad
+C=\{ (c_{1},\dots,c_{k})|c_{i}\in\{ a_{i},b_{i} \},\forall i=1,\dots,k \},
+n(c)=\#\{ c_{i}=a_{i} \} \\
+&\Delta_{B}G=\sum\limits_{c\in C}^{}(-1)^{n(c)}G(c),
+\quad
+C=\{ (c_{1},\dots,c_{k})|c_{i}\in\{ s_{i},t_{i} \},\forall i=1,\dots,k \},
+n(c)=\#\{ c_{i}=s_{i} \}
+\end{align}
+
+$$
+(这是因为 $B$ 的每个顶点正好就在式 [eq-tightness-rational-approximation](#eq-tightness-rational-approximation) 确定的 $\mathbf{r}$ 中, 而这些顶点与 $A$ 的顶点相差都不超过 $\frac{\epsilon}{2^{k}}$, 则 " 高阶增量 " 的差距不会超过 $\epsilon$.)
+又由构造 $F$ 的过程我们知道
+$$
+\Delta_{B}G=\lim_{ i \to \infty } \Delta_{B}F_{n_{i}}\geq 0,
+$$
+而 $\epsilon$ 可以任意小, 这意味着 $\Delta_{A}F\geq 0$. 也就是说, 高维分布函数的 " 非降 " 性质我们证明完成.
+
+接下来, 我们证明 " 右连续 " 性质, 也就是证明在固定其他分量的情况下, 剩下的单个分量是右连续的. 对于某个 $\mathbf{x}$, 我们可以找到一个 $\mathbf{r}$ 满足
+$$
+\mathbf{x}<\mathbf{r}<\mathbf{x}+\mathbf{z},\quad
+F(\mathbf{x})\leq F(\mathbf{r})=G(\mathbf{r})<F(\mathbf{x})+\epsilon,
+$$
+我们定义 $\mathbf{y}=(x_{1},\dots,x_{i-1},r_{i},x_{i+1},\dots,x_{k})$, 则有
+$$
+F(\mathbf{x})\leq F(\mathbf{y})\leq G(r)<F(\mathbf{x})+\epsilon,
+$$
+因为每个分量上的单调性, 我们可以知道在 $\forall y_{i}\in(x_{i},r_{i})$, 都满足
+$$
+F(\mathbf{x})\leq F(x_{1},\dots,x_{i-1},y_{i},x_{i+1},\dots,x_{k})<F(\mathbf{x})+\epsilon,
+$$
+这其实就证明了 $F$ 在第 $i$ 个分量上的右连续性.
+
+接下来, 我们来证明在连续点 $F_{n_{i}}(\mathbf{x})\to F(\mathbf{x})$. 因为我们已经证明了可以去找式 [eq-tightness-rational-approximation](#eq-tightness-rational-approximation) 那样的有理数, 这使得我们可以按照和 @thm-helly-selection 中方法来完成高维情况下的证明, 因此这里具体的细节略过.
+
+其实现在我们已经证明了 $F$ 是一个准分布函数, 但是其是不是一个分布函数还无法知道. 只要我们能够证明其是一个分布函数, 则根据 1.1 测度空间和概率空间 (`1.1 测度空间和概率空间#6.2 多维准分布函数`) 中的方法生成一个概率测度, 也就可以作为我们这里的 $P$. 否则, 我们只能生成一个普通测度.
+因为 $\{ P_{n} \}$ 的 tightness, 所以我们知道对于任意的 $\epsilon>0$, 存在一个有界闭集 $C$ ,使得
+$$
+P_{n}(C)>1-\epsilon,\forall n.
+$$
+进一步, 我们可以找到一个实数 $t$, 使得
+$$
+P_{n}([-\mathbf{t},\mathbf{t}])\geq P_{n}(C)>1-\epsilon,\forall n,
+$$
+其中 $\mathbf{t}=(t, \dots, t)$.
+现在, 对于某个 $\mathbf{x}\in\mathbb{R}^{k}$, 其可能存在以下两种情况 (这两种情况并不覆盖所有):
+(a), $\mathbf{x}$ 的所有分量都在 $>t$, 则对于所有 $\mathbf{r}>\mathbf{x}$, 我们有
+$$
+F_{n}(\mathbf{r})>1-\epsilon\implies G(\mathbf{r})\geq 1-\epsilon
+\implies F(\mathbf{x})\geq 1-\epsilon.
+$$
+
+<span id="eq-tightness-upper-tail-control"></span>
+
+(b), $\mathbf{x}$ 的部分分量 $<-t$, 此时, 我们依然可以找到一个有理点 $\mathbf{r}$ 使得 $\mathbf{r}>\mathbf{x}$ ,并且 $\mathbf{r}$ 的对应分量也 $< -t$. 此时 $(-\infty,\mathbf{r})\subset[-\mathbf{t},\mathbf{t}]^{c}$ 所以有
+$$
+F_{n}(\mathbf{r})<\epsilon\implies G(\mathbf{r})\leq\epsilon
+\implies F(\mathbf{x})\leq\epsilon.
+$$
+
+<span id="eq-tightness-lower-tail-control"></span>
+
+根据 1.1 测度空间和概率空间 (`1.1 测度空间和概率空间#^e71daf`) 定义一个测度 $\mu$, 根据上面的推导我们可以知道:
+$$
+\mu((-\infty,\mathbf{x}])=
+\lim_{ s \to \infty } \mu((-\mathbf{s},\mathbf{x}])=
+\lim_{ s \to \infty } \Delta_{(-\mathbf{s},\mathbf{x}]}F,
+$$
+其中 $\mathbf{s}=(s, \dots,s)$. 当 $s\to \infty$ 时, $(-\mathbf{s},\mathbf{x})$ 的 $2^{k}$ 个顶点中, 除了 $\mathbf{x}$, 其他的顶点因为都有 $\mathbf{s}$ 的部分所以都 $\leq\epsilon$ (根据式 [eq-tightness-lower-tail-control](#eq-tightness-lower-tail-control)), 因为 $\epsilon$ 的任意性得到
+$$
+\mu((-\infty,\mathbf{x}])=F(\mathbf{x}).
+$$
+当 $\mathbf{x}\to \infty$ 时, 根据式 [eq-tightness-upper-tail-control](#eq-tightness-upper-tail-control), 利用相似的思路又可以得到
+$$
+\mu(\mathbb{R}^{k})=F(\infty)=1.
+$$
+当 $\mathbf{x}\to-\infty$ 时, $F(\mathbf{x})=\mu(\emptyset)=0$, 这样, 我们就证明了 $\mu$ 是一个概率测度, $F$ 是其对应的分布函数.
+
+至此, 我们完成了 $\implies$ 的证明.
+
+接下来, 我们证明另一个推导的方向. 若 tightness 不成立, 则意味着 $\exists\epsilon$, 对于所有的有界闭集 $C$, 有
+$$
+\inf_{n}\{ P_{n}(C) \}\leq 1-\epsilon\implies \exists n,P_{n}(C)\leq 1-\epsilon.
+$$
+对于 $(-\mathbf{i},\mathbf{i}]$ (其中 $\mathbf{i}=(i, \dots,i)$), 我们可以找到一个 $n_{i}$ 满足
+$$
+P_{n_{i}}((-\mathbf{i},\mathbf{i}])\leq 1-\epsilon.
+$$
+根据我们的条件, 假设 $\{ P_{n_{i}} \}$ 的某个子列 $\{ P_{n_{i(j)}} \}$ 弱收敛到某个 $P$. 根据测度的性质,我们总可以选择出一个 $(\mathbf{a},\mathbf{b}]$ 令其满足下面的条件
+$$
+P(\{ \mathbf{a} \})=P(\{ \mathbf{b} \})=0,\quad
+P((\mathbf{a},\mathbf{b}])>1-\epsilon.
+$$
+
+<span id="eq-tightness-contradiction-rectangle"></span>
+
+当 $j$ 足够大时, 有 $(\mathbf{a},\mathbf{b}]\subset(-\mathbf{i(j)}, \mathbf{i(j)}]$ ,因此有
+$$
+1-\epsilon\geq P_{n_{i(j)}}((-\mathbf{i(j)}, \mathbf{i(j)}])\geq 
+P_{n}((\mathbf{a},\mathbf{b}])\to P((\mathbf{a},\mathbf{b}]),
+$$
+这意味着
+$$
+P((\mathbf{a},\mathbf{b}]) \leq 1-\epsilon,
+$$
+这与式 [eq-tightness-contradiction-rectangle](#eq-tightness-contradiction-rectangle) 中的设置产生矛盾, 命题得证.
+
+(2) 由 (1) 结合题设, 对于每个子列, 都存在子列的子列弱收敛到 $P$. 假设 $P_{n}\overset{ \omega }{ \longrightarrow }P$ 不成立, 这意味着对于一些连续点 $\mathbf{x}$ ($P\{ \mathbf{x} \}=0$)
+$$
+\lim_{ n \to \infty } P_{n}((-\infty, \mathbf{x}])\neq P((-\infty, \mathbf{x}]),
+$$
+这也就是意味着存在无限多项 $\{ n_{k} \}$ 使得
+$$
+\lvert P_{n}((-\infty, \mathbf{x}])- P((-\infty, \mathbf{x}]) \rvert \geq\epsilon, 
+$$
+这表明 $\{ P_{n_{k}} \}$ 中没有子列会弱收敛到 $P$, 这与题设得到的结论产生矛盾, 命题得证.
+
+:::
+接下来, 我们将证明几个依分布收敛的充要条件, 这些条件在后续的内容中扮演着非常重要的角色.
+
+::: {#thm-portmanteau}
+
+## 依分布收敛的 any 等价
+
+$X,X_{1},X_{2},\dots$ 是 $k$ 维随机向量, 则 $X_{n}\overset{ d }{ \longrightarrow }X$ 与下面的任意一个条件等价:
+(1) $\mathbb{E}[h(X_{n})]\to \mathbb{E}[h(X)]$ 对于每个有界连续函数成立.
+(2) $\mathop{\lim\sup}_{ n \to \infty }P_{X_{n}}(C)\leq P_{X}(C), \forall \text{closed set }C \subset \mathbb{R}^{k}$.
+(3) $\mathop{\lim\inf}_{ n \to \infty }P_{X_{n}}(O)\geq P_{X}(O), \forall \text{open set }O \subset \mathbb{R}^{k}$.
+
+:::
+
+::: {.proof}
+我们使用循环证明方式.
+
+我们首先证明依分布收敛蕴含 (1). 利用 @thm-skorohod-representation 定理, 可以找到分布相关的 $Y,Y_{1},Y_{2},\dots$ ,使得
+$$
+Y_{n}\overset{ a.s. }{ \longrightarrow }Y,
+$$
+则对于有界连续函数 $h$ 有
+$$
+h(Y_{n})\overset{ a.s. }{ \longrightarrow }h(Y),
+$$
+进而根据 [8_积分](08-integration.qmd#7ffb80)
+$$
+\mathbb{E}[h(Y_{n})]\to \mathbb{E}[h(Y)].
+$$
+进而注意到
+$$
+\mathbb{E}[h(Y)]=\int h(Y) \, dP=\int h(x) \, dP_{Y}  =\int _{h(x)} \, dP_{X}=\mathbb{E}[h(X)], 
+$$
+必要性得证.
+
+然后我们来证明 $(1)\implies(2)$. 我们定义
+$$
+f_{C}(\mathbf{x})=\inf\{ \lvert \mathbf{x}-\mathbf{y} \rvert : \mathbf{y}\in C \},
+$$
+可以证明 $f_{C}$ 是连续的. 再定义
+$$
+\phi_{j}=I_{(-\infty,0]}+(1-jt)I_{(0,j^{-1}]},\quad \forall j=1,2,\dots,
+$$
+我们可以知道
+$$
+h_{j}(\mathbf{x})=\phi_{j}(f_{C}(\mathbf{x}))
+$$
+是 bounded continuous, 并且有
+$$
+h_{j}\geq h_{j+1},\quad \lim_{ j \to \infty } h_{j}(\mathbf{x})=I_{C}(\mathbf{x}).
+$$
+因此, 我们有
+$$
+\begin{align}
+\mathop{\lim\sup}_{ n \to \infty } P_{X_{n}}(C)&=
+\mathop{\lim\sup}_{ n \to \infty } \int I_{C}(X_{n}) \, dP \\
+&\leq \lim_{ n \to \infty } \int h_{j}(X_{n}) \, dP \\
+&=\mathbb{E}[h_{j}(X_{n})]=\mathbb{E}[h_{j}(X)],\quad \forall j.
+\end{align}
+$$
+其中第三行用到了 (a). 进而我们使用控制收敛定理, 得到
+$$
+\lim_{ j \to \infty } \mathbb{E}[h_{j}(X)]=\mathbb{E}[I_{C}(X)]=P_{X}(C).
+$$
+
+注意到任意闭集的补都是开集, 所以 $(2)\iff(3)$.
+
+现在我们来证明 $(2),(3)$ 蕴含依分布收敛. 对于 $\mathbf{x}\in\mathbb{R}^{k}$, 我们有
+$$
+\begin{align}
+P_{X}((-\infty,\mathbf{x}))&\leq \mathop{\lim\inf}_{ n \to \infty } P_{X_{n}}((-\infty,\mathbf{x})) \\
+&\leq \mathop{\lim\inf}_{ n \to \infty } F_{X_{n}}(\mathbf{x}) \\
+&\leq \mathop{\lim\sup}_{ n \to \infty } F_{X_{n}}(\mathbf{x}) \\
+&=\mathop{\lim\sup}_{ n \to \infty } P_{X_{n}}((-\infty,\mathbf{x}]) \\
+&\leq P_{X}((-\infty,\mathbf{x}))=F_{X}(\mathbf{x}).
+\end{align}
+$$
+
+<span id="eq-portmanteau-sandwich"></span>
+
+其中第一行使用了 (3), 最后一行使用了 (2). 若 $\mathbf{x}$ 是 $F_{X}$ 的连续点, 则有
+$$
+P_{X}((-\infty,\mathbf{x}))=F_{X}(\mathbf{x}),
+$$
+这导致等式 [eq-portmanteau-sandwich](#eq-portmanteau-sandwich) 的不等号全部变为等号, 也就得到了依分布收敛的定义.
+:::
+
+::: {#thm-levy-cramer-continuity}
+
+## Levy-Cramer 连续定理
+
+$X,X_{1},X_{2},\dots$ 是 $k$ 维随机向量, $\phi_{X},\phi_{X_{1}},\phi_{X_{2}},\dots$ 是对应的 ch. f., 则 $X_{n}\overset{ d }{ \longrightarrow }X$ 当且仅当
+$$
+\lim_{ n \to \infty } \phi_{X_{n}}(\mathbf{t})=\phi_{X}(\mathbf{t}),\quad
+\forall \mathbf{t}\in\mathbb{R}^{k}.
+$$
+
+:::
+
+::: {.proof}
+我们首先证明条件的必要性. 这个可以直接利用
+$$
+e^{i\mathbf{t}^{T}\mathbf{x}}=\cos(\mathbf{t}^{T}\mathbf{x})+i\sin(\mathbf{t}^{T}\mathbf{x})
+$$
+, $\cos,\sin$ 的有界连续性和 @thm-portmanteau (1) 直接得到.
+
+然后我们来证明条件的充分性. 我们先证明 1 维情况, 此时对于任意的 $u>0$,
+$$
+\begin{align}
+\frac{1}{u}\int _{-u}^{u}[1-\phi_{X_{n}}(t)] \, dt
+&=\frac{1}{u}\int _{-u}^{u}\left[ 1-\int _{-\infty}^{\infty}e^{itx} \, dP_{X_{n}}(x)  \right] \, dt \\
+&=\int _{-\infty}^{\infty}\left[ \frac{1}{u}\int _{-u}^{u}(1-e^{itx}) \, dt  \right] \, dP_{X_{n}}(x) \\
+&=2\int _{-\infty}^{\infty}\left( 1-\frac{\sin ux}{ux} \right) \, dP_{X_{n}}(x) \\
+&\geq 2\int _{\lvert x \rvert >2u^{-1}}\left( 1-\frac{1}{\lvert ux \rvert } \right) \, dP_{X_{n}}(x) \\
+&\geq P_{X_{n}}((-\infty,-2u^{-1})\cup(2u^{-1},\infty)).
+\end{align}
+$$
+
+<span id="eq-levy-tightness-bound"></span>
+
+其中第二行使用到了 [1.5 乘积空间和高维随机变量](13-finite-product-spaces.qmd#9068d0).
+
+因为 $\phi_{X}(t)$ 在 $0$ 点连续, 并且 $\phi_{X}(0)=1$, 所以对于任意的 $\epsilon>0$, 我们都可以找到一个 $u>0$ 使得
+$$
+u^{-1}\int _{-u}^{u}[1-\phi_{X}(t)] \, dt < \frac{\epsilon}{2}. 
+$$
+又因为 $\phi_{X_{n}}\to \phi_{X}$, 再根据 [8_积分](08-integration.qmd#7ffb80) 得到
+$$
+\lim_{ n \to \infty } h_{n}(u)= u^{-1}\int _{-u}^{u}[1-\phi_{X_{n}}(t)] \, dt=u^{-1}\int _{-u}^{u}[1-\phi_{X}(t)] \, dt<\frac{\epsilon}{2}.
+$$
+这样, 我们可以找到一个 $N$, $\forall n>N$ 满足
+$$
+h_{n}(u) < \epsilon,
+$$
+而对于 $n\leq N$ 的 $h_{n}(u)$, 我们可以通过调整 $u$ 的大小来满足上式, 这样, 我们就找到了一个 $u>0$, 满足
+$$
+\sup_{n}\left\{  u^{-1}\int _{-u}^{u}[1-\phi_{X_{n}}(t)] \, dt   \right\}<\epsilon,
+$$
+进而结合式 [eq-levy-tightness-bound](#eq-levy-tightness-bound), 我们得到
+$$
+\inf_{n}P_{X_{n}}([-2u^{-1},2u^{-1}])\geq
+1-\sup_{n}\{ u^{-1}\int _{-u}^{u}[1-\phi_{X_{n}}(t)] \, dt \}
+\geq 1-\epsilon.
+$$
+也就是说 $\{ P_{X_{n}} \}$ 是 tight.
+
+利用 @prp-tightness-bounded-in-probability (1), 对于任意弱收敛的子列 $\{ P_{X_{n_{j}}} \}$ ,其会收敛到一个概率分布 $P$, 然后利用已经证明的条件的必要性可知这个 $P$ 的 ch. f.是 $\phi_{X}$. 由 [17_统计分布与密度函数](17-statistical-distributions-and-density-functions.qmd#b8ee09) 可知, $P=P_{X}$. 再根据 @prp-tightness-bounded-in-probability (2) 可知
+$$
+X_{n}\overset{ d }{ \longrightarrow }X.
+$$
+
+接下来, 我们来证明 $k$ 维的情况. 其实根据上面的过程, 我们发现我们只需要证明 $P_{X_{n}}$ 的 tightness 即可, 其后续使用的定理和思路可以完美推广至 $k$ 维的情况. 我们令 $Y_{nj},Y_{j}$ 分别是 $X_{n},X$ 的第 $j$ 个分量. 由 [17_统计分布与密度函数](17-statistical-distributions-and-density-functions.qmd#615f98) (4), 可知
+$$
+\phi_{Y_{nj}}\to \phi_{Y_{j}},\quad \forall j=1,\dots,k.
+$$
+根据之前证明的 1 维的结论, 这意味着 $Y_{nj}\overset{ d }{ \longrightarrow }Y_{j}$, 进而意味着 $\{ P_{Y_{nj}} \}$ 是 tight 的. 对于任意的 $\epsilon>0$, 我们都可以找到一个 $C_{j}$ 使得
+$$
+\forall n, P_{Y_{nj}}(C_{j})>1-\epsilon,
+$$
+令
+$$
+C=\left( \prod\limits_{j=1}^{k}C_{j}^{c} \right) ^{c},
+$$
+可知
+$$
+P_{X_{n}}(C^{c})\leq P_{Y_{nj}}(C_{j}),\forall j,\implies
+P_{X_{n}}(C^{c})\leq\epsilon\implies
+P_{X_{n}}(C)>1-\epsilon,
+$$
+也就是说 $\{ P_{X_{n}} \}$ 是 tight. 根据我们之前的讨论, 我们已经能够证明依分布收敛了.
+
+:::
+
+::: {#thm-cramer-wold-device}
+
+## Cramer-Wold device
+
+$X,X_{1},X_{2},\dots$ 是 $k$ 维随机向量, 则 $X_{n}\overset{ d }{ \longrightarrow }X$ 当且仅当
+$$
+\mathbf{c}^{T}X_{n}\overset{ d }{ \longrightarrow }\mathbf{c}^{T}X,
+\quad
+\forall \mathbf{c}\in\mathbb{R}^{k}.
+$$
+
+:::
+
+::: {.proof}
+根据 [17_统计分布与密度函数](17-statistical-distributions-and-density-functions.qmd#615f98) (4), 我们可知
+$$
+\phi_{\mathbf{c}^{T}X_{n}}(u)=\phi_{X_{n}}(c^{T}u),\quad
+\phi_{\mathbf{c}^{T}X}(u)=\phi_{X}(c^{T}u).
+$$
+自然 $\phi_{X_{n}}\to \phi_{X}$ 可以等价于
+$$
+\phi_{\mathbf{c}^{T}X_{n}}\to \phi_{\mathbf{c}^{T}X},
+$$
+根据 @thm-levy-cramer-continuity, 这等价于依分布收敛.
+
+:::
+
+上述几个定理已经非常强大, 能够让我们去得到一些非常强的结论. 比如, 下面将要介绍的大数定律和中心极限定理的简单版本.
+
+::: {#exm-lln-simple}
+
+## 大数定律的简单版本
+
+$X_{1},\dots,X_{n}$ 是独立同分布的随机变量, 令 $T_{n}=\sum\limits_{i=1}^{n}X_{i}$, 假设 $\mathbb{E}\lvert X_{1} \rvert<\infty$ 且有 $\mu=\mathbb{E}X_{1}$, 则我们有
+$$
+\frac{T_{n}}{n}\overset{ d }{ \longrightarrow }\mu 
+$$
+进一步根据 @thm-weak-convergence-to-constant 可知
+$$
+\frac{T_{n}}{n}\overset{ P }{ \longrightarrow }\mu .
+$$
+
+:::
+
+::: {.proof}
+根据 [17_统计分布与密度函数](17-statistical-distributions-and-density-functions.qmd#615f98), 求解 ch. f.的展开式, 得到
+$$
+\phi_{X_{1}}(t)=\phi_{X_{1}}(0)+i \mu t+o(\lvert t \rvert ),\quad
+\lvert t \rvert \to0,
+$$
+进一步, 我们可以计算得到 $\frac{T_{n}}{n}$ 的 ch. f.
+$$
+\phi_{\frac{T_{n}}{n}}=\left[ \phi_{X_{1}}\left( \frac{t}{n} \right) \right]^{n}
+=\left[ 1+\frac{i \mu t}{n}+o\left( \frac{t}{n} \right) \right]^{n},
+$$
+当 $n\to \infty$ 时, 根据
+$$
+\left( 1+\frac{c_{n}}{n} \right)^{n}\to e^{c},\quad
+\text{if}\  c_{n}\to c,
+$$
+可知
+$$
+\phi_{\frac{T_{n}}{n}}(t)\to e^{i \mu t},
+$$
+这是仅在 $\mu$ 这一点概率为 1 的概率分布的 ch. f., 根据 @thm-levy-cramer-continuity, 可知
+$$
+\frac{T_{n}}{n}\overset{ d }{ \longrightarrow }\mu.
+$$
+:::
+
+::: {#exm-clt-simple}
+
+## 中心极限定理的简单版本
+
+$X_{1},\dots,X_{n}$ 是独立同分布的随机变量, 令 $T_{n}=\sum\limits_{i=1}^{n}X_{i}$, 假设 $\mu=\mathbb{E}\lvert X_{1} \rvert=0,\sigma^{2}=Var(X_{1})<\infty$ , 则有
+$$
+\frac{T_{n}}{\sqrt{ n }}\overset{ d }{ \longrightarrow }
+\mathcal{N}(0,\sigma^{2}). 
+$$
+若 $\mu\neq 0$, 则根据期望的计算公式可知
+$$
+\frac{T_{n}-n\mu}{\sqrt{ n }}\overset{ d }{ \longrightarrow }
+\mathcal{N}(0,\sigma^{2}). 
+$$
+如果是 $k$ 维随机向量, 并且 $\boldsymbol{\mu}=\mathbb{E}X_{1},\Sigma=Var(X_{1})$ 是有限的, 则对于任意的 $\mathbf{c}\in\mathbb{R}^{k}$ ,根据上面的讨论有
+$$
+\frac{\mathbf{c}^{T}T_{n}-n\mathbf{c}^{T}\boldsymbol{\mu}}{\sqrt{ n }} 
+\overset{ d }{ \longrightarrow }\mathcal{N}(0,\mathbf{c}^{T}\Sigma \mathbf{c}^{T}),
+$$
+再根据 @thm-cramer-wold-device 可知
+$$
+\frac{T_{n}-n\boldsymbol{\mu}}{\sqrt{ n }}\overset{ d }{ \longrightarrow }
+\mathcal{N}_{k}(0,\Sigma). 
+$$
+
+:::
+
+::: {.proof}
+同样利用展开式 (但是要展开到二阶项), 可以得到
+$$
+\phi_{\frac{T_{n}}{\sqrt{ n }}}(t)
+=\left[ 1-\frac{\sigma^{2}t^{2}}{2n}+o\left( \frac{t^{2}}{n} \right) \right]^{n},
+$$
+这蕴含
+$$
+\phi_{\frac{T_{n}}{\sqrt{ n }}}(t)\to e^{-\sigma^{2}t^{2}/2},
+$$
+这是 $\mathcal{N}(0,\sigma^{2})$ 的 ch. f., 因此得到
+$$
+\frac{T_{n}}{\sqrt{ n }}\overset{ d }{ \longrightarrow }\mathcal{N}(0,\sigma^{2}).
+$$
+:::
+以上的例子展示了一种非常常用的证明策略.
+
+::: {.callout-important title="利用特征函数"}
+为了证明某个随机变量序列依分布收敛于另一个随机变量, 我们可以去探索其对应的 ch. f.之间关系, 根据 @thm-levy-cramer-continuity 从而证明依分布收敛.
+ch. f.是单纯的复变函数, 可以使用更多分析的工具来处理它.
+
+:::
+利用这个策略, 我们还有下面的一个例子, 这个例子证明了: 条件 $\mathbb{E}\lvert X_{1} \rvert<\infty$ 对于 @exm-lln-simple 是必要的.
+
+::: {#exm-19-convergence-theory-44}
+
+## 大数定律的反例
+
+$X_{1},\dots,X_{n}$ 是独立同分布的随机变量, 其 p.d.f.是
+$$
+f(x)=\frac{1-\cos x}{\pi x^{2}},
+$$
+其 ch. f.是
+$$
+\phi_{X_{1}}(t)=\max\{ 1-\lvert t \rvert ,0 \},
+$$
+则可以得到
+$$
+\phi_{T_{n} / n}=\left( \max\left\{  1-\frac{\lvert t \rvert }{n},0  \right\} \right)^{n}\to e^{-\lvert t \rvert },
+$$
+这是 Cauchy 分布 ($C(0,1)$) 的 ch. f..
+
+:::
+在这一节, 我们最后介绍一个关于 p.d.f.的定理, 请可以用来检查 $X_{n}\overset{ d }{ \longrightarrow }X$ 是否成立, 其中 $X_{n},X$ 均有 p.d.f..
+
+::: {#prp-19-convergence-theory-45}
+
+## Proposition
+
+$X,X_{1},X_{2},\dots$ 是 $k$ 维随机向量, 其有 Lebesgue p.d.f. $f, f_{1},f_{2},\dots$, 则
+$$
+X_{n}\overset{ d }{ \longrightarrow }X
+\implies
+\lim_{ n \to \infty } f_{n}=f\ a.e..
+$$
+
+:::
+::: {.proof}
+因为 $P_{X},P_{X_{n}}$ 相对于 Lebesgue 测度都有 p.d.f., 则说明其对应的分布函数 $F_{X},F_{X_{n}}$ 都是连续的.
+
+在 $\mathbf{x}$ 上
+$$
+P_{X_{n}}((-\infty, \mathbf{x}])\to P_{X}((-\infty,\mathbf{x}]),
+$$
+利用 @thm-mct, 可知
+$$
+\int _{(-\infty,\mathbf{x}]}f_{n} \to \int _{(-\infty,\mathbf{x}]}f.
+$$
+我们令
+$$
+\mathcal{F}:=\left\{  A\in\mathcal{B}^{k}| \int _{A}f_{n}\to \int _{A}f \right\},
+$$
+则可知
+$$
+\mathcal{F}\supset \{ (-\infty,\mathbf{x}) \},
+$$
+然后, 我们再证明 $\mathcal{F}$ 是一个 $\sigma$ -field, 这样我们就可以证明
+$$
+\mathcal{F}=\mathcal{B}^{k},
+$$
+进而再根据 @thm-order (5) 就能得到我们的结论.
+:::
+
+::: {#thm-19-convergence-theory-46}
+
+## Scheffe 定理
+
+假设 $\{ f_{n} \}$ 是一列 $\mathbb{R}^{k}$ 上的 p.d.f.(相对于测度 $\nu$), 并且有
+$$
+\lim_{ n \to \infty } f_{n}(x)=f(x)\ a.e.\ \nu,
+$$
+其中 $f(x)$ 是另外一个 p.d.f.(相对于 $\nu$). 则
+$$
+\lim_{ n \to \infty } \int \lvert f_{n}(x)-f(x) \rvert  \, d\nu=0. 
+$$
+
+:::
+::: {.proof}
+令
+$$
+g_{n}(x)=[f(x)-f_{n}(x)]I_{\{ f\geq f_{n} \}}(x),\quad
+\forall n=1,2,\dots,
+$$
+和
+$$
+h_{n}(x)=[f_{n}(x)-f(x)]I_{\{ f< f_{n} \}}(x),\quad
+\forall n=1,2,\dots.
+$$
+则有
+$$
+\int \lvert f_{n}(x)-f(x) \rvert  \, d\nu=
+\int g_{n}(x) \, d\nu +\int h_{n}(x) \, d\nu 
+$$
+注意到有关系
+$$
+0\leq g_{n}(x)\leq f(x),0\leq h_{n}(x)\leq f_{n}(x)\quad
+g_{n}\to0\ a.e., h_{n}\to0\ a.e..
+$$
+所以可以用 [8_积分](08-integration.qmd#7ffb80) 得到定理结论.
+:::
+
+# 函数变换下的收敛
+
+在统计中, 我们时常会对随机变量进行变换, 因此我们可能更感兴趣 $g(X_{n})$ 是否收敛到 $g(X)$ 这样的问题.
+
+变换的类型有很多, 这里我们将着重介绍 3 种, 其基本覆盖我们会碰到的情况:
+1. 连续且不随 $n$ 发生变化;
+2. 涉及到 2 个及以上的随机变量;
+3. 随着 $n$ 发生变化的变换.
+
+::: {#thm-continuous-mapping}
+
+## 连续函数变换下的收敛
+
+$X,X_{1},X_{2},\dots$ 是随机向量, $g$ 是 $(\mathbb{R}^{k},\mathcal{B}^{k})\to(\mathbb{R}^{l},\mathcal{B}^{l})$ 的可测函数, 假设 $g$ 是连续的 $a.s.\ P_{X}$. 则
+(1) $X_{n}\overset{ a.s. }{ \longrightarrow }X\implies g(X_{n})\overset{ a.s. }{ \longrightarrow }g(X)$.
+(2) $X_{n}\overset{ P }{ \longrightarrow }X\implies g(X_{n})\overset{ P }{ \longrightarrow }g(X)$.
+(3) $X_{n}\overset{ d }{ \longrightarrow }X\implies g(X_{n})\overset{ d }{ \longrightarrow }g(X)$.
+
+:::
+
+::: {.proof}
+(1) 若 $g$ 连续, 则
+$$
+\lim_{ n \to \infty } g(X_{n})=g(\lim_{ n \to \infty } X_{n}),
+$$
+若进一步 $\lim_{ n \to \infty }X_{n}=X$, 则有 $\lim_{ n \to \infty }g(X_{n})=g(X)$. 所以
+$$
+P(\lim_{ n \to \infty } g(X_{n})\neq g(X))\leq P_{X}(g \text{ is not continue}) + P(\lim_{ n \to \infty } X_{n}\neq X)=0.
+$$
+(2)
+若 $g(x)$ 连续，根据其定义，有
+$$
+\forall\epsilon>0,\exists\sigma>0,\forall t, \lvert t-x \rvert<\sigma \implies
+\lvert g(t)-g(x) \rvert < \epsilon,
+$$
+这等价于
+$$
+\forall\epsilon>0,\exists\sigma>0,\forall t, \lvert g(t)-g(x) \rvert \geq \epsilon\implies\lvert t-x \rvert\geq\sigma 
+.
+$$
+现在，对于特定的 $\epsilon$，我们可以将下面的概率分解为
+$$
+\begin{align}
+P(\lvert g(X_{n})-g(X) \rvert >\epsilon)
+&\leq P(\lvert g(X_{n})-g(X) \rvert >\epsilon,\lvert X_{n}-X \rvert \leq\sigma,g(X) \text{ is continue}) \\
+&+P(\lvert X_{n}-X \rvert > \sigma)+P(g(X) \text{ is not continue})
+\\
+\end{align}
+$$
+根据上面连续定义推出的结论，
+$$
+P(\lvert g(X_{n})-g(X) \rvert >\epsilon,\lvert X_{n}-X \rvert \leq\epsilon,g(X) \text{ is continue}) = 0,
+$$
+根据 $X_{n}\overset{ P }{ \longrightarrow }X$ 可知第二项在 $n\to \infty$ 时为 0，第三项则根据 $g$ 的连续性可知为 0，命题得证。
+（3）我们定义函数
+$$
+h(x)=e^{itg(x)},
+$$
+可知该函数是有界连续的。根据 @thm-portmanteau（1）可知
+$$
+\mathbb{E}(h(X_{n}))\to \mathbb{E}(h(X)),
+$$
+也就是
+$$
+\phi_{g(X_{n})}\to \phi_{g(X)},
+$$
+再根据 @thm-levy-cramer-continuity 可知
+$$
+g(X_{n})\overset{ d }{ \longrightarrow }g(X).
+$$
+
+:::
+
+针对定理 @thm-continuous-mapping，我们讨论如下的几个例子
+
+::: {#exm-joint-convergence-counterexample}
+
+## Example
+
+假设存在随机变量 $X,X_{1},X_{2},\dots$，并且有 $X_{n}\overset{ d }{ \longrightarrow }X$，假设 $X\sim N(0,1)$，则有 $X_{n}^{2}\overset{ d }{ \longrightarrow }Y\sim \chi^{2}_{1}$。
+**Example: 假设 $(X_{n},Y_{n})$ 是两个随机变量，并且满足 $(X_{n},Y_{n})\overset{ d }{ \longrightarrow }(X,Y)$。现在如果 $X,Y$ 是独立的，并且服从 $N(0,1)$ 的分布，则有**
+$$
+X_{n} / Y_{n} \overset{ d }{ \longrightarrow }X / Y\sim C(0,1).
+$$
+即 Cauchy 分布。
+
+:::
+
+注意到，上面例子中 $(X_{n},Y_{n})\overset{ d }{ \longrightarrow }(X,Y)$ 不能被放宽到 $X_{n}\overset{ d }{ \longrightarrow }X,Y_{n}\overset{ d }{ \longrightarrow }Y$。
+
+现在，我们来关注一下当有多个变量时的情况。当涉及到多个随机变量时，多个随机变量的运算可以被看做是这多个随机变量组成的随机向量的一个函数变换，进而有机会利用 @thm-continuous-mapping 来证明收敛。
+
+这个思路的关键在于：各个分量的收敛能够蕴含向量的收敛。根据处处收敛的定义和 @prp-convergence-in-measure-components 可以知道，这个关键对于处处收敛和依测度收敛是成立的，因此我们有如下推论：
+
+::: {#cor-arithmetic-under-as-and-in-probability}
+
+## 处处收敛和依测度收敛的四则运算
+
+假设 $X,X_{1},X_{2},\dots,Y_{1},Y_{2}$ 是随机变量，并且有 $X_{n}\overset{ a.s. }{ \longrightarrow }X,Y_{n}\overset{ a.s. }{ \longrightarrow }Y$ (或者 $X_{n}\overset{ P }{ \longrightarrow }X,Y_{n}\overset{ P }{ \longrightarrow }Y$)，则有
+1. $X_{n}+Y_{n}\overset{ a.s. }{ \longrightarrow }X+Y$ ($X_{n}+Y_{n}\overset{ P }{ \longrightarrow }X+Y$);
+2. $X_{n}Y_{n}\overset{ a.s. }{ \longrightarrow }XY$ ($X_{n}Y_{n}\overset{ P }{ \longrightarrow }XY$);
+3. $X_{n}/Y_{n}\overset{ a.s. }{ \longrightarrow }X/Y$ ($X_{n}/Y_{n}\overset{ P }{ \longrightarrow }X/Y$)，其中 $Y\neq 0\ a.s.$
+
+:::
+
+但是根据 @exm-joint-convergence-counterexample，这显然对于依分布收敛是不成立的，所以其需要单独讨论，或者给予更强的条件。这就是下面的定理。
+
+::: {#thm-slutsky}
+
+## Slutsky
+
+假设 $X,X_{1},X_{2},\dots,Y_{1},Y_{2}$ 是随机变量，并且有 $X_{n}\overset{ d }{ \longrightarrow }X,Y_{n}\overset{ P }{ \longrightarrow }c$ ，其中 $c$ 是一个实数，则有
+1. $X_{n}+Y_{n}\overset{ d }{ \longrightarrow }X+c$；
+2. $X_{n}Y_{n}\overset{ d }{ \longrightarrow }cX$；
+3. $X_{n} / Y_{n}\overset{ d }{ \longrightarrow }X / c$，如果 $c\neq 0$。
+
+:::
+
+::: {.proof}
+（1）假设 $t\in\mathbb{R},\epsilon>0$，则有
+$$
+\begin{align}
+F_{X_{n}+Y_{n}}(t)&=P(X_{n}+Y_{n}\leq t) \\
+&\leq P(\{ X_{n}+Y_{n}\leq t \}\cap \{ \lvert Y_{n}-c \rvert <\epsilon \})
++P(\lvert Y_{n}-c \rvert \geq\epsilon) \\
+&\leq P(X_{n}\leq t-c+\epsilon)+P(\lvert Y_{n}-c \rvert \geq\epsilon),
+\end{align}
+$$
+类似的，我们可以得到
+$$
+F_{X_{n}+Y_{n}}(t)\geq P(X_{n}\leq t-c-\epsilon)-P(\lvert Y_{n}-c \rvert \geq\epsilon).
+$$
+利用 $Y_{n}\overset{ P }{ \longrightarrow }c$，我们可以得到
+$$
+F_{X}(t-c-\epsilon)\leq \mathop{\lim\inf}_{ n \to \infty } F_{X_{n}+Y_{n}}(t)
+\leq \mathop{\lim\sup}_{ n \to \infty } F_{X_{n}+Y_{n}}(t)
+\leq F_{X}(t-c+\epsilon),
+$$
+因为 $\epsilon$ 是任意的，所以有
+$$
+\lim_{ n \to \infty } F_{X_{n}+Y_{n}}(t)=F_{X}(t-c),
+$$
+以上的推导是在 $t-c,t-c+\epsilon,t-c-\epsilon$ 是 $F_{X}$ 的连续点的前提下进行的，因为 $F_{X}$ 是单调的，不连续点至多可数个。又注意到 $F_{X+c}(t)=F_{X}(t-c)$，于是得到我们需要证明的命题。
+（2）和（3）证明比较类似，就略过了。
+:::
+
+根据以上定理，我们还可以得到下面这个有用的结果，其中函数变换还涉及到 $n$ 的参与。
+
+::: {#thm-19-convergence-theory-51}
+
+## 可微函数变换下的依分布收敛
+
+假设 $Y,X_{1},X_{2},\dots$ 是随机 $k$ 维向量，并且满足
+$$
+a_{n}(X_{n}-c)\overset{ d }{ \longrightarrow }Y,
+$$
+其中 $c\in\mathbb{R}^{k}$，并且 $\{ a_{n} \}\in\mathbb{R}^{+},\lim_{ n \to \infty }a_{n}=\infty$。令 $g:\mathbb{R}^{k}\to \mathbb{R}$ 是一个函数，则有
+（1）如果 $g$ 在 $c$ 点可微，则有
+$$
+a_{n}[g(X_{n})-g(c)]\overset{ d }{ \longrightarrow }[\nabla g(c)]^{T}Y,
+$$
+（2）如果 $g$ 在 $c$ 的邻域内有 $m>1$ 阶的连续偏导数，其中所有在 $c$ 点的 $j$ 阶偏导数都为 0（$1\leq j\leq m-1$），但是 $m$ 阶偏导数不为 0，则有
+$$
+a^{m}_{n}[g(X_{n})-g(c)]\overset{ d }{ \longrightarrow }
+\frac{1}{m!}\sum\limits_{i_{1}=1}^{k}\cdots \sum\limits_{i_{m}=1}^{k}
+\frac{\partial^{m}g}{\partial x_{i_{1}}\dots \partial x_{i_{m}}}|_{x=c}
+Y_{i_{1}}\dots y_{i_{m}}.
+$$
+其中 $Y_{j}$ 是 $Y$ 的第 $j$ 个分量。
+
+:::
+::: {.proof}
+我们令
+$$
+Z=a_{n}[g(X_{n})-g(c)]-a_{n}[\nabla g(c)]^{T}(X_{n}-c),
+$$
+如果我们能够证明 $Z\overset{ P }{ \longrightarrow }0$，则根据题设和 @thm-slutsky，就可以得到
+$$
+Z+a_{n}[\nabla g(c)]^{T}(X_{n}-c)=
+a_{n}[g(X_{n})-g(c)]\overset{ d }{ \longrightarrow }
+0+[\nabla g(c)]^{T}Y=[\nabla g(c)]^{T}Y.
+$$
+$g$ 在 $c$ 点的可微性蕴含：$\forall\epsilon>0,\exists\delta_{\epsilon}>0$,
+$$
+\lvert g(x)-g(c)-[\nabla g(c)]^{T}(x-c) \rvert \leq\epsilon \lvert x-c \rvert ,
+\quad \forall x,\lvert x-c \rvert <\delta_{\epsilon},
+$$
+
+<span id="eq-delta-method-differentiability-bound"></span>
+
+因此，我们有
+$$
+\begin{align}
+P(\lvert Z_{n} \rvert \geq \eta) &=
+P(\lvert Z_{n} \rvert\geq \eta ,\lvert X_{n}-c \rvert \geq\delta_{\epsilon})
++P(\lvert Z_{n} \rvert \geq \eta,\lvert X_{n}-c \rvert \leq \delta_{\epsilon}) \\
+&\leq P(\lvert X_{n}-c \rvert \geq\delta_{\epsilon}) +
+P(\lvert Z_{n} \rvert\geq \eta ,\lvert X_{n}-c \rvert \leq\delta_{\epsilon}) \\
+&\leq P(\lvert X_{n}-c \rvert \geq\delta_{\epsilon}) +
+P(a_{n}\lvert X_{n}-c \rvert \geq \eta / \epsilon) \\
+\end{align}
+
+$$
+
+<span id="eq-delta-method-probability-bound"></span>
+
+又因为 $a_{n}\to \infty$，所以，$\frac{1}{a_{n}}\to0$，
+$$
+X_{n}-c=a_{n}(X_{n}-c)\frac{1}{a_{n}}\overset{ d }{ \longrightarrow }
+0\implies X_{n}-c\overset{ P }{ \longrightarrow }0\implies X_{n}\overset{ P }{ \longrightarrow }c,
+$$
+这里使用了 @thm-slutsky (2) 和 @thm-weak-convergence-to-constant 以及 @cor-arithmetic-under-as-and-in-probability 的结果。
+
+根据题设，直接使用 @thm-continuous-mapping (3)，我们又可以得到 (这里使用到的连续函数是 $\sqrt{ x^{T}x }$)
+$$
+a_{n}\lvert X_{n}-c \rvert \overset{ d }{ \longrightarrow }
+\lvert Y \rvert ,
+$$
+
+<span id="eq-delta-method-norm-convergence"></span>
+
+因此，再根据式 [eq-delta-method-probability-bound](#eq-delta-method-probability-bound) 得到
+$$
+\begin{align}
+\mathop{\lim\sup}_{ n \to \infty } P(\lvert Z_{n} \rvert \geq \eta)&\leq
+\lim_{ n \to \infty } P(\lvert X_{n}-c \rvert \geq\delta_{\epsilon})
++\lim_{ n \to \infty } P(a_{n}\lvert X_{n}-c \rvert \geq \eta / \epsilon) \\
+&=P(\lvert Y \rvert \geq \eta / \epsilon),
+\end{align}
+$$
+这里分别用到了 $X_{n}\overset{ P }{ \longrightarrow }c$ 和式 [eq-delta-method-norm-convergence](#eq-delta-method-norm-convergence) 的结果。根据 $\epsilon$ 的任意性，可以得到
+$$
+\lim_{ n \to \infty } P(\lvert Z_{n} \rvert \geq \eta)=0,
+$$
+也就完成了我们的证明。
+
+至于对于 (2) 的证明，无非是修改式 [eq-delta-method-differentiability-bound](#eq-delta-method-differentiability-bound) 而已。
+:::
+
+以上定理的一个直接推论在数理统计中非常常用，成为 delta-method，其内容如下
+
+::: {#cor-19-convergence-theory-52}
+
+## delta-method
+
+假设 $Y,X_{1},X_{2},\dots$ 是随机 $k$ 维向量，并且满足
+$$
+a_{n}(X_{n}-c)\overset{ d }{ \longrightarrow }Y,
+$$
+其中 $c\in\mathbb{R}^{k}$，并且 $\{ a_{n} \}\in\mathbb{R}^{+},\lim_{ n \to \infty }a_{n}=\infty$。令 $g:\mathbb{R}^{k}\to \mathbb{R}$ 是一个函数。如果 $Y\sim N_{k}(0,\Sigma)$，则有
+$$
+a_{n}[g(X_{n})-g(c)]\overset{ d }{ \longrightarrow }
+N(0,[\nabla g(c)]^{T}\Sigma \nabla g(c)).
+$$
+
+:::
+利用以上 delta-method 的一个经典例子是这样的，根据 @exm-clt-simple，我们知道
+$$
+\sqrt{ n }\left( \frac{T_{n}}{n}-\mu \right)\overset{ d }{ \longrightarrow }
+N_{k}(0,\Sigma),
+$$
+因此有
+$$
+\sqrt{ n }\left( g\left( \frac{T_{n}}{n} \right)-g(\mu) \right)
+\overset{ d }{ \longrightarrow }
+N_{k}(0,(\nabla g)^{T}\Sigma(\nabla g)).
+$$

@@ -14,13 +14,28 @@ website:
         text: Home
       - href: about.qmd
         text: About
+      - href: "src/learn/advanced-probability/02-sigma-field.qmd"
+        text: Example
 
 format:
   html:
     theme:
-      - cosmo
+      - journal
+      # - cosmo
       # - quartz
       # - brand
     css: styles.css
     toc: true
+    include-after-body:
+      - scripts/proof-collapse.html
 
+crossref:
+  title-delim: " "
+  thm-title: "定理"
+  lem-title: "引理"
+  cor-title: "推论"
+  prp-title: "命题"
+  cnj-title: "猜想"
+  def-title: "定义"
+  exm-title: "例"
+  exr-title: "习题"

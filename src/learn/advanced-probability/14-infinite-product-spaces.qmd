@@ -1,0 +1,397 @@
+---
+title: "无限乘积空间"
+draft: true
+aliases:
+  - 无限乘积空间
+author:
+  - 荣志炜
+tags:
+  - 待定
+created: 2025-12-18 16:36
+updated: 2025-12-18 18:39
+order: 14
+---
+
+# 2 可列维乘积空间
+
+::: {#def-14-infinite-product-spaces-1}
+
+## 可列维乘积空间
+
+设 $(\{ X_{n},n=1,2,\dots \})$ 是一列非空集合，称集合
+
+$$
+\prod\limits_{n=1}^{\infty}X_{n}:=\{ (x_{1},x_{2},\dots)|x_{n}\in X_{n} \}
+
+ $$
+
+为这列集合的**乘积**。
+**Definition: 有限维可测矩形柱集**
+设 $\{ (X_{n},\mathcal{F}_{n}),n=1,2,\dots \}$ 是一列可测空间，对 $\forall n=1,2,\dots$，记
+
+$$
+\mathcal{L}_{(n)}=\left\{  \prod\limits_{k=1}^{n}A_{k}|A_{k}\in\mathcal{F}_{k},k=1,2,\dots n  \right\},
+$$
+
+$$
+\mathcal{L}_{[n]}=\left\{  A\times \prod\limits_{k=n+1}^{\infty}X_{k}|A\in\mathcal{L}_{(n)}  \right\},
+$$
+
+则称 $\mathcal{L}:=\bigcup_{n=1}^{\infty}\mathcal{L}_{[n]}$ 中的集合为**有限维可测矩形柱集**。
+**Definition: 有限维可测柱集**
+$\forall n=1,2,\dots$，记
+
+$$
+X_{(n)}=\prod\limits_{k=1}^{n}X_{k},\quad
+\mathcal{F}_{(n)}=\prod\limits_{k=1}^{n}\mathcal{F}_{k},
+$$
+
+以及
+
+$$
+\mathcal{A}_{[n]}=\left\{  A_{(n)}\times \prod\limits_{k=n+1}^{\infty}X_{k}|A_{(n)}\in\mathcal{F}_{(n)}  \right\},
+ $$
+
+称 $\mathcal{A}:=\bigcup_{n=1}^{\infty}\mathcal{A}_{[n]}$ 中的集合为**有限维可测柱集**。
+
+:::
+根据上面的定义，我们可以注意到，**下标 $(n)$ 其实表示的是有限维矩形集和有限维可侧集，其中的元素是 $n$ 维向量；下标 $[n]$ 表示的是柱集，其中的元素是可数维向量**。比如，$\mathcal{F}_{(n)}$ 其实就是上一节介绍的有限维乘积 $\sigma$ 代数 $\prod\limits_{k=1}^{n}\mathcal{F}_{k}$，注意不要和 $\mathcal{F}_{n}$ 混淆。
+
+这里我们解释一下为什么叫做**柱集**。我们以三维空间为例，这里的 $n=2$，则剩下的那个空间需要是全集，则有下面的情况：
+
+::: {.callout-note title="Excalidraw drawing pending export"}
+原 Obsidian 图形已保留为附件：[center](../../../assets/attachments/advanced-probability/excalidraw/finite-product-space-2024-06-21-115810.excalidraw.md)。
+:::
+
+
+接下来，我们将定义投影
+
+::: {#def-14-infinite-product-spaces-2}
+
+## 投影
+
+从 $\prod\limits_{n=1}^{\infty}X_{n}$ 到 $X_{n}$ 的映射
+
+$$
+\pi_{n}(x_{1},x_{2},\dots)=x_{n}
+$$
+
+称为 $\prod\limits_{n=1}^{\infty}X_{n}$ 到 $X_{n}$ 的**投影**。
+从 $\prod\limits_{n=1}^{\infty}X_{n}$ 到 $X_{(n)}$ 的映射
+
+$$
+\pi_{(n)}(x_{1},x_{2},\dots)=(x_{1},\dots,x_{n})
+$$
+
+称为 $\prod\limits_{n=1}^{\infty}X_{n}$ 到 $X_{(n)}$ 的**投影**。
+
+:::
+基于投影，我们可以这样表示我们前面定义的集合系
+
+::: {#prp-6d4236}
+
+## Proposition
+
+$$
+\mathcal{L}_{[n]}=\pi_{(n)}^{-1}\mathcal{L}_{(n)},\quad
+\mathcal{A}_{[n]}=\pi_{(n)}^{-1}\mathcal{F}_{(n)}.
+$$
+
+:::
+
+根据以上内容，我们有如下的命题
+
+::: {#prp-fae873}
+
+## Proposition
+
+(1) $\mathcal{L}$ 是半环并且 $\prod\limits_{n=1}^{\infty}\in\mathcal{L}$。
+(2) $\mathcal{A}$ 是域。
+(3) $\prod\limits_{n=1}^{\infty}\mathcal{F}_{n}:=\sigma(\mathcal{L})=\sigma(\mathcal{A})=\sigma\left( \bigcup_{n=1}^{\infty}\pi_{n}^{-1}\mathcal{F}_{n} \right)$。
+
+:::
+
+::: {.proof}
+(1) 容易证明，略。
+(2) 容易证明，略。
+(3) 由 [6d4236](#6d4236) 可知
+
+$$
+\bigcup_{n=1}^{\infty}\pi_{n}^{-1}\mathcal{F}_{n}\subset
+\mathcal{L}\subset \mathcal{A},
+$$
+
+因此有
+
+$$
+\sigma(\mathcal{A})\supset\sigma(\mathcal{L})\supset
+\sigma(\bigcup_{n=1}^{\infty}\pi_{n}^{-1}\mathcal{F}_{n}).
+$$
+
+由 [7ca59d](#7ca59d) (2) 我们又可知
+
+$$
+\begin{align}
+&\mathcal{A}_{[n]}=\sigma\left( \bigcup_{k=1}^{n}\pi_{k}^{-1}\mathcal{F}_{k} \right)\subset\sigma\left( \bigcup_{k=1}^{\infty}\pi_{k}^{-1}\mathcal{F}_{k} \right) \\
+&\implies
+\mathcal{A}\subset\sigma\left( \bigcup_{k=1}^{\infty}\pi_{k}^{-1}\mathcal{F}_{k} \right) \\
+&\implies
+\sigma(\mathcal{A})\subset\sigma\left( \bigcup_{k=1}^{\infty}\pi_{k}^{-1}\mathcal{F}_{k} \right).
+\end{align}
+$$
+
+注意到，第一行的等式来自于 [7ca59d](#7ca59d) (2)（移除掉那些不会造成影响、后面无穷多个维度，因为这些维度上都是全集 $X_{k}$）。
+证毕。
+:::
+
+::: {#def-14-infinite-product-spaces-5}
+
+## 序列乘积
+
+我们将上述 $\sigma$ 域 $\prod\limits_{n=1}^{\infty}\mathcal{F}_{n}$ 称为 **$\sigma$ 域序列的乘积**。将 $\left( \prod\limits_{n=1}^{\infty}X_{n},\prod\limits_{n=1}^{\infty}\mathcal{F}_{n} \right)$ 称为**可测空间列 $\{ (X_{n},\mathcal{F}_{n}),n=1,2,\dots \}$ 的乘积**。
+
+:::
+此外，根据 [fae873](#fae873) (3)，我们可以得到下面的结论：
+
+::: {#thm-14-infinite-product-spaces-6}
+
+## 可测函数序列的可测性
+
+从 $(X,\mathcal{F})$ 到 $(\mathbb{R}^{\infty},\mathcal{B}_{\mathbb{R}}^{\infty})$ 的可测映射 $f=(f_{1},\dots)$ 称为可测函数序列，其可测性成立的充分必要条件是 $\forall n\in\mathbb{N}^{+}$，$f_{n}$ 都可测。
+
+:::
+::: {.proof}
+
+$$
+\begin{align}
+f^{-1}\left( \prod\limits_{n=1}^{\infty}\mathcal{F}_{n} \right)
+&=f^{-1}\left(\sigma\left( \bigcup_{n=1}^{\infty}\pi_{n}^{-1}\mathcal{F}_{n} \right)\right) \\
+&=\sigma\left( f^{-1}\left( \bigcup_{n=1}^{\infty}\pi_{n}^{-1}\mathcal{F}_{n} \right) \right) \\
+&=\sigma\left( \bigcup_{n=1}^{\infty}(\pi_{n} \circ f)^{-1}\mathcal{F}_{n} \right) \\
+&=\sigma\left( \bigcup_{n=1}^{\infty}f_{n}^{-1}\mathcal{F}_{n} \right).
+\end{align}
+$$
+
+:::
+
+接下来，我们将在这个可列维乘积可测空间中建立起测度，其可以看做成是定理 [73165d](#73165d) 和 [629aaa](#629aaa) 的推广。为了方便期间，**我们仅讨论概率测度的情况**。
+
+::: {#thm-409f2e}
+
+## Tulcea 定理
+
+设 $\{ (X_{k},\mathcal{F}_{k}),k=1,2,\dots \}$ 是一列可测空间，对每个 $k=2,3,\dots$，$p_{k}$ 是从 $(X_{(k-1)},\mathcal{F}_{(k-1)})$ 到 $(X_{k},\mathcal{F}_{k})$ 的概率转移函数，则对于 $(X_{1},\mathcal{F}_{1})$ 上的任给概率测度 $P_{1}$，存在乘积可测空间 $\left( \prod\limits_{k=1}^{\infty}X_{k},\prod\limits_{k=1}^{\infty}\mathcal{F}_{k} \right)$ 上唯一的概率测度 $P$，使得
+
+$$
+P\pi_{(n)}^{-1}\left( \prod\limits_{k=1}^{n}A_{k} \right)=
+\int _{A_{1}}P_{1}(dx_{1})\int _{A_{2}}p_{2}(x_{1},dx_{2})\cdots 
+\int _{A_{n}}p_{n}(x_{1},\dots,x_{n-1},dx_{n}). 
+$$
+
+:::
+
+这是其实是典型地**用有限定义无限**。无限维度的积分我们无法处理，但是我们可以处理任意有限维的积分，**任意有限维即无限维**。
+
+::: {.proof}
+由 [fae873](#fae873) 可知，$\mathcal{A}=\bigcup_{n=1}^{\infty}\pi_{(n)}^{-1}\mathcal{F}_{(n)}$ 是一个 field。则 $\forall A\in\mathcal{A}$，可以找到一个 $n$ 和 $A_{(n)}\in\mathcal{F}_{(n)}$，使得
+
+$$
+A=\pi_{(n)}^{-1}A_{(n)},
+$$
+
+我们令
+
+$$
+P(A)=P_{n}(A_{(n)}):=\int _{X_{1}}P_{1}(dx_{1})\int _{X_{2}}p_{2}(x_{1},dx_{2})\cdots \int _{X_{n}}I_{A(n)}(x_{1},\dots,x_{n})p_{n}(x_{1},\dots,x_{n-1},dx_{n}), 
+$$
+
+实际上，根据 [629aaa](#629aaa) ，我们可以知道，每个 $P_{n}$ 都是一个 $\mathcal{F}_{(n)}=\prod\limits_{k=1}^{n}\mathcal{F}_{k}$ 上的唯一的有限维乘积测度。注意，$P_{n}$ 是，因为其接受的是 $\mathcal{F}_{(n)}$ 上的元素；$P$ 不是，因为 $P$ 接受不是 $\mathcal{F}_{(n)}$ 上的元素，而是 $\mathcal{A}$ 上的元素。
+
+接下来，我们将分 3 步来证明该定理。
+(1) $P$ 的定义是一意的。
+首先，需要注意到，$P$ 的定义的分歧可能来自于哪里？来自于不同的 $A_{(n)}$ 可能产生相同的原像，而 $P$ 的定义依赖自 $A_{(n)}$，所以对于这相同的原像是否可以得到相同的 $P$ 呢？
+
+若存在 $n\geq m\geq 1$，$A_{(n)}\in\mathcal{F}_{(n)}$ 和 $A_{(m)}\in\mathcal{F}_{(m)}$ 使得
+
+$$
+\pi_{(n)}^{-1}A_{(n)}=A=\pi^{-1}_{(m)}A_{(m)},
+$$
+
+又因为
+
+$$
+\pi_{(m)}^{-1}A_{(m)}=\pi_{(n)}^{-1}\left( A_{(m)}\times \prod\limits_{k=m+1}^{n}X_{k} \right),
+$$
+
+所以 (**原像相同则集合肯定相同**)
+
+$$
+A_{(n)}=A_{(m)}\times \prod\limits_{k=m+1}^{n}X_{k}.
+$$
+
+所以有
+
+$$
+\begin{align}
+P_{n}(A_{(n)})&=P_{n}\left( A_{(m)}\times \left( \prod\limits_{k=m+1}^{n}X_{k} \right) \right) \\
+&=\int _{X_{1}}P_{1}(dx_{1})\int _{X_{2}}p_{2}(x_{1},dx_{2})\cdots \int _{X_{n}}I_{A(m)\times \prod\limits_{k=m+1}^{n}X_{k}}(x_{1},\dots,x_{n})p_{n}(x_{1},\dots,x_{n-1},dx_{n}) \\
+&=\int _{X_{1}}P_{1}(dx_{1})\int _{X_{2}}p_{2}(x_{1},dx_{2})\cdots \int _{X_{m}}I_{A(m)}(x_{1},\dots,x_{n})p_{m}(x_{1},\dots,x_{m-1},dx_{m}) \\
+&=P_{m}(A_{(m)}),
+\end{align}
+$$
+
+其中，我们将第二行进行 $n-m$ 次积分（积分都为 1）后得到第三行。得证。
+
+(2) $P$ 是 $\mathcal{A}$ 上的概率测度。
+容易证明 $P(\emptyset)=0$。
+若 $A,B\in\mathcal{A}$ 不交，则存在 $n,A_{(n)}\in\mathcal{F}_{(n)}$ 和 $B_{(n)}\in\mathcal{F}_{(n)}$ 使得
+
+$$
+A=\pi_{(n)}^{-1}A_{(n)};\quad
+B=\pi_{(n)}^{-1}B_{(n)};\quad
+A_{(n)}\cap B_{(n)}=\emptyset,
+$$
+
+所以有
+
+$$
+\begin{align}
+P(A\cap B)&=P_{n}(A_{(n)}\cup B_{(n)})\\
+&=P_{n}(A_{(n)})+P_{n}(B_{(n)}) \\
+&=P(A)+P(B).
+\end{align}
+$$
+
+注意，根据 [629aaa](#629aaa) ，$P_{n}$ 实际上是一个有限维乘积测度，自然其拥有有限可加性，进而推出上面的第二行。这意味着 $P$ 有有限可加性。
+根据 [1.1 测度空间和概率空间](03-measure.qmd#273132)，我们只需要再证明 $P$ 在空集上连续即可。这里我们采用反证法，假设存在这样的一个序列 $\{ A^{(n)}\in\mathcal{A} \}$ 使得
+
+$$
+A^{(n)}\downarrow\emptyset;\quad
+\lim_{ n \to \infty } P(A^{(n)})>0.
+$$
+
+然后，我们利用 $\mathcal{A}$ 的性质容易找到整数列 $\{ m_{n} \}$ 和集合序列 $A_{(m_{n})\in\mathcal{F}_{(m_{n})}}$ 满足
+
+$$
+1\leq m_{1}<\dots<m_{n}<\dots;\quad
+A^{(n)}=\pi_{(m_{n})}^{-1}A_{(m_{n})}
+$$
+
+然后，我们重新构造一个序列 $\{ \tilde{A}^{(k)} \}$，其中
+
+$$
+\tilde{A}^{(k)}=\left\{\begin{matrix}
+\prod\limits_{i=1}^{\infty}X_{i},\quad&k=1,\dots m_{1}-1; \\
+A^{(k)},&k=m_{1},m_{2},\dots; \\
+A^{(n-1)},&m_{n-1}\leq k<m_{n}.
+\end{matrix}\right.
+$$
+
+这个新的序列满足 $\tilde{A}^{(n)}\in\mathcal{A},\tilde{A}^{(n)}\downarrow\emptyset,\lim_{ n \to \infty }P(\tilde{A}^{(n)})>0$，并且有对应的 $A_{(n)}\in\mathcal{F}_{(n)}$ 使得
+
+$$
+\tilde{A}^{(n)}=\pi_{(n)}^{-1}A_{(n)}
+$$
+
+成立。
+这里，我们**不妨**直接将 $\tilde{A}^{(n)}$ 记作 $A^{(n)}$，现在我们试着导出矛盾。
+对 $n=2,3,\dots$，令
+
+$$
+\phi_{1,n}(x_{1})=\int _{X_{2}}p_{2}(x_{1},dx_{2})\dots \int _{X_{n}}
+I_{A_{(n)}}(x_{1},\dots,x_{n})p_{n}(x_{1},\dots,x_{n-1},dx_{n}), 
+$$
+
+由 $A^{(n+1)}\subset A^{(n)}$ 易得：$\forall \{ x_{k}\in X_{k},k=1,\dots,n+1 \}$ 有
+
+$$
+I_{A_{(n+1)}}(x_{1},\dots,x_{n+1})\leq I_{A_{(n)}}(x_{1},\dots,x_{n}),
+$$
+
+进而有
+
+$$
+0\leq \phi_{1,n+1}(x_{1})\leq \phi_{1,n}(x_{1})\leq 1,\quad\forall x_{1}\in X_{1}.
+$$
+
+记 $\phi_{1}=\lim_{ n \to \infty }\phi_{1,n}$，则由 [8_积分](08-integration.qmd#7ffb80) 可知
+
+$$
+\int _{X_{1}}\phi_{1} \, dP_{1}=\lim_{ n \to \infty } \int _{X_{1}}\phi_{1,n} \, dP_{1}=
+\lim_{ n \to \infty } P_{n}(A_{(n)})=\lim_{ n \to \infty } P(A^{(n)})>0,
+$$
+
+其中第一个等号是因为 DCT，第二个等号是因为 $P_{n}$ 的定义，第三个等号是因为 $P$ 的定义，最后是因为我们的谬设。
+因此，$\exists \tilde{x}_{1}\in X_{1}$，使得 $\phi_{1}(\tilde{x}_{1})>0$。此外，该 $\tilde{x}_{1}\in A_{(1)}$，不然有
+
+$$
+\begin{align}
+&\tilde{x}_{1}\not\in A_{(1)},\pi_{(n+1)}^{-1}A_{(n+1)}=A^{(n+1)}
+\subset A^{(n)}=\pi_{(n)}A_{(n)} \\
+\implies&
+\forall n=2,3,\dots,(\tilde{x}_{1},x_{2},\dots,x_{n})\not\in A_{(n)} \\
+\implies&
+\forall n=2,3,\dots,I_{A_{(n)}}(\tilde{x}_{1},\dots,x_{n})=0 \\
+\implies&
+\phi_{1}(\tilde{x}_{1})=0,
+\end{align}
+$$
+
+这与 $\phi_{1}(\tilde{x}_{1})>0$ 矛盾。总之，我们推出了：存在 $\tilde{x}_{1}\in A_{(1)}$ 使得
+
+$$
+\phi_{1,n}(\tilde{x}_{1})\geq \phi_{1}(\tilde{x}_{1})>0,
+\quad \forall n=2,3,\dots
+$$
+
+对 $n=3,4,\dots$，令
+
+$$
+\phi_{2,n}(x_{2})=\int _{X_{3}}p_{3}(\tilde{x}_{1},x_{2},dx_{3})
+\dots \int _{x_{n}}I_{A_{(n)}}(\tilde{x}_{1},\dots,x_{n})
+p_{n}(\tilde{x}_{1},\dots,x_{n-1},dx_{n}),
+$$
+
+运用相似的思路，可以得到：存在 $X_{2}$ 上的某个函数 $\phi_{2}$，$\phi_{2,n}\downarrow\phi_{2}$，并且存在 $\tilde{x}_{2}\in X_{2}$，使得 $(\tilde{x}_{1},\tilde{x}_{2})\in A_{(2)}$ 且
+
+$$
+\phi_{2,n}(\tilde{x}_{2})\geq \phi_{2}(\tilde{x}_{2})>0,\quad
+\forall n=3,4,\dots
+$$
+
+如此继续下去，我们就得到了一个 $(\tilde{x}_{1},\tilde{x}_{2},\dots)\in\prod\limits_{k=1}^{\infty}X_{k}$ 使得 $(\tilde{x}_{1},\dots,\tilde{x}_{k})\in A_{(k)}$，并且
+
+$$
+(\tilde{x}_{1},\dots)\in A^{(k)}=\pi_{(k)}^{-1}A_{(k)},
+$$
+
+对每个 $k=1,2,\dots$ 成立。这与 $A^{(n)}\downarrow\emptyset$ 矛盾。
+
+因此 $P$ 是一个测度。(2) 得证。
+
+(3) 直接利用 1.1 测度空间和概率空间 (`1.1 测度空间和概率空间#^c7783b`)，将其唯一地扩张值 $\sigma(\mathcal{A})=\prod\limits_{n=1}^{\infty}\mathcal{F}_{n}$ 上，问题得证。
+:::
+
+作为 [409f2e](#409f2e) 定理的推论，我们可以引出下面的关于乘积测度的 Kolmogorov 定理
+
+::: {#thm-14-infinite-product-spaces-8}
+
+## Kolmogorov 定理
+
+对任何一列概率空间 $\{ (x_{k},\mathcal{F}_{k},P_{k}) \}$，在 $\left( \prod\limits_{k=1}^{\infty}X_{k},\prod\limits_{k=1}^{\infty}\mathcal{F}_{k} \right)$ 上有唯一的概率测度 $P$ 使得对于 $\forall n=1,2,\dots$ 和每一组 $A_{1}\in\mathcal{F}_{1},\dots,A_{n}\in\mathcal{F}_{n}$ 有
+
+$$
+P\left( \pi_{(n)}^{-1}\left( \prod\limits_{k=1}^{\infty}A_{k} \right) \right)=
+\prod\limits_{k=1}^{n}P_{k}(A_{k}).
+$$
+
+:::
+::: {.proof}
+将概率转移函数替换为概率测度 $P_{k}$ ，然后运用 [409f2e](#409f2e) 即可。
+:::
+
+我们可以看到，**至少在概率空间上，可列维乘积空间上的结论基本上是有限维乘积空间上对应结论的推广**。
+
+# 3 任意无穷维乘积空间
+
+TODO

@@ -1,0 +1,441 @@
+---
+title: "分布函数"
+draft: true
+aliases:
+  - 分布函数
+author:
+  - 荣志炜
+tags:
+  - 分布函数
+  - 准分布函数
+  - 左连续逆
+  - Vitali集
+  - 不可测集
+  - Lebesgue测度
+  - 高维区间
+  - 多维
+created: 2025-11-02 14:00
+updated: 2025-12-17 20:29
+order: 6
+---
+
+# 定义
+
+测度是一个集合函数，处理起来不是很方便。然而，对于在 $(\mathbb{R},\mathcal{B})$ 上的测度 $\mu$，我们可以建立一组非降函数与之一一对应，这些函数我们称之为**分布函数**。
+
+::: {#def-dist-func}
+
+## 准分布函数和分布函数
+
+1. $\mathbb{R}$ 上非降右连续实值函数 $F$ 被称为**准分布函数**。即 $F$ 满足 （单调、右连续、非负）
+
+$$
+  x\leq y\implies F(x)\leq F(y);\quad \lim_{ y \to x,y> x } =F(x); \quad F(-\infty)=\lim_{ x \to -\infty } F(x)=0
+$$
+
+2.  若准分布函数 $F$ 满足下面的条件，则称其为**分布函数**
+
+$$
+    F(\infty)=\lim_{ x \to \infty } F(x)=1,
+$$
+
+:::
+
+# 准分布函数与测度
+
+现在我们需要证明（准）分布函数和测度之间的**一一对应**性质。首先我们证明，**对于每一个准分布函数，都可以诱导出一个唯一的 $\sigma$ 有限测度且其在 $\pi$-class $\mathcal{J}_{\mathbb{R}}$ 上满足确定的性质**。
+
+::: {#prp-dist2measure}
+
+## 准分布函数 $\to$ 测度
+
+令 $\mathcal{I}_{\mathbb{R}}=\{ (a,b]|a,b\in\mathbb{R} \}$，F 是一个准分布函数，对于任意的 $a,b\in\mathbb{R}$，我们定义
+
+$$
+\mu((a,b])=\left\{\begin{align}
+&F(b)-F(a),&a<b,\\
+&0,&a\geq b
+\end{align}\right.
+$$
+
+则 $\mu$ 是 $\mathcal{I}_{\mathbb{R}}$ 上的测度。将其扩张至 $\mathcal{B}$ 后可以得到唯一的一个 **$\sigma$ 有限**测度，其对于 $\mathcal{J}_{\mathbb{R}}=\{ (-\infty,a]|a\in\mathbb{R} \}$ 中的元素有
+
+$$
+\mu((-\infty,a])=F(a),\quad\forall a\in\mathbb{R}.
+$$
+
+如果存在另外一个 $\mathcal{B}$ 上的测度 $\nu$ 对于 $\mathcal{J}_{\mathbb{R}}$ 上的元素也满足上式，则 $\mu=\nu$。当 $F$ 是一个分布函数时，$\mu$ 是一个概率测度。
+
+:::
+
+::: {.proof}
+首先容易知道 $\mu(\emptyset)=0$ 和非负性，所以我们只需要证明可列可加性就可以。证明过程可以分为 4 个步骤：
+**(1)** 证明有限可加性。
+假设 $\{ (a_{i},b_{i}] \}$ 两两不交且 $\bigcup_{i=1}^{n}(a_{i},b_{i}]=(a,b]$，则我们一定可以通过排列这些区间的先后顺序，得到下面的关系
+
+$$
+a=a_{1}\leq b_{1}=a_{2}\leq b_{2}=\dots=a_{n}\leq b_{n}=b.
+$$
+
+因此，
+
+$$
+\mu((a,b])=F(b)-F(a)=\sum\limits_{i=1}^{n}[F(b_{i})-F(a_{i})]=\sum\limits_{i=1}^{n}\mu((a_{i},b_{i}]).
+$$
+
+有限可加性得证。
+**(2)** 证明：如果 $\{ (a_{i},b_{i}] \}$ 两两不交且 $\bigcup_{i=1}^{\infty}(a_{i},b_{i}]\subset (a,b]$，则 $\mu((a,b])\geq \sum\limits_{n=1}^{\infty}\mu((a_{n},b_{n}])$.
+因为两两不交，对于前 $n$ 个区间，同样我们可以排列形成下面的关系
+
+$$
+a\leq a_{1}\leq b_{1}\leq a_{2}\leq b_{2}\leq\dots\leq a_{n}\leq b_{n}\leq b
+$$
+
+通过 (1) 我们可以得到：
+
+$$
+\begin{align}
+\mu((a,b])&=F(b)-F(a) \\
+&=F(a_{1})-F(a)+\sum\limits_{i=1}^{n}[F(b_{i})-F(a_{i})]+
+\sum\limits_{i=1}^{n-1}[F(a_{i+1}-F(b_{i}))]+F(b)-F(b_{n}) \\
+&\geq \sum\limits_{i=1}^{n}[F(b_{i})-F(a_{i})]=\sum\limits_{i=1}^{n}\mu((a_{i},b_{i}])
+\end{align}
+$$
+
+令 $n\to \infty$ 即得到结论。
+**(3)** 证明：如果 $\{ (a_{i},b_{i}] \}$ 和 $(a,b]$ 满足 $\bigcup_{i=1}^{n}(a_{i},b_{i}]\supset(a,b]$（没有两两不交的要求），则有
+
+$$
+\mu((a,b])\leq \sum\limits_{i=1}^{n}\mu((a_{i},b_{i}])
+$$
+
+<span id="eq-semi-finite-add"></span>
+
+也就是**半有限可加性**。我们使用数学归纳法来进行证明，显然当 $n=1$ 时式 [eq-semi-finite-add](#eq-semi-finite-add) 成立。假设其对于 $n=k$ 也成立，现在我们来证明其对于 $n=k+1$ 也成立。
+我们首先找到一个下标 $i_{0}$，使得其对应的 $b_{i_{0}}$ 是最大的。如果 $a\geq a_{i_{0}}$，则直接可以得到 [eq-semi-finite-add](#eq-semi-finite-add) 成立。如果 $a<a_{i_{0}}$，必有 $(a,a_{i_{0}}]\subset \bigcup_{i\neq i_{0}}(a_{i},b_{i}]$，则可以通过归纳法前提得到
+
+$$
+\begin{align}
+\mu((a,b])&=F(b)-F(a) \\
+&\leq F(b_{i_{0}})-F(a_{i_{0}})+F(a_{i_{0}})-F(a) \\
+&= F(b_{i_{0}})-F(a_{i_{0}})+\mu\left( (a,a_{i_{0}}] \right) \\
+&\leq F(b_{i_{0}})-F(a_{i_{0}})+\sum\limits_{i\neq i_{0}}^{}\mu((a_{i},b_{i}]) \\
+&=\sum\limits_{i=1}^{k}\mu((a_{i},b_{i}])
+\end{align}
+$$
+
+归纳法证明结束。
+**(4)** 证明：$\{ (a_{i},b_{i}] \}$ 两两不交，且 $\bigcup_{i=1}^{\infty}(a_{i},b_{i}]=(a,b]$，则 $\mu((a,b])\leq \sum\limits_{i=1}^{\infty}\mu((a_{i},b_{i}])$.
+由 $F$ 的右连续性，$\forall\epsilon>0,\exists\delta_i>0$ 使得
+
+$$
+F(b_{i}+\delta_{i})-F(b_{i})<\epsilon / 2^{i}
+$$
+
+因此，对于任意的 $[a+\eta,b]$，$\{ (a_{i},b_{i}+\delta_{i}) \}$ 形成它的一个开覆盖，则一定存在一个有限子覆盖
+
+$$
+\bigcup_{i=1}^{n}(a_{i},b_{i}+\delta_{i})\supset[a+\eta,b]\supset(a+\eta,b]
+$$
+
+由 (3) 可得
+
+$$
+\begin{align}
+F(b)-F(b+\eta)&\leq \sum\limits_{i=1}^{n}[F(b_{i}+\delta_{i})-F(a_{i})] \\
+&\leq \sum\limits_{i=1}^{n}[F(b_{i})-F(a_{i})] + \sum\limits_{i=1}^{n}\epsilon / 2^{i}\\
+&\leq \sum\limits_{i=1}^{\infty}\mu((a_{i},b_{i}])+\epsilon
+\end{align}
+$$
+
+然后先令 $\eta\to0$ 再令 $\epsilon\to0$ 即可得到 (4) 的结论。 结合 (2) 和 (4) 即可得到可列可加性，至此我们便证明了 $\mu$ 是 $\mathcal{I}_{\mathbb{R}}$ 上的测度。
+
+然后我们可以通过之前介绍的测度扩张办法，将变换 $\mathcal{I}_{\mathbb{R}}$ 上的测度 $\mu$ 扩张至 $\mathcal{B}$ 上，进而依靠测度的下连续性可以得到
+
+$$
+\mu((-\infty,a])=\mu\left( \bigcup_{n=1}^{\infty}(-n,a] \right)
+=\lim_{ n \to \infty } \mu((-n,a])=F(a)-F(-\infty)=F(a)
+$$
+
+假设还存在另外一个测度 $\nu$，其能够满足 $\nu((-\infty,a])=F(a)$，则通过测度的可减性可知
+
+$$
+\nu((a,b])=\nu((-\infty,b])-\mu((-\infty,a])=F(b)-F(a)=\mu((a,b])
+$$
+
+也就是说 $\nu$ 和 $\mu$ 在 $\mathcal{I}_{\mathbb{R}}$ 上是一致的。我们取 $\{ (n,n+1],n\in\mathbb{Z} \}$，可知它们每个都是有界的且其并为整个空间 $\mathbb{R}$，则根据 @thm-measure-extension，可知测度是唯一的，即 $\mu=\nu$。
+:::
+
+反过来可能略有区别，这是因为很可能 $F(a)=\mu((-\infty,a])=\infty$，这样的话 $F$ 就不是一个实值函数了。因此，我们需要将 $\mu$ 进行限制，其不能是任意的测度。
+
+::: {#prp-measure2dist}
+
+## 测度 $\to$ 准分布函数
+
+对于定义在 $(\mathbb{R},\mathcal{B})$ 上的测度 $\mu$，定义
+
+$$
+F(x)=\mu((-\infty,x])
+$$
+
+若 **$\forall x \in\mathbb{R}\implies F(x)<\infty$**，则 $F$ 是一个准分布函数，并且根据不同的 $\mu$ 定义出的 $F$ 不同。若 $\mu$ 是一个概率测度，则 $F$ 是一个分布函数。
+
+:::
+
+::: {.proof}
+由测度的单调性和下连续性可直接推出 $F$ 是一个准分布函数。然后，容易证明 $\mu$ 是一个 $\sigma$ 有限测度。假设由不同的 $\mu_{1}$ 和 $\mu_{2}$ 得到相同的 $F$，则根据 @thm-dist2measure，$\mu_{1}$ 应该和 $\mu_{2}$ 相等，出现矛盾，因此 $F$ 必然不同。
+:::
+
+# 左连续逆
+
+准分布函数不是一个严格递增的函数，所以严格来说没有逆函数存在。但是，我们可以定义一个弱化版本的逆，称为**左连续逆**:
+
+::: {#def-left-inv}
+
+## 左连续逆
+
+设 $F$ 是一个准分布函数，$\forall t\in(F(-\infty),F(\infty))$，令
+
+$$
+F^{\leftarrow}(t)=\inf\{ x \in\mathbb{R}|F(x)\geq t \}
+$$
+
+称其为 **$F$ 的左连续逆**，简称**逆**。
+
+:::
+
+左连续逆存在一些性质，在后面可能会用到。
+
+::: {#prp-left-inv}
+
+## 左连续逆的性质
+
+对于任何准分布函数 $F$，有
+1. $F^{\leftarrow}(t)\in\mathbb{R},\forall t\in(F(-\infty),F(\infty))$;
+2. $\forall t\in(F(-\infty),F(\infty)),x \in\mathbb{R}$ 有 $F^{\leftarrow}(t)\leq x \iff F(x)\geq t$;
+3. $F^{\leftarrow}$ 非降且左连续;
+4. $F(F^{\leftarrow}(t))\geq t,\quad F^{\leftarrow}(F(x))\leq x$;
+5. 令 $x=F^{\leftarrow}(t)$, $\forall \epsilon>0$, 则有 $F(x-\epsilon)<t, F(x+\epsilon)\geq t$. 若 $F^{\leftarrow}$ 在 $t$ 点连续, 则 $F(x+\epsilon)>t$.
+
+:::
+
+::: {.proof}
+对于 1，我们只需要证明 $\{ x \in \mathbb{R}|F(x) >t\}$ 对于每个 $t$ 都有下界即可。因为 $t\in(F(-\infty), F(\infty))$，所以一定存在 $x \in\mathbb{R},F(x) \geq t$，所以 1 得证。
+
+对于 2，有
+
+$$
+F^{\leftarrow}(t)\leq x\implies
+\exists x',F(x')\geq t,x'\leq x\implies
+F(x)\geq F(x')\geq t
+$$
+
+其中第一步是通过 $F^{\leftarrow}$ 的定义，第二步是因为 $F$ 的非降性质。
+反方向则有
+
+$$
+F(x)\geq t\implies x \in \{ x \in\mathbb{R}|F(x)\geq t \}\implies x\geq F^{\leftarrow}(t)
+$$
+
+对于 3，我们首先证明非降。$\forall t_{1}\leq t_{2}$，由 $F$ 的非降性质有
+
+$$
+\{ x \in \mathbb{R}|F(x)\geq t_{1} \}\supset \{ x \in\mathbb{R}|F(x) \geq t_{2}\} \implies F^{\leftarrow}(t_{1})\leq F^{\leftarrow}(t_{2})
+$$
+
+因为非降，所以我们容易得到 $\lim_{ \Delta t \to 0^{+} }F^{\leftarrow}(t-\Delta t)\leq F^{\leftarrow}(t)$。现在使用反证法，假设 $\lim_{ \Delta t \to 0^{+} }F^{\leftarrow}(t-\Delta t)<F^{\leftarrow}(t)$，则存在一个和 $\Delta t$ 无关的 $a$ 使得
+
+$$
+\lim_{ \Delta t \to 0^{+} }F^{\leftarrow}(t-\Delta t)<a<F^{\leftarrow}(t)
+$$
+
+第一个 $<$ 可以推导出
+
+$$
+\forall\Delta t>0,\exists x',F(x')\geq t-\Delta t,x'<a,
+$$
+
+第二个 $<$ 可以推导出 $F(a)<t$ (用定义)，因此有
+
+$$
+t>F(a)\geq F(x')>t-\Delta t,\quad \forall\Delta t>0.
+$$
+
+令其中的 $\Delta t\to0$，则得到 $t>t$，出现矛盾，所以左连续性得到证明。
+
+::: {.callout-important title="令人惊讶的是，以上三个性质的证明均没有用到 $F$ 的右连续性！！！"}
+
+:::
+对于 4, 第一个式子可以使用反证法证明. 第二个式子需要注意到 $x \in\{ y|F(y)=F(x) \}$ 即可.
+
+对于 5, 证明过程如下:
+$\forall t\in(F(-\infty),F(\infty))$, 令 $x=F^{\leftarrow}(t)$. 根据 4 有
+
+$$
+F(x)\geq t.
+$$
+
+下面, 我们来分情况讨论. 根据左连续逆的定义和 $F$ 的不降性, 我们得到
+
+$$
+\forall\epsilon>0,\quad F(x-\epsilon)<t,F(x+\epsilon)\geq F(x)\geq t.
+$$
+
+第一个结论得证.
+若 $F^{\leftarrow}(t)$ 在 $t$ 点连续, 我们需要证明 $F(x+\epsilon)\neq t$. 我们使用反证法: 若 $F(x+\epsilon)=t$, 则我们有
+
+$$
+\forall\delta>0, t+\delta>t=F(x+\epsilon)\implies
+F^{\leftarrow}(t+\delta)\geq x+\epsilon,
+$$
+
+令 $\delta\to0$, 我们有
+
+$$
+F^{\leftarrow}(t+0)\geq x+\epsilon=F^{\leftarrow}(t)+\epsilon,
+$$
+
+这与 $F^{\leftarrow}$ 在 $t$ 点连续矛盾, 因此 $F(x+\epsilon)>t$ 成立.
+:::
+
+# Lebesgue 测度
+
+显然，根据定义，$F(x)=x$ 也是一个准分布函数，所以我们可以根据 @thm-dist2measure 来得到一个唯一对应的 $\sigma$ 有限测度，其在 $(\mathbb{R},\mathcal{B})$ 上，我们称之为为**Lebesgue 测度**，简称**L 测度**。
+
+若对准分布函数没有任何限制，则根据 @thm-dist2measure 得到的唯一对应 $\sigma$ 有限测度，可以认为是 Lebesgue 测度的推广，称之为**Lebesgue-Stieltjes 测度**，简称**L-S 测度**。
+
+下面，我们来证明几个 L 测度的性质。
+
+::: {#prp-06-distribution-function-6}
+
+## 开集对 L 可侧集的逼近
+
+假设使用 $m$ 表示 L 测度，$\forall A\in\mathcal{B},\forall\epsilon >0,\exists O$，$O$ 是一个 open set，且有
+
+$$
+m(O\setminus A)<\epsilon
+$$
+
+:::
+::: {.proof}
+因为 L 测度是通过外测度扩展而来，所以 $\forall A\in\mathcal{B},m(A)<\infty,\forall\epsilon>0,\exists\{ (a_{i},b_{i}],i=1,2,\dots \}$，使得
+
+$$
+B=\bigcup_{i=1}^{\infty}(a_{i},b_{i}]\supset A,\quad
+m(A)+\epsilon / 2>\sum\limits_{i=1}^{\infty}m((a_{i},b_{i}])
+$$
+
+然后取 $(a_{i},b_{i}+\epsilon / 2^{i+1})$，显然
+
+$$
+O:=\bigcup_{i=1}^{\infty}(a_{i},b_{i}+\epsilon / 2^{i+1})\supset
+\bigcup_{i=1}^{\infty}(a_{i},b_{i}]\supset A
+$$
+
+因此，我们可以得到
+
+$$
+\begin{align}
+m(O\setminus A)&\leq m(O\setminus B)+m(B\setminus A) \\
+&\leq \sum\limits_{i=1}^{\infty}m((a_{i},b_{i}+\epsilon / 2^{i+1}) \setminus
+(a_{i}, b_{i}])+m(B)-m(A) \\
+&\leq \epsilon / 2 + \sum\limits_{i=1}^{\infty}m((a_{i},b_{i}]) - m(A) \\
+&<\epsilon
+\end{align}
+$$
+
+其中第一个行是因为半有限可加性，第二行是因为半可列可加性和可减性（此处 $m(A)<\infty$）是必要的。
+进一步，对于任意的 $A\in\mathcal{B}$，利用 L 测度的 $\sigma$ 有限性质，可以将其分割为两两不交的可列个 $\{ A_{i} \}$，其中每个 $A_{i}$ 都是有限的。对于 $A_{i}$，我们可以利用上面的结论得到找到一个 open set$O_{i}$，满足
+
+$$
+m(O_{i}\setminus A_{i})<\epsilon / 2^{i}
+$$
+
+然后令 $O=\bigcup_{i=1}^{\infty}O_{i}$，显然 $O$ 也是一个 open set，且有
+
+$$
+m(O\setminus A)\leq \sum\limits_{i=1}^{\infty}m(O_{i}\setminus A_{i})\leq\epsilon
+$$
+
+:::
+接下来我们来证明 L 测度的平移不变性。
+
+::: {#thm-06-distribution-function-7}
+
+## L-measure 的平移不变性
+
+假设 measurable space 是 $(\mathbb{R},\mathcal{B},m)$，其中 $m$ 表示 L- 测度，则有 $\forall x \in \mathbb{R}, A\in\mathcal{B}, A+x:=\{ a+x|a\in A \},\implies A+x \in\mathcal{B},m(A+x)=m(A)$
+
+:::
+::: {.proof}
+首先我们来证明存在性。
+令 $\mathcal{H}=\{ A\in\mathcal{B}|A+x \in\mathcal{B},\forall x \in\mathbb{R} \}$，则可知
+
+$$
+\forall A=(a,b]\in\mathcal{I}_{\mathbb{R}}\implies
+A+x=(a+x, b+x]\in\mathcal{I}_{\mathbb{R}}\subset \mathcal{B}\implies
+\mathcal{I}_{\mathbb{R}}\subset\mathcal{H}
+$$
+
+先将我们只需要证明 $\mathcal{H}$ 是一个 $\sigma$-field，则 $\mathcal{H}\supset\sigma(\mathcal{I}_{\mathbb{R}})=\mathcal{B}$，则存在性得证。
+显然 $\emptyset\in\mathcal{H}$，那么我们只需要证明另外两个条件即可。
+第一，$A\in\mathcal{H}\implies A^{c}\in\mathcal{H}$。我们有
+
+$$
+A\in\mathcal{H}\implies A+x \in\mathcal{B}\implies
+A^{c}+x=(A+x)^{c}\in\mathcal{B}\implies A^{c}\in\mathcal{H}
+$$
+
+第二，$A_{i}\in\mathcal{H},i=1,\dots\implies \bigcup_{i=1}^{\infty}A_{i}\in\mathcal{H}$。我们有
+
+$$
+A_{i}\in\mathcal{H}\implies A_{i}+x \in\mathcal{B}\implies
+\bigcup_{i=1}^{\infty}A_{i}+x=\bigcup_{i=1}^{\infty}(A_{i}+x)\in\mathcal{B}\implies \bigcup_{i=1}^{\infty}A_{i}\in\mathcal{H}
+$$
+
+其中的证明利用到了 $(C+x)^{c}=C^{c}+x$，$\cup_{i}(A_{i}+x)=\cup_{i}A_{i}+x$：
+1. $a\in(C+x)^{c} \iff a-x \not\in C \iff a-x \in C^{c} \iff a\in C^{c}+x$。
+2. $a\in \cup_{i}(A_{i}+x)\implies a\in A_{i}+x\implies a-x \in A_{i}\implies a-x \in \cup_{i}A_{i}\implies a \in \cup_{i}A_{i}+x$。
+
+因此 $\mathcal{H}$ 是一个 $\sigma$-field，存在性得证。
+
+然后，我们来证明等式。由 L 测度的外测度定义可知，
+
+$$
+m(A+x)=\inf\left\{ \sum\limits_{i=1}^{\infty}m((a_{i},b_{i}])|
+\bigcup_{i=1}^{\infty}(a_{i},b_{i}]\supset A+x \right\}
+$$
+
+显然 $(a_{i}-x,b_{i}-x]\supset A$，并且容易得到区间的平移不变性，进而有 $\sum\limits_{i=1}^{\infty}m((a_{i},b_{i}])=\sum\limits_{i=1}^{\infty}m((a_{i}-x,b_{i}-x])$，因此可以得到 $m(A+x)\geq m(A)$。利用同样的方式可以知道 $m(A)\geq m(A+x)$，从而得到 $m(A)=m(A+x)$。
+:::
+
+# 为什么需要 Sigma 域
+
+如果 $\Omega$ 是至多可数的，则一般考虑 $\mathcal{F}$ 是其所有子集组成的集合（power set，其势至多为 $\aleph_{1}$），这一般不会造成什么问题。但如果 $\Omega$ 是不可数的（如 $\mathbb{R}$），则其 power set 就太过多和复杂（其势为 $\aleph_{2}$）。这时候，几乎很难定义一个“合理的”的 measure 使之能够在所有的子集上有预期的效果，总有一些“奇奇怪怪的“集合会让 measure 失效，这些集合被称为**不可测集合**。其中最出名的莫过于 **Vitali set**。
+
+::: {#def-06-distribution-function-8}
+
+## Vitali set
+
+对于两个实数 $x$ 和 $y$，如果 $x-y\in \mathbb{Q}$，则记作 $x\sim y$。可以证明 $\sim$ 是一个等价关系，因此我们可以构造 $[x]=\{ y\in\mathbb{R}|y\sim x \}$ 称为 $x$ 的等价类。这是对 $\mathbb{R}$ 的不可数划分。根据选择公理，我们可以从每个等价类中取出一个在 $[0,1]$ 中的元素，其有且仅有一个，构成集合 $V$。这个集合 $V$ 被称为 Vitali set。
+**Theorem: Vitali set 不是 L 可测集**
+
+:::
+::: {.proof}
+我们使用反证法来证明 $V$ 是不可测的。假设其是可测的，我们将 $[-1,1]$ 中的所有有理数表示为 $q_{1},q_{2},\dots$，然后创建集合 $V_{k}=\{ v+q_{k}|v\in V \}$，由 $V$ 的构造方法可知 $V_{k},k=1,2,3,\dots$ 两两不交。
+
+$\forall x \in[0,1]$，我们可以找到其等价类 $[x]$，然后在 $V$ 中必然存在一个 $y\in [x]$，这意味着 $x-y\in [-1,1]$，也就是说存在一个 $q_{i}$，$x=y+q_{i}$，即 $x \in V_{i}\implies x \in \cup_{k}V_{k}$。所以 $[0,1]\subset \cup_{k}V_{k}$。又因为 $v\in[0,1]$，$q_{k}\in[-1,1]$，则 $\cup_{k}V_{k}\subset[-1,2]$。也就是，
+
+$$
+[0,1]\subset \cup_{k}V_{k}\subset[-1,2]
+$$
+
+因为 L-measure 有平移不变性，所以 $m(V_{k})=m(V_{l}),\forall k,l$。再利用 measure 的单调性和可列可加性可知：
+
+$$
+1=m([0,1])\leq m(\cup_{k}V_{k})=\sum_{k}m(V_{k})\leq m([-1,2])=3
+$$
+
+那么 $m(V_{k})$ 应该是多大呢？如果其是 0，则 $\sum_{k}m(V_{k})=0$，和上式不一致；如果其大于 0，则可数无穷多个数的和应该是 $+\infty$，也必然不会在 1 和 3 之间。出现矛盾，反证法证毕。
+
+:::

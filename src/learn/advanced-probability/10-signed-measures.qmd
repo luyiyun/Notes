@@ -1,0 +1,535 @@
+---
+title: "符号测度"
+draft: true
+aliases:
+  - 符号测度
+author:
+  - 荣志炜
+tags:
+  - 符号测度
+  - Hahn分解
+  - Jordan分解
+created: 2024-05-04 01:02
+updated: 2025-11-28 15:31
+order: 10
+---
+
+# 介绍
+
+前面学习了积分，那自然就会考虑其对立的另一个运算——微分。后面我们会知道，在测度论中引入微分概念不止这么简单，其至少有如下的好处：
+- 完备了理论，在了解了微分和积分的概念后，概率论中几乎所有的概念都可以得到严格的数学定义；
+- 和微积分中类似，我们可以通过导数来对函数（这里是可测函数或随机变量）进行细致地分析，这引入了 Jordan 分解和 Lebesgue 分解；
+- 通过 R-N 导数，我们可以精确地定义条件概率。
+
+为了能够有更加宽广的视野，我们将从**符号测度**而非测度入手。
+
+# 符号测度的定义
+
+如同微积分中的那样，我们寻求一个积分运算的逆运算。比如，我们可以将积分运算看做是一个集合运算
+
+$$
+\phi(A)=\int _{A}f \, d\mu,\quad\forall A\in\mathcal{F},
+$$
+
+那么我们将寻求另一个运算，其将这个集合运算 $\phi$ 重新计算为可测函数 $f$。**这个集合运算 $\phi$ 是什么呢？** 似乎好像是测度，但它却不满足**非负性**。这就要求我们去定义一个新的概念，它是测度概念的推广。
+
+::: {#def-10-signed-measures-1}
+
+## 符号测度
+
+设 $(X,\mathcal{F})$ 是一个可测空间，从 $\mathcal{F}$ 到 $\bar{\mathbb{R}}$ 的集函数 $\phi$ 可以被称为**符号测度**，如果它满足以下两个条件：
+1. $\phi(\emptyset)=0$；
+2. 可列可加性，即对于任何两两不交的 $A_{n},n=1,2,\dots,A_{n}\in\mathcal{F}$ ，有
+
+$$
+\phi\left( \bigcup_{n=1}^{\infty}A_{n} \right)=\sum\limits_{n=1}^{\infty}\phi(A_{n}).
+$$
+
+若满足 $\lvert \phi(A) \rvert<\infty,\forall A\in\mathcal{F}$，则称 $\phi$ 是有限的；若存在 $X$ 上的可测分割 $\{ A_{n},n=1,2,\dots \}$ 满足 $\lvert \phi(A_{n}) \rvert<\infty$ 对每个 $n$ 成立，则称 $\phi$ 是 $\sigma$ 有限的。
+
+:::
+现在我们来证明，积分运算本质上是一个符号测度。
+
+::: {#prp-inte-is-signed-measure}
+
+## 积分是符号测度
+
+设 $(X,\mathcal{F},\mu)$ 是一个测度空间，$f$ 是该测度空间上**积分存在**的可测函数，则
+
+$$
+\phi(A)=\int _{A}f \, d\mu 
+$$
+
+是 $(X,\mathcal{F})$ 上的一个符号测度。
+
+:::
+
+::: {.proof}
+第一条由 @thm-inte-exists (4) 得到，第二条由 @cor-measurable-seperate 得到。
+:::
+
+# 符号测度的性质
+
+符号测度是测度的推广，所以在符号测度上成立的命题，在测度上依然成立；但在测度上成立的命题则不一定在符号测度中成立，所以我们需要重新探索符号测度的性质。（我们会发现，因为符号测度定义太过宽泛，其成立的性质明显要少很多）
+
+::: {#prp-10-signed-measures-3}
+
+## Proposition
+
+符号测度有有限可加性。
+
+:::
+::: {.proof}
+略。
+:::
+
+::: {#prp-10-signed-measures-4}
+
+## 良定义
+
+对于任意的符号测度 $\phi$，下面的情况只会成立一个：
+
+$$
+-\infty<\phi(A)\leq \infty,\quad \forall A\in\mathcal{F},
+$$
+
+$$
+-\infty\leq\phi(A)< \infty,\quad \forall A\in\mathcal{F}.
+$$
+
+:::
+::: {.proof}
+使用反证法。若存在 $A,B\in\mathcal{F}$，满足 $\phi(A)=\infty,\phi(B)=-\infty$。则有以下结论
+
+$$
+\phi(A\cup B)=\phi(A)+\phi(A\setminus A),\quad
+\phi(A\cup B)=\phi(B)+\phi(B\setminus A).
+$$
+
+若 $\phi(A)=\infty$，则 $\phi(A\cup B)=\infty$，负责会出现无意义的计算；若 $\phi(B)=-\infty$，则 $\phi(A\cup B)=-\infty$，出现矛盾。
+:::
+
+::: {.callout-note title="约定"}
+为了方便起见，我们将约定所遇到的所有符号测度均满足 $-\infty<\phi(A)\leq \infty,\quad \forall A\in\mathcal{F}$。
+
+:::
+<span id="appoint-signed-measure"></span>
+
+::: {#prp-signed-control}
+
+## 控制性
+
+$\phi$ 是可测空间 $(X,\mathcal{F})$ 上的符号测度，若 $A,B\in\mathcal{F},A\supset B$，并且 $\lvert \phi(A) \rvert<\infty$，则
+
+$$
+\lvert \phi(B) \rvert <\infty.
+$$
+
+:::
+
+::: {.proof}
+基于有限可加性，可知
+
+$$
+\phi(A)=\phi(B)+\phi(A\setminus B),
+$$
+
+所以，$\phi(A)$ 有限，则 $\phi(B)$ 必然有限。
+:::
+
+::: {#prp-10-signed-measures-6}
+
+## 可列控制性
+
+$\phi$ 是可测空间 $(X,\mathcal{F})$ 上的符号测度，若 $\{ A_{n},n=1,2,\dots \}\subset\mathcal{F}$ 两两不交，则
+
+$$
+\left\lvert  \phi\left( \bigcup_{n=1}^{\infty}A_{n} \right)  \right\rvert <\infty,
+ $$
+
+成立，当且仅当
+
+$$
+\sum\limits_{n=1}^{\infty}\lvert \phi(A_{n}) \rvert <\infty.
+$$
+
+:::
+::: {.proof}
+对于每个 $n=1,2,\dots$，我们定义
+
+$$
+A_{n}^{+}=\left\{
+\begin{matrix}
+A_{n},\quad&\phi(A_{n})>0, \\
+\emptyset,&\phi(A_{n})\leq 0,
+\end{matrix}
+\right.\quad
+
+A_{n}^{-}=\left\{
+\begin{matrix}
+\emptyset,\quad&\phi(A_{n})>0, \\
+A_{n},&\phi(A_{n})\leq 0,
+\end{matrix}
+\right.\quad
+$$
+
+容易得到
+
+$$
+\bigcup_{n=1}^{\infty}A_{n}=\bigcup_{n=1}^{\infty}A_{n}^{+}\cup \bigcup_{n=1}^{\infty}A_{n}^{-},
+$$
+
+并且 $\{ A_{n}^{+},A_{n}^{-},n=1,2,\dots \}$ 两两不交。因此，我们有
+
+$$
+\begin{align}
+\sum\limits_{n=1}^{\infty}\lvert \phi(A_{n}) \rvert 
+&=\sum\limits_{n=1}^{\infty}[\phi(A_{n}^{+})+\lvert \phi(A_{n}^{-}) \rvert ] \\
+&=\sum\limits_{n=1}^{\infty}\phi(A_{n}^{+})+\sum\limits_{n=1}^{\infty}\lvert \phi(A_{n}^{-}) \rvert \\
+&=\left\lvert  \sum\limits_{n=1}^{\infty}\phi(A_{n}^{+})  \right\rvert +
+\left\lvert  \sum\limits_{n=1}^{\infty}\phi(A_{n}^{-})  \right\rvert \\
+&=\left\lvert  \phi\left( \bigcup_{n=1}^{\infty}A_{n}^{+} \right)  \right\rvert +
+\left\lvert  \phi\left( \bigcup_{n=1}^{\infty}A_{n}^{-} \right)  \right\rvert 
+\end{align}
+$$
+
+其中第一行的结论来自于 $A_{n}^{+},A_{n}^{-}$ 的定义，倒数第二行来自于符号测度的可列可加性。
+
+(1) 若 $\left\lvert  \phi\left( \bigcup_{n=1}^{\infty}A_{n} \right)  \right\rvert <\infty$ 成立，根据 @prp-signed-control ，可知以下内容成立
+
+$$
+\left\lvert  \phi\left( \bigcup_{n=1}^{\infty}A_{n}^{+} \right)  \right\rvert<\infty,\quad
+\left\lvert  \phi\left( \bigcup_{n=1}^{\infty}A_{n}^{-} \right)  \right\rvert <\infty,
+$$
+
+<span id="b75466"></span>
+
+所以，我们有
+
+$$
+\sum\limits_{n=1}^{\infty}\lvert \phi(A_{n}) \rvert <\infty.
+$$
+
+(2) 若 $\sum\limits_{n=1}^{\infty}\lvert \phi(A_{n}) \rvert <\infty$ 成立，则容易得到式 [b75466](#b75466) 成立，再根据有限可加性，可以得到
+
+$$
+\begin{align}
+\left\lvert  \phi\left( \bigcup_{n=1}^{\infty}A_{n} \right)  \right\rvert 
+&=\left\lvert  \phi\left( \bigcup_{n=1}^{\infty}A_{n}^{+} \right)+
+\phi\left( \bigcup_{n=1}^{\infty}A_{n}^{-} \right)
+\right\rvert \\
+&\leq\left\lvert  \phi\left( \bigcup_{n=1}^{\infty}A_{n}^{+} \right)  \right\rvert +
+\left\lvert  \phi\left( \bigcup_{n=1}^{\infty}A_{n}^{-} \right)  \right\rvert \\
+&\leq \infty.
+\end{align}
+$$
+
+:::
+
+# Hahn 分解和 Jordan 分解
+
+## 准备工作
+
+对于符号测度的研究，相比于测度，是不太容易的。因为其太宽泛了，没有什么有用的性质。因此，一个研究符号测度的方式是将其分离为两个测度之差，这样的分解方式就是 **Jordan 分解**。几乎与之一一对应的另一个概念是 **Hahn 分解**，其针对的是样本空间。
+
+我们现在先证明几个后面会用到的引理。
+
+::: {#lem-10-signed-measures-7}
+
+## Lemma
+
+设 $\phi$ 是一个符号测度，$\forall A\in\mathcal{F}$，记
+
+$$
+\phi^{*}(A)=\sup\{ \phi(B)|B\subset A,B\in\mathcal{F} \}.
+$$
+
+则 $\phi^{*}$ 是 $\mathcal{F}$ 上非负、单调且满足 $\phi^{*}(\emptyset)=0$ 的集函数。
+
+:::
+::: {.proof}
+非常容易。
+:::
+
+::: {#lem-singed-converge}
+
+## Lemma
+
+若 $A\in\mathcal{F}$ 满足 $\phi(A)<\infty$，则 $\forall\epsilon>0,\exists A_{\epsilon}\in\mathcal{F}$ 使
+
+$$
+A_{\epsilon}\subset A,\phi(A_{\epsilon})\geq 0,\phi^{*}(A\setminus A_{\epsilon})\leq\epsilon.
+$$
+
+:::
+
+::: {.callout-note title="这意味着任何有限的集合，都可以找到它的“正”子集，使得两者之间的“差别”很小。"}
+
+:::
+::: {.proof}
+反证法。假设存在 $\epsilon_{0}>0$，对于任何 $A_{0}\in\mathcal{F}$， $A_{0}\subset A$，成立
+
+$$
+\phi(A_{0})<0
+$$
+
+或
+
+$$
+\phi(A_{0})\geq 0,\quad \phi^{*}(A\setminus A_{0})>\epsilon_{0}.
+$$
+
+<span id="5af11d"></span>
+
+因为这个 $A_{0}$ 的任意性，所以我们就选择其为 $\emptyset$，因为 $\phi(\emptyset)=0$，所以可知 $\phi^{*}(A\setminus \emptyset)=\phi^{*}(A)>\epsilon_{0}$。
+
+由 $\phi^{*}$ 的定义可知，存在 $B_{1}\in\mathcal{F},B_{1}\subset A_{0},\phi(B_{1})>\epsilon_{0}$。又根据反证法的结论 [5af11d](#5af11d)，得到
+
+$$
+\phi^{*}(A\setminus B_{1})>\epsilon_{0}.
+$$
+
+这样，根据 $\phi^{*}$，存在 $B_{2}\in\mathcal{F},B_{2}\subset A\setminus B_{1},\phi(B_{2})>\epsilon_{0}$。该过程持续下去，我们得到了一个两两不交的序列 $\{ B_{n} \}$，并且有
+
+$$
+B_{n}\subset A,B_{n}\in\mathcal{F},\phi(B_{n})>\epsilon_{0}.
+$$
+
+令 $B=\bigcup_{n=1}^{\infty}B_{n}$，根据符号测度的可列可加性有
+
+$$
+B\subset A,B\in\mathcal{F},\phi(B)=\sum\limits_{n=1}^{\infty}\phi(B_{n})=\infty.
+$$
+
+根据命题 @prp-signed-control，这蕴含 $\lvert \phi(A) \rvert=\infty$。但是引理的条件是 $\phi(A)<\infty$，所以 $\phi(A)=-\infty$，但这与我们之前的 [约定](#517e57)。
+:::
+
+::: {#lem-full-neg-subset}
+
+## Lemma
+
+对于任何 $A\in\mathcal{F}$，只要 $\phi(A)<0$，就一定存在 $A_{0}\in\mathcal{F}$，使得
+
+$$
+A_{0}\subset A,\quad \phi(A_{0})<0,\quad \phi^{*}(A_{0})=0.
+$$
+
+:::
+
+::: {.callout-note title="这意味着，任何一个“负”集合，都能够找到一个子集，它是“全负”的。"}
+
+:::
+::: {.proof}
+对于任何 $A\in\mathcal{F},\phi(A)<0$，利用 @lem-singed-converge，我们可以找到 $C_{1}\in\mathcal{F}$，使得
+
+$$
+C_{1}\subset A,\quad\phi(C_{1})\geq 0,\quad \phi^{*}(A\setminus C_{1})\leq\epsilon_{1}=1.
+$$
+
+然后，继续利用 @lem-singed-converge ，对 $A\setminus C_{1}$ 进行处理，能够得到，存在 $C_{2}\subset A\setminus C_{1}$，使得
+
+$$
+\phi(C_{2})\geq 0,\quad \phi^{*}(A\setminus(C_{1}\cup C_{2}))\leq\epsilon_{2}=1 / 2.
+$$
+
+继续以上过程，可以得到一个序列 $\{ C_{k}\in\mathcal{F} \}$，有
+
+$$
+C_{k}\subset A,\quad \phi(C_{k})\geq 0,\quad
+\phi^{*}\left( A\setminus\left( \bigcup_{i=1}^{k}C_{i} \right) \right)
+\leq\epsilon_{k}=1/k.
+$$
+
+令 $C=\bigcup_{n=1}^{\infty}C_{n}$，则 $\phi(C)=\sum\limits_{n=1}^{\infty}\phi(C_{n})\geq 0$ 且
+
+$$
+0\leq \phi^{*}(A\setminus C)\leq \phi^{*}\left( A\setminus\left( \bigcup_{i=1}^{n}C_{k} \right) \right)\leq\epsilon_{k}=1/n\to0.
+$$
+
+我们取 $A_{0}=A\setminus C$，则有 $A_{0}\subset A,\phi^{*}(A_{0})=0$，并且
+
+$$
+\phi(A_{0})+\phi(C)=\phi(A)<0,\phi(C)\geq 0\implies
+\phi(A_{0})<0.
+$$
+
+:::
+
+## Hahn 分解
+
+利用上面证明的引理，现在我们来叙述 Hahn 分解。
+
+::: {#thm-hahn-decomp}
+
+## Hahn 分解
+
+对于可测空间 $(X,\mathcal{F})$ 的符号测度 $\phi$，存在 $X^{+},X^{-}\in\mathcal{F}$，使得
+
+$$
+X^{+}\cup X^{-}=X,\quad,X^{+}\cap X^{-}=\emptyset,
+$$
+
+并且对于 $\forall A\in\mathcal{F}$，有
+
+$$
+\phi(A\cap X^{+})\geq 0\geq \phi(A\cap X^{-}).
+$$
+
+以上分解在下列意义下是唯一的：若存在两个分解 $\{ X_{1}^{+},X^{-}_{1} \}$ 和 $\{ X_{2}^{+},X_{2}^{-} \}$ 满足上述要求，则有
+
+$$
+\begin{align}
+&\forall A\in\mathcal{F},A\subset X_{1}^{+}\Delta X_{2}^{+}\implies \phi(A)=0, \\
+&\forall B\in\mathcal{F},B\subset X_{1}^{-}\Delta X_{2}^{-}\implies \phi(B)=0.
+\end{align}
+$$
+
+:::
+
+::: {.proof}
+接下来，我们需要分步骤来证明该定理。
+(1) 集合系 $\mathcal{F}^{-}:=\{ A\in\mathcal{F}:\phi^{*}(A)=0 \}$ 是一个 $\sigma$ -ring。
+根据 [1.1 测度空间和概率空间](02-sigma-field.qmd#780e88) 中的 (4)，我们有如下：
+首先，$\emptyset\in\mathcal{F}^{-}$，所以 $\mathcal{F}^{-}$ 非空。
+若 $A_{1},A_{2}\in\mathcal{F}^{-}$，由 $\phi^{*}$ 的非负性和单调性可知
+
+$$
+0\leq \phi^{*}(A_{1}\setminus A_{2})\leq \phi^{*}(A_{1})=0,
+$$
+
+所以 $A_{1}\setminus A_{2}\in\mathcal{F}^{-}$。
+假设 $\{ A_{n}\in\mathcal{F}^{-},n=1,2,\dots \}$ 且两两不交，则 $\forall B\in\mathcal{F},B\subset \bigcup_{n=1}^{\infty}A_{n}$，有
+
+$$
+\phi(B)=\phi\left( B\cap\left( \bigcup_{n=1}^{\infty}A_{n} \right) \right)=
+\sum\limits_{n=1}^{\infty}\phi(B\cap A_{n}),
+$$
+
+进而有
+
+$$
+\begin{align}
+0&\leq \phi^{*}\left( \bigcup_{n=1}^{\infty}A_{n} \right) \\
+&=\sup\left\{  \phi(B)|B\in\mathcal{F},B\subset \bigcup_{n=1}^{\infty}A_{n}  \right\} \\
+&=\sup\left\{  \sum\limits_{n=1}^{\infty}\phi(B\cap A_{n})|B\in\mathcal{F},B\subset \bigcup_{n=1}^{\infty}A_{n}  \right\} \\
+&\leq \sup\left\{  \sum\limits_{n=1}^{\infty}\phi(B_{n})|B_{n}\in\mathcal{F},B_{n}\subset A_{n},\forall n\geq 1  \right\} \\
+&\leq \sum\limits_{n=1}^{\infty}\sup\{ \phi(B)|B\in\mathcal{F},B\subset A_{n} \} \\
+&=\sum\limits_{n=1}^{\infty}\phi^{*}(A_{n})=0.
+\end{align}
+$$
+
+这意味着 $\bigcup_{n=1}^{\infty}A_{n}\in\mathcal{F}^{-}$。
+
+(2) 我们证明存在满足定理的分解 $X^{\pm}$。
+记 $\alpha=\inf\{ \phi(A)|A\in\mathcal{F}^{-} \}$。
+由于 $\emptyset\in\mathcal{F}$，所以有 $\alpha\leq 0$。我们选择一个集合列 $\{ A_{n}\in\mathcal{F}^{-},n=1,2,\dots \}$ 使得 $\lim_{ n \to \infty }\phi(A_{n})=\alpha$。
+令 $X^{-}=\bigcup_{n=1}^{\infty}A_{n}$，由于 $\mathcal{F}^{-}$ 是一个 $\sigma$ -field，所以有 $X^{-}\in\mathcal{F}^{-}\subset \mathcal{F}$，而且有
+
+$$
+\phi(A\cap X^{-})\leq \phi^{*}(A\cap X^{-})\leq \phi^{*}(X^{-})=0.
+$$
+
+再令 $X^{+}=X\setminus X^{-}$，显然 $X^{+}\in\mathcal{F}$，现在我们只需要证明 $\forall A\in\mathcal{F},\phi(A\cap X^{+})\geq 0$ 即可。
+反证法。若存在 $A\in\mathcal{F},A\subset X^{+},\phi(A)<0$，则根据 @lem-full-neg-subset, 存在 $A_{0}\subset A,A_{0}\in\mathcal{F}$，使得
+
+$$
+\begin{align}
+&\phi(A_{0})<0,\phi^{*}(A_{0})=0 \\
+\iff &\phi(A_{0})<0,A_{0}\in\mathcal{F}^{-} \\
+\implies& \phi(A_{0})<0,A_{0}\cup X^{-}\in\mathcal{F}^{-} \\
+\implies&\phi(A_{0}\cup X^{-})=\phi(A_{0})+\phi(X^{-})<\phi(X^{-}),
+\end{align}
+$$
+
+其中第二行来自于 $\mathcal{F}^{-}$ 的定义，第三行是因为 $\mathcal{F}^{-}$ 是 $\sigma$ -field，第四行是因为 $A_{0}\cap X^{-}=\emptyset$。
+但是，我们又有
+
+$$
+\begin{align}
+\phi(X^{-})&=\phi(A_{n})+\phi(X^{-}\setminus A_{n}) \\
+&\leq\phi(A_{n})+\phi^{*}(X^{-}\setminus A_{n}) \\
+&=\phi(A_{n}),
+\end{align}
+$$
+
+其中第一行是由符号测度的有限可加性得到，第二行是由于 $\phi^{*}$ 的定义得到，第三行是由 $X^{-},A_{n}\in\mathcal{F}^{-}$，再加上 $\mathcal{F}^{-}$ 的定义得到。
+因此，我们有
+
+$$
+\phi(A_{0}\cup X^{-})<\phi(X^{-})\leq \lim_{ n \to \infty } \phi(A_{n})=\alpha,
+$$
+
+这又与 $A_{0}\cup X^{-}\in\mathcal{F}^{-}$ 和 $\alpha$ 的定义矛盾。因此证明完毕。
+
+(3) 我们来现在证明唯一性。
+假设 $\{ X_{1}^{+},X_{1}^{-} \}$ 和 $\{ X_{2}^{+},X_{2}^{-} \}$ 都符合 Hahn 分解。若 $A\in X_{2}^{+}\setminus X_{1}^{+}$，
+
+$$
+\begin{align}
+&A\in X_{2}^{+}\implies \phi(A)\geq 0,\\
+&A\in (X_{1}^{+})^{c}\implies \phi(A)\leq 0,
+\end{align}
+$$
+
+因此，$\phi(A)=0$。同理可以得到，$\forall A\in X_{1}^{+}\setminus X_{2}^{+}\implies \phi(A)=0$，因此，当 $A\in X_{1}^{+}\Delta X_{2}^{+}$ 时，
+
+$$
+\phi(A)=\phi(A\cap(X_{1}^{+}\setminus X_{2}^{+}))+\phi(A\cap(X_{2}^{+}\setminus X_{1}^{+}))=0.
+$$
+
+同理，当 $A\in X_{1}^{-}\Delta X_{2}^{-}$，证明过程类似。
+:::
+
+## Jordan 分解
+
+@thm-hahn-decomp 将整个空间 $X$ 分成了两个部分，一部分上只取正值，另一部分上只取负值。然后我们将这个分解等价地转换为测度的形式。
+
+::: {#thm-jordan-decomp}
+
+## Jordan 分解
+
+对于可测空间 $(X,\mathcal{F})$ 上的**符号测度 $\phi$**，存在**测度 $\phi^{+}$** 和**有限测度 $\phi^{-}$** 使得下面的内容成立
+
+$$
+\phi=\phi^{+}-\phi^{-},\quad
+\phi^{+}(A)=\phi^{*}(A)=\phi(A\cap X^{+}),\quad
+\phi^{-}(A)=(-\phi)^{*}(A)=-\phi(A\cap X^{-}),
+$$
+
+其中 $\{ X^{+},X^{-} \}$ 是 Hahn 分解。
+
+:::
+
+::: {.proof}
+令 $\phi^{+}(A)=\phi(A\cap X^{+}),\phi^{-}=-\phi(A\cap X^{-})$，则根据 Hahn 分解，$\phi=\phi^{+}-\phi^{-}$ 成立，并且容易证明两者都是测度。又根据约定 [约定](#appoint-signed-measure)，$\phi^{-}$ 是有限的。现在我们只需要证明 $\phi^{+}=\phi^{*},\phi^{-}=(-\phi)^{*}$ 即可。
+
+$\forall A\in\mathcal{F}$，对于 $A$ 的任意子集 $B\in\mathcal{F}$，我们有
+
+$$
+\phi(B)\leq \phi^{+}(B)\leq \phi^{+}(A),
+$$
+
+第一个不等号是因为 $\phi=\phi^{+}-\phi^{-}$ 并且 $\phi^{-}$ 是测度，第二个不等式是由测度的单调性得到的。因此，有
+
+$$
+\phi^{+}(A)\geq \sup\{ \phi(B)|B\in A,B\in\mathcal{F} \}=\phi^{*}(A).
+$$
+
+进一步，我们还有
+
+$$
+\phi^{+}(A)=\phi(A\cap X^{+})\leq \phi^{*}(A).
+$$
+
+因此，$\phi^{+}(A)=\phi^{*}(A)$。同理我们可以得到另外一个等式。
+:::
+
+# 变差
+
+::: {#def-total-variation}
+
+## 变差
+
+假设 $\phi^{+},\phi^{-}$ 是符号测度 $\phi$ 的 Jordan 分解，$\phi^{+}$ 和 $\phi^{-}$ 分别叫做 $\phi$ 的上变差和下变差，而 $\lvert \phi \rvert=\phi^{+}+\phi^{-}$ 叫做 $\phi$ 的全变差。**上变差、下变差和全变差都是测度**。
+
+:::

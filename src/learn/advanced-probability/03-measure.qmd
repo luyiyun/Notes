@@ -1,0 +1,189 @@
+---
+title: "测度"
+draft: true
+aliases:
+  - 测度和概率
+author:
+  - 荣志炜
+tags:
+  - 测度
+  - 概率
+created: 2024-03-27 16:00
+updated: 2025-11-02 13:57
+order: 3
+---
+
+# 引言
+
+[上一节](02-sigma-field.qmd) 我们介绍了测度空间三元组的 $\mathcal{F}$ —— $\sigma$ 域，现在我们将要介绍最后一个 $\nu$ —— 测度，其定义在 $\mathcal{F}$ 上。
+
+# 测度的定义
+
+::: {#def-03-measure-1}
+
+## 测度和测度空间
+
+设 $\mathcal{F}$ 是 $\Omega$ 上的一个集合系，并且 $\emptyset\in\mathcal{F}$，在其上定义一个 set function：$\nu:\mathcal{F}\to \mathbb{R}$，若其满足以下三个条件，则称 $\nu$ 是一个 **measure**：
+1. (非负性)$\forall A\in\mathcal{F}\implies0\leq \nu(A)\leq \infty$；
+2. (空集为 0)$\nu(\emptyset)=0$；
+3. (可列可加性)$A_{i}\in\mathcal{F},i=1,2,\dots$，并且 $\forall i,j,\quad i\neq j\implies A_{j}\cap A_{j}=\emptyset$，则有 $\nu(\cup_{i=1}^{\infty}A_{i})=\sum\limits_{i=1}^{\infty}\nu(A_{i})$。
+
+若 $\forall A\in\mathcal{F}\implies \nu(A)<\infty$，则称**测度 $\nu$ 是有限的**。若 $\forall A\in\mathcal{F}$，都存在 $\{A_{n}\in\mathcal{F}|n=1,2,\dots,\nu(A_{n})<\infty\}$ 使得 $\cup_{n=1}^{\infty}A_{n}\supset A$，则称**测度 $\nu$ 是 $\sigma$ 有限的**。
+
+假设 $(\Omega,\mathcal{F})$ 是一个 **measurable space**，则称 $(\Omega,\mathcal{F},\nu)$ 是一个 **measure space**。
+**Definition: 概率和概率空间**
+如果 $\nu(\Omega)=1$，则称 $\nu$ 是一个 **probability measure**，常记为 $P$。
+若 $(\Omega,\mathcal{F})$ 是一个 measurable space，则 $(\Omega,\mathcal{F},P)$ 被称为一个 **probability space**。
+
+:::
+测度可以看做是长度、面积、体积等概念的推广，但是其更加抽象，指代的对象更加广泛。下面我们将举出几个例子，其中第一个是一个 trival measure，用来展现 measure 的抽象；另外则是两个非常普遍的测度例子，在后面定义密度函数时会用到。
+
+::: {#exm-03-measure-2}
+
+## Trival、Counting、Lebesgue measure
+
+**Trival Measure**
+$(\Omega,\mathcal{F})$ 是任意的 measurable space，定义
+
+$$
+\nu(A)=\left\{\begin{align}
+&\infty,\quad A\in\mathcal{F},A\neq \emptyset \\
+&0,\quad A=\emptyset
+\end{align}\right.
+$$
+
+**Counting measure**
+对于任意的 $\Omega$，其对应的 $\sigma$-field$\mathcal{F}$ 是其 power set（all subsets），定义
+
+$$
+\nu(A)=\#\text{number of element in A}
+$$
+
+**Lebesgue measure**
+我们可以在 $(\mathbb{R},\mathcal{B})$ 上找到唯一的一个 measure $m$ 满足下面的要求，
+
+$$
+m([a,b])=b-a,\quad -\infty<a\leq b<\infty
+$$
+
+我们称其为 Lebesgue measure，简称为 L-measure。L-measure 的精确定义将在本章的最后给出，这是因为我们需要完全明确测度扩张和扩张的唯一性后才能完成的事情。
+
+:::
+此外，我们还要介绍完全测度空间的概念，其在后面测度扩张时会用到。
+
+::: {#def-complete-measure}
+
+## 完全测度空间
+
+对于任意测度空间 $(\Omega,\mathcal{F},\nu)$，如果
+
+$$
+A\in\mathcal{F},\nu(A)=0,\forall B\subset A\implies B\in\mathcal{F}
+$$
+
+则称该测度空间是一个**完全测度空间**。
+
+:::
+
+# 半环或环上的测度
+
+需要注意到，上述定义的测度并没有限制其定义域是何种集合系。这意味着我们在讨论测度的性质的时候需要注意其定义域是什么再进行讨论。很多性质的表述需要对集合进行各种各样的运算，因此讨论这些性质时需要集合系满足对运算的封闭性。这意味着，很多性质只有在定义更加“严格”的集合系中才能够讨论。
+
+我们首先需要探索半环上的测度的性质。
+
+::: {#prp-semi-ring-measure}
+
+## 半环上测度的性质
+
+半环上的测度具有有限可加性、半可列可加性、下连续性、上连续性、单调性、可减性。
+:::
+
+::: {.proof}
+使用 $\mathcal{L}$ 表示半环，$\nu$ 表示上面的一个测度。由半环的定义可知，$\emptyset\in\mathcal{L}$。则
+
+$$
+\nu\left( \cup_{i=1}^{N}A_{i} \right)=\nu(\cup_{i=1}^{N}A_{i})
+$$
+
+*TODO*
+:::
+其实半环上的测度就已经蕴含非常多的性质，而因为半环的结构简单，所以在其上定义一个测度是比较容易的。对于**环**上的测度，我们还有下面的定理
+
+::: {#thm-273132}
+
+## 环上的测度性质
+
+对于环 $\mathcal{R}$ 上的**有限可加**非负集函数 $\mu$，有
+(1) $\mu$ 可列可加
+(2) $\iff \mu$ 半可列可加
+(3) $\iff \mu$ 下连续
+(4) $\implies\mu$ 上连续
+(5) $\implies \mu$ 在 $\emptyset$ 上连续，即对满足任何 $A_{n}\downarrow\emptyset$ 和 $\mu(A_{1})<\infty$ 的 $\{ A_{n}\in\mathcal{R} \}$，有
+
+$$
+\lim_{ n \to \infty } \mu(A_{n})=0.
+$$
+
+若测度是有限的，则 (4) 和 (5) 是 $\iff$。
+
+:::
+
+::: {.proof}
+由于 $\mathcal{R}$ 也是半环，所以由 @prp-semi-ring-measure 可知 $(1)\implies(2),(3),(4)$，又容易知道 $(4)\implies(5)$，所以我们只需要证明下面的结论即可。
+
+首先是 $(2)\implies(1)$，有限可加性可以推出单调性，对于任何 $\{ A_{n} \}$ 两两不交，有
+
+$$
+\mu\left( \bigcup_{n=1}^{\infty}A_{n} \right)\geq
+\mu\left( \bigcup_{n=1}^{N}A_{n} \right)=\sum\limits_{n=1}^{N}\mu(A_{n}),
+$$
+
+因此有
+
+$$
+\mu\left( \bigcup_{n=1}^{\infty} \right)\geq \sum\limits_{n=1}^{\infty}\mu(A_{n}),
+$$
+
+配合半可列可加性得到等号的结论。
+
+$(3)\implies(1)$（其实不用证明上一条，只需要证明这一条，然后利用循环证明就可以了）。对于两两不交的 $\{ A_{n} \}$，有
+
+$$
+\bigcup_{n=1}^{N}A_{n}\uparrow\bigcup_{n=1}^{\infty}A_{n},
+$$
+
+通过下连续性和有限可加性可以推出可列可加性。
+
+$(5)\implies(1)$（在 $\mu$ 有限的条件下）。利用有限性，可以进行如下分解
+
+$$
+\mu\left( \bigcup_{n=1}^{\infty}A_{n} \right)
+=\sum\limits_{n=1}^{N}\mu(A_{n})+\mu\left( \bigcup_{rn=N+1}^{\infty}A_{n} \right).
+$$
+
+利用 (5) 可以让 $\mu\left( \bigcup_{rn=N+1}^{\infty}A_{n} \right)$ 趋向于 0，进而得到证明。
+
+:::
+
+# $\sigma$ 域上的测度
+
+为什么很多时候我们只关心 measure space 中的测度？因为**这样测度定义在一个 $\sigma$ -field 上，其作为最“严格”的集合系，拥有下面的所有性质**。
+
+::: {#thm-measure-prop}
+
+## 测度的性质
+
+$(\Omega,\mathcal{F},\nu)$ 是一个 measure space，则 $\nu$ 有以下性质
+
+1. (可减性) $A,B\in \mathcal{F},A\subset B,\nu(A)<\infty\implies \nu(B\setminus A)=\nu(B)-\nu(A)$
+2. (有限可加性) $A_{i}\in\mathcal{F},i=1,2,\dots,N, \text{disjoint}\implies\nu(\cup_{i=1}^{N}A_{i})=\sum_{i=1}^{N}\nu(A_{i})$
+4. (单调性) $A\subset B\implies \nu(A)\leq \nu(B)$；
+5. (半可列可加性) $A_{i},i=1,2,\dots\implies \nu(\cup_{i=1}^{\infty}A_{i})\leq \sum\limits_{i=1}^{\infty}\nu(A_{i})$；
+6. (上连续性) $A_{n}\downarrow A$ 且 $\nu(A_{1})<\infty$$\implies \nu(A)=\lim_{ n \to \infty }v(A_{n})=\cap_{n=1}^{\infty}A_n$；
+6. (下连续性) $A_{n}\uparrow A\implies\nu(A)=\lim_{ n \to \infty }v(A_{n})=\cup_{n=1}^{\infty}A_n$。
+
+:::
+
+::: {.proof}
+因为 $\mathcal{F}$ 是一个 semi-ring，而以上这些性质其实 semi-ring 上的 measure 都有（见下面的 @prp-semi-ring-measure），所以 measure space 中的 measure 自然也有这些性质。
+:::

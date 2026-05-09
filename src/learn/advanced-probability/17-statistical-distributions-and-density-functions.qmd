@@ -1,0 +1,762 @@
+---
+title: "统计分布与密度函数"
+draft: true
+author:
+  - 荣志炜
+tags:
+  - 概率
+  - 期望
+  - 柯西分布
+  - 卡方分布
+  - F分布
+  - t分布
+  - Cochran定理
+created: 2024-06-13 00:35
+updated: 2026-04-19 17:18
+order: 17
+---
+
+为了方便期间，我们将使用与之前不同的约定符号。比如使用 $\Omega$ 表示样本空间，使用 $X$ 来表示随机变量等。
+
+对于随机变量, 其核心性质蕴含在**随机变量的映射关系**和**所在概率空间上的概率测度**上, 取研究它们是非常有难度的, 因为这两个东西实际上非常抽象. 所以, 在它们的基础上衍生出了一系列的 " 特征 ", 可以认为是它们两者信息的压缩:
+1. **分布**, 其对应的是诱导测度 $PX^{-1}$ 和分布函数 $F(x)$, 这是保留信息最多的一种 " 特征 " ,几乎保留了所有的信息 (只在极限行为时可能有所损失);
+2. 当对于某 $\sigma$ 有限测度绝对连续时, 可以得到**密度函数**. 在这种特殊情况下, 其保留了**分布**所蕴含的所有信息.
+3. **特征函数**和**矩母函数**, 在其存在的情况下保留了密度函数所蕴含的所有信息;
+4. 单独的**矩**, 仅仅只是一个数字特征, 因此信息压缩最严重, 最简洁, 但是保留的信息最少.
+
+本节将主要介绍一下前两者。
+
+# 统计分布和密度函数
+
+我们在前面已经多次提到了**分布**的概念。分布可以看在是将随机变量 $X$ 和概率测度 $P$ 的信息整合在一起，去掉一些不重要的信息所得到的信息简化版本。其可以表示为一个在 $(\mathbb{R},\mathcal{B}_{\mathbb{R}})$ 上的概率测度 $PX^{-1}$，也可以等价的表示为一个分布函数 $F(x)=PX^{-1}((-\infty,x])$，通过 [12_Lebesgue分解](12-lebesgue-decomposition.qmd#12-lebesgue-decomposition-随机变量分类) 知道，我们还可以表示为密度函数的形式 $f=\frac{dPX^{-1}}{dm}$ (或者 $\frac{dF}{dm}$)，其中 $m$ 是某个 $\sigma$ 有限的测度。
+
+当 $Pf^{-1}$ 或 $F$ 或 $f$ 相同时（尽管可能有相同的 $X$ 或 $P$），我们就认为**分布是相同的**（或者称**随机变量有相同的分布**）。在很多问题上，我们就可以视为等价的东西进行处理。
+
+在上面介绍的这三种表达形式中，**概率测度 $PX^{-1}$** 因为是一个集合函数，所以并不好用；**分布函数 $F$** 也不太直观；反而**密度函数 $f$** 是普遍来说更方便的方式，并且其在初等概率论时已经被我们所熟知。在计算积分 (期望) 的时候, 以上三者之间的联系可以被非常明显地看出来:
+$$
+\begin{align}
+\mathbb{E}X&=\int X \, dP \\
+&=\int _{\mathbb{R}}x \, dPX^{-1}=\int _{\mathbb{R}}x \, dF_{X} \\
+&=\int _{\mathbb{R}}x\frac{dPX^{-1}}{dm} \, dm, 
+\end{align}
+$$
+第一行是原始定义, 表明了期望的本质, 但是非常难以计算; 第二行则等价地将运算转换到了 $(\mathbb{R},\mathcal{B})$ 上, 因此计算更加简单, 两个式子分别是从测度和分布函数角度进行的表达; 第三行则进一步利用密度函数将积分转换到我们熟知的测度 (比如 L 测度) 上, 使得 (在学习了微积分后) 可以手动计算期望.
+
+但是，密度函数依赖于绝对连续的 $\sigma$ 有限测度 $m$，根据 [12_Lebesgue分解](12-lebesgue-decomposition.qmd#12-lebesgue-decomposition-随机变量分类) 中的内容我们知道，除了奇异型随机变量和混合型随机变量，最常见的就是两类：**离散型随机变量**和**连续型随机变量**。
+
+- 常见的离散型随机变量的分布有：均匀分布、二项分布、泊松分布、几何分布、超几何分布、负二项分布、对数分布等。
+- 常见的连续型随机变量的分布有：均匀分布、正态分布、指数分布、卡方分布、Gamma 分布、Beta 分布、柯西分布、t 分布、F 分布、对数正态分布、Weibull 分布、双指数分布、帕累托分布、Logistic 分布等。
+
+接着, 我们还探索了多维随机变量的联合概率密度函数与边缘概率密度函数之间的关系 (@prp-comb-margin-density), 以及独立随机变量的概率密度函数的关系 (@prp-indepent-denisty). 此时, 可以说初等概率论中的大部分相关结论, 我们已经基于测度论视角对其进行了重建.
+
+# 密度变换
+
+## 密度变换公式
+
+接下来, 我们将叙述一个在初等概率论中经常使用的定理, 其描述了随机变量在经过函数变换后, 密度函数的变换.
+
+::: {#thm-density-transform}
+
+## 密度函数变换公式
+
+假设随机变量 $X$ 有相对于 $L$ 测度的 p.d.f $f_{X}$, 令 $Y=g(X)$, 并且 $g$ 是一个 $(\mathbb{R}^{k},\mathcal{B}^{k})\to(\mathbb{R}^{k},\mathcal{B}^{k})$ 的 Borel 函数. 令 $A_{1},\dots,A_{m}$ 是互斥的可测集, 并且有 $\mathbb{R}^{k}-(A_{1}\cup\dots \cup A_{m})$ 是一个零测集, 并且 $g$ 在 $A_{j}$ 上是一个有着非退化的 Jacobian 矩阵的双射函数 ($Det\left( \frac{\partial g}{\partial x} \right)\neq 0$ on $A_{j}$). 则 $Y$ 有下面的相对于 $L$ 测度的 p.d.f:
+$$
+\begin{align}
+f_{Y}(x)&=\sum\limits_{j=1}^{m}\left\lvert  Det\left( \frac{\partial h_{j}(x)}{\partial x} \right)  \right\rvert f_{X}(h_{j}(x)) \\
+&=\sum\limits_{j=1}^{m}\left\lvert  Det\left( \frac{\partial g_{j}(x)}{\partial x} \right)^{-1}  \right\rvert f_{X}(h_{j}(x))
+\end{align}
+$$
+其中 $h_{j}$ 是 $g$ 在 $A_{j}$ 上的反函数, $g_{j}$ 是 $g$ 在 $A_{j}$ 上的部分 .
+
+:::
+
+::: {.proof}
+略
+:::
+
+::: {.callout-note}
+注意, 这里是 $g$ 可以分成多个互斥的双射函数, 而不是 $h$.
+**Note: 注意到, 这里的 $g$ 需要是双射, 并且有可逆的 jacobian. 为了满足这个条件, 我们在应用的时候可能会用一些技巧, 比如将维度故意升上去, 下面的例子说明了这一点.**
+
+:::
+## 随机变量的算数运算
+
+::: {#exm-17-statistical-distributions-and-density-functions-2}
+
+## 算术运算的密度函数
+
+假设 $X_{1},X_{2}$ 是个 2 个的随机变量, 并且有概率密度函数, 请问 $X_{1}+X_{2},X_{1}X_{2},X_{1}/X_{2}$ 的密度函数是什么? (当求解 $X_{1}X_{2}$ 时 $X_{1}\neq 0$ a.s., $X_{1}/X_{2}$ 时假设 $X_{2}\neq 0$ a.s.)
+
+:::
+::: {.proof}
+首先我们来求解 $Y=X_{1}+X_{2}$. 我们令 $X=(X_{1},X_{2}),Z=(X_{1},Y)=g(X)$, 其中
+$$
+g(x_{1},x_{2})=(x_{1}, x_{1}+x_{2}).
+$$
+我们直接利用 @thm-density-transform, 有
+$$
+f_{Z}(x_{1},y)=f_{X}(x_{1},y-x_{1}),
+$$
+因为 $g$ 的 Jacobian 是 1. 继续利用 @prp-comb-margin-density, 我们得到
+$$
+f_{Y}(y)=\int f_{X}(x_{1},y-x_{1}) \, dx_{1} .
+$$
+若 $X_{1},X_{2}$ 是独立的, 则
+$$
+f_{Y}(y)=\int f_{X_{1}}(x_{1})f_{X_{2}}(y-x_{1}) \, dx_{1} .
+$$
+
+<span id="eq-sum-of-rv"></span>
+
+现在我们再来求解 $Y=X_{1}X_{2}$. 我们令 $Z=(X_{1},Y)=g(X)$, 其中
+$$
+\begin{align}
+&g(x_{1},y)=(x_{1},x_{1}x_{2}), \\
+&\frac{\partial g}{\partial x}=\left(\begin{matrix}
+1, x_{2} \\
+0, x_{1}
+\end{matrix}\right), \\
+&\left\lvert  Det\left( \frac{\partial g}{\partial x} \right)  \right\rvert 
+=\lvert x_{1} \rvert .
+\end{align}
+$$
+所以有
+$$
+f_{Z}(x_{1},y)=\frac{1}{\lvert x_{1} \rvert} f_{X}\left( x_{1},\frac{y}{x_{1}} \right),
+$$
+因此有
+$$
+f_{Y}(y)=\int \frac{1}{\lvert x_{1} \rvert} f_{X}\left( x_{1},\frac{y}{x_{1}} \right) \, dx_{1}. 
+$$
+当 $X_{1},X_{2}$ 独立, 则
+$$
+f_{Y}(y)=\int\frac{1}{\lvert x_{1} \rvert}f_{X_{1}}(x_{1})f_{X_{2}}\left( \frac{y}{x_{1}} \right)  \, dx_{1}. 
+$$
+<span id="eq-product-of-rv"></span>
+
+现在我们再来求解 $Y=X_{1} / X_{2}$. 我们令 $Z=(Y, X_{2})=g(X)$, 其中
+$$
+\begin{align}
+&g(y, x_{2})=(x_{1} / x_{2},x_{2}), \\
+&\frac{\partial g}{\partial x}=\left(\begin{matrix}
+1 / x_{2}, 0 \\
+-\frac{x_{1}}{x_{2}^{2}}, 1
+\end{matrix}\right), \\
+&\left\lvert  Det\left( \frac{\partial g}{\partial x} \right)  \right\rvert 
+=\lvert  1/ x_{2} \rvert .
+\end{align}
+$$
+所以有
+$$
+f_{Z}(y,x_{2})=\lvert x_{2} \rvert f_{X}\left( yx_{2},x_{2}\right),
+$$
+因此有
+$$
+f_{Y}(y)=\int \lvert x_{2} \rvert f_{X}\left( yx_{2},x_{2}\right) \, dx_{2}. 
+$$
+当 $X_{1},X_{2}$ 独立, 则
+$$
+f_{Y}(y)=\int\lvert x_{2} \rvert f_{X_{1}}(yx_{2})f_{X_{2}}(x_{2}) \, dx_{2}. 
+$$
+
+<span id="eq-division-of-rv"></span>
+
+:::
+我们将以上内容总结为下面的推论
+
+::: {#prp-dist-of-rv-operation}
+
+## 随机变量算数运算的密度计算公式
+
+假设 $X_{1},X_{2}$ 是个 2 个的随机变量, 并且其相对于 L 测度存在联合概率密度函数 $f_{X_{1},X_{2}}(x_{1},x_{2})$, 假设两个随机变量各自的边缘概率密度为 $f_{X_{1}}(x_{1}),f_{X_{2}}(x_{2})$, 则
+(1) 若 $Y=X_{1}+X_{2}$, 则
+$$
+f_{Y}(y)=\int f_{X}(x_{1},y-x_{1}) \, dx_{1},
+$$
+若 $X_{1},X_{2}$ 独立, 则
+$$
+f_{Y}(y)=\int f_{X_{1}}(x_{1})f_{X_{2}}(y-x_{1}) \, dx_{1}.
+$$
+(2) 若 $Y=X_{1}X_{2}$ 并且 $X_{1}\neq 0$ a.s., 则
+$$
+f_{Y}(y)=\int \frac{1}{\lvert x_{1} \rvert} f_{X}\left( x_{1},\frac{y}{x_{1}} \right) \, dx_{1},
+$$
+若 $X_{1},X_{2}$ 独立, 则
+$$
+f_{Y}(y)=\int\frac{1}{\lvert x_{1} \rvert}f_{X_{1}}(x_{1})f_{X_{2}}\left( \frac{y}{x_{1}} \right)  \, dx_{1}.
+$$
+(3) 若 $Y=X_{1} / X_{2}$ 并且 $X_{2}\neq 0$ a.s., 则
+$$
+f_{Y}(y)=\int \lvert x_{2} \rvert f_{X}\left( yx_{2},x_{2}\right) \, dx_{2},
+$$
+若 $X_{1},X_{2}$ 独立, 则
+$$
+f_{Y}(y)=\int\lvert x_{2} \rvert f_{X_{1}}(yx_{2})f_{X_{2}}(x_{2}) \, dx_{2}.
+$$
+
+:::
+
+# 常用统计分布
+
+接下来, 我们将利用上面得到的一些结论, 直接计算一下我们在统计学中会经常使用到的一些分布.
+
+## 正态分布
+
+略。
+
+## 柯西分布
+
+::: {#prp-17-statistical-distributions-and-density-functions-4}
+
+## 柯西分布
+
+若 $X_{1},X_{2}\sim N(0, 1)$, 独立, 则 $Y=X_{1} / X_{2}\sim C(0,1)$, 其概率密度函数为
+$$
+f_{Y}(y)=\frac{1}{\pi(1+y^{2})}.
+$$
+若进一步对 $Y$ 进行平移和缩放操作
+$$
+Z=\sigma Y+\mu,\quad \sigma> 0,
+$$
+则 $Z\sim C(\mu,\sigma)$, 其对应的概率密度函数为
+$$
+f_{Z}(z)=\frac{1}{\pi\sigma}\left[ 1+\left( \frac{z-\mu}{\sigma} \right)^{2} \right]^{-1}.
+$$
+
+:::
+::: {.proof}
+直接使用随机变量商的公式 [eq-division-of-rv](#eq-division-of-rv), 得到
+$$
+\begin{align}
+f_{Y}(y)&=\int _{x_{2}}\lvert x_{2} \rvert 
+f_{X_{1}}(yx_{2}) f_{X_{2}}(x_{2})
+\, dx_{2}  \\
+&=\int _{x_{2}}\lvert x_{2} \rvert 
+\frac{1}{\sqrt{ 2\pi }}
+\exp\left ( -\frac{(yx_{2})^{2}}{2} \right)
+\frac{1}{\sqrt{ 2\pi }}
+\exp\left ( -\frac{(x_{2})^{2}}{2} \right)
+\, dx_{2}  \\
+&=\frac{1}{2\pi}
+\int \lvert x_{2} \rvert
+\exp\left ( -\frac{(y^{2}+1)x_{2}^{2}}{2} \right)
+\, dx_{2} \\
+&=\frac{1}{\pi (1+y^{2})}.
+\end{align}
+$$
+进一步使用 @thm-density-transform, 有
+$$
+\begin{align}
+f_{Z}(z)&=\frac{1}{\sigma}f_{Y}\left( \frac{z-\mu}{\sigma} \right) \\
+&=\frac{1}{\pi\sigma}\left[ 1+\left( \frac{z-\mu}{\sigma} \right)^{2} \right]^{-1}.
+\end{align}
+$$
+
+:::
+
+## 卡方分布 {#17-statistical-distributions-and-density-functions-卡方分布}
+
+::: {#prp-17-statistical-distributions-and-density-functions-5}
+
+## 卡方分布
+
+若 $X_{i}\sim N(0,1),\forall i=1,\dots,n$, 独立,则 $Y=\sum\limits_{i=1}^{n}X_{i}^{2}\sim \chi^{2}_{n}$, 其概率密度函数为
+$$
+f_{Y}(y; n)=\frac{1}{\Gamma\left ( \frac{n}{2} \right) 2^{\frac{n}{2}}}
+y^{\frac{n}{2}-1}\exp\left ( -\frac{y}{2} \right) I_{(0,\infty)}(y),
+$$
+其中存在一个参数 $n$, 一般被称为**自由度**. 如果在统计分析中一旦出现自由度, 一般来说就和卡方分布有一定关系. 容易证明卡方分布存在**可加性**, 即
+$$
+Y_{1}\sim \chi_{n}^{2}, Y_{2}\sim \chi_{m}^{2}\implies
+Y_{1}+Y_{2}\sim \chi_{n+m}^{2}.
+$$
+进一步, 我们可以将 $X_{i}$ 的分布扩展至 $N(\mu_{i},\sigma^{2})$, 则随机变量
+$$
+Y=\frac{X_{1}^{2}+\cdots+X_{n}^{2}}{\sigma^{2}}
+$$
+服从的分布被称作非中心 (noncentral) 卡方分布, 记作 $\chi^{2}_{n}(\delta)$, 其依赖的参数除了 $n$ 之外, 还依赖
+$$
+\delta=\frac{\mu_{1}^{2}+\cdots+\mu_{n}^{2}}{\sigma^{2}},
+$$
+卡方分布是它的特殊情况, 它的概率密度函数为
+$$
+f_{Y}(y)=\exp\left( -\frac{\delta}{2} \right)
+\sum\limits_{j=0}^{\infty}
+\frac{(\delta/2)^{j}}{j!}f_{2j+n}(y),
+$$
+其中 $f_{k}(y)$ 是 $\chi^{2}_{k}$ 的概率密度函数. 此外, 也容易知道, 非中心卡方分布也存在其对应的**可加性**: 若 $\forall k=1,\dots,K,Y_{k}\sim \chi^{2}_{n_{k}}(\delta_{k})$, 有
+$$
+Y_{1}+\cdots+Y_{K}\sim \chi^{2}_{n_{1}+\cdots+n_{K}}(\delta_{1}+\cdots+\delta_{K}).
+$$
+
+:::
+::: {.proof}
+令 $Y_{i}=X_{i}^{2}$, 利用 @thm-density-transform, 我们直接得到
+$$
+\begin{align}
+f_{Y_{i}}(y)&=\frac{1}{2\sqrt{ y }}
+(f_{X_{i}}(\sqrt{ y })+f_{X_{i}}(-\sqrt{ y })) \\
+&=\frac{1}{\sqrt{ y }}\frac{1}{\sqrt{ 2\pi }}\exp\left ( -\frac{y}{2} \right) I_{(0,\infty)}(y) \\
+&=\frac{1}{\sqrt{ 2\pi y }}\exp\left ( -\frac{y}{2} \right) I_{(0,\infty)}(y).
+\end{align}
+$$
+
+<span id="79ec2d"></span>
+
+其中 $I_{(0,\infty)}(y)$ 表示定义域. 也就是说
+$$
+f_{Y}(y; 1)=\frac{1}{\sqrt{ 2\pi y }}\exp\left ( -\frac{y}{2} \right)
+I_{(0,\infty)}(y).
+$$
+进而利用加法变换的公式 [eq-sum-of-rv](#eq-sum-of-rv), 我们有
+$$
+\begin{align}
+f_{Y}(y; 2)&=\int f_{Y}(t; 1) f_{Y}(y-t; 1) dt \\
+&= \left ( \frac{1}{\sqrt{ 2\pi }} \right)^{2}
+\exp\left ( -\frac{y}{2} \right)
+\int \frac{1}{\sqrt{ t (y-t) }}
+I_{(0,\infty)}(t)
+I_{(0,\infty)}(y-t)\, dt \\
+&=\left ( \frac{1}{\sqrt{ 2\pi }} \right)^{2}
+\exp\left ( -\frac{y}{2} \right)
+\int \frac{1}{\sqrt{ t (y-t) }}
+ I_{(0, y)}(t) I_{(0,\infty)}(y)\, dt \\
+ &=\pi\left ( \frac{1}{\sqrt{ 2\pi }} \right)^{2}
+ \exp\left ( -\frac{y}{2} \right) I_{(0,\infty)}(y) \\
+ &=\frac{1}{2}\exp\left ( -\frac{y}{2} \right) I_{(0,\infty)}(y).
+\end{align}
+$$
+第 2 个等号中用到了这样的等式 (因为它其实可以表示为集合计算, 所以只需要保证两个式子所表示的集合 (2-vector 的集合) 相等即可):
+$$
+I_{(0,\infty)}(t) I_{(0,\infty)}(y-t)
+=I_{(0,\infty)}(y) I_{(0, y)}(t),
+$$
+第 3 个等号是利用了 $\int \frac{1}{\sqrt{ a^{2}-x^{2} }} \, dx=\arcsin \frac{x}{a}+C$.
+
+然后, 我们还可以继续进行这个内容, 得到
+$$
+\begin{align}
+f_{Y}(y; 3)&=
+\int f_{Y}(y-t; 2) f_{Y}(t; 1) \, dt \\
+&=\frac{1}{2}\left ( \frac{1}{\sqrt{ 2\pi }} \right)
+\int \frac{1}{\sqrt{ t }}\exp\left ( -\frac{y}{2} \right) I_{(0,\infty)}(t) I_{(0,\infty)}(y-t) \, dt \\
+&=\frac{1}{2}\left ( \frac{1}{\sqrt{ 2\pi }} \right)
+\exp\left ( -\frac{y}{2} \right) I_{(0,\infty)}(y)
+\int \frac{1}{\sqrt{ t }}I_{(0, y)} \, dt \\
+&=\frac{1}{\sqrt{ 2\pi }}y^{1/2}
+\exp\left ( -\frac{y}{2} \right) I_{(0,\infty)}(y),
+\end{align}
+$$
+继续计算
+$$
+\begin{align}
+f_{Y}(y; 4)&=
+\int f_{Y}(y-t; 3) f_{Y}(t) \, dt \\
+&=\frac{1}{4\sqrt{ 2\pi }}\frac{1}{\sqrt{ 2\pi }}
+\exp\left ( -\frac{y}{2} \right) I_{(0,\infty)}(y)
+\int \sqrt{ \frac{y-t}{t} }
+I_{(0, y)}(t)\, dt \\
+&=\frac{1}{8\pi}\frac{\pi}{2}
+\exp\left ( -\frac{y}{2} \right) I_{(0,\infty)}(y) y \\
+&=\frac{1}{16}y\exp\left ( -\frac{y}{2} \right) I_{(0,\infty)}(y).
+\end{align}
+$$
+以上的计算使用了 $y_{n-3}=t^{2}$ 的变量替换.
+总结我们上面的计算, 我们可以猜测:
+$$
+f_{Y}(y; n)\propto y^{n/2-1}\exp\left ( -\frac{y}{2} \right) I_{(0,\infty)}(y).
+$$
+
+<span id="ad6f78"></span>
+
+我们可以使用反证法来证明以上的结论:
+当 $n=1$ 时, 根据公式 [79ec2d](#79ec2d) 可知上述猜测成立.
+当假设 $n=k$ 成立时, 我们现在来证明 $n=k+1$ 成立. 直接利用加法变换的公式, 得到
+$$
+\begin{align}
+f_{Y}(y; k+1)&\propto\int f_{Y}(y-t; k) f_{Y}(t; 1) \, dt \\
+&\propto \exp\left ( -\frac{y}{2} \right) I_{(0,\infty)}(y)
+\int \frac{(y-t)^{k/2-1}}{\sqrt{t }}I_{(0, y)}(t) \, dt \\
+&\propto \exp\left ( -\frac{y}{2} \right) I_{(0,\infty)}(y)
+\int (y-s^{2})^{k/2-1}I_{(0,\sqrt{ y })}(s) \, ds \\
+&\propto \exp\left ( -\frac{y}{2} \right) I_{(0,\infty)}(y) y^{k/2-1}
+\int \left ( 1-\frac{s^{2}}{y} \right)^{k/2-1}I_{(0,\sqrt{ y })}(s) \, ds \\
+&\propto\exp\left ( -\frac{y}{2} \right) I_{(0,\infty)}(y) y^{k/2-1}
+\int I_{(0,\sqrt{ y })}(s) \left[ 
+1+\sum\limits_{n=1}^{\infty}\binom{\frac{k}{2}-1}{n}(-1)^{n}
+\left ( \frac{s^{2}}{y} \right)^{n}
+ \right] \, ds \\
+ &=\exp\left ( -\frac{y}{2} \right) I_{(0,\infty)}(y) y^{k/2-1}
+ \left\{  
+ \sqrt{ y }+\sum\limits_{n=1}^{\infty}
+ \binom{\frac{k}{2}-1}{n}(-1)^{n}\int \frac{s ^{2 n}}{y^{n}}
+ I_{(0,\sqrt{ y })}(s) \, ds 
+   \right\} \\
+&=\exp\left ( -\frac{y}{2} \right) I_{(0,\infty)}(y) y^{k/2}
+ \left\{  
+ 1+\sum\limits_{n=1}^{\infty}
+ \binom{\frac{k}{2}-1}{n}\frac{(-1)^{n}}{2 n+1} 
+   \right\} \\
+&\propto\exp\left ( -\frac{y}{2} \right) I_{(0,\infty)}(y) y^{k/2}
+\end{align}
+$$
+
+其中第 3 行利用了变量代换 $t=s^{2}$, 第 5 行使用了 $(1+x)^{\alpha},\lvert x \rvert<1$ 的级数展开:
+$$
+(1+x)^{\alpha}=1+\sum\limits_{n=1}^{\infty}\binom{\alpha}{n}x^{n},
+$$
+第 6 行交换了级数和积分运算, 这需要级数的部分和**一致收敛**, 容易证明在 $(0,1)$ 的范围内是满足条件的 (可以使用 [Weierstrass M-test](https://en.wikipedia.org/wiki/Weierstrass_M-test) 来验证, 显然 $\frac{s^{2}}{y}<1$, 所以
+$$
+\lvert \binom{\frac{k}{2}-1}{n}(-1)^{n}\left ( \frac{s^{2}}{y} \right)^{n} \rvert<\binom{\frac{k}{2}-1}{n},
+$$
+而我们有
+$$
+1+\sum\limits_{n=1}^{\infty}\binom{\frac{k}{2}-1}{n}=(1+1)^{k/2-1}=2^{k/2-1}
+$$
+收敛, 从而满足 Weierstrass M-test 的条件, 证明了一致收敛性; 或者**将其视为 L 积分, 然后使用控制收敛定理**). 然后我们只需要证明第 7 行中的级数收敛即可, 使用证明一致收敛的思路可以同样证明此内容. 这样, 我们就证明了我们的猜测, 也就得到了卡方分布的 kernel.
+
+最后, 利用分布函数的性质 (积分是 1) 和 Gamma 函数的定义, 我们可以得到精确的分布表达式.
+
+::: {.callout-note title="Gamma 函数的性质"}
+我们简单介绍一下 Gamma 函数:
+$$
+\Gamma (z):=\int _{0}^\infty t^{z-1}\exp (-t) \, dt,\quad
+z\in\mathbb{C},\mathrm{Re}(z)>0. 
+$$
+其有性质
+$$
+\begin{align}
+&\Gamma (n+1)=n!,\quad n\in\mathbb{N}^{+}; \\
+&\Gamma\left ( \frac{1}{2} \right)=\sqrt{ \pi }; \\
+&\Gamma (x+1)=x\Gamma (x);
+
+\end{align}
+$$
+因此, 我们有
+$$
+\Gamma (n/2)=\left\{\begin{matrix}
+&\frac{n}{2}\frac{n-2}{2}\cdots \frac{3}{2}\sqrt{ \pi },\quad
+&n\text{ is odd}; \\
+&\frac{n}{2}\frac{n-2}{2}\cdots 1,\quad 
+&n\text{ is even}.
+\end{matrix}\right.
+
+$$
+
+:::
+接下来, 我们来证明非中心卡方分布的密度函数. 整体的想法依然是归纳法, 我们首先证明当 $n=1$ 的时候成立, 然后再证明 $n=k$ 成立的前提下 $n=k+1$ 成立.
+我们首先去求解 $Z=\frac{X^{2}}{\sigma^{2}}$ 的分布, 其中 $X\sim N(\mu,\sigma^{2})$. 使用 @thm-density-transform, 有
+$$
+\begin{align}
+f_{Z}(z)&=\frac{\sigma^{2}}{2\sigma\sqrt{ z }}
+(f_{X}(\sigma\sqrt{ z })+f_{X_{i}}(-\sigma\sqrt{ z })) \\
+&=\frac{1}{2\sqrt{2\pi z }}\exp\left ( -\frac{z+\frac{\mu^{2}}{\sigma^{2}}}{2} \right) 
+\left[\exp\left(\frac{\mu}{\sigma}\sqrt{ z }\right)+
+\exp\left(-\frac{\mu}{\sigma}\sqrt{ z }\right)
+\right]
+I_{(0,\infty)}(y) \\
+&=\frac{1}{\sqrt{ 2\pi z }}
+\exp\left ( -\frac{\delta}{2} \right) 
+\exp\left(-\frac{z}{2}\right)
+\cosh(\sqrt{ \delta z })
+I_{(0,\infty)}(y) \\
+&=\exp\left ( -\frac{\delta}{2} \right) 
+\frac{1}{\sqrt{ 2\pi z }}\exp\left(-\frac{z}{2}\right)
+\sum\limits_{i=0}^{\infty}\frac{(\delta z)^{i}}{(2i)!} \\
+&=\exp\left ( -\frac{\delta}{2} \right) 
+\sum\limits_{i=0}^{\infty}z^{i-1/2}\exp(-\frac{z}{2})
+\frac{\delta^{i}}{(2i)!}\frac{1}{\sqrt{ 2 }\Gamma(1/2)} \\
+&=\exp\left ( -\frac{\delta}{2} \right) 
+\sum\limits_{i=0}^{\infty}z^{i-1/2}\exp(-\frac{z}{2})
+\frac{(\delta/2)^{i}}{i!}\frac{1}{2^{i+1/2}\Gamma(1/2+j)} \\
+&=\exp\left ( -\frac{\delta}{2} \right) 
+\sum\limits_{i=0}^{\infty}f_{2j+1}(z).
+\end{align}
+$$
+其中第 3 行是使用 $\delta=\frac{\mu^{2}}{\sigma^{2}}$, 第 4 行使用了 $\cosh$ 函数的泰勒展开, 第 6 行则使用了下面的变换过程:
+$$
+\begin{align}
+\frac{\delta^{j}}{(2j)!}\frac{1}{\sqrt{ 2 }\Gamma(1/2)}
+&=\frac{\delta^{j}}{(2j)!}\frac{1}{\sqrt{ 2 }}
+\frac{\frac{1}{2}\frac{3}{2}\cdots \frac{2j-1}{2}}
+{\Gamma(1/2)\frac{1}{2}\frac{3}{2}\cdots \frac{2j-1}{2}} \\
+&=\frac{\delta^{j}}{(2j)!}\frac{1}{\sqrt{ 2 }}
+\frac{2^{-j}(2j-1)!!}{\Gamma\left( j+\frac{1}{2} \right)} \\
+&=\frac{(2j-1)!!}{\Gamma\left( j+\frac{1}{2} \right)
+2^{j+\frac{1}{2}}}\frac{\delta^{j}}{(2j)!} \\
+&=\frac{1}{\Gamma\left( j+\frac{1}{2} \right)
+2^{j+\frac{1}{2}}}\frac{\delta^{j}}{(2j)!!} \\
+&=\frac{1}{\Gamma\left( j+\frac{1}{2} \right)
+2^{j+\frac{1}{2}}}\frac{\left( \frac{\delta}{2} \right)^{j}}{(j)!},
+\end{align}
+$$
+最后一行的结果表明其满足非中心卡方分布的密度函数公式.
+接下来, 假设当 $n=k$ 时, $Y_{k}=\sum\limits_{i=1}^{k}X_{k} / {\sigma^{2}}$, 并且其密度函数为
+$$
+f_{Y_{k}}=\exp\left( -\frac{\delta_{k}}{2} \right)
+\sum\limits_{j=0}^{\infty}
+\frac{(\delta_{k}/2)^{j}}{j!}f_{2j+k}(y),
+$$
+其中 $\delta_{k}=\sum\limits_{i=1}^{k}\mu_{i}^{2} / \sigma^{2}$, 则对于 $n=k+1$, $Y_{k+1}=Y_{k}+X_{k+1} / \sigma^{2}$, 利用随机变量加法的公式有
+$$
+\begin{align}
+f_{Y_{k+1}}(y_{k+1})&=\int f_{Y_{k}}(y_{k})f_{Y_{1}}(y_{k+1}-y_{k}) \, dy_{k} \\
+&=\int 
+\exp\left( -\frac{\delta_{k}+\delta_{1}}{2} \right)
+\sum\limits_{j=0}^{\infty}\sum\limits_{i=0}^{\infty}
+  \frac{(\delta_{k} / 2)^{j}(\delta_{1} / 2)^{i}
+f_{2j+k}(y_{k})f_{2i+1}(y_{k+1}-y_{k})}
+{j!i!}  
+\, dy_{k} \\
+&=\exp\left( -\frac{\delta_{k}+\delta_{1}}{2} \right)
+\sum\limits_{j=0}^{\infty}\sum\limits_{i=0}^{\infty}
+\frac{(\delta_{k} / 2)^{j}(\delta_{1} / 2)^{i}}{j!i!}
+\int f_{2j+k}(y_{k})f_{2i+1}(y_{k+1}-y_{k}) \, dy_{k} \\
+&=\exp\left( -\frac{\delta_{k}+\delta_{1}}{2} \right)
+\sum\limits_{j=0}^{\infty}\sum\limits_{i=0}^{\infty}
+\frac{(\delta_{k} / 2)^{j}(\delta_{1} / 2)^{i}}{j!i!}
+f_{2(i+j)+k+1}(y_{k+1}) \\
+&=\exp\left( -\frac{\delta_{k}+\delta_{1}}{2} \right)
+\sum\limits_{s=0}^{\infty}f_{2s+k+1}(y_{k+1})
+\sum\limits_{i+j=s}
+\frac{(\delta_{k} / 2)^{j}(\delta_{1} / 2)^{i}}{j!i!} \\
+&=\exp\left( -\frac{\delta_{k}+\delta_{1}}{2} \right)
+\sum\limits_{s=0}^{\infty}f_{2s+k+1}(y_{k+1})
+\frac{((\delta_{k}+\delta_{1})/2)^{s}}{s!} \\
+&=\exp\left( -\frac{\delta_{k+1}}{2} \right)
+\sum\limits_{s=0}^{\infty}
+\frac{(\delta_{k+1}/2)^{s}}{s!}
+f_{2s+k+1}(y_{k+1}),
+\end{align}
+$$
+其中第 4 行用到了卡方分布的可加性, 第 6 行使用到了二项式定理. 证毕.
+:::
+
+## F 分布 {#17-statistical-distributions-and-density-functions-f-分布}
+
+::: {#prp-17-statistical-distributions-and-density-functions-6}
+
+## F 分布
+
+若 $X_{1}\sim \chi_{n}^{2},X_{2}\sim \chi_{m}^{2}$, 两者是独立的, 则
+$$
+Y=\frac{X_{1}/n}{X_{2}/m}\sim F_{n, m},
+$$
+其概率密度函数为
+$$
+f_{Y}(x)=\frac{n^{n/2}m^{m/2}\Gamma[(n+m)/2]x^{n/2-1}}{\Gamma(n/2)\Gamma(m/2)(m+nx)^{(n+m)/2}}I_{(0,\infty)}(x)
+$$
+其中两个参数 $n,m$ 的顺序是非常重要的.
+进一步, 我们可以将 $X_{1}$ 的分布扩展至非中心卡方分布 $\chi^{2}_{n}(\delta)$, 则随机变量
+$$
+Y=\frac{X_{1}/n}{X_{2}/m}
+$$
+服从的分布被称作非中心 (noncentral) F 分布, 记作 $F_{n,m}(\delta)$, 其依赖的参数除了 $n,m$ 之外, 还依赖 $\delta$. F 分布是它的特殊情况, 它的概率密度函数为
+$$
+\begin{align}
+f_{Y}(y)&=e^{-\delta/2}\sum_{j=0}^\infty\frac{n(\delta/2)^j}{j!(2j+n)}f_{2j+n,m}\left(\frac{ny}{2j+n}\right) \\
+&=e^{-\delta/2}\sum_{j=0}^\infty\frac{(\delta/2)^j}{j!}f_{2j+n,m}\left(y\right),
+\end{align}
+$$
+其中 $f_{2j+n,m}(y)$ 是 $F_{2j+n,m}$ 的概率密度函数.
+
+:::
+::: {.proof}
+利用 @thm-density-transform 和变量商的分布公式 [eq-division-of-rv](#eq-division-of-rv), 我们有
+$$
+\begin{align}
+f_{Y}(y)&=\int x_{2}f_{X_{1}/n}(yx_{2}) f_{X_{2}/m}(x_{2}) \, dx _{2} \\
+&=nm\int x_{2}f_{n}(nyx_{2}) f_{m}(mx_{2}) \, dx _{2} \\
+&=\frac{nm}{\Gamma\left ( \frac{n}{2} \right)
+\Gamma\left ( \frac{m}{2} \right) 2^{\frac{n+m}{2}}}\int 
+x_{2}(nyx_{2})^{n/2-1}\exp\left ( -\frac{nyx_{2}}{2} \right)
+(mx_{2})^{m/2-1}\exp\left ( -\frac{mx_{2}}{2} \right)
+I_{(0,\infty)}(yx_{2}) I_{(0,\infty)}(x_{2})
+\, dx_{2} \\
+&= \frac{n^{n/2}m^{m/2}}
+{\Gamma\left ( \frac{n}{2} \right)
+\Gamma\left ( \frac{m}{2} \right) 2^{\frac{n+m}{2}}}
+y^{n/2-1}I_{(0,\infty)}(y)
+\int 
+\exp\left ( -\frac{(ny+m) x_{2}}{2} \right)
+x_{2}^{\frac{n+m}{2}-1} I_{(0,\infty)}(x_{2})
+\, dx_{2} \\
+&=\frac{n^{n/2}m^{m/2}
+\Gamma\left ( \frac{n+m}{2} \right)}
+{\Gamma\left ( \frac{n}{2} \right)
+\Gamma\left ( \frac{m}{2} \right)}
+\frac{y^{n/2-1}}{(ny+m)^{\frac{n+m}{2}}}
+I_{(0,\infty)}(y).
+\end{align}
+$$
+
+使用同样的方式, 我们可以证明非中心 F 分布的概率密度函数
+$$
+\begin{align}
+f_{Y}(y)&=\int x_{2}f_{X_{1}/n}(yx_{2}) f_{X_{2}/m}(x_{2}) \, dx _{2} \\
+&=nm\int x_{2}f_{X_{1}}(nyx_{2}) f_{X_{2}}(mx_{2}) \, dx _{2} \\
+&=e^{-\delta/2}\sum\limits_{i=0}^{\infty}\frac{(\delta/2)^{i}}{i!}
+nm\int x_{2}
+f_{2i+n}(nyx_{2})f_{m}(mx_{2}) \, dx_{2} \\
+&=e^{-\delta/2}\sum\limits_{i=0}^{\infty}\frac{(\delta/2)^{i}}{i!}
+f_{2i+n,m}(y),
+\end{align}
+$$
+其中由第 3 行推导第 4 行使用到了中心 F 分布推导过程中的结论. 在最后一行的基础上使用 $z=\frac{2j+n}{n}y$ 的变量替换, 就可以得到定理中的公式了.
+:::
+
+## t 分布 {#17-statistical-distributions-and-density-functions-t-分布}
+
+::: {#prp-17-statistical-distributions-and-density-functions-7}
+
+## t 分布
+
+若 $X_{1}\sim N(0,1),X_{2}\sim \chi_{n}^{2}$, 并且它们两个是独立的, 则有
+$$
+Y=\frac{X_{1}}{\sqrt{ X_{2}/n }}\sim t_{n},
+$$
+其概率密度函数为
+$$
+f_{Y}(y; n)=\frac{\Gamma\left ( \frac{n+1}{2} \right) n^{n/2}}{\Gamma\left ( \frac{n}{2} \right)\sqrt{ n\pi }}\left ( 1+\frac{y^{2}}{n} \right)^{-\frac{n+1}{2}},
+$$
+其中存在一个参数 $n$, 一般也被称为**自由度**.
+根据 F 分布的定义, 容易知道
+$$
+Y^{2}\sim F_{1, n}.
+$$
+根据 Cauchy 分布的定义可知
+$$
+t_{1}=C (0,1).
+$$
+进一步, 我们可以将 $X_{1}$ 的分布扩展至 $N(\mu,1)$, 则随机变量
+$$
+Y=\frac{X_{1}}{\sqrt{ X_{2}/n }}
+$$
+服从的分布被称作非中心 (noncentral) t 分布, 记作 $t_{n}(\delta)$, 其依赖的参数除了 $n$ 之外, 还依赖 $\delta$. t 分布是它的特殊情况, 它的概率密度函数为
+$$
+\begin{align}
+f_{Y}(y)&=\frac{1}{2^{(n+1)/2}\Gamma(n/2)\sqrt{\pi n}}\int_{0}^{\infty}y^{(n-1)/2}e^{-[(x\sqrt{y/n}-\delta)^{2}+y]/2}dy,
+\end{align}
+$$
+容易只知道
+$$
+Y^{2}\sim F_{1,n}(\delta).
+$$
+
+:::
+::: {.proof}
+
+有多种思路去求解 $Y$ 的密度函数, 这里我们基于 F 分布的密度函数来进行. 已知
+$$
+Z=Y^{2}\sim F_{1, n},
+$$
+则我们有
+$$
+f_{Z}(z)=\frac{\Gamma\left ( \frac{1+n}{2} \right) n^{n/2}}{\sqrt{ \pi }\Gamma\left ( \frac{n}{2} \right)}\frac{1}{\sqrt{ z }(z+n)^{\frac{n+1}{2}}}
+I_{(0,\infty)}(z).
+$$
+注意, $\forall y\in\mathbb{R}^{+}$, 我们有
+$$
+F_{Y}(-y)=P (Y\leq -y)=P (Z\geq y^{2})=P (Y\geq  y)=1-P (Y< y)=1-P (Y\leq y)=1-F_{Y}(y),
+$$
+直接求导即可证明 ([1.4 符号测度与R-N导数](11-radon-nikodym-derivative.qmd#54d0e5))
+$$
+f_{Y}(-y)=f_{Y}(y).
+$$
+也就是说, $f_{Y}$ 是一个偶函数. 我们只关注 $@thm-density-transform
+$$
+\begin{align}
+f_{Y}(y)&=\frac{\Gamma\left ( \frac{1+n}{2} \right) n^{n/2}}
+{\sqrt{ \pi }\Gamma\left ( \frac{n}{2} \right)}
+\frac{2 y}{y (y^{2}+n)^{\frac{n+1}{2}}}I_{[0, \infty)} \\
+&=2\frac{\Gamma\left ( \frac{1+n}{2} \right)}
+{\sqrt{ n\pi }\Gamma\left ( \frac{n}{2} \right)}
+\left ( 1+\frac{y^{2}}{n} \right)^{-\frac{n+1}{2}}
+I_{[0, \infty)}.
+\end{align}
+$$
+需要注意到, 我们现在是将一整个密度全部集中在 $[0,+\infty)$ 的部分得到了以上结果, 但实际上整个密度应该分布在整个 $\mathbb{R}$ 上, 这时再根据我们上面证明的偶函数的结论可以得到正和负轴部分各得一般, 也就是
+$$
+f_{Y}(y)=\frac{\Gamma\left ( \frac{1+n}{2} \right)}
+{\sqrt{ n\pi }\Gamma\left ( \frac{n}{2} \right)}
+\left ( 1+\frac{y^{2}}{n} \right)^{-\frac{n+1}{2}}
+$$
+
+::: {.callout-note}
+以上的证明过程可能不是很严谨, 从两个分布的商的角度出发是更好的选择.
+
+:::
+:::
+至此, 我们就完成了三大统计分布 (卡方分布, F 分布, t 分布) 密度函数的推导.
+
+# Cochran 定理
+
+以上讨论的内容结合线性代数, 会得到下面的 Cochran's theorem, 其会在**方差分析**中用到.
+
+::: {#thm-17-statistical-distributions-and-density-functions-8}
+
+## Cochran
+
+假设 $n$ 维随机向量 $X\sim N_{n}(\mu,I_{n})$, 并且有
+$$
+X^\tau X=X^\tau A_1X+\cdots+X^\tau A_kX,
+$$
+其中 $I_{n}$ 是 $n\times n$ 的单位向量, 并且 $A_{i}$ 是 $n\times n$ 的对称矩阵, 其秩为 $n_{i}$. 则下面的命题等价:
+(1) $X^\tau A_i X\sim \chi^{2}_{n_{i}}(\delta_{i}),\quad\delta_{i}=\mu^{T}A_{i}\mu$, 随机变量 $\{ X^{T}A_{i}X,i=1,\dots,k \}$ 是独立的;
+(2) $n=n_{1}+\cdots+n_{k}$.
+此外, 当以上之一成立时, 有 $\mu^{T}\mu=\delta_{1}+\dots+\delta_{k}$.
+
+:::
+::: {.proof}
+假设 (1) 成立, 现在我们证明 (2). 条件 (1) 成立意味着
+$$
+X^{T}X\sim \chi^{2}_{n_{1}+\dots+n_{k}}(\delta_{1}+\dots+\delta_{k}).
+$$
+根据非中心卡方分布的定义可知, $X^{T}X\sim \chi^{2}_{n}(\mu^{T}\mu)$, 这意味着
+$$
+n=n_{1}+\dots+ n_{k},\quad
+\mu^{T}\mu=\delta_{1}+\dots+\delta_{k}.
+$$
+假设 (2) 成立, 现在我们来证明 (1). 首先, 因为 $A_{i}$ 都是对称矩阵, 可以直接进行特征值分解, 得到
+$$
+X^{T}A_{i}X=(U_{i}X)^{T}\Sigma_{i}U_{i}X
+=\sum\limits_{j=1}^{n_{i}}\lambda_{ij}(u_{ij}^{T}X)^{2},
+$$
+其中 $\Sigma_{i}$ 是一个对角矩阵, 其中主对角线上前 $n_{i}$ 个元素是 $A_{i}$ 的特征值 $\lambda_{ij}$, 其他元素是 0. $U_{i}$ 是 $A_{i}$ 的特征向量组成的矩阵, 其中的每一列是 $u_{ij}\in\mathbb{R}^{n}$. 令 $c_{ij}=\pm\sqrt{ \lvert \lambda_{ij} \rvert }u_{ij}$ (注意正负号还不确定), 则我们得到了
+$$
+X^{T}A_{i}X=\sum\limits_{j=1}^{n_{ij}}\pm(c_{ij}^{T}X)^{2}.
+$$
+
+<span id="07e344"></span>
+
+令 $C_{i}$ 是一个 $n\times n_{i}$ 的矩阵, 其中每一列是 $c_{ij}$, 然后构造 $C=(C_{1},\dots,C_{k})$, 因为条件 (2), 所以 $C$ 是一个 $n\times n$ 的矩阵, 因此有
+$$
+X^{T}X=X^{T}C^{T}\Delta CX,
+$$
+其中 $\Delta$ 是一个对角矩阵, 对角线元素为 $\pm1$. 上式蕴含 $I_{n}=C^{T}\Delta C$ ($X$ 取不同的值都能处理, 自然很容易推导出 $I_{n}=C^{T}\Delta C$).
+这进而推出 $C$ 是满秩的, 因此有 $(C^{T})^{-1}C^{-1}=\Delta$, 这意味着 $\Delta$ 是正定的, 所以 $\Delta=I_{n}$, 所以 $C^{T}C=I_{n}$, 所以
+$$
+X^{T}A_{i}X=\sum\limits_{j=n_{1}+\dots n_{i-1}+1}^{n_{1}+\dots +n_{i-1}+n_{i}}Y_{j}^{2},
+$$
+
+<span id="2daa5c"></span>
+
+其中 $Y=CX$ 的第 $j$ 个元素, $Y\sim N_{n}(C\mu,I_{n})$. 这意味着 $\{ Y_{j} \}$ 是独立的, 并且有 $Y_{j}\sim N(\lambda_{j},1)$, 其中 $\lambda_{j}$ 是 $C\mu$ 的第 $j$ 个元素. 也就是说
+$$
+X^{T}A_{i}X\sim \chi^{2}_{n_{i}}(\delta_{i}),\quad
+\delta_{i}=\sum\limits_{j=n_{1}+\dots n_{i-1}+1}^{n_{1}+\dots +n_{i-1}+n_{i}}\lambda_{j}^{2},
+$$
+
+<span id="2c9aa2"></span>
+
+令取 $X=\mu$ 的样本点, 该样本点令 $Y=C\mu$, 则根据式 [2daa5c](#2daa5c) 有
+$$
+\mu^{T}A_{i}\mu=\sum\limits_{j=n_{1}+\dots n_{i-1}+1}^{n_{1}+\dots +n_{i-1}+n_{i}}(C\mu)_{j}^{2},
+$$
+其中 $(C\mu)_{j}$ 表示 $C\mu$ 的第 $j$ 个元素. 再根据式 [2c9aa2](#2c9aa2) 的后半部分, 可以得到
+$$
+\mu^{T}A_{i}\mu=\delta_{i}.
+$$
+问题得证.
+
+:::
