@@ -84,6 +84,7 @@ $(\Omega, \mathcal{F})$ 则称之为一个 measurable space。
 令 $C \subset\Omega$ 并且 $C\in\mathcal{F}$，则 $\mathcal{F}_{C}=\{ C\cap A|A\in\mathcal{F} \}$ 是定义在 $C$ 上的 $\sigma$-field，$(C,\mathcal{F}_{C})$ 构成了一个 **measurable space**，称为 **$\sigma$-field on $C$**。
 
 :::
+
 # 各种集合系
 
 直接去构造一个足够大的、有意义的 $\sigma$-field 是非常困难的，特别是对于无穷大小的 sample space。这主要是因为 $\sigma$-field 还是非常复杂的结构。其需要满足至少 3 条性质，而且这些性质之间还存在相互影响。因此，我们使用一种常用的策略（可能是在测度论中最重要的方法）来研究它——**由简单到复杂**。我们首先去研究一些简单的结构（集合系，即 sample space 子集的集合），**这些简单结构通常只蕴含 $\sigma$-field 的部分性质，因此也易于构造和分析**。通过对这些结构的组合、提升来一步一步得到 $\sigma$-field。
@@ -97,31 +98,67 @@ $(\Omega, \mathcal{F})$ 则称之为一个 measurable space。
 1. 如果 $\{ A_{n},n=1,2,\dots \}$ 满足 $A_{n}\subset A_{n+1}$，则称 $\{ A_{n} \}$ 是非降的，记作 $A_{n}\uparrow$，并定义 $\lim_{ n \to \infty }A_{n}:=\cup^{\infty}_{n=1}A_{n}$，记作 $A_{n}\uparrow \lim_{ n \to \infty }A_{n}$。
 2. 如果 $\{ A_{n},n=1,2,\dots \}$ 满足 $A_{n} \supset A_{n+1}$，则称 $\{ A_{n} \}$ 是非增的，记作 $A_{n}\downarrow$，并定义 $\lim_{ n \to \infty }A_{n}:=\cap^{\infty}_{n=1}A_{n}$，记作 $A_{n}\downarrow \lim_{ n \to \infty }A_{n}$。
 
-以上两者被统称为**单调序列**，**单调序列总有极限**。我们还可以定义**上极限** ${\lim\inf}_{ n \to \infty }A_{n}:=\cup^{\infty}_{n=1}\cap^{\infty}_{k=n}A_{k}$ 和**下极限** $\lim\sup_{ n \to \infty }A_{n}:=\cap^{\infty}_{n=1}\cup^{\infty}_{k=n}A_{k}$，它们总是存在的。如果 ${\lim\inf}_{ n \to \infty }A_{n}=\lim\sup_{ n \to \infty }A_{n}$，则认为序列 $\{ A_{n} \}$ 的**极限**存在，其极限是 $\lim_{ n \to \infty }A_{n}:={\lim\inf}_{ n \to \infty }A_{n}=\lim\sup_{ n \to \infty }A_{n}$。
-**Definition: 其他集合系的定义**
-我们首先定义集合系是 sample space 子集的集合。
-1. 如果某个非空集合系 $\mathcal{J}$ 满足 $A,B\in\mathcal{J}\implies A\cap B\in\mathcal{J}$，则称之为 **${\pi}$-class**。
-2. 如果存在某个 $\pi$-class $\mathcal{I}$ 满足下面的条件，则称之为 **semi-ring**：
-$\forall A,B\in\mathcal{I},A\subset B\implies \exists \{ C_{k}\in\mathcal{I},k=1,\dots,n \},\text{其中}\forall C_{i},C_{j},C_{i}\cap C_{j}=\emptyset,\text{使得}B\setminus A=\cup^{n}_{k=1}C_{k}$
-3. 如果某个非空集合系 $\mathcal{R}$ 对并和差运算是封闭的，则称之为 **ring**:
-$A,B\in\mathcal{R}\implies A\cup B,A\setminus B\in\mathcal{R}$
-4. 若某个非空集合系 $\mathcal{R}$ 对可列并和差运算封闭，则称之为 **$\sigma$ -ring**:
+以上两者被统称为**单调序列**，**单调序列总有极限**。
 
-$$
+我们还可以定义
+
+1. **上极限** ${\lim\inf}_{ n \to \infty }A_{n}:=\cup^{\infty}_{n=1}\cap^{\infty}_{k=n}A_{k}$
+2. **下极限** $\lim\sup_{ n \to \infty }A_{n}:=\cap^{\infty}_{n=1}\cup^{\infty}_{k=n}A_{k}$
+
+它们总是存在的。
+
+如果
+$${\lim\inf}_{ n \to \infty }A_{n}=\lim\sup_{ n \to \infty }A_{n},$$
+则认为序列 $\{ A_{n} \}$ 的**极限**存在，其极限是
+
+$$\lim_{ n \to \infty }A_{n}:={\lim\inf}_{ n \to \infty }A_{n}=\lim\sup_{ n \to \infty }A_{n}.$$
+
+:::
+
+::: {#def-other-sets}
+
+## 其他集合系的定义
+
+我们首先定义集合系是 sample space 子集的集合。
+
+1. 如果某个非空集合系 $\mathcal{J}$ 满足 
+  $$A,B\in\mathcal{J}\implies A\cap B\in\mathcal{J},$$
+  则称之为 **${\pi}$-class**。
+2. 如果存在某个 $\pi$-class $\mathcal{I}$ 满足下面的条件，则称之为 **semi-ring**：
+  $$\forall A,B\in\mathcal{I},A\subset B\implies \exists \{ C_{k}\in\mathcal{I},k=1,\dots,n \},$$
+ 其中$\forall C_{i},C_{j},C_{i}\cap C_{j}=\emptyset$,使得$B\setminus A=\cup^{n}_{k=1}C_{k}$。
+3. 如果某个非空集合系 $\mathcal{R}$ 对并和差运算是封闭的，则称之为 **ring**。即 
+  $$A,B\in\mathcal{R}\implies A\cup B,A\setminus B\in\mathcal{R}.$$
+4. 若某个非空集合系 $\mathcal{R}$ 对可列并和差运算封闭，则称之为 **$\sigma$ -ring**，即
+  $$
     \begin{align}
     &A,B\in\mathcal{R}\implies A\setminus B\in\mathcal{R}, \\
     &\{ A_{n},n=1,2,\dots \}\subset \mathcal{R}\implies
     \bigcup_{n=1}^{\infty}A_{n}\in\mathcal{R}.
     \end{align}
-    $$
+   $$
+
+---
+
 1. 如果某个$\pi$-class$\mathcal{A}$满足以下两个条件，则称之为**field** (or **algebra**):
-	* $\Omega\in\mathcal{A}$；
-	* $A\in\mathcal{A}\implies A^{c}\in\mathcal{A}$;
-2. 如果集合系$\mathcal{M}$中的任意单调序列$\{ A_{n},n=1,2,\dots \}$，均有$\lim_{ n \to \infty }A_{n}\in\mathcal{M}$，则称之为**monotone-class**。
+  $$
+  \begin{align}
+	&\Omega\in\mathcal{A}, \\
+	&A\in\mathcal{A}\implies A^{c}\in\mathcal{A}.
+  \end{align}
+  $$
+2. 如果集合系$\mathcal{M}$中的任意单调序列$\{ A_{n},n=1,2,\dots \}$，均有
+  $$\lim_{ n \to \infty }A_{n}\in\mathcal{M},$$
+  则称之为**monotone-class**。
 3. 如果集合系$\mathcal{L}$满足下面的三个条件，则称之为**$\lambda$-class**:
-	* $\Omega\in\mathcal{L}$
-	* $A,B\in\mathcal{L},A\subset B\implies B\setminus A\in\mathcal{L}$
-	* $A_{n}\in\mathcal{L},A_{n}\uparrow\implies \cup^{\infty}_{n=1}A_{n}\in\mathcal{L}$
+  $$
+  \begin{align}
+	\Omega &\in\mathcal{L},  \\
+	A,B\in\mathcal{L},A\subset B &\implies B\setminus A\in\mathcal{L},  \\
+	A_{n}\in\mathcal{L},A_{n}\uparrow &\implies \cup^{\infty}_{n=1}A_{n}\in\mathcal{L}.
+  \end{align}
+  $$
+
 
 :::
 
