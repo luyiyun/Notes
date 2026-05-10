@@ -1,0 +1,77 @@
+<script>
+(function () {
+  function fixTheoremTitleSpacing() {
+    const titleSelectors = [
+      ".theorem-title",
+      ".lemma-title",
+      ".corollary-title",
+      ".proposition-title",
+      ".conjecture-title",
+      ".definition-title",
+      ".example-title",
+      ".exercise-title",
+      ".solution-title",
+      ".remark-title",
+      ".algorithm-title",
+      ".proof-title"
+    ].join(",");
+
+    document.querySelectorAll(titleSelectors).forEach(function (title) {
+      const p = title.parentElement;
+
+      if (!p || p.tagName.toLowerCase() !== "p") return;
+
+      /*
+        Quarto/Pandoc often inserts a text node like:
+        <p><span class="theorem-title">...</span>&nbsp;</p>
+
+        Remove whitespace-only text nodes, including non-breaking spaces.
+      */
+      Array.from(p.childNodes).forEach(function (node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          const cleaned = node.textContent.replace(/\u00a0/g, " ").trim();
+          if (cleaned === "") {
+            node.remove();
+          }
+        }
+      });
+
+      p.classList.add("math-env-title-p");
+
+      /*
+        If the paragraph only contains the title span after cleanup,
+        mark it as title-only.
+      */
+      const meaningfulChildren = Array.from(p.childNodes).filter(function (node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          return node.textContent.replace(/\u00a0/g, " ").trim() !== "";
+        }
+        return true;
+      });
+
+      if (meaningfulChildren.length === 1 && meaningfulChildren[0] === title) {
+        p.classList.add("math-env-title-only");
+      }
+
+      /*
+        If the title-only paragraph is followed by a list,
+        compress the gap between title and list.
+      */
+      const next = p.nextElementSibling;
+      if (
+        p.classList.contains("math-env-title-only") &&
+        next &&
+        (next.tagName.toLowerCase() === "ol" || next.tagName.toLowerCase() === "ul")
+      ) {
+        p.classList.add("math-env-title-before-list");
+      }
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", fixTheoremTitleSpacing);
+  } else {
+    fixTheoremTitleSpacing();
+  }
+})();
+</script>

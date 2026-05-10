@@ -19,8 +19,8 @@
 .theorem,
 .lemma,
 .corollary,
-.proposition,
 .conjecture,
+.proposition,
 .definition,
 .example,
 .exercise,
@@ -387,5 +387,4 @@ details.proof.proof-collapsible > :last-child {
 details.proof.proof-collapsible:not([open])::before {
   display: none;
 }
-
 

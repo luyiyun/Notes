@@ -28,6 +28,7 @@ format:
     toc: true
     include-after-body:
       - scripts/proof-collapse.html
+      - scripts/math-env-fix.html
 
 crossref:
   title-delim: " "
