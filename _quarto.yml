@@ -5,17 +5,28 @@ project:
     - about.qmd
     - "src/**/*.qmd"
 
+lang: zh
+
 website:
   title: "Rong's Notes"
   draft-mode: gone
   navbar:
     left:
       - href: index.qmd
-        text: Home
+        text: 首页
+      - href: src/learn/index.qmd
+        text: 学习笔记
       - href: about.qmd
-        text: About
-      - href: "src/learn/advanced-probability/02-sigma-field.qmd"
-        text: Example
+        text: 关于
+  sidebar:
+    - id: learn
+      title: "学习笔记"
+      style: docked
+      contents:
+        - href: src/learn/index.qmd
+          text: 学习笔记总览
+        - href: src/learn/advanced-probability/index.qmd
+          text: 高等概率论
 
 format:
   html:

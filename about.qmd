@@ -1,7 +1,7 @@
 ---
-title: "About"
+title: "关于"
 ---
 
-This site is a migration-friendly home for notes that were previously managed in Obsidian.
+这个网站是我从 Obsidian 迁移长期笔记的公开入口。
 
-The project uses Quarto for publishing, Git for version control, and Neovim for day-to-day editing. Source note organization under `src/` is intentionally left open for later design.
+项目使用 Quarto 发布网页，使用 Git 做版本管理。源笔记放在 `src/` 下，并尽量保持英文目录名、英文 kebab-case 文件名和清晰的专题结构。

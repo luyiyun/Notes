@@ -1,26 +1,22 @@
 ---
-title: "高等概率论 / Advanced Probability"
-draft: true
+title: "高等概率论"
+subtitle: "Advanced Probability"
+description: "测度论视角下的概率论专题笔记。"
+draft: false
+listing:
+  contents: "*.qmd"
+  type: table
+  sort: "order"
+  fields: [title, tags, created]
+  sort-ui: false
+  filter-ui: false
 ---
 
-这是从 Obsidian 迁移来的高等概率论专题笔记，当前仍作为草稿整理。
+> 这是从 Obsidian 迁移来的高等概率论专题笔记。当前版本已经可以在网站中浏览，但仍在持续整理：少数页面保留了 TODO 标记，部分附件和交叉引用也会在后续迁移中继续打磨。
 
-- [介绍](01-introduction.qmd)
-- [Sigma 域](02-sigma-field.qmd)
-- [测度](03-measure.qmd)
-- [外测度](04-outer-measure.qmd)
-- [测度扩张](05-measure-extension.qmd)
-- [分布函数](06-distribution-function.qmd)
-- [可测函数](07-measurable-functions.qmd)
-- [积分](08-integration.qmd)
-- [Lp 空间](09-lp-spaces.qmd)
-- [符号测度](10-signed-measures.qmd)
-- [R-N 导数](11-radon-nikodym-derivative.qmd)
-- [Lebesgue 分解](12-lebesgue-decomposition.qmd)
-- [有限乘积空间](13-finite-product-spaces.qmd)
-- [无限乘积空间](14-infinite-product-spaces.qmd)
-- [独立和条件期望](15-independence-and-conditional-expectation.qmd)
-- [马尔可夫链与鞅](16-markov-chains-and-martingales.qmd)
-- [统计分布与密度函数](17-statistical-distributions-and-density-functions.qmd)
-- [矩](18-moments.qmd)
-- [收敛理论](19-convergence-theory.qmd)
+## 笔记目录
+
+下面的目录由 Quarto 自动生成，并按照每篇笔记 YAML 中的 `order` 字段排序。新增笔记时，只需要把 `.qmd` 文件放到本目录，并写好 `title`、`draft` 和 `order`。
+
+:::{#listing}
+:::

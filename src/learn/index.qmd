@@ -1,0 +1,24 @@
+---
+title: "学习笔记"
+description: "公开学习笔记的总览入口。"
+listing:
+  contents: "*/index.qmd"
+  type: table
+  sort: "title"
+  fields: [title, description]
+  sort-ui: false
+  filter-ui: false
+---
+
+这里收录从 Obsidian vault 迁移出来、已经适合公开浏览的学习笔记。每个专题都有自己的入口页，后续新增专题时，只要在 `src/learn/` 下创建专题目录和 `index.qmd`，这里会自动出现对应入口。
+
+## 已整理专题
+
+:::{#listing}
+:::
+
+## 后续迁移方向
+
+后续可以继续迁移贝叶斯统计与变分推断、生存分析、强化学习、纵向数据分析、PRML、LLM、评价指标等专题。
+
+目前这个分区只链接已经整理过的公开学习笔记。

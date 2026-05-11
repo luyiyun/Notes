@@ -1,6 +1,6 @@
 ---
 title: "无限乘积空间"
-draft: true
+draft: false
 aliases:
   - 无限乘积空间
 author:

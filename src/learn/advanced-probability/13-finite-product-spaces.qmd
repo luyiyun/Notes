@@ -1,6 +1,6 @@
 ---
 title: "有限乘积空间"
-draft: true
+draft: false
 aliases:
   - 有限乘积空间
 author:

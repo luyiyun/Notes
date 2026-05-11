@@ -13,5 +13,11 @@ _site/
 *.jpg
 *.webp
 *.pdf
+*.excalidraw.md
+*.excalidraw
 
 assets/
+assets/images/
+assets/images/**
+assets/attachments/
+assets/attachments/**

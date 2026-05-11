@@ -1,6 +1,6 @@
 ---
 title: "积分"
-draft: true
+draft: false
 aliases:
   - 积分
 author: 荣志炜

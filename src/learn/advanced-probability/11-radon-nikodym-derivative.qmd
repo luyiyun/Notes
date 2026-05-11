@@ -1,6 +1,6 @@
 ---
 title: "R-N 导数"
-draft: true
+draft: false
 aliases:
   - RN导数
 author:

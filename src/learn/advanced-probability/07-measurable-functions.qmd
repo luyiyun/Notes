@@ -1,6 +1,6 @@
 ---
 title: "可测函数"
-draft: true
+draft: false
 aliases:
   - 可测函数与随机变量
 author:

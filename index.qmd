@@ -2,11 +2,27 @@
 title: "Rong's Notes"
 ---
 
-This is a Quarto website for long-term notes, reading records, methods, and project knowledge.
+这是一个使用 Quarto 搭建的长期笔记网站，用来整理学习笔记、阅读记录、方法知识和项目经验。
 
-The source files will live under `src/` and are edited as `.qmd` files. Chinese or bilingual titles can be used inside each note's YAML front matter.
+> 当前网站正在从 Obsidian vault 迁移到更清晰的 Quarto 目录结构中。现阶段公开入口优先展示已经整理到可以浏览的学习笔记；日记、密钥、模板、同步元数据和本地缓存不会出现在网站导航中。
 
-Use `draft: true` in a note's YAML header when a file should stay unpublished.
+## 开始阅读
 
+[学习笔记](src/learn/index.qmd) 是目前主要的公开入口，用来浏览已经迁移并整理过的专题笔记。
 
-[example](02-sigma-field)
+[高等概率论](src/learn/advanced-probability/index.qmd) 是第一个完成网页入口整理的专题，内容围绕测度论视角下的概率论展开。
+
+## 迁移映射
+
+Obsidian vault 中的主要目录会逐步映射到下面这些 Quarto 分区：
+
+| Obsidian 目录 | Quarto 分区 | 展示策略 |
+| --- | --- | --- |
+| 专题学习 | `src/learn/` | 公开学习笔记 |
+| 研究 | `src/research/` | 整理后再公开 |
+| 计算机 | `src/computing/` | 整理后再公开 |
+| 文献 | `src/literature/` | 整理后再公开 |
+
+## 发布规则
+
+源笔记统一写成 `.qmd` 文件并放在 `src/` 下。还不适合公开的页面可以在 YAML 头部设置 `draft: true`，Quarto 渲染时会自动隐藏这些草稿页。

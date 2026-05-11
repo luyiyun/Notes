@@ -1,6 +1,6 @@
 ---
 title: "测度"
-draft: true
+draft: false
 aliases:
   - 测度和概率
 author:

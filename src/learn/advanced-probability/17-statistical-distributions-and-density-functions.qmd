@@ -1,6 +1,6 @@
 ---
 title: "统计分布与密度函数"
-draft: true
+draft: false
 author:
   - 荣志炜
 tags:

@@ -1,6 +1,6 @@
 ---
 title: "马尔可夫链与鞅"
-draft: true
+draft: false
 aliases:
   - 马尔科夫链与鞅
 author:

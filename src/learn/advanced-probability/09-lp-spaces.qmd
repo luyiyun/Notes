@@ -1,6 +1,6 @@
 ---
 title: "Lp 空间"
-draft: true
+draft: false
 aliases:
   - Lp空间
 author:

@@ -1,6 +1,6 @@
 ---
 title: "独立和条件期望"
-draft: true
+draft: false
 aliases:
   - 独立性和条件分布
 author:

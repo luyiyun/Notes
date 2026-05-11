@@ -1,6 +1,6 @@
 ---
 title: "测度扩张"
-draft: true
+draft: false
 aliases:
   - 测度的扩张
 author:

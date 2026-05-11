@@ -1,6 +1,6 @@
 ---
 title: "外测度"
-draft: true
+draft: false
 aliases:
   - 外测度
 author:

@@ -1,6 +1,6 @@
 ---
 title: "Lebesgue 分解"
-draft: true
+draft: false
 aliases:
   - Lebesgue分解
 author:

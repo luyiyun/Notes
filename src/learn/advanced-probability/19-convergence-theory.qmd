@@ -1,6 +1,6 @@
 ---
 title: "收敛理论"
-draft: true
+draft: false
 aliases: []
 author:
   - 荣志炜
