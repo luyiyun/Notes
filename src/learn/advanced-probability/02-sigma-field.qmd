@@ -11,8 +11,8 @@ tags:
   - sigma域
   - Borel-field
   - 测度空间
-created: 2024-03-27 16:00
-updated: 2025-12-19 17:02
+date: 2024-03-27 16:00
+date-modified: last-modified
 order: 2
 ---
 

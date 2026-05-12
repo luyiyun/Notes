@@ -8,8 +8,8 @@ author:
 tags:
   - 外测度
   - Caratheodory定理
-created: 2024-03-27 16:00
-updated: 2025-11-01 10:57
+date: 2024-03-27 16:00
+date-modified: last-modified
 order: 4
 ---
 

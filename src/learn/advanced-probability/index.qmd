@@ -7,7 +7,7 @@ listing:
   contents: "*.qmd"
   type: table
   sort: "order"
-  fields: [title, tags, created]
+  fields: [title, tags, date]
   sort-ui: false
   filter-ui: false
 ---

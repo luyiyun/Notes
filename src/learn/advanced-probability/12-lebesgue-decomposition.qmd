@@ -11,8 +11,8 @@ tags:
   - 连续型随机变量
   - 离散型随机变量
   - 奇异型随机变量
-created: 2024-05-04 01:02
-updated: 2025-11-28 16:15
+date: 2024-05-04 01:02
+date-modified: last-modified
 order: 12
 ---
 

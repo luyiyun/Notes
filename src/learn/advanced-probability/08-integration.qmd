@@ -11,8 +11,8 @@ tags:
   - MCT
   - Fatou引理
   - Lebesgue积分
-created: 2024-05-04 01:02
-updated: 2026-02-11 17:09
+date: 2024-05-04 01:02
+date-modified: last-modified
 order: 8
 ---
 

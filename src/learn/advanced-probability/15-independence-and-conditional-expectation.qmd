@@ -14,8 +14,8 @@ tags:
   - 条件分布
   - 条件密度
   - 马尔科夫链
-created: 2024-06-14 12:12
-updated: 2026-05-05 17:47
+date: 2024-06-14 12:12
+date-modified: last-modified
 order: 15
 ---
 

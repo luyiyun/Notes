@@ -16,8 +16,8 @@ tags:
   - 一致收敛
   - 分布函数
   - 有限可测分割
-created: 2024-04-12 14:17
-updated: 2025-12-11 20:27
+date: 2024-04-12 14:17
+date-modified: last-modified
 order: 7
 ---
 

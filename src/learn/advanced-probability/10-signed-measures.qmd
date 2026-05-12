@@ -9,8 +9,8 @@ tags:
   - 符号测度
   - Hahn分解
   - Jordan分解
-created: 2024-05-04 01:02
-updated: 2025-11-28 15:31
+date: 2024-05-04 01:02
+date-modified: last-modified
 order: 10
 ---
 

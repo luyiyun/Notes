@@ -8,8 +8,8 @@ author:
 tags:
   - 测度
   - 概率
-created: 2024-03-27 16:00
-updated: 2025-11-02 13:57
+date: 2024-03-27 16:00
+date-modified: last-modified
 order: 3
 ---
 

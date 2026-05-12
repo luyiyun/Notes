@@ -9,8 +9,8 @@ tags:
   - R-N导数
   - 绝对连续
   - 换元积分法
-created: 2024-05-04 01:02
-updated: 2025-12-18 16:29
+date: 2024-05-04 01:02
+date-modified: last-modified
 order: 11
 ---
 

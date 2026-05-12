@@ -9,8 +9,8 @@ tags:
   - 强sigma有限
   - 测度扩张
   - 完全化
-created: 2024-03-27 16:00
-updated: 2025-11-02 14:04
+date: 2024-03-27 16:00
+date-modified: last-modified
 order: 5
 ---
 

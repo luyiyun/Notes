@@ -9,8 +9,8 @@ tags:
   - Lp空间
   - Holder不等式
   - Minkowski不等式
-created: 2025-11-11 22:35
-updated: 2026-04-29 12:48
+date: 2025-11-11 22:35
+date-modified: last-modified
 order: 9
 ---
 

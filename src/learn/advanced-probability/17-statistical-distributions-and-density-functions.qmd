@@ -11,8 +11,8 @@ tags:
   - F分布
   - t分布
   - Cochran定理
-created: 2024-06-13 00:35
-updated: 2026-04-19 17:18
+date: 2024-06-13 00:35
+date-modified: last-modified
 order: 17
 ---
 

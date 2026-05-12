@@ -26,8 +26,8 @@ tags:
   - 函数变换
   - slutsky定理
   - delta-method
-created: 2024-05-17 15:25
-updated: 2026-05-07 12:22
+date: 2024-05-17 15:25
+date-modified: last-modified
 order: 19
 ---
 
