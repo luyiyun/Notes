@@ -37,6 +37,8 @@ format:
       # - brand
     css: styles.css
     toc: true
+    toc-location: right
+    toc-title: "目录"
     include-after-body:
       - scripts/proof-collapse.html
       - scripts/math-env-fix.html

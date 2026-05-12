@@ -24,18 +24,36 @@ order: 3
 ## 测度和测度空间
 
 设 $\mathcal{F}$ 是 $\Omega$ 上的一个集合系，并且 $\emptyset\in\mathcal{F}$，在其上定义一个 set function：$\nu:\mathcal{F}\to \mathbb{R}$，若其满足以下三个条件，则称 $\nu$ 是一个 **measure**：
-1. (非负性)$\forall A\in\mathcal{F}\implies0\leq \nu(A)\leq \infty$；
-2. (空集为 0)$\nu(\emptyset)=0$；
-3. (可列可加性)$A_{i}\in\mathcal{F},i=1,2,\dots$，并且 $\forall i,j,\quad i\neq j\implies A_{j}\cap A_{j}=\emptyset$，则有 $\nu(\cup_{i=1}^{\infty}A_{i})=\sum\limits_{i=1}^{\infty}\nu(A_{i})$。
 
-若 $\forall A\in\mathcal{F}\implies \nu(A)<\infty$，则称**测度 $\nu$ 是有限的**。若 $\forall A\in\mathcal{F}$，都存在 $\{A_{n}\in\mathcal{F}|n=1,2,\dots,\nu(A_{n})<\infty\}$ 使得 $\cup_{n=1}^{\infty}A_{n}\supset A$，则称**测度 $\nu$ 是 $\sigma$ 有限的**。
+1. **非负性**，即
+  $$\forall A\in\mathcal{F}\implies0\leq \nu(A)\leq \infty.$$
+2. **空集为 0**，即
+  $$\nu(\emptyset)=0.$$
+3. **可列可加性**，即如果$A_{i}\in\mathcal{F},i=1,2,\dots$两两不交，则有
+
+  $$
+  \nu(\cup_{i=1}^{\infty}A_{i})=\sum\limits_{i=1}^{\infty}\nu(A_{i}).
+  $$
+
+若 $\forall A\in\mathcal{F}\implies \nu(A)<\infty$，则称**测度 $\nu$ 是有限的**。
+
+若 $\forall A\in\mathcal{F}$，都存在 $\{A_{n}\in\mathcal{F}|n=1,2,\dots,\nu(A_{n})<\infty\}$ 使得 $\cup_{n=1}^{\infty}A_{n}\supset A$，则称**测度 $\nu$ 是 $\sigma$ 有限的**。
 
 假设 $(\Omega,\mathcal{F})$ 是一个 **measurable space**，则称 $(\Omega,\mathcal{F},\nu)$ 是一个 **measure space**。
-**Definition: 概率和概率空间**
+
+:::
+
+
+::: {#def-03-measure-space}
+
+## 概率和概率空间
+
 如果 $\nu(\Omega)=1$，则称 $\nu$ 是一个 **probability measure**，常记为 $P$。
+
 若 $(\Omega,\mathcal{F})$ 是一个 measurable space，则 $(\Omega,\mathcal{F},P)$ 被称为一个 **probability space**。
 
 :::
+
 测度可以看做是长度、面积、体积等概念的推广，但是其更加抽象，指代的对象更加广泛。下面我们将举出几个例子，其中第一个是一个 trival measure，用来展现 measure 的抽象；另外则是两个非常普遍的测度例子，在后面定义密度函数时会用到。
 
 ::: {#exm-03-measure-2}
@@ -114,15 +132,15 @@ $$
 ## 环上的测度性质
 
 对于环 $\mathcal{R}$ 上的**有限可加**非负集函数 $\mu$，有
-(1) $\mu$ 可列可加
-(2) $\iff \mu$ 半可列可加
-(3) $\iff \mu$ 下连续
-(4) $\implies\mu$ 上连续
-(5) $\implies \mu$ 在 $\emptyset$ 上连续，即对满足任何 $A_{n}\downarrow\emptyset$ 和 $\mu(A_{1})<\infty$ 的 $\{ A_{n}\in\mathcal{R} \}$，有
 
-$$
-\lim_{ n \to \infty } \mu(A_{n})=0.
-$$
+1. $\mu$ 可列可加
+1. $\iff \mu$ 半可列可加
+1. $\iff \mu$ 下连续
+1. $\implies\mu$ 上连续
+1. $\implies \mu$ 在 $\emptyset$ 上连续，即对满足任何 $A_{n}\downarrow\emptyset$ 和 $\mu(A_{1})<\infty$ 的 $\{ A_{n}\in\mathcal{R} \}$，有
+  $$
+  \lim_{ n \to \infty } \mu(A_{n})=0.
+  $$
 
 若测度是有限的，则 (4) 和 (5) 是 $\iff$。
 
@@ -175,12 +193,27 @@ $$
 
 $(\Omega,\mathcal{F},\nu)$ 是一个 measure space，则 $\nu$ 有以下性质
 
-1. (可减性) $A,B\in \mathcal{F},A\subset B,\nu(A)<\infty\implies \nu(B\setminus A)=\nu(B)-\nu(A)$
-2. (有限可加性) $A_{i}\in\mathcal{F},i=1,2,\dots,N, \text{disjoint}\implies\nu(\cup_{i=1}^{N}A_{i})=\sum_{i=1}^{N}\nu(A_{i})$
-4. (单调性) $A\subset B\implies \nu(A)\leq \nu(B)$；
-5. (半可列可加性) $A_{i},i=1,2,\dots\implies \nu(\cup_{i=1}^{\infty}A_{i})\leq \sum\limits_{i=1}^{\infty}\nu(A_{i})$；
-6. (上连续性) $A_{n}\downarrow A$ 且 $\nu(A_{1})<\infty$$\implies \nu(A)=\lim_{ n \to \infty }v(A_{n})=\cap_{n=1}^{\infty}A_n$；
-6. (下连续性) $A_{n}\uparrow A\implies\nu(A)=\lim_{ n \to \infty }v(A_{n})=\cup_{n=1}^{\infty}A_n$。
+1. 可减性, 即若$A,B\in \mathcal{F},A\subset B,\nu(A)<\infty$，则有
+  $$
+  \begin{align}
+  \nu(B\setminus A)=\nu(B)-\nu(A).
+  \end{align}
+  $$
+2. 有限可加性, 即若$A_{i}\in\mathcal{F},i=1,2,\dots,N$两两不交，则有
+  $$
+  \nu(\cup_{i=1}^{N}A_{i})=\sum_{i=1}^{N}\nu(A_{i}).
+  $$
+
+3. 单调性，即
+  $$
+  A\subset B\implies \nu(A)\leq \nu(B).
+  $$
+4. 半可列可加性,即
+  $$A_{i},i=1,2,\dots\implies \nu(\cup_{i=1}^{\infty}A_{i})\leq \sum\limits_{i=1}^{\infty}\nu(A_{i}).$$
+5. 上连续性, 即若$A_{n}\downarrow A$ 且 $\nu(A_{1})<\infty$，则有
+  $$\nu(A)=\lim_{ n \to \infty }v(A_{n})=\cap_{n=1}^{\infty}A_n.$$
+6. 下连续性, 若$A_{n}\uparrow A$，则有
+  $$\nu(A)=\lim_{ n \to \infty }v(A_{n})=\cup_{n=1}^{\infty}A_n$$
 
 :::
 
