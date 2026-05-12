@@ -32,17 +32,18 @@ $$
 \forall A\in\mathcal{E}\implies \mu(E)=\mu'(E),
 $$
 
-则称 $\mu'$ 是 $\mu$ 在 $\mathcal{E}'$ 上的扩张。
+则称 **$\mu'$ 是 $\mu$ 在 $\mathcal{E}'$ 上的扩张**。
 如果任意一个定义在 $\mathcal{E}'$ 上的满足
 
 $$
 \forall A\in\mathcal{E}\implies \mu (E)=\tau(E)
 $$
 
-的测度 $\tau$ 都会导致 $\tau=\mu'$（在 $\mathcal{E}'$ 上），则称扩张是唯一的。
+的测度 $\tau$ 都会导致 $\tau=\mu'$（在 $\mathcal{E}'$ 上），则称**扩张是唯一的**。
 
 :::
-为了能够完成测度扩张的目的，我们似乎可以使用上一小节介绍的 @thm-caratheodory：即**首先利用 $\mathcal{E}$ 上的测度去构建一个外测度 $\tau$，然后利用该定理将 $\tau$ 限制在 $\mathcal{F}_{\tau}$ 中，不就将测度扩张到一个更大的 $\mathcal{F}_{\tau}$ 中了吗？**
+为了能够完成测度扩张的目的，我们似乎可以使用上一小节介绍的 [Caratheodory定理](04-outer-measure.qmd#thm-caratheodory)：即**首先利用 $\mathcal{E}$ 上的测度去构建一个外测度 $\tau$，然后利用该定理将 $\tau$ 限制在 $\mathcal{F}_{\tau}$ 中，不就将测度扩张到一个更大的 $\mathcal{F}_{\tau}$ 中了吗？**
+
 其实未必如此。关键在于，这个过程中我们是先扩大了集合系（从 $\mathcal{E}$ 扩张到了 power set）又缩小了集合系（从 power set 缩小到 $\mathcal{F}_{\tau}$），因此 $\mathcal{F}_{\tau}$ 未必比 $\mathcal{E}$ 范围大。可以看下面的例子：
 
 ::: {#exm-05-measure-extension-2}
@@ -74,7 +75,7 @@ $$
 
 首先， 我们需要证明一个引理
 
-::: {#lem-8158eb}
+::: {#lem-pi-class-extension}
 
 ## $\pi$-class 的扩张
 
@@ -94,8 +95,13 @@ $$
 $$
 
 现在我们证明 $\mathcal{L}$ 是一个 $\lambda$-class，这需要证明 3 条：
-**第一**，$\Omega$ 在其中，这是显然的。
-**第二**，$\forall A_{1},A_{2}\in\mathcal{L},A_{1}\subset A_{2}\implies A_{1}\setminus A_{2}\in\mathcal{L}$。这是因为
+
+1. $\Omega$ 在其中。
+2. $\forall A_{1},A_{2}\in\mathcal{L},A_{1}\subset A_{2}\implies A_{1}\setminus A_{2}\in\mathcal{L}$。
+3. $A_{n}\in\mathcal{L},n=1,2,\dots;A_{n}\uparrow\implies \bigcup_{n=1}^{\infty}A_{n}\in\mathcal{L}$。
+
+
+1是显然的。2的证明如下：
 
 $$
 \begin{align}
@@ -109,7 +115,7 @@ $$
 
 该步骤中，$\mu(B)<\infty$ 在第二个等号处起到作用。其保证了 $\mu(A_{2}\cap B)<\infty$，这样才能够使得 $\mu(A_{1}\cap B)-\mu(A_{2}\cap B)$ 有意义。
 
-**第三**， $A_{n}\in\mathcal{L},n=1,2,\dots;A_{n}\uparrow\implies \bigcup_{n=1}^{\infty}A_{n}\in\mathcal{L}$。这是因为
+3的证明如下：
 
 $$
 \begin{align}
@@ -142,13 +148,14 @@ $$
 其中，最关键的第三行就是利用我们上面得到的等式。
 :::
 
-**注意到**，条件 2 (后面我们将其称为 **“强 $\sigma$ 有限”** ) 与有限非常相似，但实际上要比 $\sigma$ 有限更强。$\sigma$ 有限要求
+**注意到**，条件 2 (后面我们将其称为 **“强 $\sigma$ 有限”** ) 与$\sigma$有限非常相似，但实际上要比 $\sigma$ 有限更强。$\sigma$ 有限要求
 
 $$
 \forall A\in\mathcal{T},\exists \{ A_{n}\in\mathcal{T},n=1,2,\dots \},\mu(A_{n})<\infty\implies \bigcup_{n=1}^{\infty}A_{n}\supset A
 $$
 
 和条件 2 主要有两点不同：
+
 1. $X$ 不一定在 $\mathcal{T}$ 中;
 2. $\{ A_{n},n=1,2,\dots \}$ 没有要求两两不交。因为 $\mathcal{T}$ 仅限制在 $\pi$-class 上，所以我们无法将其推广至两两不交的情况。
 
@@ -170,7 +177,6 @@ $$
 
 $$
 \forall A\in\mathcal{L}\implies \tau(A)=\mu(A).
-
 $$
 
 如果存在两两不交的 $\{ A_{n}\in\mathcal{L},n=1,2,\dots \}$，使得 $\mu(A_{n})<\infty$ 且 $\bigcup_{n=1}^{\infty}A_n=\Omega$，则使得上式成立的 $\tau$ 唯一。
@@ -307,14 +313,12 @@ $$
 ## 测度扩张前后的差异
 
 设 $\tau$ 是 semi-ring $\mathcal{L}$ 上测度 $\mu$ 生成的外测度，则
+
 1. $\forall A\in\mathcal{F}_{\tau}\implies \exists B\in\sigma(\mathcal{L}),B\supset A,\tau(A)=\tau(B)$;
-2. 若 $\exists \{ A_{n}\in\mathcal{L},n=1,2,\dots \}$ 两两不交,且 $\bigcup_{n=1}^{\infty}A_{n}=\Omega$ 和 $\mu(A_{n})<\infty$ （**强 $\sigma$ 条件**），则
-
-$$
-\forall A\in\mathcal{F}_{\tau}\implies\exists B\in\sigma(\mathcal{L}),B\supset A,\tau(B\setminus A)=0
-
-
-$$
+2. 若 $\exists \{ A_{n}\in\mathcal{L},n=1,2,\dots \}$ 两两不交,且 $\bigcup_{n=1}^{\infty}A_{n}=\Omega$ 和 $\mu(A_{n})<\infty$ （**强 $\sigma$ 条件**），则有
+  $$
+  \forall A\in\mathcal{F}_{\tau}\implies\exists B\in\sigma(\mathcal{L}),B\supset A,\tau(B\setminus A)=0
+  $$
 
 :::
 
@@ -374,7 +378,9 @@ $$
 :::
 # 基于域的扩张
 
-上面的讨论告诉我们，因为 semi-ring 结构包含有某种性质，所以从上面去扩张测度是非常好的，可以避免一些问题。那么更进一步，如果我们从一个性质更好的结构（也就是 filed）上扩张测度，会有另外那些额外的收获呢？后面的定理告诉我们，从 field 上生成的外测度、扩张的测度和 field 本身的测度非常相似，**我们可以使用 field 上的测度来无限逼近扩张测度**。
+上面的讨论告诉我们，因为 semi-ring 结构包含有某种性质，所以从上面去扩张测度是非常好的，可以避免一些问题。那么更进一步，如果我们从一个性质更好的结构（也就是 filed）上扩张测度，会有另外那些额外的收获呢？
+
+后面的定理告诉我们，从 field 上生成的外测度、扩张的测度和 field 本身的测度非常相似，**我们可以使用 field 上的测度来无限逼近扩张测度**。
 
 ::: {#prp-ring-extension-outer}
 
@@ -459,7 +465,7 @@ $$
 
 # 测度空间的完全化
 
-往一个测度空间中添加一些集合，从而得到一个完全的测度空间（定义可见 @def-complete-measure），我们称这个完全的测度空间是原来**测度空间的完全化**。
+往一个测度空间中添加一些集合，从而得到一个完全的测度空间（定义可见 [完全测度空间的定义](03-measure.qmd#def-complete-measure)），我们称这个完全的测度空间是原来**测度空间的完全化**。
 
 ::: {#thm-any-complete}
 
@@ -481,6 +487,7 @@ $$
 
 ::: {.proof}
 我们使用 4 个步骤来进行证明这个定理，
+
 1. $\tilde{\mathcal{F}}$ 是一个 $\sigma$-field；
 2. $\tilde{\mu}$ 是 well-defined；
 3. $\tilde{\mu}$ 是一个测度；

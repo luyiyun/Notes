@@ -15,18 +15,19 @@ website:
       - href: index.qmd
         text: 首页
       - href: src/learn/index.qmd
-        text: 学习笔记
+        text: 专题学习
       - href: about.qmd
         text: 关于
   sidebar:
-    - id: learn
-      title: "学习笔记"
-      style: docked
-      contents:
-        - href: src/learn/index.qmd
-          text: 学习笔记总览
-        - href: src/learn/advanced-probability/index.qmd
-          text: 高等概率论
+    style: docked
+    search: true
+    collapse-level: 3
+    contents:
+      - href: index.qmd
+        text: 首页
+      - auto: "src/learn"
+      - href: about.qmd
+        text: 关于
 
 format:
   html:
