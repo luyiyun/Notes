@@ -16,7 +16,7 @@
         details.id = proof.id;
       }
 
-      details.open = false;
+      details.open = proof.classList.contains("open");
 
       const summary = document.createElement("summary");
       const title = proof.querySelector(".proof-title");

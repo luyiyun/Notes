@@ -30,11 +30,13 @@ order: 4
 ## 外测度
 
 假设 $\Omega$ 的所有子集组成的集合记为 $\mathcal{P}(\Omega)$，定义集函数 $\tau:\mathcal{P}(\Omega)\to \bar{\mathbb{R}}$（其中 $\bar{\mathbb{R}}=\mathbb{R}\cup \{ -\infty,+\infty \}$），如果其满足以下 3 个条件，则称其为 $\Omega$ 上的外测度（outer measure）：
+
 1. $\tau(\emptyset)=0$;
-2. (单调性) $\forall A\subset B\subset\Omega\implies \tau(A)\leq \tau(B)$；
-3. (半可列可加性) $\forall A_{n}\in\mathcal{P}(\Omega),n=1,2,\dots\implies \tau(\cup_{i=1}^{\infty}A_{n})\leq \sum_{n=1}^{\infty}\tau(A_{n})$。
+2. 单调性，即 $\forall A\subset B\subset\Omega\implies \tau(A)\leq \tau(B)$；
+3. 半可列可加性,即若$\forall A_{n}\in\mathcal{P}(\Omega),n=1,2,\dots$，则有 $$\tau(\cup_{i=1}^{\infty}A_{n})\leq \sum_{n=1}^{\infty}\tau(A_{n})$$
 
 :::
+
 外测度的定义可以说是非常宽松，我们几乎可以通过任意一个集合系和该集合系上的一个非负集函数来得到一个 outer measure。下面是一个构造外测度的方法：
 
 ::: {#thm-04-outer-measure-2}
@@ -94,13 +96,34 @@ $$
 :::
 
 ::: {.proof}
-证明该定理需要证明三个子命题，即 (1)$\mathcal{F}_{\tau}$ 是一个 $\sigma$-field、(2)$\tau$ 限制在 $\mathcal{\tau}$ 是一个 measure 和 (3)$(\Omega,\mathcal{F}_{\tau},\tau)$ 是完全的。
+证明该定理需要证明三个子命题，即 
 
-首先 (1)$\mathcal{F}_{\tau}$ 是一个 $\sigma$-field，这需要证明三个条件：即存在 $\emptyset$、对补运算封闭、对可列并封闭。
-(1.1) $\tau(D)=\tau(\emptyset)+\tau(D)=\tau(D\cap \emptyset)+\tau(D\cap \emptyset^{c})\implies \emptyset\in\mathcal{F}_{\tau}$
-(1.2) $A\in\mathcal{F}_{\tau}\implies \tau(D)=\tau(D\cap A)+\tau(D\cap A^{c})=\tau(D\cap (A^{c})^{c})+\tau(D\cap A^{c})\implies A^{c}\in\mathcal{F}_{\tau}$
-(1.3) 可列并封闭的证明比较麻烦，需要分成几个步骤慢慢进行。
-(1.3.1) 我们首先去证明对于有限交封闭，即 $A_{1},A_{2}\in\mathcal{F}_{\tau}\implies A_{1}\cap A_{2}\in\mathcal{F}_{\tau}$，证明如下:
+1. $\mathcal{F}_{\tau}$ 是一个 $\sigma$-field;
+2. $\tau$ 限制在 $\mathcal{\tau}$ 是一个 measure;
+3. $(\Omega,\mathcal{F}_{\tau},\tau)$ 是完全的。
+
+首先针对第一个子命题，这需要证明三个条件，即
+
+a. 存在 $\emptyset$
+b. 对补运算封闭
+c. 对可列并封闭。
+
+对于a，我们有
+$$
+\tau(D)=\tau(\emptyset)+\tau(D)=\tau(D\cap \emptyset)+\tau(D\cap \emptyset^{c})\implies \emptyset\in\mathcal{F}_{\tau}.
+$$
+
+对于b，我们有
+$$
+A\in\mathcal{F}_{\tau}\implies \tau(D)=\tau(D\cap A)+\tau(D\cap A^{c})=\tau(D\cap (A^{c})^{c})+\tau(D\cap A^{c})\implies A^{c}\in\mathcal{F}_{\tau}.
+$$
+
+对于c，证明比较麻烦，需要分成几个步骤慢慢进行。
+
+我们首先去证明对于有限交封闭(1.c.1)，即
+$$A_{1},A_{2}\in\mathcal{F}_{\tau}\implies A_{1}\cap A_{2}\in\mathcal{F}_{\tau}.$$
+
+证明如下:
 
 $$
 \begin{align}
@@ -111,8 +134,9 @@ $$
 \end{align}
 $$
 
-其中第 1、2 行是因为 $A_{1},A_{2}\in\mathcal{F}_{\tau}$，第 3 行是通过集合运算（通过 venn 图可能更容易看出来），第 4 行有时利用 $A_{1}\in\mathcal{F}_{\tau}$。该结论结合 (1.1) 和 (1.2)，其实证明了 $\mathcal{F}_{\tau}$ 是一个 field。
-(1.3.2) 然后我们证明以下等式（和有限并相关）：
+其中第 1、2 行是因为 $A_{1},A_{2}\in\mathcal{F}_{\tau}$，第 3 行是通过集合运算（通过 venn 图可能更容易看出来），第 4 行有时利用 $A_{1}\in\mathcal{F}_{\tau}$。该结论结合 a 和 b，其实证明了 $\mathcal{F}_{\tau}$ 是一个 field。
+
+然后我们证明以下等式（1.c.2, 和有限并相关）：
 
 $$
 \begin{align}
@@ -136,14 +160,15 @@ $$
 \end{align}
 $$
 
-(1.3.3) 然后，进一步，我们将有限并的运算推广到无限并运算上，得到下面的等式：
+然后，进一步，我们将有限并的运算推广到无限并运算上，得到下面的等式(1.c.3)：
 
 $$
 \tau (D)\geq \sum\limits_{i=1}^{\infty}\tau(D\cap B_{i})+\tau\left[ D\cap\left( \bigcup_{i=1}^{\infty}B_{i} \right)^{c} \right]
 $$
 
-其中 $B_{i}\in\mathcal{F}_{\tau},i=1,\dots;\forall i,j,B_{i}\cap B_{j}=\emptyset$。证明过程如下：
-根据之前证明的结论，我们知道 $\mathcal{F}_{\tau}$ 是一个 field，所以其对于有限并封闭，因此有：
+其中 $B_{i}\in\mathcal{F}_{\tau},i=1,\dots;\forall i,j,B_{i}\cap B_{j}=\emptyset$。
+
+证明过程： 根据之前证明的结论，我们知道 $\mathcal{F}_{\tau}$ 是一个 field，所以其对于有限并封闭，因此有：
 
 $$
 \begin{align}
@@ -156,8 +181,9 @@ $$
 \end{align}
 $$
 
-第一个等号是因为 $\bigcup_{i=1}^{n}\in\mathcal{F}_{\tau}$，第二个等号是因为 (1.3.2) 的结论，第三个不等式是因为 $\tau$ 作为 outer measure 有单调性。上述不等式的成立与 $n$ 的取值无关，令 $n\to \infty$ 得到 (1.3.3) 的结论。
-(1.3.4) 完成可列并封闭的证明。即我们需要证明
+第一个等号是因为 $\bigcup_{i=1}^{n}\in\mathcal{F}_{\tau}$，第二个等号是因为 (1.c.2) 的结论，第三个不等式是因为 $\tau$ 作为 outer measure 有单调性。上述不等式的成立与 $n$ 的取值无关，令 $n\to \infty$ 得到 (1.c.3) 的结论。
+
+现在我们来完成可列并封闭的证明(1.c.4)。即我们需要证明
 
 $$
 B_{i}\in\mathcal{F}_{\tau},i=1,2,\dots;\forall i,j,B_{i}\cap B_{j}=\emptyset
@@ -178,7 +204,7 @@ $$
 \tau\left[ D\cap\left( \bigcup_{i=1}^{\infty}B_{i} \right)^{c} \right].
 $$
 
-我们只需要证明另外一个方向的不等式即可。由 (1.3.3) 的结论可以得到
+我们只需要证明另外一个方向的不等式即可。由 (1.c.3) 的结论可以得到
 
 $$
 \begin{align}
@@ -191,14 +217,13 @@ $$
 
 第二个不等号是因为 $\tau$ 作为 outer measure 的半可列可加性。至此，我们证明了对不相交的可列并的封闭性，而根据我们之前对于 $\sigma$-field 的等价定义的介绍，这已经足够证明 $\mathcal{F}_{\tau}$ 是一个 $\sigma$-field 了。
 
-现在我们需要证明 (2)$\tau$ 限制在 $\mathcal{F}_{\tau}$ 是一个 measure，基于 $\tau$ 是一个 outer measure，我们只需要其拥有可列可加性即可，即
+现在我们需要证明2，也就是$\tau$ 限制在 $\mathcal{F}_{\tau}$ 是一个 measure，基于 $\tau$ 是一个 outer measure，我们只需要其拥有可列可加性即可，即$A_{n}\in\mathcal{F}_{\tau},n=1,\dots$两两不交，则有
 
 $$
-A_{n}\in\mathcal{F}_{\tau},n=1,\dots;\forall i,j,A_{i}\cap A_{j}=\emptyset\implies
 \tau\left( \bigcup_{n=1}^{\infty}A_{n} \right)=\sum\limits_{n=1}^{\infty}\tau(A_{n}).
 $$
 
-又因为 $\tau$ 是一个 outer measure，其拥有半可列可加性，所以 $\leq$ 已经满足，我们只需要证明 $\geq$ 即可。这只需要将 (1.3.3) 中的 $D$ 替换为 $\cup_{i=1}^{\infty}B_{i}$，即可得到
+又因为 $\tau$ 是一个 outer measure，其拥有半可列可加性，所以 $\leq$ 已经满足，我们只需要证明 $\geq$ 即可。这只需要将 (1.c.3) 中的 $D$ 替换为 $\cup_{i=1}^{\infty}B_{i}$，即可得到
 
 $$
 \tau\left( \bigcup_{i=1}^{\infty}B_{i} \right)\geq \sum\limits_{i=1}^{\infty}\tau(B_{i}).
@@ -206,7 +231,7 @@ $$
 
 由此，我们证明了 $\tau$ 在 $\mathcal{F}_{\tau}$ 是一个 measure。
 
-最后，我们需要证明 $(\Omega,\mathcal{F}_{\tau},\tau)$ 的完全性。这里我们证明一个更加强的命题，
+最后，我们需要证明3，也就是$(\Omega,\mathcal{F}_{\tau},\tau)$ 的完全性。这里我们证明一个更加强的命题，
 
 $$
 \forall A\in\mathcal{P}(\Omega),\tau(A)=0\implies A\in\mathcal{F}_{\tau}.
