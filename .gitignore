@@ -25,3 +25,8 @@ assets/attachments/**
 
 # 可能存在的codex文件
 *.log
+
+
+# quarto相关文件
+.quarto/
+_site/
