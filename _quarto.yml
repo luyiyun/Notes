@@ -29,6 +29,21 @@ website:
       - auto: "src/learn"
       - href: about.qmd
         text: 关于
+  comments:
+    giscus:
+      repo: luyiyun/Notes-comments
+      repo-id: "R_kgDOScB5XQ"
+      category: "Announcements"
+      category-id: "DIC_kwDOScB5Xc4C87kL"
+      mapping: pathname
+      reactions-enabled: true
+      input-position: bottom
+      loading: lazy
+      language: zh-CN
+      theme:
+        light: light
+        dark: dark_dimmed
+
 
 format:
   html:

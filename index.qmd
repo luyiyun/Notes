@@ -1,5 +1,6 @@
 ---
 title: "Rong's Notes"
+comments: false
 ---
 
 这是一个使用 Quarto 搭建的长期笔记网站，用来整理学习笔记、阅读记录、方法知识和项目经验。

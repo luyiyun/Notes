@@ -1,5 +1,6 @@
 ---
 title: "关于"
+comments: false
 ---
 
 这个网站是我从 Obsidian 迁移长期笔记的公开入口。
