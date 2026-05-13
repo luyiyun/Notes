@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="荣志炜">
+
+<title>符号测度 – Rong’s Notes</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-7dba656801d47940102fc4ffc3dc1a54.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../../styles.css">
+</head>
+
+<body class="nav-sidebar docked nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">Rong’s Notes</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="搜索"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="展开或折叠导航栏" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="../../../index.html" aria-current="page"> 
+<span class="menu-text">首页</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../src/learn/index.html"> 
+<span class="menu-text">专题学习</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../about.html"> 
+<span class="menu-text">关于</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/index.html">高等概率论</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/10-signed-measures.html">符号测度</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">首页</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../../src/learn/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">专题学习</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../../src/learn/advanced-probability/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">高等概率论</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/01-introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">介绍</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/02-sigma-field.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sigma 域</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/03-measure.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">测度</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/04-outer-measure.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">外测度</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/05-measure-extension.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">测度扩张</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/06-distribution-function.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">分布函数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/07-measurable-functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">可测函数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/08-integration.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">积分</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/09-lp-spaces.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lp 空间</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/10-signed-measures.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">符号测度</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/11-radon-nikodym-derivative.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R-N 导数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/12-lebesgue-decomposition.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lebesgue 分解</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/13-finite-product-spaces.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">有限乘积空间</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/14-infinite-product-spaces.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">无限乘积空间</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/15-independence-and-conditional-expectation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">独立和条件期望</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/16-markov-chains-and-martingales.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">马尔可夫链与鞅</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/17-statistical-distributions-and-density-functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">统计分布与密度函数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/18-moments.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">矩</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/19-convergence-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">收敛理论</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../../src/learn/prml/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">PRML</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/prml/06-kernel-methods.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">核方法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/prml/07-sparse-kernel-machines.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">稀疏核机器</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../about.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">关于</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#介绍" id="toc-介绍" class="nav-link active" data-scroll-target="#介绍">介绍</a></li>
+  <li><a href="#符号测度的定义" id="toc-符号测度的定义" class="nav-link" data-scroll-target="#符号测度的定义">符号测度的定义</a></li>
+  <li><a href="#符号测度的性质" id="toc-符号测度的性质" class="nav-link" data-scroll-target="#符号测度的性质">符号测度的性质</a></li>
+  <li><a href="#hahn-分解和-jordan-分解" id="toc-hahn-分解和-jordan-分解" class="nav-link" data-scroll-target="#hahn-分解和-jordan-分解">Hahn 分解和 Jordan 分解</a>
+  <ul class="collapse">
+  <li><a href="#准备工作" id="toc-准备工作" class="nav-link" data-scroll-target="#准备工作">准备工作</a></li>
+  <li><a href="#hahn-分解" id="toc-hahn-分解" class="nav-link" data-scroll-target="#hahn-分解">Hahn 分解</a></li>
+  <li><a href="#jordan-分解" id="toc-jordan-分解" class="nav-link" data-scroll-target="#jordan-分解">Jordan 分解</a></li>
+  </ul></li>
+  <li><a href="#变差" id="toc-变差" class="nav-link" data-scroll-target="#变差">变差</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/index.html">高等概率论</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/10-signed-measures.html">符号测度</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">符号测度</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">作者</div>
+    <div class="quarto-title-meta-contents">
+             <p>荣志炜 </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">发布于</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">2024年5月4日</p>
+    </div>
+  </div>
+  
+    <div>
+    <div class="quarto-title-meta-heading">修改于</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date-modified">2026年5月13日</p>
+    </div>
+  </div>
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="介绍" class="level1">
+<h1>介绍</h1>
+<p>前面学习了积分，那自然就会考虑其对立的另一个运算——微分。后面我们会知道，在测度论中引入微分概念不止这么简单，其至少有如下的好处： - 完备了理论，在了解了微分和积分的概念后，概率论中几乎所有的概念都可以得到严格的数学定义； - 和微积分中类似，我们可以通过导数来对函数（这里是可测函数或随机变量）进行细致地分析，这引入了 Jordan 分解和 Lebesgue 分解； - 通过 R-N 导数，我们可以精确地定义条件概率。</p>
+<p>为了能够有更加宽广的视野，我们将从<strong>符号测度</strong>而非测度入手。</p>
+</section>
+<section id="符号测度的定义" class="level1">
+<h1>符号测度的定义</h1>
+<p>如同微积分中的那样，我们寻求一个积分运算的逆运算。比如，我们可以将积分运算看做是一个集合运算</p>
+<p><span class="math display">\[
+\phi(A)=\int _{A}f \, d\mu,\quad\forall A\in\mathcal{F},
+\]</span></p>
+<p>那么我们将寻求另一个运算，其将这个集合运算 <span class="math inline">\(\phi\)</span> 重新计算为可测函数 <span class="math inline">\(f\)</span>。<strong>这个集合运算 <span class="math inline">\(\phi\)</span> 是什么呢？</strong> 似乎好像是测度，但它却不满足<strong>非负性</strong>。这就要求我们去定义一个新的概念，它是测度概念的推广。</p>
+<div id="def-10-signed-measures-1" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 1 (符号测度)</strong></span> 设 <span class="math inline">\((X,\mathcal{F})\)</span> 是一个可测空间，从 <span class="math inline">\(\mathcal{F}\)</span> 到 <span class="math inline">\(\bar{\mathbb{R}}\)</span> 的集函数 <span class="math inline">\(\phi\)</span> 可以被称为<strong>符号测度</strong>，如果它满足以下两个条件： 1. <span class="math inline">\(\phi(\emptyset)=0\)</span>； 2. 可列可加性，即对于任何两两不交的 <span class="math inline">\(A_{n},n=1,2,\dots,A_{n}\in\mathcal{F}\)</span> ，有</p>
+<p><span class="math display">\[
+\phi\left( \bigcup_{n=1}^{\infty}A_{n} \right)=\sum\limits_{n=1}^{\infty}\phi(A_{n}).
+\]</span></p>
+<p>若满足 <span class="math inline">\(\lvert \phi(A) \rvert&lt;\infty,\forall A\in\mathcal{F}\)</span>，则称 <span class="math inline">\(\phi\)</span> 是有限的；若存在 <span class="math inline">\(X\)</span> 上的可测分割 <span class="math inline">\(\{ A_{n},n=1,2,\dots \}\)</span> 满足 <span class="math inline">\(\lvert \phi(A_{n}) \rvert&lt;\infty\)</span> 对每个 <span class="math inline">\(n\)</span> 成立，则称 <span class="math inline">\(\phi\)</span> 是 <span class="math inline">\(\sigma\)</span> 有限的。</p>
+</div>
+<p>现在我们来证明，积分运算本质上是一个符号测度。</p>
+<div id="prp-inte-is-signed-measure" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 1 (积分是符号测度)</strong></span> 设 <span class="math inline">\((X,\mathcal{F},\mu)\)</span> 是一个测度空间，<span class="math inline">\(f\)</span> 是该测度空间上<strong>积分存在</strong>的可测函数，则</p>
+<p><span class="math display">\[
+\phi(A)=\int _{A}f \, d\mu
+\]</span></p>
+<p>是 <span class="math inline">\((X,\mathcal{F})\)</span> 上的一个符号测度。</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>第一条由 <strong>?@thm-inte-exists</strong> (4) 得到，第二条由 <strong>?@cor-measurable-seperate</strong> 得到。</p>
+</div>
+</section>
+<section id="符号测度的性质" class="level1">
+<h1>符号测度的性质</h1>
+<p>符号测度是测度的推广，所以在符号测度上成立的命题，在测度上依然成立；但在测度上成立的命题则不一定在符号测度中成立，所以我们需要重新探索符号测度的性质。（我们会发现，因为符号测度定义太过宽泛，其成立的性质明显要少很多）</p>
+<div id="prp-10-signed-measures-3" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 2 (Proposition)</strong></span> 符号测度有有限可加性。</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>略。</p>
+</div>
+<div id="prp-10-signed-measures-4" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 3 (良定义)</strong></span> 对于任意的符号测度 <span class="math inline">\(\phi\)</span>，下面的情况只会成立一个：</p>
+<p><span class="math display">\[
+-\infty&lt;\phi(A)\leq \infty,\quad \forall A\in\mathcal{F},
+\]</span></p>
+<p><span class="math display">\[
+-\infty\leq\phi(A)&lt; \infty,\quad \forall A\in\mathcal{F}.
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>使用反证法。若存在 <span class="math inline">\(A,B\in\mathcal{F}\)</span>，满足 <span class="math inline">\(\phi(A)=\infty,\phi(B)=-\infty\)</span>。则有以下结论</p>
+<p><span class="math display">\[
+\phi(A\cup B)=\phi(A)+\phi(A\setminus A),\quad
+\phi(A\cup B)=\phi(B)+\phi(B\setminus A).
+\]</span></p>
+<p>若 <span class="math inline">\(\phi(A)=\infty\)</span>，则 <span class="math inline">\(\phi(A\cup B)=\infty\)</span>，负责会出现无意义的计算；若 <span class="math inline">\(\phi(B)=-\infty\)</span>，则 <span class="math inline">\(\phi(A\cup B)=-\infty\)</span>，出现矛盾。</p>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="约定">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>约定
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>为了方便起见，我们将约定所遇到的所有符号测度均满足 <span class="math inline">\(-\infty&lt;\phi(A)\leq \infty,\quad \forall A\in\mathcal{F}\)</span>。</p>
+</div>
+</div>
+<p><span id="appoint-signed-measure"></span></p>
+<div id="prp-signed-control" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 4 (控制性)</strong></span> <span class="math inline">\(\phi\)</span> 是可测空间 <span class="math inline">\((X,\mathcal{F})\)</span> 上的符号测度，若 <span class="math inline">\(A,B\in\mathcal{F},A\supset B\)</span>，并且 <span class="math inline">\(\lvert \phi(A) \rvert&lt;\infty\)</span>，则</p>
+<p><span class="math display">\[
+\lvert \phi(B) \rvert &lt;\infty.
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>基于有限可加性，可知</p>
+<p><span class="math display">\[
+\phi(A)=\phi(B)+\phi(A\setminus B),
+\]</span></p>
+<p>所以，<span class="math inline">\(\phi(A)\)</span> 有限，则 <span class="math inline">\(\phi(B)\)</span> 必然有限。</p>
+</div>
+<div id="prp-10-signed-measures-6" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 5 (可列控制性)</strong></span> <span class="math inline">\(\phi\)</span> 是可测空间 <span class="math inline">\((X,\mathcal{F})\)</span> 上的符号测度，若 <span class="math inline">\(\{ A_{n},n=1,2,\dots \}\subset\mathcal{F}\)</span> 两两不交，则</p>
+<p><span class="math display">\[
+\left\lvert  \phi\left( \bigcup_{n=1}^{\infty}A_{n} \right)  \right\rvert &lt;\infty,
+\]</span></p>
+<p>成立，当且仅当</p>
+<p><span class="math display">\[
+\sum\limits_{n=1}^{\infty}\lvert \phi(A_{n}) \rvert &lt;\infty.
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>对于每个 <span class="math inline">\(n=1,2,\dots\)</span>，我们定义</p>
+$$ A_{n}^{+}={
+<span class="math display">\[\begin{matrix}
+A_{n},\quad&amp;\phi(A_{n})&gt;0, \\
+\emptyset,&amp;\phi(A_{n})\leq 0,
+\end{matrix}\]</span>
+<p>.</p>
+A_{n}^{-}={
+<span class="math display">\[\begin{matrix}
+\emptyset,\quad&amp;\phi(A_{n})&gt;0, \\
+A_{n},&amp;\phi(A_{n})\leq 0,
+\end{matrix}\]</span>
+<p>. $$</p>
+<p>容易得到</p>
+<p><span class="math display">\[
+\bigcup_{n=1}^{\infty}A_{n}=\bigcup_{n=1}^{\infty}A_{n}^{+}\cup \bigcup_{n=1}^{\infty}A_{n}^{-},
+\]</span></p>
+<p>并且 <span class="math inline">\(\{ A_{n}^{+},A_{n}^{-},n=1,2,\dots \}\)</span> 两两不交。因此，我们有</p>
+<p><span class="math display">\[
+\begin{align}
+\sum\limits_{n=1}^{\infty}\lvert \phi(A_{n}) \rvert
+&amp;=\sum\limits_{n=1}^{\infty}[\phi(A_{n}^{+})+\lvert \phi(A_{n}^{-}) \rvert ] \\
+&amp;=\sum\limits_{n=1}^{\infty}\phi(A_{n}^{+})+\sum\limits_{n=1}^{\infty}\lvert \phi(A_{n}^{-}) \rvert \\
+&amp;=\left\lvert  \sum\limits_{n=1}^{\infty}\phi(A_{n}^{+})  \right\rvert +
+\left\lvert  \sum\limits_{n=1}^{\infty}\phi(A_{n}^{-})  \right\rvert \\
+&amp;=\left\lvert  \phi\left( \bigcup_{n=1}^{\infty}A_{n}^{+} \right)  \right\rvert +
+\left\lvert  \phi\left( \bigcup_{n=1}^{\infty}A_{n}^{-} \right)  \right\rvert
+\end{align}
+\]</span></p>
+<p>其中第一行的结论来自于 <span class="math inline">\(A_{n}^{+},A_{n}^{-}\)</span> 的定义，倒数第二行来自于符号测度的可列可加性。</p>
+<ol type="1">
+<li>若 <span class="math inline">\(\left\lvert  \phi\left( \bigcup_{n=1}^{\infty}A_{n} \right)  \right\rvert &lt;\infty\)</span> 成立，根据 <a href="#prp-signed-control" class="quarto-xref">命题&nbsp;4</a> ，可知以下内容成立</li>
+</ol>
+<p><span class="math display">\[
+\left\lvert  \phi\left( \bigcup_{n=1}^{\infty}A_{n}^{+} \right)  \right\rvert&lt;\infty,\quad
+\left\lvert  \phi\left( \bigcup_{n=1}^{\infty}A_{n}^{-} \right)  \right\rvert &lt;\infty,
+\]</span></p>
+<p><span id="b75466"></span></p>
+<p>所以，我们有</p>
+<p><span class="math display">\[
+\sum\limits_{n=1}^{\infty}\lvert \phi(A_{n}) \rvert &lt;\infty.
+\]</span></p>
+<ol start="2" type="1">
+<li>若 <span class="math inline">\(\sum\limits_{n=1}^{\infty}\lvert \phi(A_{n}) \rvert &lt;\infty\)</span> 成立，则容易得到式 <a href="#b75466">b75466</a> 成立，再根据有限可加性，可以得到</li>
+</ol>
+<p><span class="math display">\[
+\begin{align}
+\left\lvert  \phi\left( \bigcup_{n=1}^{\infty}A_{n} \right)  \right\rvert
+&amp;=\left\lvert  \phi\left( \bigcup_{n=1}^{\infty}A_{n}^{+} \right)+
+\phi\left( \bigcup_{n=1}^{\infty}A_{n}^{-} \right)
+\right\rvert \\
+&amp;\leq\left\lvert  \phi\left( \bigcup_{n=1}^{\infty}A_{n}^{+} \right)  \right\rvert +
+\left\lvert  \phi\left( \bigcup_{n=1}^{\infty}A_{n}^{-} \right)  \right\rvert \\
+&amp;\leq \infty.
+\end{align}
+\]</span></p>
+</div>
+</section>
+<section id="hahn-分解和-jordan-分解" class="level1">
+<h1>Hahn 分解和 Jordan 分解</h1>
+<section id="准备工作" class="level2">
+<h2 class="anchored" data-anchor-id="准备工作">准备工作</h2>
+<p>对于符号测度的研究，相比于测度，是不太容易的。因为其太宽泛了，没有什么有用的性质。因此，一个研究符号测度的方式是将其分离为两个测度之差，这样的分解方式就是 <strong>Jordan 分解</strong>。几乎与之一一对应的另一个概念是 <strong>Hahn 分解</strong>，其针对的是样本空间。</p>
+<p>我们现在先证明几个后面会用到的引理。</p>
+<div id="lem-10-signed-measures-7" class="theorem lemma">
+<p><span class="theorem-title"><strong>引理 1 (Lemma)</strong></span> 设 <span class="math inline">\(\phi\)</span> 是一个符号测度，<span class="math inline">\(\forall A\in\mathcal{F}\)</span>，记</p>
+<p><span class="math display">\[
+\phi^{*}(A)=\sup\{ \phi(B)|B\subset A,B\in\mathcal{F} \}.
+\]</span></p>
+<p>则 <span class="math inline">\(\phi^{*}\)</span> 是 <span class="math inline">\(\mathcal{F}\)</span> 上非负、单调且满足 <span class="math inline">\(\phi^{*}(\emptyset)=0\)</span> 的集函数。</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>非常容易。</p>
+</div>
+<div id="lem-singed-converge" class="theorem lemma">
+<p><span class="theorem-title"><strong>引理 2 (Lemma)</strong></span> 若 <span class="math inline">\(A\in\mathcal{F}\)</span> 满足 <span class="math inline">\(\phi(A)&lt;\infty\)</span>，则 <span class="math inline">\(\forall\epsilon&gt;0,\exists A_{\epsilon}\in\mathcal{F}\)</span> 使</p>
+<p><span class="math display">\[
+A_{\epsilon}\subset A,\phi(A_{\epsilon})\geq 0,\phi^{*}(A\setminus A_{\epsilon})\leq\epsilon.
+\]</span></p>
+</div>
+<div class="callout callout-style-default callout-note callout-empty-content callout-titled" title="这意味着任何有限的集合，都可以找到它的“正”子集，使得两者之间的“差别”很小。">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>这意味着任何有限的集合，都可以找到它的“正”子集，使得两者之间的“差别”很小。
+</div>
+</div>
+<div class="callout-body-container callout-body">
+
+</div>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>反证法。假设存在 <span class="math inline">\(\epsilon_{0}&gt;0\)</span>，对于任何 <span class="math inline">\(A_{0}\in\mathcal{F}\)</span>， <span class="math inline">\(A_{0}\subset A\)</span>，成立</p>
+<p><span class="math display">\[
+\phi(A_{0})&lt;0
+\]</span></p>
+<p>或</p>
+<p><span class="math display">\[
+\phi(A_{0})\geq 0,\quad \phi^{*}(A\setminus A_{0})&gt;\epsilon_{0}.
+\]</span></p>
+<p><span id="5af11d"></span></p>
+<p>因为这个 <span class="math inline">\(A_{0}\)</span> 的任意性，所以我们就选择其为 <span class="math inline">\(\emptyset\)</span>，因为 <span class="math inline">\(\phi(\emptyset)=0\)</span>，所以可知 <span class="math inline">\(\phi^{*}(A\setminus \emptyset)=\phi^{*}(A)&gt;\epsilon_{0}\)</span>。</p>
+<p>由 <span class="math inline">\(\phi^{*}\)</span> 的定义可知，存在 <span class="math inline">\(B_{1}\in\mathcal{F},B_{1}\subset A_{0},\phi(B_{1})&gt;\epsilon_{0}\)</span>。又根据反证法的结论 <a href="#5af11d">5af11d</a>，得到</p>
+<p><span class="math display">\[
+\phi^{*}(A\setminus B_{1})&gt;\epsilon_{0}.
+\]</span></p>
+<p>这样，根据 <span class="math inline">\(\phi^{*}\)</span>，存在 <span class="math inline">\(B_{2}\in\mathcal{F},B_{2}\subset A\setminus B_{1},\phi(B_{2})&gt;\epsilon_{0}\)</span>。该过程持续下去，我们得到了一个两两不交的序列 <span class="math inline">\(\{ B_{n} \}\)</span>，并且有</p>
+<p><span class="math display">\[
+B_{n}\subset A,B_{n}\in\mathcal{F},\phi(B_{n})&gt;\epsilon_{0}.
+\]</span></p>
+<p>令 <span class="math inline">\(B=\bigcup_{n=1}^{\infty}B_{n}\)</span>，根据符号测度的可列可加性有</p>
+<p><span class="math display">\[
+B\subset A,B\in\mathcal{F},\phi(B)=\sum\limits_{n=1}^{\infty}\phi(B_{n})=\infty.
+\]</span></p>
+<p>根据命题 <a href="#prp-signed-control" class="quarto-xref">命题&nbsp;4</a>，这蕴含 <span class="math inline">\(\lvert \phi(A) \rvert=\infty\)</span>。但是引理的条件是 <span class="math inline">\(\phi(A)&lt;\infty\)</span>，所以 <span class="math inline">\(\phi(A)=-\infty\)</span>，但这与我们之前的 <a href="#517e57">约定</a>。</p>
+</div>
+<div id="lem-full-neg-subset" class="theorem lemma">
+<p><span class="theorem-title"><strong>引理 3 (Lemma)</strong></span> 对于任何 <span class="math inline">\(A\in\mathcal{F}\)</span>，只要 <span class="math inline">\(\phi(A)&lt;0\)</span>，就一定存在 <span class="math inline">\(A_{0}\in\mathcal{F}\)</span>，使得</p>
+<p><span class="math display">\[
+A_{0}\subset A,\quad \phi(A_{0})&lt;0,\quad \phi^{*}(A_{0})=0.
+\]</span></p>
+</div>
+<div class="callout callout-style-default callout-note callout-empty-content callout-titled" title="这意味着，任何一个“负”集合，都能够找到一个子集，它是“全负”的。">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>这意味着，任何一个“负”集合，都能够找到一个子集，它是“全负”的。
+</div>
+</div>
+<div class="callout-body-container callout-body">
+
+</div>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>对于任何 <span class="math inline">\(A\in\mathcal{F},\phi(A)&lt;0\)</span>，利用 <a href="#lem-singed-converge" class="quarto-xref">引理&nbsp;2</a>，我们可以找到 <span class="math inline">\(C_{1}\in\mathcal{F}\)</span>，使得</p>
+<p><span class="math display">\[
+C_{1}\subset A,\quad\phi(C_{1})\geq 0,\quad \phi^{*}(A\setminus C_{1})\leq\epsilon_{1}=1.
+\]</span></p>
+<p>然后，继续利用 <a href="#lem-singed-converge" class="quarto-xref">引理&nbsp;2</a> ，对 <span class="math inline">\(A\setminus C_{1}\)</span> 进行处理，能够得到，存在 <span class="math inline">\(C_{2}\subset A\setminus C_{1}\)</span>，使得</p>
+<p><span class="math display">\[
+\phi(C_{2})\geq 0,\quad \phi^{*}(A\setminus(C_{1}\cup C_{2}))\leq\epsilon_{2}=1 / 2.
+\]</span></p>
+<p>继续以上过程，可以得到一个序列 <span class="math inline">\(\{ C_{k}\in\mathcal{F} \}\)</span>，有</p>
+<p><span class="math display">\[
+C_{k}\subset A,\quad \phi(C_{k})\geq 0,\quad
+\phi^{*}\left( A\setminus\left( \bigcup_{i=1}^{k}C_{i} \right) \right)
+\leq\epsilon_{k}=1/k.
+\]</span></p>
+<p>令 <span class="math inline">\(C=\bigcup_{n=1}^{\infty}C_{n}\)</span>，则 <span class="math inline">\(\phi(C)=\sum\limits_{n=1}^{\infty}\phi(C_{n})\geq 0\)</span> 且</p>
+<p><span class="math display">\[
+0\leq \phi^{*}(A\setminus C)\leq \phi^{*}\left( A\setminus\left( \bigcup_{i=1}^{n}C_{k} \right) \right)\leq\epsilon_{k}=1/n\to0.
+\]</span></p>
+<p>我们取 <span class="math inline">\(A_{0}=A\setminus C\)</span>，则有 <span class="math inline">\(A_{0}\subset A,\phi^{*}(A_{0})=0\)</span>，并且</p>
+<p><span class="math display">\[
+\phi(A_{0})+\phi(C)=\phi(A)&lt;0,\phi(C)\geq 0\implies
+\phi(A_{0})&lt;0.
+\]</span></p>
+</div>
+</section>
+<section id="hahn-分解" class="level2">
+<h2 class="anchored" data-anchor-id="hahn-分解">Hahn 分解</h2>
+<p>利用上面证明的引理，现在我们来叙述 Hahn 分解。</p>
+<div id="thm-hahn-decomp" class="theorem">
+<p><span class="theorem-title"><strong>定理 1 (Hahn 分解)</strong></span> 对于可测空间 <span class="math inline">\((X,\mathcal{F})\)</span> 的符号测度 <span class="math inline">\(\phi\)</span>，存在 <span class="math inline">\(X^{+},X^{-}\in\mathcal{F}\)</span>，使得</p>
+<p><span class="math display">\[
+X^{+}\cup X^{-}=X,\quad,X^{+}\cap X^{-}=\emptyset,
+\]</span></p>
+<p>并且对于 <span class="math inline">\(\forall A\in\mathcal{F}\)</span>，有</p>
+<p><span class="math display">\[
+\phi(A\cap X^{+})\geq 0\geq \phi(A\cap X^{-}).
+\]</span></p>
+<p>以上分解在下列意义下是唯一的：若存在两个分解 <span class="math inline">\(\{ X_{1}^{+},X^{-}_{1} \}\)</span> 和 <span class="math inline">\(\{ X_{2}^{+},X_{2}^{-} \}\)</span> 满足上述要求，则有</p>
+<p><span class="math display">\[
+\begin{align}
+&amp;\forall A\in\mathcal{F},A\subset X_{1}^{+}\Delta X_{2}^{+}\implies \phi(A)=0, \\
+&amp;\forall B\in\mathcal{F},B\subset X_{1}^{-}\Delta X_{2}^{-}\implies \phi(B)=0.
+\end{align}
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>接下来，我们需要分步骤来证明该定理。 (1) 集合系 <span class="math inline">\(\mathcal{F}^{-}:=\{ A\in\mathcal{F}:\phi^{*}(A)=0 \}\)</span> 是一个 <span class="math inline">\(\sigma\)</span> -ring。 根据 <a href="../../../src/learn/advanced-probability/02-sigma-field.html#780e88">1.1 测度空间和概率空间</a> 中的 (4)，我们有如下： 首先，<span class="math inline">\(\emptyset\in\mathcal{F}^{-}\)</span>，所以 <span class="math inline">\(\mathcal{F}^{-}\)</span> 非空。 若 <span class="math inline">\(A_{1},A_{2}\in\mathcal{F}^{-}\)</span>，由 <span class="math inline">\(\phi^{*}\)</span> 的非负性和单调性可知</p>
+<p><span class="math display">\[
+0\leq \phi^{*}(A_{1}\setminus A_{2})\leq \phi^{*}(A_{1})=0,
+\]</span></p>
+<p>所以 <span class="math inline">\(A_{1}\setminus A_{2}\in\mathcal{F}^{-}\)</span>。 假设 <span class="math inline">\(\{ A_{n}\in\mathcal{F}^{-},n=1,2,\dots \}\)</span> 且两两不交，则 <span class="math inline">\(\forall B\in\mathcal{F},B\subset \bigcup_{n=1}^{\infty}A_{n}\)</span>，有</p>
+<p><span class="math display">\[
+\phi(B)=\phi\left( B\cap\left( \bigcup_{n=1}^{\infty}A_{n} \right) \right)=
+\sum\limits_{n=1}^{\infty}\phi(B\cap A_{n}),
+\]</span></p>
+<p>进而有</p>
+<p><span class="math display">\[
+\begin{align}
+0&amp;\leq \phi^{*}\left( \bigcup_{n=1}^{\infty}A_{n} \right) \\
+&amp;=\sup\left\{  \phi(B)|B\in\mathcal{F},B\subset \bigcup_{n=1}^{\infty}A_{n}  \right\} \\
+&amp;=\sup\left\{  \sum\limits_{n=1}^{\infty}\phi(B\cap A_{n})|B\in\mathcal{F},B\subset \bigcup_{n=1}^{\infty}A_{n}  \right\} \\
+&amp;\leq \sup\left\{  \sum\limits_{n=1}^{\infty}\phi(B_{n})|B_{n}\in\mathcal{F},B_{n}\subset A_{n},\forall n\geq 1  \right\} \\
+&amp;\leq \sum\limits_{n=1}^{\infty}\sup\{ \phi(B)|B\in\mathcal{F},B\subset A_{n} \} \\
+&amp;=\sum\limits_{n=1}^{\infty}\phi^{*}(A_{n})=0.
+\end{align}
+\]</span></p>
+<p>这意味着 <span class="math inline">\(\bigcup_{n=1}^{\infty}A_{n}\in\mathcal{F}^{-}\)</span>。</p>
+<ol start="2" type="1">
+<li>我们证明存在满足定理的分解 <span class="math inline">\(X^{\pm}\)</span>。 记 <span class="math inline">\(\alpha=\inf\{ \phi(A)|A\in\mathcal{F}^{-} \}\)</span>。 由于 <span class="math inline">\(\emptyset\in\mathcal{F}\)</span>，所以有 <span class="math inline">\(\alpha\leq 0\)</span>。我们选择一个集合列 <span class="math inline">\(\{ A_{n}\in\mathcal{F}^{-},n=1,2,\dots \}\)</span> 使得 <span class="math inline">\(\lim_{ n \to \infty }\phi(A_{n})=\alpha\)</span>。 令 <span class="math inline">\(X^{-}=\bigcup_{n=1}^{\infty}A_{n}\)</span>，由于 <span class="math inline">\(\mathcal{F}^{-}\)</span> 是一个 <span class="math inline">\(\sigma\)</span> -field，所以有 <span class="math inline">\(X^{-}\in\mathcal{F}^{-}\subset \mathcal{F}\)</span>，而且有</li>
+</ol>
+<p><span class="math display">\[
+\phi(A\cap X^{-})\leq \phi^{*}(A\cap X^{-})\leq \phi^{*}(X^{-})=0.
+\]</span></p>
+<p>再令 <span class="math inline">\(X^{+}=X\setminus X^{-}\)</span>，显然 <span class="math inline">\(X^{+}\in\mathcal{F}\)</span>，现在我们只需要证明 <span class="math inline">\(\forall A\in\mathcal{F},\phi(A\cap X^{+})\geq 0\)</span> 即可。 反证法。若存在 <span class="math inline">\(A\in\mathcal{F},A\subset X^{+},\phi(A)&lt;0\)</span>，则根据 <a href="#lem-full-neg-subset" class="quarto-xref">引理&nbsp;3</a>, 存在 <span class="math inline">\(A_{0}\subset A,A_{0}\in\mathcal{F}\)</span>，使得</p>
+<p><span class="math display">\[
+\begin{align}
+&amp;\phi(A_{0})&lt;0,\phi^{*}(A_{0})=0 \\
+\iff &amp;\phi(A_{0})&lt;0,A_{0}\in\mathcal{F}^{-} \\
+\implies&amp; \phi(A_{0})&lt;0,A_{0}\cup X^{-}\in\mathcal{F}^{-} \\
+\implies&amp;\phi(A_{0}\cup X^{-})=\phi(A_{0})+\phi(X^{-})&lt;\phi(X^{-}),
+\end{align}
+\]</span></p>
+<p>其中第二行来自于 <span class="math inline">\(\mathcal{F}^{-}\)</span> 的定义，第三行是因为 <span class="math inline">\(\mathcal{F}^{-}\)</span> 是 <span class="math inline">\(\sigma\)</span> -field，第四行是因为 <span class="math inline">\(A_{0}\cap X^{-}=\emptyset\)</span>。 但是，我们又有</p>
+<p><span class="math display">\[
+\begin{align}
+\phi(X^{-})&amp;=\phi(A_{n})+\phi(X^{-}\setminus A_{n}) \\
+&amp;\leq\phi(A_{n})+\phi^{*}(X^{-}\setminus A_{n}) \\
+&amp;=\phi(A_{n}),
+\end{align}
+\]</span></p>
+<p>其中第一行是由符号测度的有限可加性得到，第二行是由于 <span class="math inline">\(\phi^{*}\)</span> 的定义得到，第三行是由 <span class="math inline">\(X^{-},A_{n}\in\mathcal{F}^{-}\)</span>，再加上 <span class="math inline">\(\mathcal{F}^{-}\)</span> 的定义得到。 因此，我们有</p>
+<p><span class="math display">\[
+\phi(A_{0}\cup X^{-})&lt;\phi(X^{-})\leq \lim_{ n \to \infty } \phi(A_{n})=\alpha,
+\]</span></p>
+<p>这又与 <span class="math inline">\(A_{0}\cup X^{-}\in\mathcal{F}^{-}\)</span> 和 <span class="math inline">\(\alpha\)</span> 的定义矛盾。因此证明完毕。</p>
+<ol start="3" type="1">
+<li>我们来现在证明唯一性。 假设 <span class="math inline">\(\{ X_{1}^{+},X_{1}^{-} \}\)</span> 和 <span class="math inline">\(\{ X_{2}^{+},X_{2}^{-} \}\)</span> 都符合 Hahn 分解。若 <span class="math inline">\(A\in X_{2}^{+}\setminus X_{1}^{+}\)</span>，</li>
+</ol>
+<p><span class="math display">\[
+\begin{align}
+&amp;A\in X_{2}^{+}\implies \phi(A)\geq 0,\\
+&amp;A\in (X_{1}^{+})^{c}\implies \phi(A)\leq 0,
+\end{align}
+\]</span></p>
+<p>因此，<span class="math inline">\(\phi(A)=0\)</span>。同理可以得到，<span class="math inline">\(\forall A\in X_{1}^{+}\setminus X_{2}^{+}\implies \phi(A)=0\)</span>，因此，当 <span class="math inline">\(A\in X_{1}^{+}\Delta X_{2}^{+}\)</span> 时，</p>
+<p><span class="math display">\[
+\phi(A)=\phi(A\cap(X_{1}^{+}\setminus X_{2}^{+}))+\phi(A\cap(X_{2}^{+}\setminus X_{1}^{+}))=0.
+\]</span></p>
+<p>同理，当 <span class="math inline">\(A\in X_{1}^{-}\Delta X_{2}^{-}\)</span>，证明过程类似。</p>
+</div>
+</section>
+<section id="jordan-分解" class="level2">
+<h2 class="anchored" data-anchor-id="jordan-分解">Jordan 分解</h2>
+<p><a href="#thm-hahn-decomp" class="quarto-xref">定理&nbsp;1</a> 将整个空间 <span class="math inline">\(X\)</span> 分成了两个部分，一部分上只取正值，另一部分上只取负值。然后我们将这个分解等价地转换为测度的形式。</p>
+<div id="thm-jordan-decomp" class="theorem">
+<p><span class="theorem-title"><strong>定理 2 (Jordan 分解)</strong></span> 对于可测空间 <span class="math inline">\((X,\mathcal{F})\)</span> 上的<strong>符号测度 <span class="math inline">\(\phi\)</span></strong>，存在<strong>测度 <span class="math inline">\(\phi^{+}\)</span></strong> 和<strong>有限测度 <span class="math inline">\(\phi^{-}\)</span></strong> 使得下面的内容成立</p>
+<p><span class="math display">\[
+\phi=\phi^{+}-\phi^{-},\quad
+\phi^{+}(A)=\phi^{*}(A)=\phi(A\cap X^{+}),\quad
+\phi^{-}(A)=(-\phi)^{*}(A)=-\phi(A\cap X^{-}),
+\]</span></p>
+<p>其中 <span class="math inline">\(\{ X^{+},X^{-} \}\)</span> 是 Hahn 分解。</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>令 <span class="math inline">\(\phi^{+}(A)=\phi(A\cap X^{+}),\phi^{-}=-\phi(A\cap X^{-})\)</span>，则根据 Hahn 分解，<span class="math inline">\(\phi=\phi^{+}-\phi^{-}\)</span> 成立，并且容易证明两者都是测度。又根据约定 <a href="#appoint-signed-measure">约定</a>，<span class="math inline">\(\phi^{-}\)</span> 是有限的。现在我们只需要证明 <span class="math inline">\(\phi^{+}=\phi^{*},\phi^{-}=(-\phi)^{*}\)</span> 即可。</p>
+<p><span class="math inline">\(\forall A\in\mathcal{F}\)</span>，对于 <span class="math inline">\(A\)</span> 的任意子集 <span class="math inline">\(B\in\mathcal{F}\)</span>，我们有</p>
+<p><span class="math display">\[
+\phi(B)\leq \phi^{+}(B)\leq \phi^{+}(A),
+\]</span></p>
+<p>第一个不等号是因为 <span class="math inline">\(\phi=\phi^{+}-\phi^{-}\)</span> 并且 <span class="math inline">\(\phi^{-}\)</span> 是测度，第二个不等式是由测度的单调性得到的。因此，有</p>
+<p><span class="math display">\[
+\phi^{+}(A)\geq \sup\{ \phi(B)|B\in A,B\in\mathcal{F} \}=\phi^{*}(A).
+\]</span></p>
+<p>进一步，我们还有</p>
+<p><span class="math display">\[
+\phi^{+}(A)=\phi(A\cap X^{+})\leq \phi^{*}(A).
+\]</span></p>
+<p>因此，<span class="math inline">\(\phi^{+}(A)=\phi^{*}(A)\)</span>。同理我们可以得到另外一个等式。</p>
+</div>
+</section>
+</section>
+<section id="变差" class="level1">
+<h1>变差</h1>
+<div id="def-total-variation" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 2 (变差)</strong></span> 假设 <span class="math inline">\(\phi^{+},\phi^{-}\)</span> 是符号测度 <span class="math inline">\(\phi\)</span> 的 Jordan 分解，<span class="math inline">\(\phi^{+}\)</span> 和 <span class="math inline">\(\phi^{-}\)</span> 分别叫做 <span class="math inline">\(\phi\)</span> 的上变差和下变差，而 <span class="math inline">\(\lvert \phi \rvert=\phi^{+}+\phi^{-}\)</span> 叫做 <span class="math inline">\(\phi\)</span> 的全变差。<strong>上变差、下变差和全变差都是测度</strong>。</p>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script>
+(function () {
+  function makeProofsCollapsible() {
+    const proofs = document.querySelectorAll("div.proof");
+
+    proofs.forEach(function (proof) {
+      if (proof.dataset.collapsibleReady === "true") return;
+
+      const details = document.createElement("details");
+
+      details.className = proof.className;
+      details.classList.add("proof-collapsible");
+      details.dataset.collapsibleReady = "true";
+
+      if (proof.id) {
+        details.id = proof.id;
+      }
+
+      details.open = proof.classList.contains("open");
+
+      const summary = document.createElement("summary");
+      const title = proof.querySelector(".proof-title");
+
+      if (title) {
+        summary.innerHTML = title.innerHTML;
+        title.remove();
+      } else {
+        summary.innerHTML = "<strong>Proof</strong>";
+      }
+
+      details.appendChild(summary);
+
+      while (proof.firstChild) {
+        details.appendChild(proof.firstChild);
+      }
+
+      proof.replaceWith(details);
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", makeProofsCollapsible);
+  } else {
+    makeProofsCollapsible();
+  }
+})();
+</script>
+<script>
+(function () {
+  function fixTheoremTitleSpacing() {
+    const titleSelectors = [
+      ".theorem-title",
+      ".lemma-title",
+      ".corollary-title",
+      ".proposition-title",
+      ".conjecture-title",
+      ".definition-title",
+      ".example-title",
+      ".exercise-title",
+      ".solution-title",
+      ".remark-title",
+      ".algorithm-title",
+      ".proof-title"
+    ].join(",");
+
+    document.querySelectorAll(titleSelectors).forEach(function (title) {
+      const p = title.parentElement;
+
+      if (!p || p.tagName.toLowerCase() !== "p") return;
+
+      /*
+        Quarto/Pandoc often inserts a text node like:
+        <p><span class="theorem-title">...</span>&nbsp;</p>
+
+        Remove whitespace-only text nodes, including non-breaking spaces.
+      */
+      Array.from(p.childNodes).forEach(function (node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          const cleaned = node.textContent.replace(/\u00a0/g, " ").trim();
+          if (cleaned === "") {
+            node.remove();
+          }
+        }
+      });
+
+      p.classList.add("math-env-title-p");
+
+      /*
+        If the paragraph only contains the title span after cleanup,
+        mark it as title-only.
+      */
+      const meaningfulChildren = Array.from(p.childNodes).filter(function (node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          return node.textContent.replace(/\u00a0/g, " ").trim() !== "";
+        }
+        return true;
+      });
+
+      if (meaningfulChildren.length === 1 && meaningfulChildren[0] === title) {
+        p.classList.add("math-env-title-only");
+      }
+
+      /*
+        If the title-only paragraph is followed by a list,
+        compress the gap between title and list.
+      */
+      const next = p.nextElementSibling;
+      if (
+        p.classList.contains("math-env-title-only") &&
+        next &&
+        (next.tagName.toLowerCase() === "ol" || next.tagName.toLowerCase() === "ul")
+      ) {
+        p.classList.add("math-env-title-before-list");
+      }
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", fixTheoremTitleSpacing);
+  } else {
+    fixTheoremTitleSpacing();
+  }
+})();
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "已复制");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "已复制");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/luyiyun\.github\.io\/Notes\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

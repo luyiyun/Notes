@@ -1,0 +1,40 @@
+[
+  {
+    "listing": "/src/learn/prml/index.html",
+    "items": [
+      "/src/learn/prml/06-kernel-methods.html",
+      "/src/learn/prml/07-sparse-kernel-machines.html"
+    ]
+  },
+  {
+    "listing": "/src/learn/advanced-probability/index.html",
+    "items": [
+      "/src/learn/advanced-probability/01-introduction.html",
+      "/src/learn/advanced-probability/02-sigma-field.html",
+      "/src/learn/advanced-probability/03-measure.html",
+      "/src/learn/advanced-probability/04-outer-measure.html",
+      "/src/learn/advanced-probability/05-measure-extension.html",
+      "/src/learn/advanced-probability/06-distribution-function.html",
+      "/src/learn/advanced-probability/07-measurable-functions.html",
+      "/src/learn/advanced-probability/08-integration.html",
+      "/src/learn/advanced-probability/09-lp-spaces.html",
+      "/src/learn/advanced-probability/10-signed-measures.html",
+      "/src/learn/advanced-probability/11-radon-nikodym-derivative.html",
+      "/src/learn/advanced-probability/12-lebesgue-decomposition.html",
+      "/src/learn/advanced-probability/13-finite-product-spaces.html",
+      "/src/learn/advanced-probability/14-infinite-product-spaces.html",
+      "/src/learn/advanced-probability/15-independence-and-conditional-expectation.html",
+      "/src/learn/advanced-probability/16-markov-chains-and-martingales.html",
+      "/src/learn/advanced-probability/17-statistical-distributions-and-density-functions.html",
+      "/src/learn/advanced-probability/18-moments.html",
+      "/src/learn/advanced-probability/19-convergence-theory.html"
+    ]
+  },
+  {
+    "listing": "/src/learn/index.html",
+    "items": [
+      "/src/learn/prml/index.html",
+      "/src/learn/advanced-probability/index.html"
+    ]
+  }
+]

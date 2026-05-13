@@ -1,0 +1,2092 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="荣志炜">
+
+<title>有限乘积空间 – Rong’s Notes</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-7dba656801d47940102fc4ffc3dc1a54.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../../styles.css">
+</head>
+
+<body class="nav-sidebar docked nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">Rong’s Notes</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="搜索"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="展开或折叠导航栏" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="../../../index.html" aria-current="page"> 
+<span class="menu-text">首页</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../src/learn/index.html"> 
+<span class="menu-text">专题学习</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../about.html"> 
+<span class="menu-text">关于</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/index.html">高等概率论</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/13-finite-product-spaces.html">有限乘积空间</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">首页</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../../src/learn/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">专题学习</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../../src/learn/advanced-probability/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">高等概率论</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/01-introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">介绍</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/02-sigma-field.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sigma 域</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/03-measure.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">测度</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/04-outer-measure.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">外测度</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/05-measure-extension.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">测度扩张</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/06-distribution-function.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">分布函数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/07-measurable-functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">可测函数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/08-integration.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">积分</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/09-lp-spaces.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lp 空间</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/10-signed-measures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">符号测度</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/11-radon-nikodym-derivative.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R-N 导数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/12-lebesgue-decomposition.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lebesgue 分解</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/13-finite-product-spaces.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">有限乘积空间</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/14-infinite-product-spaces.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">无限乘积空间</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/15-independence-and-conditional-expectation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">独立和条件期望</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/16-markov-chains-and-martingales.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">马尔可夫链与鞅</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/17-statistical-distributions-and-density-functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">统计分布与密度函数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/18-moments.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">矩</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/19-convergence-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">收敛理论</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../../src/learn/prml/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">PRML</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/prml/06-kernel-methods.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">核方法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/prml/07-sparse-kernel-machines.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">稀疏核机器</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../about.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">关于</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#引言" id="toc-引言" class="nav-link active" data-scroll-target="#引言">引言</a>
+  <ul class="collapse">
+  <li><a href="#乘积测度空间的构造理论" id="toc-乘积测度空间的构造理论" class="nav-link" data-scroll-target="#乘积测度空间的构造理论">乘积测度空间的构造理论</a></li>
+  <li><a href="#乘积空间上的函数与随机向量" id="toc-乘积空间上的函数与随机向量" class="nav-link" data-scroll-target="#乘积空间上的函数与随机向量">“乘积空间上的函数”与“随机向量”</a></li>
+  </ul></li>
+  <li><a href="#乘积可测空间" id="toc-乘积可测空间" class="nav-link" data-scroll-target="#乘积可测空间">乘积可测空间</a></li>
+  <li><a href="#乘积空间上的映射" id="toc-乘积空间上的映射" class="nav-link" data-scroll-target="#乘积空间上的映射">乘积空间上的映射</a>
+  <ul class="collapse">
+  <li><a href="#投影" id="toc-投影" class="nav-link" data-scroll-target="#投影">投影</a></li>
+  <li><a href="#截口" id="toc-截口" class="nav-link" data-scroll-target="#截口">截口</a></li>
+  </ul></li>
+  <li><a href="#13-finite-product-spaces-乘积空间上的测度" id="toc-13-finite-product-spaces-乘积空间上的测度" class="nav-link" data-scroll-target="#13-finite-product-spaces-乘积空间上的测度">乘积空间上的测度</a>
+  <ul class="collapse">
+  <li><a href="#测度转移函数" id="toc-测度转移函数" class="nav-link" data-scroll-target="#测度转移函数">测度转移函数</a></li>
+  <li><a href="#fubini-定理和-tonelli-定理" id="toc-fubini-定理和-tonelli-定理" class="nav-link" data-scroll-target="#fubini-定理和-tonelli-定理">Fubini 定理和 Tonelli 定理</a></li>
+  <li><a href="#分部积分公式" id="toc-分部积分公式" class="nav-link" data-scroll-target="#分部积分公式">分部积分公式</a></li>
+  </ul></li>
+  <li><a href="#多维-lebesgue-stieltjes-测度" id="toc-多维-lebesgue-stieltjes-测度" class="nav-link" data-scroll-target="#多维-lebesgue-stieltjes-测度">多维 Lebesgue-Stieltjes 测度</a>
+  <ul class="collapse">
+  <li><a href="#高维区间" id="toc-高维区间" class="nav-link" data-scroll-target="#高维区间">高维区间</a></li>
+  <li><a href="#高维准分布函数" id="toc-高维准分布函数" class="nav-link" data-scroll-target="#高维准分布函数">高维（准）分布函数</a></li>
+  <li><a href="#13-finite-product-spaces-多维-l-s-测度" id="toc-13-finite-product-spaces-多维-l-s-测度" class="nav-link" data-scroll-target="#13-finite-product-spaces-多维-l-s-测度">多维 L-S 测度</a></li>
+  </ul></li>
+  <li><a href="#随机向量" id="toc-随机向量" class="nav-link" data-scroll-target="#随机向量">随机向量</a>
+  <ul class="collapse">
+  <li><a href="#定义和可测性" id="toc-定义和可测性" class="nav-link" data-scroll-target="#定义和可测性">定义和可测性</a></li>
+  <li><a href="#随机向量生成的-sigma-代数" id="toc-随机向量生成的-sigma-代数" class="nav-link" data-scroll-target="#随机向量生成的-sigma-代数">随机向量生成的 <span class="math inline">\(\sigma\)</span> 代数</a></li>
+  <li><a href="#积分" id="toc-积分" class="nav-link" data-scroll-target="#积分">积分</a></li>
+  <li><a href="#分布" id="toc-分布" class="nav-link" data-scroll-target="#分布">分布</a></li>
+  <li><a href="#密度" id="toc-密度" class="nav-link" data-scroll-target="#密度">密度</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/index.html">高等概率论</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/13-finite-product-spaces.html">有限乘积空间</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">有限乘积空间</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">作者</div>
+    <div class="quarto-title-meta-contents">
+             <p>荣志炜 </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">发布于</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">2025年11月28日</p>
+    </div>
+  </div>
+  
+    <div>
+    <div class="quarto-title-meta-heading">修改于</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date-modified">2026年5月13日</p>
+    </div>
+  </div>
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="引言" class="level1">
+<h1>引言</h1>
+<p>在之前的学习中，我们将目光局限在单个样本空间 <span class="math inline">\(X\)</span>、单个测度 <span class="math inline">\(\mu\)</span> 以及单维可测函数 <span class="math inline">\(f:X\to \mathbb{R}\)</span> 上。然而，概率论与数理统计的进一步发展——如独立性、条件概率、随机过程等——必然要求我们将视野拓展至多个可测空间的情形。我们将讨论如何将单个空间推广至有限个、可数无穷个，乃至不可数无穷个空间的乘积。这将为后续理解条件期望、随机过程等核心概念奠定坚实的测度论基础。</p>
+<p>值得注意的是，积分与微分的抽象定义本身并不依赖于空间的维度，因此其概念可以自然地延拓至乘积空间。本章的核心任务，<strong>在于探究“分量空间”（Subspace）上的测度与积分操作，如何与“乘积空间”（Product Space）上的对应操作建立联系</strong>（例如 Fubini 定理）。</p>
+<p>本节内容将主要围绕以下两个维度展开：</p>
+<section id="乘积测度空间的构造理论" class="level2">
+<h2 class="anchored" data-anchor-id="乘积测度空间的构造理论">乘积测度空间的构造理论</h2>
+<p>首先，我们需要从理论层面解决如何“拼接”多个空间的问题。我们将按照以下步骤，从有限个空间出发，逐步构建乘积空间及其上的分析工具：</p>
+<ol type="1">
+<li><strong>乘积 <span class="math inline">\(\sigma\)</span> 代数的构造</strong>：基于一组可测空间 <span class="math inline">\(\{(X_{k},\mathcal{F}_{k})\}_{k=1}^{n}\)</span>，如何在乘积样本空间 <span class="math inline">\(\prod_{k=1}^{n}X_{k}\)</span> 上构造一个合适的 <span class="math inline">\(\sigma\)</span> 代数 <span class="math inline">\(\bigotimes_{k=1}^{n}\mathcal{F}_{k}\)</span>，从而形成<strong>乘积可测空间</strong>。</li>
+<li><strong>乘积空间上的可测映射</strong>：定义定义域为乘积空间的可测映射 <span class="math inline">\(f:\prod X_k \to \mathbb{R}\)</span>，并重点研究两类特殊的映射——<strong>投影（Projection）</strong> 与 <strong>截口（Section）</strong> ，它们是连接高维与低维的桥梁。</li>
+<li><strong>乘积测度与积分</strong>：在乘积可测空间上定义<strong>乘积测度</strong> <span class="math inline">\(P = \mu_1 \times \dots \times \mu_n\)</span>，从而构成完整的<strong>乘积测度空间</strong>。在此基础上，我们将讨论该空间上的积分计算（即多重积分与累次积分的关系）。</li>
+<li><strong>经典实例</strong>：重点介绍 <span class="math inline">\((\mathbb{R}^{n},\mathcal{B}^{n},m)\)</span>，即 <span class="math inline">\(n\)</span> 维 Lebesgue-Stieltjes 测度空间。这是后续应用中最常接触的乘积空间模型。</li>
+</ol>
+</section>
+<section id="乘积空间上的函数与随机向量" class="level2">
+<h2 class="anchored" data-anchor-id="乘积空间上的函数与随机向量">“乘积空间上的函数”与“随机向量”</h2>
+<p>在第一部分中，我们讨论的可测映射形式为 <span class="math inline">\(f: (\prod X_{k}, \prod \mathcal{F}_{k}) \to \mathbb{R}\)</span>，即<strong>定义域为高维空间，值域为一维实数</strong>的函数（例如联合概率密度函数）。</p>
+<p>然而，在统计学与概率论中，我们更常遇到的是<strong>随机向量</strong>。随机向量的形式为 <span class="math inline">\(f = (f_{1},\dots,f_{n}): (X,\mathcal{F}) \to \mathbb{R}^{n}\)</span>，即<strong>定义域为抽象单空间，值域为高维空间</strong>的映射。</p>
+<p>这两者虽然定义方向不同，但存在着深刻的内在联系：</p>
+<p><strong>区别</strong>：我们无法直接套用实值函数的积分定义来处理随机向量（因为其积分结果是一个向量而非标量），但我们可以通过分量定义其期望。</p>
+<p><strong>联系</strong>：当我们计算关于随机向量的函数的期望 <span class="math inline">\(\mathbb{E}[g(f_1, \dots, f_n)]\)</span> 时，可以通过 <strong>变量代换公式</strong> （<strong>?@thm-inte-by-subs</strong>） 将其转化为乘积空间上的积分：</p>
+<p><span class="math display">\[
+\int_{X} g(f_{1},\dots,f_{n}) \, d\mu = \int_{\mathbb{R}^n} g(x_{1},\dots,x_{n}) \, d(\mu \circ f^{-1})
+\]</span></p>
+<p>其中，<span class="math inline">\(\mu \circ f^{-1}\)</span> 正是随机向量在 <span class="math inline">\((\mathbb{R}^{n},\mathcal{B}^{n})\)</span> 上诱导出的分布测度。</p>
+<p>因此，为了完整处理多维问题，我们还需要专门讨论关于随机向量的以下内容：</p>
+<ol type="1">
+<li><strong>随机向量的定义与可测性</strong>：明确值域为 <span class="math inline">\(\mathbb{R}^n\)</span> 的映射成为随机向量的充要条件。</li>
+<li><strong>随机向量的分布</strong>：研究由随机向量诱导出的 <span class="math inline">\(\mathbb{R}^n\)</span> 上的概率测度。</li>
+<li><strong>随机向量的积分</strong>：定义期望向量，并建立其与分量积分的关系。</li>
+<li><strong>随机向量的密度函数</strong>：基于 Radon-Nikodym 导数，讨论多维分布的绝对连续性及联合密度函数的存在性。</li>
+</ol>
+</section>
+</section>
+<section id="乘积可测空间" class="level1">
+<h1>乘积可测空间</h1>
+<p>我们将讨论如何将多个可测空间 <span class="math inline">\((X_{k},\mathcal{F}_{k})\)</span> 考虑到一起进行讨论。首先，我们将定义<strong>集合的乘积</strong>，其实就是笛卡尔乘积。</p>
+<div id="def-13-finite-product-spaces-1" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 1 (乘积空间)</strong></span> 设 <span class="math inline">\(\{ X_{K},k=1,\dots,n \}\)</span>，其中 <span class="math inline">\(n\geq 2\)</span>，每个 <span class="math inline">\(X_{k}\)</span> 都是一个非空集合。我们定义</p>
+<p><span class="math display">\[
+\prod\limits_{k=1}^{n}X_{k}:=\{
+(x_{1},\dots,x_{n})|x_{k}\in X_{k},k=1,\dots,n \}
+\]</span></p>
+<p>称为这些<strong>集合的乘积</strong>。如果我们将这些集合称为空间，则这个乘积也被称为<strong>乘积空间</strong>。</p>
+</div>
+<p>接下来，我们将讨论可测空间的乘积，除了空间外，还需要讨论对应的 <span class="math inline">\(\sigma\)</span> 代数。一个自然的想法是将乘积空间的定义方式扩展到 <span class="math inline">\(\sigma\)</span> 代数上，但这会存在一些问题，即这样构造的集合系其实不是一个 <span class="math inline">\(\sigma\)</span> 代数。</p>
+<div id="def-13-finite-product-spaces-2" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 2 (可测矩形)</strong></span> 设 <span class="math inline">\(\{ (X_{k},\mathcal{F}_{k}),k=1,\dots ,n \}\)</span> 是一组可测空间，则称任意一个下面的集合</p>
+<p><span class="math display">\[
+\prod\limits_{k=1}^{n}A_{k},\quad
+A_{k}\in\mathcal{F}_{k},
+\]</span></p>
+<p>为由 <span class="math inline">\(\{ \mathcal{F}_{k} \}\)</span> 确定的<strong>可测矩形</strong>。可测矩形组成的集合记作</p>
+<p>$$ ={ <em>{k=1}^{n}A</em>{k}|A_{k}X_{k},k=1,2,,n }.</p>
+<p>$$</p>
+</div>
+<p>关于可测矩形，以及其组成的集合系，我们有下面的结论。</p>
+<div id="prp-measurable-rect-is-semi-ring" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 1 (可测矩形集合系是半环)</strong></span> <span class="math inline">\(\mathcal{L}\)</span> 是半环，并且 <span class="math inline">\(\prod\limits_{k=1}^{n}X_{k}\in\mathcal{L}\)</span>。</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>容易证明 <span class="math inline">\(\prod\limits_{k=1}^{n}X_{k}\in\mathcal{L}\)</span>。 假设 <span class="math inline">\(\prod\limits_{k=1}^{n}A_{k},\prod\limits_{k=1}^{n}B_{k}\in\mathcal{L}\)</span>，则</p>
+<p><span class="math display">\[
+\prod\limits_{k=1}^{n}A_{k}\cap\prod\limits_{k=1}^{n}B_{k}
+=\prod\limits_{k=1}^{n}(A_{k}\cap B_{k})\in\mathcal{L},
+\]</span></p>
+<p>因此，<span class="math inline">\(\mathcal{L}\)</span> 是一个 <span class="math inline">\(\pi\)</span> -class。 假设 <span class="math inline">\(\prod\limits_{k=1}^{n}A_{k},\prod\limits_{k=1}^{n}B_{k}\in\mathcal{L}\)</span>，并且有</p>
+<p><span class="math display">\[
+\prod\limits_{k=1}^{n}A_{k}\subset\prod\limits_{k=1}^{n}B_{k}.
+\]</span></p>
+<p>上式蕴含</p>
+<p><span class="math display">\[
+A_{k}\subset B_{k},\quad k=1,\dots,n,
+\]</span></p>
+<p>则会有</p>
+<p><span class="math display">\[
+\begin{align}
+\prod\limits_{k=1}^{n}B_{k} \setminus\prod\limits_{k=1}^{n}A_{k}&amp;=
+\left[ B_{1}\times\left( \prod\limits_{k=2}^{n}B_{k}\setminus
+\prod\limits_{k=2}^{n}A_{k}
+\right) \right]\cup
+\left[ (B_{1}\setminus A_{1})\times \prod\limits_{k=2}^{n}A_{k} \right] \\
+&amp;=\left[ (B_{1}\setminus A_{1})\times \prod\limits_{k=2}^{n}A_{k} \right]
+\cup
+\left[ B_{1}\times(B_{2}\setminus A_{2})\times \prod\limits_{k=3}^{n}A_{k} \right]\cap
+\left[ B_{1}\times B_{2}\times\left( \prod\limits_{k=3}^{n}B_{k}\setminus
+\prod\limits_{k=3}^{n}A_{k}\right) \right] \\
+&amp;=\dots \\
+&amp;=\bigcup_{i=1}^{n}\left[
+\prod\limits_{j=1}^{i-1}B_{j}\times
+(B_{i}\setminus A_{i})\times
+\prod\limits_{l=i+1}^{n}A_{l}
+\right]\in\mathcal{L}.
+\end{align}
+\]</span></p>
+<p>命题得证。</p>
+</div>
+<div id="def-13-finite-product-spaces-4" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 3 (<span class="math inline">\(\sigma\)</span> -field 的乘积)</strong></span> 设 <span class="math inline">\(\{ (X_{k},\mathcal{F}_{k}),k=1,\dots ,n \}\)</span> 是一组可测空间，其中</p>
+<p><span class="math display">\[
+\mathcal{L}=\left\{ \prod\limits_{k=1}^{n}A_{k}|A_{k}\in X_{k},k=1,2,\dots,n \right\},
+\]</span></p>
+<p>也就是说 <span class="math inline">\(L\)</span> 是由可测矩形组成的集合，然后称由其生成的 <span class="math inline">\(\sigma\)</span> -field</p>
+<p><span class="math display">\[
+\prod\limits_{k=1}^{n}\mathcal{F}_{k}:=\sigma(\mathcal{L}),
+\]</span></p>
+<p>为 <strong><span class="math inline">\(\{ \mathcal{F}_{k} \}\)</span> 的乘积</strong>。 <strong>Caution: 注意，<span class="math inline">\(\prod\limits_{k=1}^{n}\mathcal{F}_{k}\)</span> 和 <span class="math inline">\(\prod\limits_{k=1}^{n}X_{k}\)</span> 从记号上来看都是集合的乘积，但是我们需要注意这两个拥有本质的区别。</strong> - <span class="math inline">\(\prod\limits_{k=1}^{n}X_{k}\)</span> 本质上是集合的乘积，所以其就是一个笛卡尔积。 - <span class="math inline">\(\prod\limits_{k=1}^{n}\mathcal{F}_{k}\)</span> 本质上是集合系的乘积，其是一个笛卡尔积的集合生成的 <span class="math inline">\(\sigma\)</span> 代数。</p>
+</div>
+<p>这里我们证明一个小命题</p>
+<div id="thm-law-of-association-sigma-field" class="theorem">
+<p><span class="theorem-title"><strong>定理 1 (<span class="math inline">\(\sigma\)</span> -field 乘积的结合律)</strong></span> $$ (<em>{1}</em>{2})<em>{3} = </em>{1}(<em>{2}</em>{3}) = <em>{n=1}^{3}</em>{n}</p>
+<p>$$</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>容易证明 <span class="math inline">\(\prod\limits_{n=1}^{3}\mathcal{F}_{n} \subset (\mathcal{F}_{1}\times \mathcal{F}_{2})\times \mathcal{F}_{3}\)</span>，现在我们来证明反方向。</p>
+<p>固定 <span class="math inline">\(A_{3}\in\mathcal{F}_{3}\)</span> 为全集，则令</p>
+<p><span class="math display">\[
+\mathcal{E}=\sigma(\{ A_{1}\times A_{2}\times A_{3}|A_{1}\in\mathcal{F}_{1},A_{2}\in\mathcal{F}_{2} \}),
+\]</span></p>
+<p>容易知道 <span class="math inline">\(\mathcal{E}\subset \prod\limits_{n=1}^{3}\mathcal{F}_{n}\)</span>。现在我们需要证明，<span class="math inline">\(\mathcal{E}=\mathcal{F}_{1}\times \mathcal{F}_{2}\times A_{3}\)</span>。如此，<span class="math inline">\((\mathcal{F}_{1}\times \mathcal{F}_{2})\times \mathcal{F}_{3}\)</span> 的可测矩形都在 <span class="math inline">\(\prod\limits_{n=1}^{3}\mathcal{F}_{n}\)</span> 中，也就证明了反方向。</p>
+<p>怎么证明 <span class="math inline">\(\mathcal{E}=\mathcal{F}_{1}\times \mathcal{F}_{2}\times A_{3}\)</span> 呢？我们首先设计一个</p>
+<p><span class="math display">\[
+\mathcal{G}=\{ A\in\mathcal{F}_{1}\times \mathcal{F}_{2}|A\times A_{3}\in\mathcal{E} \},
+\]</span></p>
+<p>显然，<span class="math inline">\(\mathcal{G}\subset \mathcal{F}_{1}\times \mathcal{F}_{2}\)</span>，并且有 <span class="math inline">\(\mathcal{G}\supset\{ A_{1}\times A_{2}|A_{1}\in\mathcal{F}_{1},A_{2}\in\mathcal{F}_{2} \}\)</span>。现在我们只需要证明 <span class="math inline">\(\mathcal{G}\)</span> 是一个 <span class="math inline">\(\sigma\)</span> field，则有</p>
+<p><span class="math display">\[
+\mathcal{G}\supset\sigma(\{ A_{1}\times A_{2}|A_{1}\in\mathcal{F}_{1},A_{2}\in\mathcal{F}_{2} \})=\mathcal{F}_{1}\times \mathcal{F_{2}}.
+\]</span></p>
+<ol type="1">
+<li>显然 <span class="math inline">\(\emptyset\in\mathcal{G}\)</span>;</li>
+<li><span class="math inline">\(A\in\mathcal{G}\implies A\times A_{3}\in\mathcal{E}\implies A^{c}\times A_{3}=(A\times A_{3})^{c}\in\mathcal{E}\implies A^{c}\in\mathcal{G}\)</span>；</li>
+<li><span class="math inline">\(A_{n}\in\mathcal{G}\implies A_{n}\times A_{3}\in\mathcal{E}\implies \bigcup_{n=1}^{\infty}A_{n}\times A_{3}=\bigcup_{n=1}^{\infty}(A_{n}\times A_{3})\in\mathcal{E}\implies \bigcup_{n=1}^{\infty}A_{n}\in\mathcal{G}\)</span>. 因此，<span class="math inline">\(\mathcal{G}\)</span> 是一个 <span class="math inline">\(\sigma\)</span> field，这意味着 <span class="math inline">\(\mathcal{G}=\mathcal{F}_{1}\times \mathcal{F}_{2}\)</span>，也就是说，</li>
+</ol>
+<p><span class="math display">\[
+\forall A\in\mathcal{F}_{1}\times \mathcal{F}_{2}\implies A\times A_{3}\in\mathcal{E},
+\]</span></p>
+<p>即</p>
+<p><span class="math display">\[
+\mathcal{F}_{1}\times \mathcal{F}_{2}\times A_{3}\subset \mathcal{E},
+\]</span></p>
+<p>问题得证。</p>
+</div>
+<p>我们在后续扩展乘积空间的内容时，可以先从两个出发，然后一步一步增加，这样其实对应的是 <span class="math inline">\((\mathcal{F}_{1}\times \mathcal{F}_{2})\times \mathcal{F}_{3}\)</span> 的过程；根据 <a href="#thm-law-of-association-sigma-field" class="quarto-xref">定理&nbsp;1</a> ，其等价于 <span class="math inline">\(\prod\limits_{n=1}^{3}\mathcal{F}_{n}\)</span>。</p>
+<div id="def-13-finite-product-spaces-6" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 4 (可测空间的乘积)</strong></span> 我们称</p>
+<p><span class="math display">\[
+\left( \prod\limits_{k=1}^{n}X_{k},\prod\limits_{k=1}^{n}\mathcal{F}_{k} \right)
+\]</span></p>
+<p>是<strong>可测空间 <span class="math inline">\(\{ (X_{k},\mathcal{F}_{k})|k=1,\dots,n \}\)</span> 的乘积</strong>，有时候也简称为<strong>乘积空间</strong>。若这些可测空间都是同一个，则我们可以使用 <span class="math inline">\((X^{n},\mathcal{F}^{n})\)</span> 来表示。</p>
+</div>
+</section>
+<section id="乘积空间上的映射" class="level1">
+<h1>乘积空间上的映射</h1>
+<p>基于乘积空间，我们需要意识到，<strong>定义域是乘积空间的函数是一个多元函数</strong>：</p>
+<p><span class="math display">\[
+f:\prod\limits_{k=1}^{n}X_{k}\to\Omega,\quad
+(x_{1},x_{2},\dots,x_{n})\mapsto a,\ a\in\Omega.
+\]</span></p>
+<section id="投影" class="level2">
+<h2 class="anchored" data-anchor-id="投影">投影</h2>
+<p>首先，我们将讨论一个特殊的映射——投影</p>
+<div id="def-project" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 5 (投影)</strong></span> 定义映射 <span class="math inline">\(\pi_{k}:\prod\limits_{i=1}^{n}X_{i}\to X_{k}\)</span> 为</p>
+<p><span class="math display">\[
+\pi_{k}(x_{1},\dots,x_{n})=x_{k},
+\]</span></p>
+<p>称其为 <strong><span class="math inline">\(\prod\limits_{i=1}^{n}X_{k}\)</span> 到 <span class="math inline">\(X_{k}\)</span> 的投影</strong>。</p>
+</div>
+<p>投影是一类非常重要的函数，特别是其与乘积空间映射的可测性密切相关。这样，我们证明乘积空间上的可测性时就不需要在乘积空间上进行验证，而是在每个空间中验证即可，这降低了难度。</p>
+<div id="prp-project" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 2 (投影的性质)</strong></span> 设 <span class="math inline">\(\{ (X_{k},\mathcal{F}_{k}),k=1,\dots,n \}\)</span> 都是可测空间， (1) 投影 <span class="math inline">\(\pi_{k}\)</span> 都是可测映射； (2) <span class="math inline">\(\prod\limits_{k=1}^{n}\mathcal{F}_{k}\)</span> 是使 <span class="math inline">\(\pi_{1},\dots,\pi_{n}\)</span> 都可测的最小 <span class="math inline">\(\sigma\)</span> -field，即</p>
+<p><span class="math display">\[
+\prod\limits_{k=1}^{n}\mathcal{F}_{k}=\sigma\left(
+\bigcup_{k=1}^{n}\pi_{k}^{-1}\mathcal{F}_{k} \right).
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span></p>
+<ol type="1">
+<li><span class="math inline">\(\forall A_{k}\in\mathcal{F}_{k}\)</span>，有</li>
+</ol>
+<p><span class="math display">\[
+\pi_{k}^{-1}(A_{k})=\prod\limits_{i=1}^{k-1}X_{i}\times A_{k}\times
+\prod\limits_{j=k+1}^{n}X_{j}\in\mathcal{L}\subset \prod\limits_{k=1}^{n}\mathcal{F}_{k}.
+\]</span></p>
+<p>所以 (1) 成立。 (2) 上面的内容还说明</p>
+<p><span class="math display">\[
+\bigcup_{k=1}^{n}\pi_{k}^{-1}\mathcal{F}_{k}\subset \mathcal{L}
+\implies
+\sigma\left(\bigcup_{k=1}^{n}\pi_{k}^{-1}\mathcal{F}_{k} \right)
+\subset\sigma(\mathcal{L})=\prod\limits_{k=1}^{n}\mathcal{F}_{k},
+\]</span></p>
+<p>又因为 <span class="math inline">\(\forall A_{k}\in\mathcal{F}_{k}\)</span>，</p>
+<p><span class="math display">\[
+\prod\limits_{k=1}^{n}A_{k}=\bigcap_{k=1}^{n}\pi_{k}^{-1}(A_{k})\in
+\sigma\left(\bigcup_{k=1}^{n}\pi_{k}^{-1}\mathcal{F}_{k}\right),
+\]</span></p>
+<p>所以</p>
+<p><span class="math display">\[
+\prod\limits_{k=1}^{n}\mathcal{F}_{k}=\sigma(\mathcal{L})\subset
+\sigma \left( \bigcup_{k=1}^{n}\pi_{k}^{-1}\mathcal{F}_{k} \right) .
+\]</span></p>
+<p>问题得证。</p>
+</div>
+<p>我们可以继续投影的概念推广，</p>
+<div id="def-13-finite-product-spaces-9" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 6 (多维投影)</strong></span> 对于任何的 <span class="math inline">\(1\leq k_{1}&lt;\dots&lt;k_{i}\leq n\)</span>，我们将映射</p>
+<p><span class="math display">\[
+\pi_{k_{1},\dots,k_{i}}(x_{1},\dots,x_{n})=(x_{k_{1}},\dots,x_{k_{i}})
+\]</span></p>
+<p>称为 <span class="math inline">\(\prod\limits_{k=1}^{n}X_{k}\)</span> 到 <span class="math inline">\(\prod\limits_{j=1}^{i}X_{k_{j}}\)</span> 的（多维）投影。</p>
+</div>
+<p>通过 <a href="#thm-vector-measurable" class="quarto-xref">定理&nbsp;7</a>，不难验证：</p>
+<div id="prp-13-finite-product-spaces-10" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 3 (多维投影的可测性)</strong></span> 投影 <span class="math inline">\(\pi_{k_{1},\dots,k_{i}}\)</span> 是从 <span class="math inline">\(\left( \prod\limits_{k=1}^{n}X_{k},\prod\limits_{k=1}^{n}\mathcal{F}_{k} \right)\)</span> 到 <span class="math inline">\(\left( \prod\limits_{j=1}^{i}X_{k_{j}},\prod\limits_{j=1}^{i}\mathcal{F}_{k_{j}} \right)\)</span> 的可测映射。</p>
+</div>
+</section>
+<section id="截口" class="level2">
+<h2 class="anchored" data-anchor-id="截口">截口</h2>
+<p>这里我们将讨论一类非常常用的可测集合和可测映射——截口，其在后面讨论乘积空间中的测度时非常有用。</p>
+<div id="def-13-finite-product-spaces-11" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 7 (截口集合)</strong></span> <span class="math inline">\(\forall A\subset \prod\limits_{k=1}^{n}X_{k}\)</span>，给定 <span class="math inline">\((x_{1},\dots,x_{i})\in\prod\limits_{k=1}^{i}X_{k},1\leq i\leq n\)</span>，则称 <span class="math inline">\(\prod\limits_{i+1}^{n}X_{k}\)</span> 的子集</p>
+<p><span class="math display">\[
+A|_{x_{1},\dots,x_{k}}=\{ (x_{i+1},\dots,x_{n})|(x_{1},\dots,x_{n})\in A \}
+\]</span></p>
+<p>是 <span class="math inline">\(A\)</span> 在 <span class="math inline">\((x_{1},\dots,x_{i})\)</span> 处的<strong>截口</strong>（集合）。</p>
+</div>
+<p>下面是一个在二维空间中的例子：</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Excalidraw drawing pending export">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>Excalidraw drawing pending export
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>原 Obsidian 图形已保留为附件：<a href="../../../assets/attachments/advanced-probability/excalidraw/finite-product-spaces-2024-06-15-221123.excalidraw.md">Drawing 2024-06-15 22.11.23.excalidraw</a>。</p>
+</div>
+</div>
+<p>我们同样可以定义函数的截口</p>
+<div id="def-13-finite-product-spaces-12" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 8 (截口函数)</strong></span> 对于映射 <span class="math inline">\(f:\prod\limits_{k=1}^{n}X_{k}\to Y\)</span>，存在 <span class="math inline">\(1\leq i\leq n\)</span> 和 <span class="math inline">\((x_{1},\dots,x_{i})\in\prod\limits_{k=1}^{i}X_{k}\)</span>，定义</p>
+<p><span class="math display">\[
+f|_{x_{1},\dots,x_{i}}(x_{i+1},\dots,x_{n}):=
+f(x_{1,}\dots,x_{i},x_{i+1},\dots,x_{n}),
+\]</span></p>
+<p>为映射 <span class="math inline">\(f\)</span> 在 <span class="math inline">\((x_{1},\dots,x_{i})\)</span> 处的<strong>截口</strong>（函数）。 <strong>Note: 类似的，我们也可以对于 <span class="math inline">\(1\leq k_{1}&lt;\dots&lt;k_{i}\leq n\)</span> 和 <span class="math inline">\((x_{k_{1}},\dots,x_{k_{i}})\)</span> 来定义截口（函数或集合），方法与上面一致，只是过程麻烦一些而已。</strong></p>
+</div>
+<p>我们首先证明一下截口的一些简单性质。</p>
+<div id="prp-13-finite-product-spaces-13" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 4 (截口的性质)</strong></span> 设 <span class="math inline">\(A,A_{n}\subset X_{1}\times X_{2}\)</span>，则</p>
+<p><span class="math display">\[
+A^{c}|_{x_{1}}=(A|_{x_{1}})^{c},\quad
+\left( \bigcup_{n=1}^{\infty}A_{n} \right)|_{x_{1}}=\bigcup_{n=1}^{\infty}(A_{n}|_{x_{1}}).
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span><span class="math display">\[
+x_{2}\in A^{c}|_{x_{1}}\iff
+(x_{1},x_{2})\in A^{c} \iff
+(x_{1},x_{2})\not\in A\iff
+x_{2}\not\in A|_{x_{1}}\iff
+x_{2}\in(A|_{x_{1}})^{c}.
+\]</span></p>
+<p><span class="math display">\[
+\begin{align}
+x_{2}\in\left( \bigcup_{n=1}^{\infty}A_{n} \right)|_{x_{1}}
+&amp;\iff
+(x_{1},x_{2})\in\bigcup_{n=1}^{\infty}A_{n}\iff
+\exists n,(x_{1},x_{2})\in A_{n} \\
+&amp;\iff
+\exists n,x_{2}\in A_{n}|_{x_{1}}\iff
+x_{2}\in\bigcup_{n=1}^{\infty}(A_{n}|_{x_{1}}).
+\end{align}
+\]</span></p>
+</div>
+<p>接下来，我们来证明截口的可测性。</p>
+<div id="thm-section-measurable" class="theorem">
+<p><span class="theorem-title"><strong>定理 2 (截口的可测性)</strong></span> 设 <span class="math inline">\((\{ (X_{k},\mathcal{F}_{k}),k=1,\dots,n \})\)</span> 都是可测空间，对任意 <span class="math inline">\(1\leq k_{1}&lt;\dots&lt;k_{i}\leq n\)</span> 和 <span class="math inline">\((x_{k_{1}},\dots, x_{k_{i}})\in\prod\limits_{j=1}^{i}X_{k_{j}}\)</span>， (1) 集合 <span class="math inline">\(A\in\prod\limits_{k=1}^{n}X_{k}\)</span> 在 <span class="math inline">\((x_{k_{1}},\dots, x_{k_{i}})\)</span> 处的截口是 <span class="math inline">\(\mathcal{F}|_{k_{1},\dots,k_{i}}:=\prod\limits_{k\not\in\{ k_{1},\dots,k_{i} \}}^{}\mathcal{F}_{k}\)</span> 中的集合。 (2) 乘积空间 <span class="math inline">\(\left( \prod\limits_{k=1}^{n}X_{k},\prod\limits_{k=1}^{n}\mathcal{F}_{k} \right)\)</span> 上的可测函数 <span class="math inline">\(f\)</span> 在 <span class="math inline">\((x_{k_{1}},\dots, x_{k_{i}})\)</span> 处的截口是 <span class="math inline">\(\mathcal{F}|_{k_{1},\dots,k_{i}}\)</span> 可测函数。</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span></p>
+<ol type="1">
+<li>我们首先设置</li>
+</ol>
+<p><span class="math display">\[
+\mathcal{E}=\{ A\in \prod\limits_{k=1}^{n}X_{k}|A|_{x_{k_{1}},\dots,x_{k_{i}}}\in
+\mathcal{F}|_{k_{1},\dots,k_{i}}\},
+\]</span></p>
+<p>当 <span class="math inline">\(A\)</span> 是一个可测矩形时，可以知道 <span class="math inline">\(A|_{x_{k_{1}},\dots,x_{k_{i}}}\)</span> 要么也是可测矩形，要么是 <span class="math inline">\(\emptyset\)</span>，所以 <span class="math inline">\(A|_{x_{k_{1}},\dots,x_{k_{i}}}\in\mathcal{F}|_{k_{1},\dots, k_{i}}\)</span>，也就是说</p>
+<p><span class="math display">\[
+\mathcal{E}\in\mathcal{L}.
+\]</span></p>
+<p>此外，容易证明</p>
+<p><span class="math display">\[
+A^{c}|_{x_{k_{1}},\dots,x_{k_{i}}}=(A|_{x_{k_{1}},\dots,x_{k_{i}}})^{c},
+\]</span></p>
+<p>若对于 <span class="math inline">\(A_{n}\in\prod\limits_{k=1}^{n}X_{k}\)</span>，我们也容易证明</p>
+<p><span class="math display">\[
+\left( \bigcup_{n=1}^{\infty}A_{n} \right)|_{x_{k_{1}},\dots,x_{k_{i}}}=
+\bigcup_{n=1}^{\infty}(A_{n}|_{x_{k_{1}},\dots,x_{k_{i}}}).
+\]</span></p>
+<p>这意味着 <span class="math inline">\(\mathcal{E}\)</span> 是一个 <span class="math inline">\(\sigma\)</span> -field，所以 <span class="math inline">\(\mathcal{E}\supset\prod\limits_{k=1}^{n}X_{k}\)</span>，证明完成。</p>
+<ol start="2" type="1">
+<li>首先对于指示函数 <span class="math inline">\(I_{A}\)</span>，其截口</li>
+</ol>
+<p><span class="math display">\[
+I_{A}|_{x_{1},\dots,x_{i}}=I_{A|_{x_{1},\dots,x_{i}}},
+\]</span></p>
+<p>根据 (1) 可以知道，这个截口可测。进而，就可以使用 <a href="../../../src/learn/advanced-probability/07-measurable-functions.html#typical-method">典型方法</a> 来证明该结论。</p>
+</div>
+</section>
+</section>
+<section id="13-finite-product-spaces-乘积空间上的测度" class="level1">
+<h1>乘积空间上的测度</h1>
+<p>现在我们需要建立在乘积可测空间上的测度。因为我们之间关于测度的知识是普适的，所以我们可以直接指定乘积可测空间上某个集合函数为测度，自然相关的结论与之前是一致的。</p>
+<p>但是，这样做并没有让我们对于<strong>乘积可测空间</strong>这种特殊的可测空间的特殊性有任何了解。其特殊点在于其是<strong>通过多个可测空间构造</strong>而来，因此，一个必然存在的特殊性在于<strong>乘积可测空间上的测度与构造它的单个可测空间上的测度</strong>之间关系。根据后面要介绍的内容我们可以知道，在乘积可测空间上，<strong>存在一个测度，与构造它的单个可测空间上的测度存在非常深刻的联系</strong>（因为测度构造的任意性，不可能所有的测度都与构造可测空间上的测度存在联系）。</p>
+<p>后面的内容我们将主要只涉及到二维乘积可测空间，在明白了它的内容后，将其扩展到一般多维乘积可测空间是容易的。</p>
+<p>接下来，我们将首先讨论比较普适的结果，也就是通过测度转移函数来联系一维测度与多维测度。</p>
+<section id="测度转移函数" class="level3">
+<h3 class="anchored" data-anchor-id="测度转移函数">测度转移函数</h3>
+<div id="def-measure-transform-func" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 9 (测度转移函数)</strong></span> 定义在 <span class="math inline">\(\Omega \times \mathcal{F}\)</span> 上的广义实值函数 <span class="math inline">\(p\)</span> 被称为<strong>从可测空间 <span class="math inline">\((\Omega,\mathcal{T})\)</span> 到 <span class="math inline">\((X,\mathcal{F})\)</span> 的测度转移函数</strong> （简称为<strong>转移函数</strong>），如果： (1) <span class="math inline">\(\forall\omega \in\Omega,p(\omega,\cdot)\)</span> 是 <span class="math inline">\(\mathcal{F}\)</span> 上的测度； (2) <span class="math inline">\(\forall A\in\mathcal{F},p(\cdot,A)\)</span> 是 <span class="math inline">\(\mathcal{T}\)</span> 上的可测函数。 若 <span class="math inline">\(\exists \{ A_{n},n=1,2,\dots \}\subset \mathcal{F}\)</span> 是可测分割，并且使得 <span class="math inline">\(p(\omega,A_{n})&lt;\infty\)</span> 对每个 <span class="math inline">\(\omega \in\Omega\)</span> 成立，则称转移函数为 <strong><span class="math inline">\(\sigma\)</span> 有限的</strong>。若对于每个 <span class="math inline">\(\omega \in\Omega\)</span> 均有 <span class="math inline">\(p(\omega,X)=1\)</span>，则称 <span class="math inline">\(p\)</span> 是<strong>概率转移函数</strong>。</p>
+</div>
+<p>接下来，我们的目标是可以通过转移函数来建立乘积可测空间上的测度。当然，首先我们需要先建立一个引理，其说明：<strong>利用测度转移函数的测度分量可以去针对一个二元可测函数进行积分，这样就将这个分量积分掉后，依然会是一个可测函数</strong>。</p>
+<div id="lem-measure-transform-func-integrate" class="theorem lemma">
+<p><span class="theorem-title"><strong>引理 1 (Lemma)</strong></span> 若 <span class="math inline">\(p\)</span> 是从可测空间 <span class="math inline">\((X_{1},\mathcal{F}_{1})\)</span> 到 <span class="math inline">\((X_{2},\mathcal{F}_{2})\)</span> 的 <strong><span class="math inline">\(\sigma\)</span> 有限转移函数</strong>，则对任何 <span class="math inline">\((X_{1}\times X_{2},\mathcal{F}_{1}\times \mathcal{F}_{2})\)</span> 上的<strong>非负</strong>可测函数 <span class="math inline">\(f\)</span> ，函数</p>
+<p><span class="math display">\[
+g_{f}(\cdot):=\int _{X_{2}}f(\cdot,x_{2})p(\cdot,dx_{2})
+\]</span></p>
+<p>是 <span class="math inline">\((X_{1},\mathcal{F}_{1})\)</span> 上的可测函数。</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>我们整体上的思路依然是典型方法。</p>
+<p><strong>步骤 1：指示函数</strong></p>
+<p>首先，我们<strong>需要</strong>证明 <span class="math inline">\(\forall A\in\mathcal{F}_{1}\times \mathcal{F}_{2}\)</span>，函数</p>
+<p><span class="math display">\[
+\begin{align}
+g_{I_{A}}(x_{1})&amp;=\int _{X_{2}}I_{A}(x_{1},x_{2})p(x_{1},dx_{2}) \\
+&amp;=\int _{X_{2}}I_{A|_{x_{1}}}(x_{2})p(x_{1},dx_{2}) \\
+&amp;=p(x_{1},A|_{x_{1}}),\quad \forall x_{1}\in X_{1},
+\end{align}
+\]</span></p>
+<p>是 <span class="math inline">\(\mathcal{F}_{1}\)</span> 可测的。</p>
+<p>注意到，以上第二行等式源于截口的定义。根据 <a href="#thm-section-measurable" class="quarto-xref">定理&nbsp;2</a>，<span class="math inline">\(A|_{x_{1}}\in\mathcal{F}_{2}\)</span>，因此可以执行第二行的积分，得到第三行的结果。注意第三行中的点是同一个值。</p>
+<p>因为 <span class="math inline">\(p\)</span> 是 <span class="math inline">\(\sigma\)</span> 有限的，所以存在 <span class="math inline">\(\mathcal{F}_{2}\)</span> 的可测分割 <span class="math inline">\(\{ A_{n} \}\)</span>，使得 <span class="math inline">\(p(x_{1},A_{n})&lt;\infty\)</span> 对每个 <span class="math inline">\(x_{1}\in X_{1}\)</span> 和 <span class="math inline">\(n=1,\dots\)</span> 成立。所以有</p>
+<p><span class="math display">\[
+g_{I_{A}}(x_{1})=p\left( x_{1},(A|_{x_{1}})\cap\left( \bigcup_{n=1}^{\infty}A_{n} \right) \right)=\sum\limits_{n=1}^{\infty}p(x_{1},(A|_{x_{1}})\cap A_{n}).
+\]</span></p>
+<p>也就是说，要证明 <span class="math inline">\(g_{I_{A}}\)</span> 可测，只需要证明 <span class="math inline">\(p(x_{1},(A|_{x_{1}})\cap A_{n})\)</span> 可测。也只需要证明 <span class="math inline">\(p(x_{1},A)&lt;\infty\)</span> 对每个 <span class="math inline">\(x_{1}\in X_{1}\)</span> 都成立的假设下来证明 <span class="math inline">\(p(x_{1},A|_{x_{1}})\)</span> 对于 <span class="math inline">\(\mathcal{F}_{1}\)</span> 可测。</p>
+<p>首先，注意</p>
+<p><span class="math display">\[
+\mathcal{E}:=\{ A\in\mathcal{F}_{1}\times \mathcal{F}_{2}|p(x_{1},A|_{x_{1}})\ \text{is measurable function w.r.t }x_{1} \}
+\]</span></p>
+<p>是一个 <span class="math inline">\(\lambda\)</span> -class。这是因为 (1) <span class="math inline">\(p(x_{1},(X_{1}\times X_{2})|_{x_{1}})=p(x_{1},X_{2})\)</span> 是可测函数，所以 <span class="math inline">\(X_{1}\times X_{2}\in\mathcal{E}\)</span>； (2) 若 <span class="math inline">\(A\supset B \in\mathcal{E}\)</span>，则</p>
+<p><span class="math display">\[
+p(x_{1},(A\setminus B)|_{x_{1}})
+=p(x_{1},A|_{x_{1}}\setminus B|_{x_{1}})=p(x_{1},A|_{x_{1}})-
+p(x_{1},B|_{x_{1}}),
+\]</span></p>
+<p>第二个等号源于 <span class="math inline">\(p(x_{1},A)\)</span> 关于 <span class="math inline">\(A\)</span> 是一个测度。因此可知 <span class="math inline">\(p(x_{1},(A\setminus B)|_{x_{1}})\)</span> 可测，<span class="math inline">\(A\setminus B\in\mathcal{E}\)</span>； (3) 若 <span class="math inline">\(A_{n}\in\mathcal{E},A_{n}\uparrow A\)</span>，则</p>
+<p><span class="math display">\[
+p(x_{1},A|_{x_{1}})=p\left( x_{1},\left( \bigcup_{n=1}^{\infty}A_{n} \right) |_{x_{1}} \right)=
+p\left( x_{1}, \bigcup_{n=1}^{\infty}(A_{n} |_{x_{1}}) \right)
+=\lim_{ n \to \infty } p(x_{1},A_{n}|x_{1})
+\]</span></p>
+<p>可测，所以 <span class="math inline">\(A\in\mathcal{E}\)</span>。 其次，需要注意到当 <span class="math inline">\(A=A_{1}\times A_{2},A_{1}\in\mathcal{F}_{1},A_{2}\in\mathcal{F}_{2}\)</span> 时，</p>
+<p><span class="math display">\[
+p(x_{1},A|_{x_{1}})=p(x_{1},A_{2})I_{A_{1}}(x_{1})
+\]</span></p>
+<p>关于 <span class="math inline">\(\mathcal{F}_{1}\)</span> 可测（<span class="math inline">\(p\)</span> 的有限性在此处应用），所以</p>
+<p><span class="math display">\[
+\mathcal{E}\supset \mathcal{L},
+\]</span></p>
+<p>由 1.1 测度空间和概率空间 (<code>1.1 测度空间和概率空间#^dae17c</code>) 和 <a href="#prp-measurable-rect-is-semi-ring" class="quarto-xref">命题&nbsp;1</a> 可知，</p>
+<p><span class="math display">\[
+\mathcal{E}\supset\sigma(\mathcal{L})=\mathcal{F}_{1}\times \mathcal{F}_{2},
+\]</span></p>
+<p>接下来，我们利用<strong>非负简单函数逼近</strong>的方法，将结论推广到一般情况。</p>
+<p><strong>步骤 2：非负简单函数</strong></p>
+<p>对于任意 <span class="math inline">\((X_{1}\times X_{2}, \mathcal{F}_{1}\times \mathcal{F}_{2})\)</span> 上的非负简单函数 <span class="math inline">\(\varphi\)</span>，其具有形式：</p>
+<p><span class="math display">\[
+\varphi(x_{1},x_{2}) = \sum_{i=1}^{n} a_{i} I_{A_{i}}(x_{1},x_{2}),
+\]</span></p>
+<p>其中 <span class="math inline">\(a_{i} \ge 0\)</span>，且 <span class="math inline">\(A_{i} \in \mathcal{F}_{1}\times \mathcal{F}_{2}\)</span>。 根据积分的线性性质，有</p>
+<p><span class="math display">\[
+\begin{align}
+g_{\varphi}(x_{1}) &amp;= \int_{X_{2}} \left( \sum_{i=1}^{n} a_{i} I_{A_{i}}(x_{1},x_{2}) \right) p(x_{1}, dx_{2}) \\
+&amp;= \sum_{i=1}^{n} a_{i} \int_{X_{2}} I_{A_{i}}(x_{1},x_{2}) p(x_{1}, dx_{2}) \\
+&amp;= \sum_{i=1}^{n} a_{i} g_{I_{A_{i}}}(x_{1}).
+\end{align}
+\]</span></p>
+<p>由步骤 1 可知，每一个 <span class="math inline">\(g_{I_{A_{i}}}\)</span> 都是 <span class="math inline">\(\mathcal{F}_{1}\)</span> 可测的。由于可测函数的线性组合依然是可测函数，因此 <span class="math inline">\(g_{\varphi}\)</span> 是 <span class="math inline">\(\mathcal{F}_{1}\)</span> 可测的。</p>
+<p><strong>步骤 3：非负可测函数</strong></p>
+<p>对于任意非负可测函数 <span class="math inline">\(f: X_{1}\times X_{2} \to [0, \infty]\)</span>，存在一个非负简单函数序列 <span class="math inline">\(\{ \varphi_{n} \}_{n=1}^{\infty}\)</span> 使得</p>
+<p><span class="math display">\[
+0 \le \varphi_{n}(x_{1},x_{2}) \uparrow f(x_{1},x_{2}), \quad \forall (x_{1},x_{2}) \in X_{1}\times X_{2}.
+\]</span></p>
+<p>此时，对于固定的 <span class="math inline">\(x_{1} \in X_{1}\)</span>，函数 <span class="math inline">\(f(x_{1}, \cdot)\)</span> 是定义在 <span class="math inline">\(X_{2}\)</span> 上的非负可测函数，且 <span class="math inline">\(\varphi_{n}(x_{1}, \cdot) \uparrow f(x_{1}, \cdot)\)</span>。由于 <span class="math inline">\(p(x_{1}, \cdot)\)</span> 是 <span class="math inline">\((X_{2}, \mathcal{F}_{2})\)</span> 上的一个测度，应用 <strong>?@thm-mct</strong>，我们有：</p>
+<p><span class="math display">\[
+\begin{align}
+g_{f}(x_{1}) &amp;= \int_{X_{2}} f(x_{1},x_{2}) p(x_{1}, dx_{2}) \\
+&amp;= \int_{X_{2}} \lim_{n \to \infty} \varphi_{n}(x_{1},x_{2}) p(x_{1}, dx_{2}) \\
+&amp;= \lim_{n \to \infty} \int_{X_{2}} \varphi_{n}(x_{1},x_{2}) p(x_{1}, dx_{2}) \\
+&amp;= \lim_{n \to \infty} g_{\varphi_{n}}(x_{1}).
+\end{align}
+\]</span></p>
+<p>根据步骤 2，每一个 <span class="math inline">\(g_{\varphi_{n}}\)</span> 都是 <span class="math inline">\(\mathcal{F}_{1}\)</span> 可测的。因为可测函数序列的极限（若存在）依然是可测函数，所以 <span class="math inline">\(g_{f}\)</span> 是 <span class="math inline">\(\mathcal{F}_{1}\)</span> 可测的。</p>
+<p>综上所述，命题得证。</p>
+</div>
+<p>接下来，我们来证明使用转移函数可以生成一个乘积测度，这个乘积测度有这样的性质： 1. 可测矩形上的测度值等于<strong>转移函数函数项</strong>上的积分； 2. 基于该乘积测度的积分，也与<strong>转移函数测度项</strong>上的积分存在关系。</p>
+<div id="thm-transform-func-generate-measure" class="theorem">
+<p><span class="theorem-title"><strong>定理 3 (转移函数生成乘积测度)</strong></span> 给定 <span class="math inline">\((X_{1},\mathcal{F}_{1})\)</span> 到 <span class="math inline">\((X_{2},\mathcal{F}_{2})\)</span> 的 <strong><span class="math inline">\(\sigma\)</span> 有限转移函数</strong> <span class="math inline">\(p\)</span>， (1) 对 <span class="math inline">\((X_{1},\mathcal{F}_{1})\)</span> 上的任何测度 <span class="math inline">\(\mu_{1}\)</span>，存在乘积空间 <span class="math inline">\((X_{1}\times X_{2},\mathcal{F}_{1}\times \mathcal{F}_{2})\)</span> 上的测度 <span class="math inline">\(\mu\)</span>，使得对于任何 <span class="math inline">\(A_{1}\in\mathcal{F}_{1},A_{2}\in\mathcal{F}_{2}\)</span> 有</p>
+<p><span class="math display">\[
+\mu(A_{1}\times A_{2})=\int _{A_{1}}p(x_{1},A_{2})\mu_{1}(dx_{1});
+\]</span></p>
+<ol start="2" type="1">
+<li>若 <span class="math inline">\((X_{1}\times X_{2},\mathcal{F}_{1}\times \mathcal{F}_{2})\)</span> 上的可测函数 <span class="math inline">\(f\)</span> 的积分存在，则</li>
+</ol>
+<p><span class="math display">\[
+\int _{X_{1}\times X_{2}}f \, d\mu=\int _{X_{1}}\mu_{1}(dx_{1})\int _{X_{2}}f(x_{1},x_{2})p(x_{1},dx_{2}),
+\]</span></p>
+<p>其中 <span class="math inline">\(\int _{X_{2}}f(x_{1},x_{2})p(x_{1},dx_{2})\)</span> 是 <span class="math inline">\((X_1,\mathcal{F}_{1},\mu_{1})\)</span> 上的积分存在的可测函数; (3) 如果 <span class="math inline">\(\mu_{1}\)</span> 是 <span class="math inline">\(\sigma\)</span> 有限的，则使 (1) 成立的测度 <span class="math inline">\(\mu\)</span> 唯一且 <span class="math inline">\(\sigma\)</span> 有限。</p>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+注记
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>可以看做是 (2) 的特殊情况，即当 <span class="math inline">\(f=I_{A_{1}\times A_{2}}\)</span> 的时候。</li>
+</ol>
+</div>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span></p>
+<ol type="1">
+<li>由 <a href="#lem-measure-transform-func-integrate" class="quarto-xref">引理&nbsp;1</a> 的证明过程可知</li>
+</ol>
+<p><span class="math display">\[
+p(x_{1},A|_{x_{1}})=\int _{X_{2}}I_{A}(x_{1},x_{2})p(x_{1},dx_{2})
+\]</span></p>
+<p>关于 <span class="math inline">\(\mathcal{F}_{1}\)</span> 可测，并且非负。所以其也积分存在，因此定义</p>
+<p><span class="math display">\[
+\mu(A)=\int _{X_{1}}p(x_{1},A|_{x_{1}})\mu_{1}(dx_{1}),
+\]</span></p>
+<p>我们现在证明 <span class="math inline">\(\mu\)</span> 是测度。 第一，容易证明 <span class="math inline">\(\mu(\emptyset)=0\)</span>。 第二，也容易证明 <span class="math inline">\(\mu(A)\geq 0\)</span>。 第三，对于两两不交的 <span class="math inline">\(\{ A_{n} \}\)</span>，有</p>
+<p><span class="math display">\[
+\begin{align}
+\mu\left( \bigcup_{n=1}^{\infty}A_{n} \right)
+&amp;=\int _{X_{1}}p\left( x_{1},\left( \bigcup_{n=1}^{\infty}A_{n} \right)|_{x_{1}} \right) \mu_{1}(dx_{1}) \\
+&amp;=\sum\limits_{n=1}^{\infty}\int _{X_{1}}p(x_{1},A_{n}|_{x_{1}}) \mu_{1}(dx_{1}) \\
+&amp;=\sum\limits_{n=1}^{\infty}\mu_{A_{n}}.
+\end{align}
+\]</span></p>
+<p>进而，我们得到</p>
+<p><span class="math display">\[
+\begin{align}
+\mu(A_{1}\times A_{2})&amp;=\int _{X_{1}}p(x_{1},(A_{1}\times A_{2})|_{x_{1}}) \mu_{1}(dx_{1}) \\
+&amp;=\int _{X_{1}}p(x_{1},A_{2})I_{A_{1}}(x_{1}) \mu_{1}(dx_{1}) \\
+&amp;=\int _{A_{1}}p(x_{1},A_{2}) \mu_{1}(dx_{1}).
+\end{align}
+\]</span></p>
+<ol start="2" type="1">
+<li>以 <span class="math inline">\(\mathcal{M}\)</span> 记使下式成立的非负可测函数组成的集合，</li>
+</ol>
+<p><span class="math display">\[
+\int _{X_{1}\times X_{2}}f \, d\mu =
+\int _{X_{1}}\mu_{1}(dx_{1})\int _{X_{2}}f(x_{1},x_{2})p(x_{1},dx_{2}) ,
+\]</span></p>
+<p>容易证明 <span class="math inline">\(\mathcal{M}\)</span> 是一个 <strong>?@def-func-monoton</strong>（线性性质可以根据积分的性质得到，单调性直接通过 <strong>?@thm-mct</strong> 得到）。此外，当 <span class="math inline">\(f=I_{A},A\in\mathcal{F}_{1}\times \mathcal{F}_{2}\)</span> 时，有</p>
+<p><span class="math display">\[
+\begin{align}
+\int _{X_{1}\times X_{2}}f \, d\mu
+&amp;=\mu(A)=\int _{X_{1}}p(x_{1},A|_{x_{1}})\mu_{1}(dx_{1}) \\
+&amp;=\int _{X_{1}}\mu_{1}(dx_{1})\int _{X_{2}}I_{A|_{x_{1}}}(x_{2})p(x_{1},dx_{2})\\
+&amp;=\int _{X_{1}}\mu_{1}(dx_{1})\int _{X_{2}}I_{A}(x_{1},x_{2})p(x_{1},dx_{2})\\
+&amp;=\int _{X_{1}}\mu_{1}(dx_{1})\int _{X_{2}}f(x_{1},x_{2})p(x_{1},dx_{2}),
+\end{align}
+\]</span></p>
+<p>从而得到 <span class="math inline">\(I_{A}\in\mathcal{M}\)</span>。利用 <a href="../../../src/learn/advanced-probability/07-measurable-functions.html#d702d8">7_可测函数</a>，进一步可以知道 <span class="math inline">\((X_{1}\times X_{2},\mathcal{F}_{1}\times \mathcal{F}_{2})\)</span> 上的所有非负可测函数都在 <span class="math inline">\(\mathcal{M}\)</span> 中，满足其性质。</p>
+<p>然后针对任何积分存在的可测函数 <span class="math inline">\(f\)</span>，有</p>
+<p><span class="math display">\[
+\int _{X_{1}\times X_{2}}f^{\pm} \, d\mu=
+\int _{X_{1}}\mu_{1}(dx_{1})\int _{X_{2}}f^{\pm}(x_{1},x_{2})p(x_{1},dx_{2}).
+\]</span></p>
+<p><span id="509e64"></span></p>
+<p>根据约定，我们设 <span class="math inline">\(\int _{X_{1}\times X_{2}}f^{-}d\mu&lt;\infty\)</span>，则记</p>
+<p><span class="math display">\[
+A_{1}=\left\{ x_{1}\in X_{1}|\int _{X_{2}}f^{-}(x_{1},x_{2})p(x_{1},dx_{2})&lt;\infty \right\},
+\]</span></p>
+<p>由 <a href="#lem-measure-transform-func-integrate" class="quarto-xref">引理&nbsp;1</a>，<span class="math inline">\(A_{1}\)</span> 可测；又因为 <span class="math inline">\(\int _{X_{1}\times X_{2}}f^{-}d\mu&lt;\infty\)</span> 和式 <a href="#509e64">509e64</a> 可知 <span class="math inline">\(\mu_{1}(A^{c}_{1})=0\)</span>。从而有</p>
+<p><span class="math display">\[
+\begin{align}
+\int _{X_{1}\times X_{2}}f \, d\mu
+&amp;= \int _{X_{1}\times X_{2}}f^{+} \, d\mu- \int _{X_{1}\times X_{2}}f^{-} \, d\mu \\
+&amp;= \int _{X_{1}}\mu_{1}(dx_{1})\int _{X_{2}}f^{+}(x_{1},x_{2})p(x_{1},dx_{2})-
+\int _{X_{1}}\mu_{1}(dx_{1})\int _{X_{2}}f^{-}(x_{1},x_{2})p(x_{1},dx_{2}) \\
+&amp;= \int _{A_{1}}\mu_{1}(dx_{1})\int _{X_{2}}f^{+}(x_{1},x_{2})p(x_{1},dx_{2})-
+\int _{A_{1}}\mu_{1}(dx_{1})\int _{X_{2}}f^{-}(x_{1},x_{2})p(x_{1},dx_{2}) \\
+&amp;=\int _{A_{1}}\left\{ \int _{X_{2}}[f^{+}(x_{1},x_{2})-f^{-}(x_{1},x_{2})] \, p(x_{1},dx_{2}) \right\} \, \mu_{1}(dx_{1}) \\
+&amp;=\int _{X_{1}}\mu_{1}(dx_{1})\int _{X_{2}}f(x_{1},x_{2})p(x_{1},dx_{2}) ,
+\end{align}
+\]</span></p>
+<p>注意，需要先将 <span class="math inline">\(X_{1}\)</span> 换成 <span class="math inline">\(A_{1}\)</span>，这样才能保证减法有意义。这样，就证明了 (2)。</p>
+<ol start="3" type="1">
+<li>若 <span class="math inline">\(\mu_{1}\)</span> 和 <span class="math inline">\(p\)</span> 均 <span class="math inline">\(\sigma\)</span> 有限，则取 <span class="math inline">\((X_{1},\mathcal{F}_{1})\)</span> 的可测分割 <span class="math inline">\(\{ A_{1,n} \}\)</span> 和 <span class="math inline">\((X_{2},\mathcal{F}_{2})\)</span> 的可测分割 <span class="math inline">\(\{ A_{2,m} \}\)</span>，分别使 <span class="math inline">\(\mu_{1}(A_{1,n})&lt;\infty,p(x_{1},A_{2,m})&lt;\infty\)</span>。令</li>
+</ol>
+<p><span class="math display">\[
+B_{n,m,l}=\{ x_{1}\in A_{1,n}|l-1\leq p(x_{1},A_{2,m})&lt;l \},
+\]</span></p>
+<p>则 <span class="math inline">\(\{ B_{n,m,l}\times A_{2,m},n,m,l=1,2,\dots \}\)</span> 构成了 <span class="math inline">\((X_{1}\times X_{2},\mathcal{F}_{1}\times \mathcal{F}_{2})\)</span> 的可测分割，而且</p>
+<p><span class="math display">\[
+\mu(B_{n,m,l}\times A_{2,m})=\int _{B_{n,m,l}}p(x_{1},A_{2,m})\mu_{1}(dx_{1}) \leq l\mu_{1}(A_{1,n})&lt;\infty.
+\]</span></p>
+<p>因此，<span class="math inline">\(\mu\)</span> 是 <span class="math inline">\(\sigma\)</span> 有限的。又因为 <span class="math inline">\(\mathcal{L}\)</span> 是半环，<span class="math inline">\(\mathcal{F}_{1}\times \mathcal{F_{2}}=\sigma(\mathcal{L})\)</span>，再根据 1.1 测度空间和概率空间 (<code>1.1 测度空间和概率空间#^c7783b</code>)，可知这样的测度唯一。</p>
+</div>
+<p>该定理需要注意的有以下几点： - (1) 中只针对可测矩形进行讨论； - (2) 中需要注意顺序，先进行转移函数上测度的积分，然后再进行单纯测度积分； - 通过类似的方式，我们可以逐步建立更高维度空间上的乘积空间测度，只是此时，转移函数会越来越复杂。</p>
+<p>证明了以上定理后的一个很自然的想法是：对于任意测度空间 <span class="math inline">\((X_{1},\mathcal{F}_{1},\mu_{1})\)</span> 和 <span class="math inline">\((X_{1}\times X_{2},\mathcal{F}_{1}\times \mathcal{F}_{2},\mu)\)</span>，是否能够找到对应的转移函数 <span class="math inline">\(p(x_{1},A_{2}):X_{1}\times \mathcal{F}_{2}\to [0,\infty]\)</span> 使得下式成立：</p>
+<p><span class="math display">\[
+\mu(A_{1}\times A_{2})=\int _{A_{1}}p(x_{1},A_{2}) \mu_{1}(dx_{1}),
+\]</span></p>
+<p>这显然需要依赖于 <a href="../../../src/learn/advanced-probability/11-radon-nikodym-derivative.html">RN导数</a> 来探索条件，这里不再深入讨论，在讨论条件概率时可能会再继续深入研究。</p>
+</section>
+<section id="fubini-定理和-tonelli-定理" class="level2">
+<h2 class="anchored" data-anchor-id="fubini-定理和-tonelli-定理">Fubini 定理和 Tonelli 定理</h2>
+<p>这时候我们将视角放在转移函数 <span class="math inline">\(p(x_{1},A_{2})\)</span> 上，其实可以看出这个东西是比较复杂的。其实，我们可以考虑它的一个特殊情况 <span class="math inline">\(p(x_{1},A_{2})=\mu_{2}(A_{2})\)</span>，即转移函数与 <span class="math inline">\(x_{1}\)</span> 完全无关。此时</p>
+<p><span class="math display">\[
+\mu(A_{1}\times A_{2})=\int _{A_{1}}p(x_{1},A_{2})\mu_{1}(dx_{1})
+=\mu_{2}(A_{2})\int _{A_{1}}\mu_{1}(dx_{1})
+=\mu_{1}(A_{1})\mu_{2}(A_{2}),
+\]</span></p>
+<p>也就是说，<strong>乘积空间的测度是将各个子空间的测度乘在一起得到的</strong>。这就引出了下面的定理。</p>
+<div id="thm-fubini" class="theorem">
+<p><span class="theorem-title"><strong>定理 4 (Fubini 定理)</strong></span> 设 <span class="math inline">\((X_{1},\mathcal{F}_{1},\mu_{1})\)</span> 和 <span class="math inline">\((X_{2},\mathcal{F}_{2},\mu_{2})\)</span> 是 <strong><span class="math inline">\(\sigma\)</span> 有限测度</strong>，则 (1) 在乘积可测空间 <span class="math inline">\((X_{1}\times X_{2},\mathcal{F}_{1}\times \mathcal{F}_{2})\)</span> 上存在<strong>唯一的</strong>测度 <span class="math inline">\(\mu\)</span>，使得对于任何 <span class="math inline">\(A_{1}\in\mathcal{F}_{1}\)</span> 和 <span class="math inline">\(A_{2}\in\mathcal{F}_{2}\)</span> 有</p>
+<p><span class="math display">\[
+\mu(A_{1}\times A_{2})=\mu_{1}(A_{1})\mu_{2}(A_{2}),
+\]</span></p>
+<p>该测度是 <strong><span class="math inline">\(\sigma\)</span> 有限的</strong>； (2) 对 <span class="math inline">\((X_{1}\times X_{2},\mathcal{F}_{1}\times \mathcal{F}_{2},\mu)\)</span> 上任何<strong>积分存在的可测函数</strong> <span class="math inline">\(f\)</span> 有</p>
+<p><span class="math display">\[
+\int _{X_{1}\times X_{2}}f \, d\mu =
+\int _{X_{1}}\mu_{1}(dx_{1})\int _{X_{2}}f(x_{1},x_{2})\mu_{2}(dx_{2})
+=\int _{X_{2}}\mu_{2}(dx_{2})\int _{X_{1}}f(x_{1},x_{2})\mu_{1}(dx_{1}),
+\]</span></p>
+<p>其中 <span class="math inline">\(\int _{X_{2}}f(x_{1},x_{2})\mu_{2}(dx_{2})\)</span> 和 <span class="math inline">\(\int _{X_{1}}f(x_{1},x_{2})\mu_{1}(dx_{1})\)</span> 分别是 <span class="math inline">\((X_{1},\mathcal{F}_{1},\mu_{1})\)</span> 和 <span class="math inline">\((X_{2},\mathcal{F}_{2},\mu_{2})\)</span> 上积分存在的可测函数.</p>
+</div>
+<p>根据以上的定理，我们可以有下面的定义：</p>
+<div id="def-13-finite-product-spaces-19" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 10 (乘积测度和乘积测度空间)</strong></span> <a href="#thm-fubini" class="quarto-xref">定理&nbsp;4</a> 中定义的 <span class="math inline">\(\mu\)</span> 被称为<strong>乘积测度</strong>，记作 <span class="math inline">\(\mu_{1}\times \mu_{2}\)</span>。对应的测度空间 <span class="math inline">\((X_{1}\times X_{2},\mathcal{F}_{1}\times \mathcal{F}_{2},\mu_{1}\times \mu_{2})\)</span> 被称为<strong>乘积测度空间</strong>。以上概念可以比较简单的推广至任意有限维度。 <strong>Note: 注意</strong> 这个乘积测度空间是我们最常使用的测度空间。注意，<strong>只有这样的测度才被称为乘积测度，包含该测度的测度空间才被称为乘积测度空间</strong>。</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>令 <span class="math inline">\(p(x_{1},A_{2})=\mu_{2}(A_{2})\)</span>，直接利用 <a href="#thm-transform-func-generate-measure" class="quarto-xref">定理&nbsp;3</a> ，我们可以知道，存在唯一的 <span class="math inline">\(\sigma\)</span> 有限测度 <span class="math inline">\(\mu_{1}\times \mu_{2}\)</span> 成立</p>
+<p><span class="math display">\[
+(\mu_{1}\times \mu_{2})(A_{1}\times A_{2})=\mu_{1}(A_{1})\mu_{2}(A_{2}),
+\]</span></p>
+<p><span id="8ad7a0"></span></p>
+<p>并且满足</p>
+<p><span class="math display">\[
+\int _{X_{1}\times X_{2}}f \, d(\mu_{1}\times \mu_{2})
+=\int _{X_{1}}\mu_{1}(dx_{1})\int _{X_{2}}f(x_{1},x_{2})\mu_{2}(dx_{2}).
+\]</span></p>
+<p><span id="b513fe"></span></p>
+<p>此时，仅凭借式 <a href="#8ad7a0">8ad7a0</a> 就已经证明了 (1)。</p>
+<p>将 <span class="math inline">\(\mu_{1}\)</span> 和 <span class="math inline">\(\mu_{2}\)</span> 的位置颠倒，即对 <span class="math inline">\(\mu_{2}\)</span> 和 <span class="math inline">\(p(x_{2},A_{1})=\mu_{1}(A_{1})\)</span>，利用 <a href="#thm-transform-func-generate-measure" class="quarto-xref">定理&nbsp;3</a>，存在唯一的 <span class="math inline">\(\sigma\)</span> 有限测度 <span class="math inline">\(\mu_{2}\times \mu_{1}\)</span> 满足</p>
+<p><span class="math display">\[
+(\mu_{2}\times \mu_{1})(A_{2}\times A_{1})=
+\mu_{1}(A_{1})\mu_{2}(A_{2}),
+\]</span></p>
+<p><span id="eq-1"></span></p>
+<p>并且满足</p>
+<p><span class="math display">\[
+\int _{X_{2}\times X_{1}}f \, d(\mu_{2}\times \mu_{1})
+=\int _{X_{2}}\mu_{2}(dx_{2})\int _{X_{1}}f(x_{1},x_{2})\mu_{1}(dx_{1}).
+\]</span></p>
+<p><span id="67064e"></span></p>
+<p>结合公式 <a href="#8ad7a0">8ad7a0</a> 和 <a href="#eq-1">eq-1</a> 可以得到</p>
+<p><span class="math display">\[
+(\mu_{1}\times \mu_{2})(A_{1}\times A_{2})=
+(\mu_{2}\times \mu_{1})(A_{2}\times A_{1}),
+\]</span></p>
+<p>设 <span class="math inline">\(\tilde{A}=\{ (x_{2},x_{1})|(x_{1},x_{2})\in A \}\)</span>，则对于 <span class="math inline">\(\forall A\in\mathcal{F}_{1}\times \mathcal{F}_{2}\)</span>，我们可以证明</p>
+<p><span class="math display">\[
+(\mu_{1}\times \mu_{2})(A)=(\mu_{2}\times \mu_{1})(\tilde{A}).
+\]</span></p>
+<p>（利用外测度来证明）。然后，通过典型方法，不难证明</p>
+<p><span class="math display">\[
+\int _{X_{1}\times X_{2}}fd(\mu_{1}\times \mu_{2})=
+\int _{X_{2}\times X_{1}}fd(\mu_{2}\times \mu_{1}),
+\]</span></p>
+<p>再结合式 <a href="#b513fe">b513fe</a> 和 <a href="#67064e">67064e</a>，就证明了 (2)。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="通过唯一性直接可以得到测度相等">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>通过唯一性直接可以得到测度相等
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>其实，通过 <a href="#thm-transform-func-generate-measure" class="quarto-xref">定理&nbsp;3</a> 中的乘积测度的唯一性，应该就直接可以推导出</p>
+<p><span class="math display">\[
+\mu_{1}\times \mu_{2}=\mu_{2}\times \mu_{1},
+\]</span></p>
+<p>因此直接就可以证明 (2)。</p>
+</div>
+</div>
+</div>
+<p><a href="#thm-fubini" class="quarto-xref">定理&nbsp;4</a> 有一个非常直接的推论，也就是 Tonelli 定理</p>
+<div id="cor-tonelli" class="theorem corollary">
+<p><span class="theorem-title"><strong>推论 1 (Tonelli 定理)</strong></span> 设 <span class="math inline">\((X_{1},\mathcal{F}_{1},\mu_{1})\)</span> 和 <span class="math inline">\((X_{2},\mathcal{F}_{2},\mu_{2})\)</span> 是 <strong><span class="math inline">\(\sigma\)</span> 有限测度</strong>，则对于 <span class="math inline">\((X_{1}\times X_{2},\mathcal{F}_{1}\times \mathcal{F}_{2},\mu_{1}\times \mu_{2})\)</span> 上任何<strong>非负可测函数</strong> <span class="math inline">\(f\)</span> 有</p>
+<p><span class="math display">\[
+\int _{X_{1}\times X_{2}}f \, d\mu =
+\int _{X_{1}}\mu_{1}(dx_{1})\int _{X_{2}}f(x_{1},x_{2})\mu_{2}(dx_{2})
+=\int _{X_{2}}\mu_{2}(dx_{2})\int _{X_{1}}f(x_{1},x_{2})\mu_{1}(dx_{1}).
+\]</span></p>
+</div>
+<p><a href="#thm-fubini" class="quarto-xref">定理&nbsp;4</a> 中存在两个非常重要的条件：<strong><span class="math inline">\(\sigma\)</span> 有限</strong>和<strong>重积分存在</strong>。如果两个条件之一不存在，则都有可能存在问题。比如下面的两个例子。</p>
+<div id="exm-13-finite-product-spaces-21" class="theorem example">
+<p><span class="theorem-title"><strong>例 1 (Example)</strong></span> 设 <span class="math inline">\(X_{1}=X_{2}=[0, 1),\quad\mathcal{F}_{1}=\mathcal{F}_{2}=[0,1)\cap \mathcal{B}_{\mathbb{R}}\)</span>。其中，<span class="math inline">\(\mu_{1}\)</span> 是 L 测度，<span class="math inline">\(\mu_{2}=\#\)</span>。所以前者是 <span class="math inline">\(\sigma\)</span> 有限，后者则不然。我们取集合</p>
+<p><span class="math display">\[
+D=\{ (x_{1},x_{2})|x_{1}=x_{2},x_{1},x_{2}\in[0,1) \},
+\]</span></p>
+<p>则有</p>
+<p><span class="math display">\[
+\begin{align}
+(\mu_{1}\times \mu_{2})(D)&amp;=\int _{[0,1)}\mu_{2}(D|_{x_{1}})\mu_{1}(dx_{1})=1 \\
+&amp;\neq 0=\int _{[0,1)}\mu_{1}(D|_{x_{2}})\mu_{2}(d_{x2})=(\mu_{2}\times \mu_{1})(D).
+\end{align}
+\]</span> <strong>Example: 设 <span class="math inline">\(X_{1}=X_{2}=[0, 1),\quad\mathcal{F}_{1}=\mathcal{F}_{2}=[0,1)\cap \mathcal{B}_{\mathbb{R}}\)</span>，<span class="math inline">\(\mu_{1},\mu_{2}\)</span> 都是 L 测度，现在两者都是 <span class="math inline">\(\sigma\)</span> 有限的。对于函数</strong></p>
+<p><span class="math display">\[
+f(x_{1},x_{2})=\left\{\begin{matrix}
+(x_{1}^{2}-x_{2}^{2})/ (x_{1}^{2}+x_{2}^{2})^{2},\quad &amp;x_{1}^{2}+x_{2}^{2}&gt;0; \\
+0,&amp;x_{1}=x_{2}=0.
+\end{matrix}\right.
+\]</span></p>
+<p>容易证明 <span class="math inline">\(f\)</span> 的重积分并不存在。则此时，其累次积分是</p>
+<p><span class="math display">\[
+\int _{0}^{1}dx_{1}\int _{0}^{1}fdx_{2} =
+\frac{\pi}{4}\neq-\frac{\pi}{4}=
+\int _{0}^{1}dx_{2}\int _{0}^{1}fdx_{1}.
+\]</span></p>
+</div>
+<p><a href="#thm-transform-func-generate-measure" class="quarto-xref">定理&nbsp;3</a> 和 <a href="#thm-fubini" class="quarto-xref">定理&nbsp;4</a> 可以推广到任意有限维乘积空间，也就是下面的两个定理。</p>
+<div id="thm-transform-func-generation-plus" class="theorem">
+<p><span class="theorem-title"><strong>定理 5 (转移函数生成乘积测度 plus)</strong></span> 给定可测空间 <span class="math inline">\(\{ (X_{k},\mathcal{F}_{k}),k=1,\dots,n \}\)</span>。若对每个 <span class="math inline">\(k=2,\dots,n\)</span>，<span class="math inline">\(p_{k}\)</span> 是从 <span class="math inline">\(\left( \prod\limits_{i=1}^{k-1}X_{k},\prod\limits_{i=1}^{k-1}\mathcal{F}_{i} \right)\)</span> 到 <span class="math inline">\((X_{k},\mathcal{F}_{k})\)</span> 的 <strong><span class="math inline">\(\sigma\)</span> 有限转移函数</strong>，则有 (1) 对于 <span class="math inline">\((X_{1},\mathcal{F}_{1})\)</span> 上的任何测度 <span class="math inline">\(\mu_{1}\)</span>，存在 <span class="math inline">\(\left( \prod\limits_{k=1}^{n}X_{k},\prod\limits_{k=1}^{n}\mathcal{F}_{k} \right)\)</span> 上的测度 <span class="math inline">\(\mu\)</span> 使</p>
+<p><span class="math display">\[
+\mu\left( \prod\limits_{k=1}^{n}A_{k} \right)=
+\int _{A_{1}}\mu_{1}(dx_{1})\int _{A_{2}} p_{2}(x_{1},dx_{2})
+\cdots
+\int _{A_{n}}p_{n}(x_{1},\dots,x_{n-1},dx_{n}),
+\]</span></p>
+<ol start="2" type="1">
+<li>对任何 <span class="math inline">\(\left( \prod\limits_{k=1}^{n}X_{k},\prod\limits_{k=1}^{n}\mathcal{F}_{k},\mu \right)\)</span> 上的积分存在的可测函数 <span class="math inline">\(f\)</span>，有</li>
+</ol>
+<p><span class="math display">\[
+\int _{\prod\limits_{k=1}^{n}X_{k}}f \, d\mu=
+\int _{X_{1}}\mu_{1}(dx_{1})\int _{X_{2}}p_{2}(x_{1},dx_{2})\cdots
+\int _{X_{n}}f(x_{1},\dots,x_{n})p_{n}(x_{1},\dots,x_{n-1},dx_{n}),
+\]</span></p>
+<ol start="3" type="1">
+<li>若 <span class="math inline">\(\mu_{1}\)</span> 是 <span class="math inline">\(\sigma\)</span> 有限的，则使 (1) 成立的测度 <span class="math inline">\(\mu\)</span> 唯一且 <span class="math inline">\(\sigma\)</span> 有限。</li>
+</ol>
+</div>
+<div id="thm-fubini-plus" class="theorem">
+<p><span class="theorem-title"><strong>定理 6 (Fubini 定理 plus)</strong></span> 设 <span class="math inline">\((X_{k},\mathcal{F}_{k},\mu_{k}),k=1,\dots,n\)</span> 是 <span class="math inline">\(\sigma\)</span> 有限测度空间。 (1) 存在 <span class="math inline">\(\left( \prod\limits_{k=1}^{n}X_{k},\prod\limits_{k=1}^{n}\mathcal{F}_{k} \right)\)</span> 上唯一的测度 <span class="math inline">\(\mu\)</span> 使</p>
+<p><span class="math display">\[
+\mu\left( \prod\limits_{k=1}^{n}A_{k} \right)=
+\prod\limits_{k=1}^{n}\mu_{k}(A)
+\]</span></p>
+<p>对一切 <span class="math inline">\(A_{k}\in\mathcal{F}_{k}\)</span> 成立。该测度 <span class="math inline">\(\mu\)</span> 记为 <span class="math inline">\(\prod\limits_{k=1}^{n}\mu_{k}\)</span>，是 <span class="math inline">\(\sigma\)</span> 有限的，称为 <span class="math inline">\(\mu_{1},\dots,\mu_{k}\)</span> 的乘积测度； (2) 对 <span class="math inline">\(\left( \prod\limits_{k=1}^{n}X_{k},\prod\limits_{k=1}^{n}\mathcal{F}_{k},\prod\limits_{k=1}^{n}\mu_{k} \right)\)</span> 上任何积分存在的可测函数 <span class="math inline">\(f\)</span> 和 <span class="math inline">\(1,\dots,n\)</span> 的任意重新排列 <span class="math inline">\(k_{1},\dots,k_{n}\)</span>，有</p>
+<p><span class="math display">\[
+\int _{\prod\limits_{k=1}^{n}X_{k}}f \, d\mu=
+\int _{X_{k_{1}}}\mu_{k_{1}}(dx_{k_{1}})
+\int _{X_{k_{2}}}\mu_{k_{2}}(dx_{k_{2}})
+\cdots
+\int _{X_{k_{n}}}f(x_{1},\dots,x_{n})\mu_{k_{n}}(dx_{k_{n}}).
+\]</span></p>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+注记
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>我感觉，通过利用 <a href="#thm-law-of-association-sigma-field" class="quarto-xref">定理&nbsp;1</a>，可以利用二维的结论得到上面多维的结论。</p>
+</div>
+</div>
+</section>
+<section id="分部积分公式" class="level2">
+<h2 class="anchored" data-anchor-id="分部积分公式">分部积分公式</h2>
+<p>作为 <a href="#thm-fubini" class="quarto-xref">定理&nbsp;4</a> 的一个推论，我们可以得到 L-S 积分的分布积分公式。</p>
+<div id="cor-partial-integration" class="theorem corollary">
+<p><span class="theorem-title"><strong>推论 2 (分部积分公式)</strong></span> 对任何准分布函数 <span class="math inline">\(F,G\)</span> 和任何实数 <span class="math inline">\(a\leq b\)</span>，有</p>
+<p><span class="math display">\[
+\int _{(a,b]}F(x)G(dx)=FG|_{a}^{b}-
+\int _{(a,b]}G(x-0)F(dx),
+\]</span></p>
+<p>其中 <span class="math inline">\(FG|_{a}^{b}=F(b)G(b)-F(a)G(a)\)</span>。</p>
+</div>
+<p>针对上述内容，我们需要注意以下几点： - 仅针对 L-S 积分； - 微积分中的分布积分公式是</p>
+<p>$$ <em>{a}^{b} Fg , dx=</em>{a}^{b}F , dG =FG|<em>{a}^{b}-</em>{a}^{b}G , dF = FG|<em>{a}^{b}-</em>{a}^{b}Gf , dx,</p>
+<blockquote class="blockquote">
+<p>$$</p>
+</blockquote>
+<p>其中 <span class="math inline">\(F,G\)</span> 是 <span class="math inline">\(f,g\)</span> 的原函数。所以说，这里的原函数对应于 <strong>?@thm-partial-integration</strong> 中的准分布函数 <span class="math inline">\(F,G\)</span>。这就产生一个问题：准分布函数是单调的，但是原函数则没有这个限制，这是为什么？</p>
+<p>注意，如果我们将视角放在原函数的导函数或者说准分布函数的密度函数上，认为此两者是一样的，则<strong>原函数是其实是从左往右的面积函数</strong>，<strong>准分布函数是从下到上的密度函数</strong>。自然会有这样的区别。换句话说，准分布函数和原函数本身也不应该是对应关系的，两者的定义是完全不一样的。</p>
+<p>微积分中的分部积分公式还有另外一个区别在于 <span class="math inline">\(G(x-0)\)</span>。其实，如果 <span class="math inline">\(G\)</span> 是连续的，则是没有区别的。但是，对于普遍的 L-S 积分，<span class="math inline">\(G\)</span> 不是连续的，并且其单点集还可能是有意义的，积分值可能不为 0。</p>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>以 <span class="math inline">\(\mu_{F},\mu_{G}\)</span> 分别表示 <span class="math inline">\(F,G\)</span> 对应的 L-S 测度，则我们有</p>
+<p><span class="math display">\[
+\begin{align}
+\int _{(a,b]}F(x)G(dx) &amp;= \int _{(a,b]}\left\{ F(a)+\int _{(a,x]}F(dy) \right\} \, G(dx) \\
+&amp;=F(a)[G(b)-G(a)]+\int _{(a,b]}G(dx)\int _{(a,x]}F(dy) \\
+&amp;=F(a)[G(b)-G(a)]+\int _{\{ (x,y),a&lt;y\leq x\leq b \}} \, d(\mu_{G}\times \mu_G(dx) \\
+&amp;=F(a)[G(b)-G(a)]+\int _{(a,b]}[G(b)-G(y-0)]F(dy) \\
+&amp;=F(a)[G(b)-G(a)]+G(b)[F(b)-F(a)]-\int _{\{ (x,y),a&lt;y\leq x\leq b \}} \, d(\mu_{a}^{b}-\int _{a}^{b}Gf \, dx.
+\end{align}
+\]</span></p>
+</div>
+</section>
+</section>
+<section id="多维-lebesgue-stieltjes-测度" class="level1">
+<h1>多维 Lebesgue-Stieltjes 测度</h1>
+<p>在 <a href="#13-finite-product-spaces-定义">定义</a> 和 <a href="#13-finite-product-spaces-准分布函数与测度">准分布函数与测度</a> 中, 我们定义了在 <span class="math inline">\(\mathbb{R}\)</span> 上的准分布函数, 并基于此可以定义在 <span class="math inline">\(\mathbb{R}\)</span> 上的特殊测度 <span class="math inline">\(L-S\)</span> 测度。它实际上是传统积分理论的重建，是之后<strong>实变函数论</strong>的基础。</p>
+<p>以上方式也同样可以扩展到高维 <span class="math inline">\(\mathbb{R}^{n}\)</span> 上, 即我们可以通过下面的过程来定义一个在 <span class="math inline">\(\mathbb{R}^{n}\)</span> 上的测度和可测空间: 1. 定义一个 <span class="math inline">\(F:\mathbb{R}^{n}\to \mathbb{R}\)</span> 上满足 ” 右连续 ” 和 ” 非降 “; 2. 利用 <span class="math inline">\(F\)</span> ,仿照 <strong>?@thm-dist2measure</strong>,来定义一个适用于” 区间 ” 上的 <span class="math inline">\(\sigma\)</span> 有限测度 <span class="math inline">\(\mu\)</span>, 而这些 ” 区间 ” 的集合 <span class="math inline">\(\mathcal{L}_{\mathbb{R}^{n}}\)</span> 恰好组成一个 semi-ring 或 ring; 3. 利用 <strong>?@thm-measure-extension</strong>, 我们可以将这个 <span class="math inline">\(\mu\)</span> 唯一扩张到 <span class="math inline">\(\sigma(\mathcal{L}_{\mathbb{R}^{n}})\)</span> 中, 一般来说这个 <span class="math inline">\(\sigma(\mathcal{L}_{\mathbb{R}^{n}})\)</span> 已经足够大能够囊括我们后续主要的研究范畴了.</p>
+<p>显然, 我们还有很多细节<strong>Lebesgue-Stieljes 测度</strong>需要解决. 比如: 1. 在 <span class="math inline">\(\mathbb{R}^{n}\)</span> 上,” 区间 ” 该如何定义? 这些区间的集合真的能够组成一个半环吗? 2. 作为一个多变量函数, 其 ” 右连续 ” 和 ” 非降 ” 该如何定义? 3. <span class="math inline">\(F(b)-F(a)\)</span> 的方式定义的是一个测度吗? 4. 这个 <span class="math inline">\(\sigma\)</span> -field <span class="math inline">\(\sigma(\mathcal{L}_{\mathbb{R}^{n}})\)</span> 是什么样的结构? 其与一维的 <span class="math inline">\(\mathcal{B}\)</span> 有什么样的关系?</p>
+<p>在本节, 我们将逐一解决以上问题。</p>
+<section id="高维区间" class="level2">
+<h2 class="anchored" data-anchor-id="高维区间">高维区间</h2>
+<p>我们首先来定义高维区间。</p>
+<div id="def-high-dim-interval" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 11 (高维区间)</strong></span> 设 <span class="math inline">\(a=(a_{1},\dots,a_{n}),b=(b_{1},\dots,b_{n})\in\mathbb{R}^{n}\)</span>，并且有 <span class="math inline">\(a_{i}\leq b_{i},\forall i\)</span>，这记作 <span class="math inline">\(a\leq b\)</span>。如果 <span class="math inline">\(a_{i}&lt;b_{i},\forall i\)</span>，则记为 <span class="math inline">\(a&lt;b\)</span>。我们将</p>
+<p><span class="math display">\[
+(a,b]=\{x \in\mathbb{R}^{n}|a&lt;x\leq b \}
+\]</span></p>
+<p>当作 <span class="math inline">\(\mathbb{R}^{n}\)</span> 中左开右闭的<strong>区间</strong>。</p>
+</div>
+<p>在一维中, 区间组成的集合是一个 ring. 在这里有所不同, 高维区间组成的集合是一个 semi-ring, 也就是下面的命题：</p>
+<div id="prp-13-finite-product-spaces-26" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 5 (Proposition)</strong></span> <span class="math inline">\(\mathcal{L}_{\mathbb{R}^{n}}:=\{ (a,b] |a,b\in\mathbb{R}^{n}\}\)</span> 是 <span class="math inline">\(\mathbb{R}^{n}\)</span> 上的半环。</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>至于差运算, 注意到 <span class="math inline">\((a,b]=\prod\limits_{i=1}^{n}(a_{i},b_{i}]\)</span>, 则我们可以有下面的推断过程: 假设 <span class="math inline">\(\prod\limits_{k=1}^{n}A_{k},\prod\limits_{k=1}^{n}B_{k}\in\mathcal{L}\)</span>，并且有</p>
+<p><span class="math display">\[
+\prod\limits_{k=1}^{n}A_{k}\subset\prod\limits_{k=1}^{n}B_{k}.
+\]</span></p>
+<p>上式蕴含</p>
+<p><span class="math display">\[
+A_{k}\subset B_{k},\quad k=1,\dots,n,
+\]</span></p>
+<p>则会有</p>
+<p><span class="math display">\[
+\begin{align}
+\prod\limits_{k=1}^{n}B_{k} \setminus\prod\limits_{k=1}^{n}A_{k}&amp;=
+\left[ B_{1}\times\left( \prod\limits_{k=2}^{n}B_{k}\setminus
+\prod\limits_{k=2}^{n}A_{k}
+\right) \right]\cup
+\left[ (B_{1}\setminus A_{1})\times \prod\limits_{k=2}^{n}A_{k} \right] \\
+&amp;=\left[ (B_{1}\setminus A_{1})\times \prod\limits_{k=2}^{n}A_{k} \right]
+\cup
+\left[ B_{1}\times(B_{2}\setminus A_{2})\times \prod\limits_{k=3}^{n}A_{k} \right]\cap
+\left[ B_{1}\times B_{2}\times\left( \prod\limits_{k=3}^{n}B_{k}\setminus
+\prod\limits_{k=3}^{n}A_{k}\right) \right] \\
+&amp;=\dots \\
+&amp;=\bigcup_{i=1}^{n}\left[
+\prod\limits_{j=1}^{i-1}B_{j}\times
+(B_{i}\setminus A_{i})\times
+\prod\limits_{l=i+1}^{n}A_{l}
+\right]\in\mathcal{L}.
+\end{align}
+\]</span></p>
+<p>其中 <span class="math inline">\(B_{i}\setminus A_{i}\)</span> 是两个区间之差, 得到的至多也是两个区间的并, 因此满足半环的定义, 命题得证。</p>
+</div>
+</section>
+<section id="高维准分布函数" class="level2">
+<h2 class="anchored" data-anchor-id="高维准分布函数">高维（准）分布函数</h2>
+<div id="def-high-dim-distribution" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 12 (多维准分布函数)</strong></span> <span class="math inline">\(\mathbb{R}^{n}\)</span> 上的实值函数 <span class="math inline">\(F\)</span> 被称为准分布函数，如果满足 (1) <span class="math inline">\(\forall i=1,\dots,n,\forall x_{1},\dots,x_{i-1},x_{i+1},\dots,x_{n}\in\mathbb{R}\)</span>，</p>
+<p><span class="math display">\[
+F(x_{1},\dots,x_{i-1},\cdot,x_{i+1},\dots,x_{n})
+\]</span></p>
+<p>作为第 <span class="math inline">\(i\)</span> 个变量的函数右连续； (2) （n 重差分非负性）<span class="math inline">\(\forall a=(a_{1},\dots,a_{n}),b=(b_{1},\dots,b_{n})\in\mathbb{R}^{n}\)</span>，记</p>
+<p><span class="math display">\[
+C=\{ c=(c_{1},\dots,c_{n})|c_{i}=a_{i}\text{ or }b_{i}, i=1,\dots,n \}.
+\]</span></p>
+<p>又对 <span class="math inline">\(c=(c_{1},\dots,c_{n})\in C\)</span>，记 <span class="math inline">\(n(c)=\#\{ i|c_{i}=a_{i} \}\)</span>，则当 <span class="math inline">\(a\leq b\)</span> 时有</p>
+<p><span class="math display">\[
+\sum\limits_{c\in C}^{}(-1)^{n(c)}F(c)\geq 0.
+\]</span></p>
+</div>
+<div id="def-multi-dist-func" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 13 (n 元分布函数)</strong></span> 若准分布函数 <span class="math inline">\(F\)</span> 满足</p>
+<p><span class="math display">\[
+\lim_{ x_{1},\dots,x_{n} \to \infty } F(x_{1},\dots,x_{n})=1,\quad
+\lim_{ x_{1},\dots,x_{n} \to -\infty } F(x_{1},\dots,x_{n})=0,
+\]</span></p>
+<p>则我们称其为 <strong>多维分布函数</strong>。</p>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="n 重差分非负性">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>n 重差分非负性
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><a href="#def-high-dim-distribution" class="quarto-xref">定义&nbsp;12</a> 中的条件 (2) 叫做 <strong><span class="math inline">\(n\)</span> - 重差分非负性</strong>（或<strong>体积非负性</strong>）。那个求和公式 <span class="math inline">\(\sum_{c \in C} (-1)^{n(c)} F(c) \ge 0\)</span> 实际上是在计算一个<strong>超长方体（Hyper-rectangle） <span class="math inline">\((a, b]\)</span> 的体积（或概率）</strong>。</p>
+<ul>
+<li>对于一维情况 (<span class="math inline">\(n=1\)</span>)，该公式就是 <span class="math inline">\(F(b) - F(a) \ge 0\)</span>。</li>
+<li>对于二维情况 (<span class="math inline">\(n=2\)</span>)，该公式就是 <span class="math inline">\(F(b_1, b_2) - F(a_1, b_2) - F(b_1, a_2) + F(a_1, a_2) \ge 0\)</span>。</li>
+</ul>
+<p>这是 <a href="../../../src/learn/advanced-probability/06-distribution-function.html">分布函数</a> 中单调性的推广。比如对于一维函数, 其单调性使用一次增量非负来定义:</p>
+<p><span class="math display">\[
+\Delta_{(a,b]}F:= F(b)-F(a)\geq 0.
+\]</span></p>
+<p>对于二维函数, 则可以使用二次增量非负来定义:</p>
+<p><span class="math display">\[
+\begin{align}
+\Delta_{(a,b]}F:=&amp; \Delta_{(a_{2},b_{2}]}[\Delta_{(a_{1},b_{1}]}F] \\
+=&amp;\Delta_{(a_{1},b_{1}]}[\Delta_{(a_{2},b_{2}]}F] \\
+=&amp;(F(b_{1},b_{2})-F(a_{1}, b_{2}))-(F(b_{1},a_{2})-F(a_{1},a_{2})) \\
+=&amp;F(b_{1},b_{2})-F(a_{1},b_{2})-F(b_{1},a_{2})+F(a_{1},a_{2}) \geq 0.
+\end{align}
+\]</span></p>
+<p>或者这样理解, 如果函数 <span class="math inline">\(n\)</span> 是 <span class="math inline">\(n\)</span> 次可微, 则其单调性由</p>
+<p><span class="math display">\[
+\frac{\partial^{n}F}{\partial x_{1}\dots \partial x_{n}}\geq 0
+\]</span></p>
+<p><span id="ca6c8d"></span></p>
+<p>来定义, 只是使用增量替代偏导数来适用范围扩展至不可微点.</p>
+</div>
+</div>
+<div id="prp-n-dist-semi-ring-measure" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 6 (如果 <span class="math inline">\(F\)</span> 是准分布函数，则)</strong></span> <span class="math display">\[
+\mu_{F}((a,b]):=\left\{\begin{matrix}
+\sum\limits_{c\in C}^{}(-1)^{n(c)}F(c),\quad &amp;a&lt;b, \\
+0,&amp;a\geq b.
+\end{matrix}\right.
+\]</span></p>
+<p>是半环 <span class="math inline">\(\mathcal{L}_{\mathbb{R}^{n}}\)</span> 上的测度。</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>非负性由准分布函数和 <span class="math inline">\(\mu_{F}\)</span> 的定义保证，我们只需要证明可列可加性即可。<strong>TODO:</strong></p>
+</div>
+</section>
+<section id="13-finite-product-spaces-多维-l-s-测度" class="level2">
+<h2 class="anchored" data-anchor-id="13-finite-product-spaces-多维-l-s-测度">多维 L-S 测度</h2>
+<p>进而，我们就可以来定义多维上的 L-S 测度了。</p>
+<div id="def-13-finite-product-spaces-29" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 14 (多维 L-S 测度)</strong></span> 以 <span class="math inline">\(\lambda_{F}\)</span> 记半环 <span class="math inline">\(\mathcal{L}_{\mathbb{R}^{n}}\)</span> 上的测度 <span class="math inline">\(\mu_{F}\)</span> 生成的外测度，则 <span class="math inline">\(\lambda_{F}\)</span> 是 <span class="math inline">\(\mathcal{F}_{\lambda_{F}}\)</span> 上的测度，称之为 <strong>(n 维) L-S 测度</strong>。特别的，如果对于每个 <span class="math inline">\((x_{1},\dots,x_{n})\in\mathbb{R}^{n}\)</span> 有</p>
+<p><span class="math display">\[
+F(x_{1},\dots,x_{n})=x_{1}\cdots x_{n},
+\]</span></p>
+<p>则称其对应的 L-S 测度为 <strong>L 测度</strong>。</p>
+</div>
+<p>注意到，我们定义 <strong>L-S 测度空间</strong>的时候，实际上有两种定义方式： - 第一种方式，是通过<strong>多维（准）分布函数</strong>。仿照一维 L-S 测度空间的生成方式：定义一个 <span class="math inline">\(\pi\)</span> -class <span class="math inline">\(\{ (-\infty,(x_{1},\dots,x_{n})] \}\)</span> (或者半环 <span class="math inline">\(\{ (a,b] \}\)</span>)，在其上通过一个<strong>高维准分布函数</strong>来定义一个<strong>高维测度</strong>，然后利用<strong>外测度</strong>方式将其扩展到 <span class="math inline">\(\mathcal{B}^{n}\)</span> 上。 - 第二种方式，通过<strong>测度转移函数</strong>。先构造一个<strong>一维测度</strong>，然后再定义一个个<strong>测度转移函数</strong>，通过 <a href="#thm-transform-func-generate-measure" class="quarto-xref">定理&nbsp;3</a> <strong>逐个维度</strong>的将<strong>高维测度</strong>建立起来。</p>
+<p>两种方案都具有非常高的灵活度。第一种方案的灵活度来自于<strong>多维准分布函数</strong>，其直接就进入高维空间了；第二种方式的灵活度来自于<strong>测度转移函数</strong>，是一种“自下而上”的构建方式，从单个维度逐步进入高维空间。</p>
+<p>这时候，有一个问题：<strong>两种方案到底哪个具有更高的灵活度？是否某种方案所生成的测度类型是另一种方案无法生成的？</strong> 这个问题不好回答，或者说无法回答，因为两者可能聚焦于不同的问题。 - 第一种方案不会受到 <strong><span class="math inline">\(\sigma\)</span> 有限</strong>的限制（<a href="#thm-transform-func-generate-measure" class="quarto-xref">定理&nbsp;3</a> 要求测度转移函数 <span class="math inline">\(\sigma\)</span> 有限），但是其只聚焦于 <span class="math inline">\(\mathbb{R}^{n}\)</span> 空间，不适合于其他<strong>抽象空间</strong>（因为需要能够定义区间）。 - 第二种方案则适用于<strong>任何抽象空间</strong>，但是测度的建立依赖于积分，所以会受到 <strong><span class="math inline">\(\sigma\)</span> 有限</strong>的限制。</p>
+<p>但是，如果我们聚焦于 L 测度，则不难有下面的推论：</p>
+<div class="callout callout-style-default callout-note callout-titled" title="cor: $L$ 测度的分解性">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>cor: <span class="math inline">\(L\)</span> 测度的分解性
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>对于 <span class="math inline">\(\mathbb{R}^{n}\)</span> 上的 <span class="math inline">\(L\)</span> 测度 <span class="math inline">\(m^{n}\)</span>，其是唯一满足以下条件的测度：</p>
+<p><span class="math inline">\(\forall A_{i}\subset \mathbb{R},i=1,\dots,n\)</span>，有</p>
+<p><span class="math display">\[
+m^{n}\left( \prod\limits_{i=1}^{n}A_{i} \right)=\prod\limits_{i=1}^{n}m(A_{i})
+\]</span></p>
+<p>其中 <span class="math inline">\(m\)</span> 是一维空间上的 <span class="math inline">\(L\)</span> 测度。</p>
+</div>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>首先，通过将多个 <span class="math inline">\(L\)</span> 测度相乘可以构造一个在 <span class="math inline">\(\mathbb{R}^{n}\)</span> 上的集函数，通过 <a href="#thm-fubini" class="quarto-xref">定理&nbsp;4</a> 可知存在一个唯一的高维测度是它的扩展。现在我们的目标就是证明它就是高维空间上的 <span class="math inline">\(L\)</span> 测度。</p>
+<p>首先，容易证明两者在 <span class="math inline">\(\mathcal{L}_{\mathbb{R}^{n}}\)</span> 是等价的。因为 <span class="math inline">\(\mathcal{L}_{\mathbb{R}^{n}}\)</span> 是个半环，所以直接利用 <strong>?@cor-measure-extension-2</strong>，可以知道，将其上的测度扩展到 <span class="math inline">\(\sigma(\mathcal{L}_{\mathbb{R}^{n}})\)</span> 具有唯一性。因此，我们只需要证明 <span class="math inline">\(\sigma(\mathcal{L}_{\mathbb{R}^{n}})=\mathcal{B}^{n}\)</span> 即可，而这不难证明。</p>
+</div>
+<p>另外一个非常重要的例子是<strong>随机变量 <span class="math inline">\(f_{1},\dots,f_{n}\)</span> 所生成的诱导测度 <span class="math inline">\(Pf^{-1}_{1},\dots,Pf^{-1}_{n}\)</span> 的乘积测度 <span class="math inline">\(\prod\limits_{i=1}^{n}Pf^{-1}_{i}\)</span></strong> 和这些随机变量组成<strong>随机向量 <span class="math inline">\(f=(f_{1},..,f_{n})\)</span> 的诱导测度 <span class="math inline">\(Pf^{-1}\)</span></strong>。显然 <span class="math inline">\(Pf^{-1}\)</span> 是通过第一种方式得到的，<span class="math inline">\(\prod\limits_{i=1}^{n}Pf^{-1}_{i}\)</span> 是通过第二种方式得到的。显然，<strong>只有当 <span class="math inline">\(f_{1},\dots,f_{n}\)</span> 相互独立时两者才相等</strong>，因为 <span class="math inline">\(Pf^{-1}\)</span> 一般有更丰富的变换，这在 <strong>?@thm-indepent-distribution</strong> 中有详细叙述。</p>
+</section>
+</section>
+<section id="随机向量" class="level1">
+<h1>随机向量</h1>
+<p>在 <a href="#13-finite-product-spaces-乘积空间上的测度">乘积空间上的测度</a> 中我们提到, 乘积测度空间上的很多内容我们不需要过多讨论 (比如定义积分), 其本质上和前面定义的内容是兼容的.但是, 对于随机向量这是不兼容的, 我们需要重新构建这方面的内容.</p>
+<section id="定义和可测性" class="level2">
+<h2 class="anchored" data-anchor-id="定义和可测性">定义和可测性</h2>
+<div id="def-13-finite-product-spaces-30" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 15 (随机向量)</strong></span> 对于概率测度空间 <span class="math inline">\((\Omega,\mathcal{F}),P\)</span>, 我们定义可测映射</p>
+<p><span class="math display">\[
+f:(\Omega,\mathcal{F}) \to (\mathbb{R}^{n},\mathcal{B}^{n})
+\]</span></p>
+<p>为<strong>随机向量</strong>. 此外, 令</p>
+<p><span class="math display">\[
+f_{k}=f\circ\pi_{k},\quad k=1,\dots,n,
+\]</span></p>
+<p>其中 <span class="math inline">\(\pi_{k}\)</span> 是 <span class="math inline">\(\mathbb{R}^{n}\)</span> 到第 <span class="math inline">\(k\)</span> 个 <span class="math inline">\(\mathbb{R}\)</span> 的投影, 则称 <span class="math inline">\(f_{k}\)</span> 是 <span class="math inline">\(f\)</span> 的第 <span class="math inline">\(k\)</span> 个<strong>分量</strong>. 容易证明, <span class="math inline">\(f=(f_{1},\dots,f_{k})\)</span>.</p>
+</div>
+<p>利用 <a href="#prp-project" class="quarto-xref">命题&nbsp;2</a> (2), 容易证明</p>
+<div id="thm-vector-measurable" class="theorem">
+<p><span class="theorem-title"><strong>定理 7 (值域为乘积空间的映射的可测性判定)</strong></span> 设 <span class="math inline">\((\Omega,\mathcal{T})\)</span> 和 <span class="math inline">\(\{ (X_{k},\mathcal{F}_{k}),k=1,\dots,n \}\)</span> 是可测空间，<span class="math inline">\(f=(f_{1},\dots,f_{n})\)</span> 是 <span class="math inline">\(\Omega\)</span> 到 <span class="math inline">\(\prod\limits_{k=1}^{n}X_{k}\)</span> 的一个映射。则 <span class="math inline">\(f\)</span> 是 <span class="math inline">\((\Omega,\mathcal{T})\)</span> 到 <span class="math inline">\(\left( \prod\limits_{k=1}^{n}X_{k},\prod\limits_{k=1}^{n}\mathcal{F}_{k} \right)\)</span> 的可测映射<strong>当且仅当</strong>对于每个 <span class="math inline">\(k=1,\dots,n\)</span>，<span class="math inline">\(f_{k}\)</span> 是 <span class="math inline">\((\Omega,\mathcal{T})\)</span> 到 <span class="math inline">\((X_{k},\mathcal{F}_{k})\)</span> 的可测映射。</p>
+<p>并且有这样的关系（该关系不依赖于可测性）：</p>
+<p><span class="math display">\[
+\sigma(f)=\sigma((f_{1},\dots,f_{n}))=\sigma\left( \bigcup_{i=1}^{n}\sigma(f_{i}) \right),
+\]</span></p>
+<p>如果用 <span class="math inline">\(X\)</span> 表示随机变量，则是</p>
+<p><span class="math display">\[
+\sigma(X_{1},\dots,X_{n})=\sigma\left( \bigcup_{i=1}^{n}\sigma(X_{i}) \right).
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span><span class="math display">\[
+\begin{align}
+f^{-1}\left( \prod\limits_{k=1}^{n}\mathcal{F}_{k} \right)
+&amp;=f^{-1}\sigma\left( \bigcup_{k=1}^{n}\pi_{k}^{-1}\mathcal{F}_{k} \right) \\
+&amp;=\sigma\left( f^{-1}\left( \bigcup_{k=1}^{n}\pi_{k}^{-1}\mathcal{F}_{k} \right) \right) \\
+&amp;=\sigma\left( \bigcup_{k=1}^{n}f^{-1}(\pi_{k}^{-1}\mathcal{F}_{k}) \right) \\
+&amp;=\sigma\left( \bigcup_{k=1}^{n}(\pi_{k}\circ f)^{-1}\mathcal{F}_{k} \right)\\
+&amp;=\sigma\left( \bigcup_{k=1}^{n}f_{k}^{-1}\mathcal{F}_{k} \right).
+\end{align}
+\]</span></p>
+<p>由上述关系可以知道，若 <span class="math inline">\(f_{i}\)</span> 可测，则 <span class="math inline">\(f\)</span> 可测。</p>
+<p>反过来，若 <span class="math inline">\(f\)</span> 是可测映射，由于投影的可测性，结合 <strong>?@thm-composite-func</strong>，可知所有 <span class="math inline">\(f_{i}\)</span> 都是可测的。</p>
+<p>证毕.</p>
+</div>
+<p>换句话说, <strong><span class="math inline">\(f=(f_{1},\dots,f_{n})\)</span> 是 <span class="math inline">\(n\)</span> 维随机向量当且仅当 <span class="math inline">\(f_{k},k=1,\dots,n\)</span> 都是随机变量</strong>。</p>
+</section>
+<section id="随机向量生成的-sigma-代数" class="level2">
+<h2 class="anchored" data-anchor-id="随机向量生成的-sigma-代数">随机向量生成的 <span class="math inline">\(\sigma\)</span> 代数</h2>
+<p>有时候，我们会关注随机向量生成的 <span class="math inline">\(\sigma\)</span> 代数，这里我们进行更加细致地讨论。根据 <a href="#thm-vector-measurable" class="quarto-xref">定理&nbsp;7</a>，我们知道</p>
+<p><span class="math display">\[
+\sigma(X_{1},\dots,X_{n})=\sigma\left( \bigcup_{i=1}^{n}\sigma(X_{i}) \right).
+\]</span></p>
+<p>所以，有时候我们需要证明某个集合系 <span class="math inline">\(\mathcal{G}\)</span> 是 <span class="math inline">\(\sigma(X_{1},\dots,X_{n})\)</span>，只需要证明两点就可以：</p>
+<ol type="1">
+<li><span class="math inline">\(\mathcal{G}\supset\bigcup_{i=1}^{n}\sigma(X_{i})\)</span>；</li>
+<li><span class="math inline">\(\mathcal{G}\)</span> 是一个 <span class="math inline">\(\sigma\)</span> 代数。</li>
+</ol>
+<p>但是有时候，以上两点不是特别容易用，所以我们有如下几个命题。</p>
+<div id="thm-multi-sigma-generate-1" class="theorem">
+<p><span class="theorem-title"><strong>定理 8 (递归生成 <span class="math inline">\(\sigma\)</span> 代数)</strong></span> <span class="math display">\[
+\sigma(X_{1},\dots,X_{n})=\sigma((X_{1},\dots,X_{n-1}),X_{n})
+=\sigma(\sigma(X_{1},\dots,X_{n-1})\cup\sigma(X_{n}))
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>因为 <span class="math inline">\(\sigma(X_{i})\subset\sigma(X_{1},\dots,X_{n-1}),\forall i\leq n-1\)</span>，所以有</p>
+<p><span class="math display">\[
+\sigma(X_{1},\dots,X_{n})\subset\sigma((X_{1},\dots,X_{n-1}),X_{n}).
+\]</span></p>
+<p>又因为 <span class="math inline">\(\sigma(X_{1},\dots,X_{n-1})\subset\sigma(X_{1},\dots,X_{n})\)</span> 和 <span class="math inline">\(\sigma(X_{n})\subset\sigma(X_{1},\dots,X_{n})\)</span>，所以有</p>
+<p><span class="math display">\[
+\sigma((X_{1},\dots,X_{n-1}),X_{n})\subset\sigma(X_{1},\dots,X_{n}).
+\]</span></p>
+</div>
+<div id="thm-multi-sigma-generate-2" class="theorem">
+<p><span class="theorem-title"><strong>定理 9 (<span class="math inline">\(\pi\)</span> 系生成 <span class="math inline">\(\sigma\)</span> 代数)</strong></span> 令 <span class="math inline">\(\mathcal{G}=\{ A_{1}\cap A_{2} |A_{1}\in\sigma(X_{1}),A_{2}\in\sigma(X_{2})\}\)</span>，则有</p>
+<p><span class="math display">\[
+\sigma(\mathcal{G})=\sigma(X_{1},X_{2}).
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>显然 <span class="math inline">\(\sigma(\mathcal{G})\subset\sigma(X_{1},X_{2})\)</span>，现在我们来证明反方向。</p>
+<p>令 <span class="math inline">\(A_{2}=\Omega\)</span>，则可知</p>
+<p><span class="math display">\[
+\sigma(X_{1})\subset\sigma(\mathcal{G}),
+\]</span></p>
+<p>令 <span class="math inline">\(A_{1}=\Omega\)</span>，则可知</p>
+<p><span class="math display">\[
+\sigma(X_{2})\subset\sigma(\mathcal{G}),
+\]</span></p>
+<p>因此有 <span class="math inline">\(\sigma(\mathcal{G})\subset\sigma(X_{1},X_{2})\)</span>。问题得证。</p>
+</div>
+</section>
+<section id="积分" class="level2">
+<h2 class="anchored" data-anchor-id="积分">积分</h2>
+<p>注意到 <a href="../../../src/learn/advanced-probability/08-integration.html">8_积分</a> 中定义的积分本质上是函数值的权重和, 但对于随机向量, 函数值是一个向量, 因此相应的积分结果也应该是向量. 这里, 我们直接给出随机向量积分的定义.</p>
+<div id="def-vector-integrate" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 16 (随机向量的积分)</strong></span> 对于随机向量 <span class="math inline">\(f=(f_{1},\dots,f_{n})\)</span>, 其积分被定义为</p>
+<p><span class="math display">\[
+\int f =\left( \int f_{1},\dots,\int f_{n} \right).
+\]</span></p>
+<p>当位于概率测度空间中时, 积分也被称为期望, 表示为</p>
+<p><span class="math display">\[
+\mathbb{E}f=(\mathbb{E}f_{1},\dots,\mathbb{E}f_{n}).
+\]</span></p>
+</div>
+<p>这样的推广是合理的, 相当于我们在积分定义时将<strong>其中所用到的标量加法和乘法</strong>扩展至<strong>线性空间中的向量加法和数乘</strong>。</p>
+</section>
+<section id="分布" class="level2">
+<h2 class="anchored" data-anchor-id="分布">分布</h2>
+<p>在前面的学习中知道, 我们可以使用分布的概念来描述随机变量 (及测度) 所包含的信息. 分布的概念一般包含两层函数: <strong>随机变量诱导的测度</strong>及<strong>分布函数</strong>. <strong>随机向量</strong>也可以如此.</p>
+<p>对于<strong>随机向量</strong><span class="math inline">\(f=(f_{1},\dots,f_{n})\)</span>，它是一个普通概率空间 <span class="math inline">\((X,\mathcal{F},P)\to(\mathbb{R}^{n},\mathcal{B}^{n})\)</span> 的可测映射。其对应的诱导测度空间是 <span class="math inline">\((\mathbb{R}^{n},\mathcal{B}^{n},Pf^{-1})\)</span>, 这是一个典型的<strong>乘积测度空间</strong>, 因此刚才关于乘积测度空间上的内容便有了用武之地.</p>
+<p>与 <a href="../../../src/learn/advanced-probability/06-distribution-function.html">分布函数</a> 中类似, 我们可以从两个方向来定义分布函数.</p>
+<p>首先，是从<strong>分布函数</strong>应该满足的性质开始 (测度空间未知, 通过分布函数来生成测度)。这里我们直接沿用 <a href="#def-multi-dist-func" class="quarto-xref">定义&nbsp;13</a> 的定义即可。</p>
+<p>其次，是从<strong>随机变量的诱导测度</strong>出发 (定义测度相关联的分布函数):</p>
+<div id="def-n-dist-rv" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 17 (随机向量的分布函数)</strong></span> 设 <span class="math inline">\(f=(f_{1},\dots,f_{n})\)</span> 是 <span class="math inline">\((X,\mathcal{F},P)\)</span> 上的随机向量，则对每个 <span class="math inline">\((x_{1},\dots,x_{n})\in\mathbb{R}^{n}\)</span>，令</p>
+<p><span class="math display">\[
+F(x_{1},\dots,x_{n})=P(f_{1}\leq x_{1},\dots,f_{n}\leq x_{n}),
+\]</span></p>
+<p>则 <span class="math inline">\(F\)</span> 称为随机向量 <span class="math inline">\(f\)</span> 的<strong>分布函数</strong>，或称为 <span class="math inline">\(n\)</span> 个随机变量 <span class="math inline">\(f_{1},\dots,f_{n}\)</span> 的<strong>联合分布函数</strong>，记作 <span class="math inline">\(f\sim F\)</span>。</p>
+</div>
+<p>虽然两个定义从不同的角度出发得到, 但是两者实际上是相同的对象. 我们有如下的定理:</p>
+<div id="thm-13-finite-product-spaces-36" class="theorem">
+<p><span class="theorem-title"><strong>定理 10 (n 元分布函数对应定理（Correspondence Theorem）)</strong></span> &nbsp;</p>
+<ol type="1">
+<li><span class="math inline">\(n\)</span> 维随机向量 <span class="math inline">\(f\)</span> 的分布函数是一个 <span class="math inline">\(n\)</span> 元分布函数。</li>
+<li>任意一个给定的 <span class="math inline">\(n\)</span> 元分布函数，一定存在一个概率空间 <span class="math inline">\((X,\mathcal{F},P)\)</span>，在其上定义有随机向量 <span class="math inline">\(f\sim F\)</span>。</li>
+</ol>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>（1）由概率测度的下连续性和有界性，我们很容易可以证明得到 <a href="#def-high-dim-distribution" class="quarto-xref">定义&nbsp;12</a> 的第一条和 <a href="#def-multi-dist-func" class="quarto-xref">定义&nbsp;13</a>。因此，我们只需要证明 <strong>n 重差分非负性</strong>即可。</p>
+<p>为了证明这个，我们可以应用 <a href="#thm-inclusion-exclusion" class="quarto-xref">定理&nbsp;11</a>，或者使用<strong>差分算子</strong>来进行讨论。下面我们使用第二种方案。</p>
+<p>定义针对第 <span class="math inline">\(i\)</span> 个坐标的差分算子 <span class="math inline">\(\Delta_i\)</span> 为：</p>
+<p><span class="math display">\[
+\Delta_{a_i, b_i} F(x_1, \dots, x_n) = F(x_1, \dots, b_i, \dots, x_n) - F(x_1, \dots, a_i, \dots, x_n)
+\]</span></p>
+<p>这其实就是 <span class="math inline">\(P(X \in \dots \times (a_i, b_i] \times \dots)\)</span>，只考虑第 <span class="math inline">\(i\)</span> 个维度的限制。现在，我们考虑 <span class="math inline">\(n\)</span> 维矩形</p>
+<p><span class="math display">\[
+R = (a_1, b_1] \times \dots \times (a_n, b_n].
+\]</span></p>
+<p>随机向量 <span class="math inline">\(X\)</span> 落在 <span class="math inline">\(R\)</span> 中的事件，就是所有分量 <span class="math inline">\(X_i\)</span> 都落在 <span class="math inline">\((a_i, b_i]\)</span> 中。这就相当于对分布函数 <span class="math inline">\(F\)</span> 在所有 <span class="math inline">\(n\)</span> 个维度上依次做差分：</p>
+<p><span class="math display">\[
+\begin{aligned}
+P(a &lt; X \le b) &amp;= P(a_1 &lt; X_1 \le b_1, \dots, a_n &lt; X_n \le b_n) \\
+&amp;= \Delta_{a_n, b_n} \left( \dots \left( \Delta_{a_1, b_1} F(x_1, \dots, x_n) \right) \dots \right)
+\end{aligned}
+\]</span></p>
+<p><strong>让我们展开这个差分运算。</strong> 每个算子 <span class="math inline">\(\Delta_{a_i, b_i}\)</span> 都是两项之差：(代入 <span class="math inline">\(b_i\)</span>) - (代入 <span class="math inline">\(a_i\)</span>)。如果你把 <span class="math inline">\(n\)</span> 个这样的算子乘起来（即连续作用）, 就会得到</p>
+<p><span class="math display">\[
+\prod_{i=1}^n (\text{代入 } b_i - \text{代入 } a_i)
+\]</span></p>
+<p>展开这个括号，你会得到 <span class="math inline">\(2^n\)</span> 项。每一项都是 <span class="math inline">\(F\)</span> 在某个点 <span class="math inline">\(c\)</span> 的值，其中 <span class="math inline">\(c\)</span> 的第 <span class="math inline">\(i\)</span> 个分量要么是 <span class="math inline">\(b_i\)</span>，要么是 <span class="math inline">\(a_i\)</span>。 * 如果选择了“代入 <span class="math inline">\(b_i\)</span>”，该项系数贡献一个正号 <span class="math inline">\((+1)\)</span>。 * 如果选择了“代入 <span class="math inline">\(a_i\)</span>”，该项系数贡献一个负号 <span class="math inline">\((-1)\)</span>。</p>
+<p>因此，对于任意一个顶点 <span class="math inline">\(c\)</span>，如果它有 <span class="math inline">\(k\)</span> 个分量取自 <span class="math inline">\(a\)</span>（即 <span class="math inline">\(n(c)=k\)</span>），那么它的总符号就是 <span class="math inline">\(k\)</span> 个 <span class="math inline">\((-1)\)</span> 相乘，即 <span class="math inline">\((-1)^k\)</span>。这就推导出了定义中的公式：</p>
+<p><span class="math display">\[
+P(a &lt; X \le b) = \sum_{c \in C} (-1)^{n(c)} F(c)
+\]</span></p>
+<p>而根据概率测度的非负性，可知上面这个式子是 <span class="math inline">\(\geq 0\)</span> 的。</p>
+<p>（2）利用 <a href="#prp-n-dist-semi-ring-measure" class="quarto-xref">命题&nbsp;6</a>，我们可以定义半环上的测度，然后利用 <strong>?@thm-measure-extension</strong> 得到唯一扩张的测度，容易证明这样的概率测度是唯一的，并且满足 <a href="#def-n-dist-rv" class="quarto-xref">定义&nbsp;17</a> 中的公式。</p>
+</div>
+<p>因为<strong>随机向量可以表示为多个随机变量的组合</strong>, 那么自然的一个问题是: 这些<strong>随机变量的分布</strong>与<strong>随机向量的分布</strong>之间是否存在联系? 为了能够去探讨这个问题, 我们需要先定义<strong>边缘分布</strong> (也就是分量的分布).</p>
+<div id="def-margin-dist" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 18 (边缘分布函数)</strong></span> 设 <span class="math inline">\(f=(f_{1},\dots,f_{n})\)</span> 是 <span class="math inline">\((X,\mathcal{F},P)\)</span> 上的随机向量，对任意给定的指标 <span class="math inline">\(i_{1},\dots,i_{k},k\leq n\)</span>，则称 <span class="math inline">\((f_{i_{1}},\dots,f_{i_{k}})\)</span> 的联合分布函数叫做 <strong><span class="math inline">\(f\)</span> 的第 <span class="math inline">\(i_{1},\dots,i_{k}\)</span> 个分量的边缘分布函数</strong>。特别的，第 <span class="math inline">\(i\)</span> 个分量 <span class="math inline">\(f_{i}\)</span> 的边缘分布函数记作 <span class="math inline">\(F_{i}\)</span>（<span class="math inline">\(=Pf_{i}^{-1}((-\infty,x])\)</span>）。</p>
+</div>
+<p>结合 <a href="#13-finite-product-spaces-多维-l-s-测度">多维 L-S 测度</a> 中的讨论可以知道, 正常情况下使用 <span class="math inline">\(\{ F_{i},i=1,\dots,n \}\)</span> 是无法确定 <span class="math inline">\(F\)</span> 的，除非是在<strong>独立</strong>这一特殊的条件下，这个我们将在 <strong>?@thm-indepent-distribution</strong> 中进行讨论。</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+注记
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>这里有一个非常容易混淆的点。<strong>一维测度的乘积来确定高维测度</strong>这样的内容在本章的内容中出现了两次： - 通过一维测度空间中的测度来生成高维测度空间中的测度； - 通过边缘分布来确定联合分布。</p>
+<p>这不仅让我们想象两者之间是否存在一些联系？在完成了 <strong>?@thm-indepent-distribution</strong> 的证明后，我们知道，当<strong>独立性成立</strong>的前提下，两者是同一个事情。</p>
+</div>
+</div>
+<div id="thm-inclusion-exclusion" class="theorem">
+<p><span class="theorem-title"><strong>定理 11 (容斥原理)</strong></span> （集合论形式）设 <span class="math inline">\(A_1, A_2, \dots, A_n\)</span> 为有限集合，则这 <span class="math inline">\(n\)</span> 个集合的并集的元素个数为：</p>
+<p><span class="math display">\[
+\left| \bigcup_{i=1}^n A_i \right| = \sum_{1 \le i \le n} |A_i| - \sum_{1 \le i &lt; j \le n} |A_i \cap A_j| + \sum_{1 \le i &lt; j &lt; k \le n} |A_i \cap A_j \cap A_k| - \dots + (-1)^{n-1} |A_1 \cap \dots \cap A_n|
+\]</span></p>
+<p>（概率论形式）设 <span class="math inline">\((\Omega, \mathcal{F}, P)\)</span> 为概率空间，<span class="math inline">\(A_1, A_2, \dots, A_n \in \mathcal{F}\)</span> 为一系列事件。则这些事件中至少有一个发生的概率（即并集的概率）为：</p>
+<p><span class="math display">\[
+P\left( \bigcup_{i=1}^n A_i \right) = \sum_{1 \le i \le n} P(A_i) - \sum_{1 \le i &lt; j \le n} P(A_i \cap A_j) + \dots + (-1)^{n-1} P\left( \bigcap_{i=1}^n A_i \right)
+\]</span></p>
+</div>
+</section>
+<section id="密度" class="level2">
+<h2 class="anchored" data-anchor-id="密度">密度</h2>
+<p>仿照一维的情况，我们可以直接应用 <strong>?@thm-rn</strong> 来定义高维的密度函数。假设对于某个高维随机变量 <span class="math inline">\(f=(f_{1},\dots,f_{n})\)</span>，存在某个在 <span class="math inline">\((\mathbb{R}^{n},\mathcal{B}^{n})\)</span> 上的 <span class="math inline">\(\sigma\)</span> 有限测度 <span class="math inline">\(\mu\)</span> 使得</p>
+<p><span class="math display">\[
+Pf^{-1}\ll \mu.
+\]</span></p>
+<p>此时，我们可以运用 <strong>?@thm-rn</strong> ，定义某个可测函数 <span class="math inline">\(\frac{dPf^{-1}}{d\mu}: (\mathbb{R}^{n},\mathcal{B}^{n})\to(\mathbb{R},\mathcal{B})\)</span>，满足</p>
+<p><span class="math display">\[
+\int _{A}\frac{dPf^{-1}}{d\mu} \, d\mu=Pf^{-1}(A)=P(f\in A),\quad
+\forall A\in\mathcal{B^{n}}.
+\]</span></p>
+<p>可测函数 <span class="math inline">\(\frac{dPf^{-1}}{d\mu}\)</span> 被称为 <strong><span class="math inline">\(f\)</span> 相对于 <span class="math inline">\(\mu\)</span> 的密度函数</strong>，可见，<strong>其是一个输入 <span class="math inline">\(n\)</span> 个值，输出 1 个值的函数</strong>。当然, 我们也可以去定义<strong>单个随机变量的边缘概率密度</strong>, 也就是其<strong>边缘分布的 R-N 导数</strong>。基于此，我们就可以去证明 <strong>?@prp-rn</strong> 。</p>
+<p>下面, 我们将证明下面的一个推论, 其描述了<strong>联合概率密度</strong>和<strong>边缘概率密度</strong>之间的关系.</p>
+<div id="prp-comb-margin-density" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 7 (联合密度和边缘密度)</strong></span> 若 <span class="math inline">\(p(x,y)\)</span> 是 <span class="math inline">\(n\)</span> 和 <span class="math inline">\(m\)</span> 维随机向量 <span class="math inline">\(X,Y\)</span> 相对于 <span class="math inline">\(\lambda \times \mu\)</span> 的联合概率密度函数, 则有</p>
+<p><span class="math display">\[
+\int p(x,y) \, \lambda(dx)=\frac{PY^{-1}(dy)}{\mu(dy)}\ a.s.,
+\]</span></p>
+<p>和</p>
+<p><span class="math display">\[
+\int p(x,y) \, \mu(dy)=\frac{PX^{-1}(dx)}{\lambda(dx)}\ a.s..
+\]</span></p>
+<p>此外, 该结论可以推广至有限维联合概率密度.</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span><span class="math inline">\(\forall B\in\mathcal{B}^{m}\)</span>, 则我们有 (利用了 <strong>?@prp-rn</strong>（1）)</p>
+<p><span class="math display">\[
+\begin{align}
+PY^{-1}(B)=\int _{B} PY^{-1}(dy)
+=\int _{B}\frac{PY^{-1}(dy)}{\mu(dy)} \, \mu(dy),
+\end{align}
+\]</span></p>
+<p>此外, 我们还有</p>
+<p><span class="math display">\[
+\begin{align}
+PY^{-1}(B)&amp;=P(X,Y)^{-1}(\mathbb{R}^{n}\times B) \\
+&amp;=
+\int _{\mathbb{R}^{n}\times B}p(x,y) \, (\lambda \times \mu)(dxdy) \\
+&amp;=\int _{B}\mu(dy)\int _{\mathbb{R}^{n}}f(x,y)\lambda(dx),
+\end{align}
+\]</span></p>
+<p>其中最后一行是因为 <a href="#thm-fubini" class="quarto-xref">定理&nbsp;4</a>. 联立两个等式, 我们得到</p>
+<p><span class="math display">\[
+\int p(x,y) \, \lambda(dx)=\frac{PY^{-1}(dy)}{\mu(dy)}\ a.s..
+\]</span></p>
+<p>使用类似的方法可以得到另外一个等式的结果.</p>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script>
+(function () {
+  function makeProofsCollapsible() {
+    const proofs = document.querySelectorAll("div.proof");
+
+    proofs.forEach(function (proof) {
+      if (proof.dataset.collapsibleReady === "true") return;
+
+      const details = document.createElement("details");
+
+      details.className = proof.className;
+      details.classList.add("proof-collapsible");
+      details.dataset.collapsibleReady = "true";
+
+      if (proof.id) {
+        details.id = proof.id;
+      }
+
+      details.open = proof.classList.contains("open");
+
+      const summary = document.createElement("summary");
+      const title = proof.querySelector(".proof-title");
+
+      if (title) {
+        summary.innerHTML = title.innerHTML;
+        title.remove();
+      } else {
+        summary.innerHTML = "<strong>Proof</strong>";
+      }
+
+      details.appendChild(summary);
+
+      while (proof.firstChild) {
+        details.appendChild(proof.firstChild);
+      }
+
+      proof.replaceWith(details);
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", makeProofsCollapsible);
+  } else {
+    makeProofsCollapsible();
+  }
+})();
+</script>
+<script>
+(function () {
+  function fixTheoremTitleSpacing() {
+    const titleSelectors = [
+      ".theorem-title",
+      ".lemma-title",
+      ".corollary-title",
+      ".proposition-title",
+      ".conjecture-title",
+      ".definition-title",
+      ".example-title",
+      ".exercise-title",
+      ".solution-title",
+      ".remark-title",
+      ".algorithm-title",
+      ".proof-title"
+    ].join(",");
+
+    document.querySelectorAll(titleSelectors).forEach(function (title) {
+      const p = title.parentElement;
+
+      if (!p || p.tagName.toLowerCase() !== "p") return;
+
+      /*
+        Quarto/Pandoc often inserts a text node like:
+        <p><span class="theorem-title">...</span>&nbsp;</p>
+
+        Remove whitespace-only text nodes, including non-breaking spaces.
+      */
+      Array.from(p.childNodes).forEach(function (node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          const cleaned = node.textContent.replace(/\u00a0/g, " ").trim();
+          if (cleaned === "") {
+            node.remove();
+          }
+        }
+      });
+
+      p.classList.add("math-env-title-p");
+
+      /*
+        If the paragraph only contains the title span after cleanup,
+        mark it as title-only.
+      */
+      const meaningfulChildren = Array.from(p.childNodes).filter(function (node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          return node.textContent.replace(/\u00a0/g, " ").trim() !== "";
+        }
+        return true;
+      });
+
+      if (meaningfulChildren.length === 1 && meaningfulChildren[0] === title) {
+        p.classList.add("math-env-title-only");
+      }
+
+      /*
+        If the title-only paragraph is followed by a list,
+        compress the gap between title and list.
+      */
+      const next = p.nextElementSibling;
+      if (
+        p.classList.contains("math-env-title-only") &&
+        next &&
+        (next.tagName.toLowerCase() === "ol" || next.tagName.toLowerCase() === "ul")
+      ) {
+        p.classList.add("math-env-title-before-list");
+      }
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", fixTheoremTitleSpacing);
+  } else {
+    fixTheoremTitleSpacing();
+  }
+})();
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "已复制");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "已复制");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/luyiyun\.github\.io\/Notes\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

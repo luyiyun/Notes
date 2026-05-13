@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="荣志炜">
+
+<title>Lp 空间 – Rong’s Notes</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-7dba656801d47940102fc4ffc3dc1a54.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../../styles.css">
+</head>
+
+<body class="nav-sidebar docked nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">Rong’s Notes</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="搜索"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="展开或折叠导航栏" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="../../../index.html" aria-current="page"> 
+<span class="menu-text">首页</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../src/learn/index.html"> 
+<span class="menu-text">专题学习</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../about.html"> 
+<span class="menu-text">关于</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/index.html">高等概率论</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/09-lp-spaces.html">Lp 空间</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">首页</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../../src/learn/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">专题学习</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../../src/learn/advanced-probability/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">高等概率论</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/01-introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">介绍</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/02-sigma-field.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sigma 域</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/03-measure.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">测度</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/04-outer-measure.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">外测度</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/05-measure-extension.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">测度扩张</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/06-distribution-function.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">分布函数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/07-measurable-functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">可测函数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/08-integration.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">积分</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/09-lp-spaces.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Lp 空间</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/10-signed-measures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">符号测度</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/11-radon-nikodym-derivative.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R-N 导数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/12-lebesgue-decomposition.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lebesgue 分解</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/13-finite-product-spaces.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">有限乘积空间</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/14-infinite-product-spaces.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">无限乘积空间</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/15-independence-and-conditional-expectation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">独立和条件期望</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/16-markov-chains-and-martingales.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">马尔可夫链与鞅</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/17-statistical-distributions-and-density-functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">统计分布与密度函数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/18-moments.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">矩</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/19-convergence-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">收敛理论</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../../src/learn/prml/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">PRML</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/prml/06-kernel-methods.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">核方法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/prml/07-sparse-kernel-machines.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">稀疏核机器</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../about.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">关于</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#背景" id="toc-背景" class="nav-link active" data-scroll-target="#背景">背景</a></li>
+  <li><a href="#定义" id="toc-定义" class="nav-link" data-scroll-target="#定义">定义</a></li>
+  <li><a href="#性质" id="toc-性质" class="nav-link" data-scroll-target="#性质">性质</a>
+  <ul class="collapse">
+  <li><a href="#线性封闭性" id="toc-线性封闭性" class="nav-link" data-scroll-target="#线性封闭性">线性封闭性</a></li>
+  <li><a href="#积分不等式" id="toc-积分不等式" class="nav-link" data-scroll-target="#积分不等式">积分不等式</a>
+  <ul class="collapse">
+  <li><a href="#holder-不等式" id="toc-holder-不等式" class="nav-link" data-scroll-target="#holder-不等式">Holder 不等式</a></li>
+  <li><a href="#cauchy-schwarz-不等式" id="toc-cauchy-schwarz-不等式" class="nav-link" data-scroll-target="#cauchy-schwarz-不等式">Cauchy-Schwarz 不等式</a></li>
+  <li><a href="#liapounov-不等式" id="toc-liapounov-不等式" class="nav-link" data-scroll-target="#liapounov-不等式">Liapounov 不等式</a></li>
+  <li><a href="#minkowski-不等式" id="toc-minkowski-不等式" class="nav-link" data-scroll-target="#minkowski-不等式">Minkowski 不等式</a></li>
+  <li><a href="#essen-bahr-不等式" id="toc-essen-bahr-不等式" class="nav-link" data-scroll-target="#essen-bahr-不等式">Essen-Bahr 不等式</a></li>
+  <li><a href="#jensen-不等式" id="toc-jensen-不等式" class="nav-link" data-scroll-target="#jensen-不等式">Jensen 不等式</a></li>
+  </ul></li>
+  <li><a href="#l_infty" id="toc-l_infty" class="nav-link" data-scroll-target="#l_infty"><span class="math inline">\(L_{\infty}\)</span></a></li>
+  <li><a href="#线性赋范空间" id="toc-线性赋范空间" class="nav-link" data-scroll-target="#线性赋范空间">线性赋范空间</a></li>
+  <li><a href="#完备性" id="toc-完备性" class="nav-link" data-scroll-target="#完备性">完备性</a></li>
+  <li><a href="#p1" id="toc-p1" class="nav-link" data-scroll-target="#p1"><span class="math inline">\(0&lt;p&lt;1\)</span></a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/index.html">高等概率论</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/09-lp-spaces.html">Lp 空间</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Lp 空间</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">作者</div>
+    <div class="quarto-title-meta-contents">
+             <p>荣志炜 </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">发布于</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">2025年11月11日</p>
+    </div>
+  </div>
+  
+    <div>
+    <div class="quarto-title-meta-heading">修改于</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date-modified">2026年5月13日</p>
+    </div>
+  </div>
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="背景" class="level1">
+<h1>背景</h1>
+<p>Lp 空间的出现是分析学从具体函数向量空间化的关键一步，其背景在于为可测函数集合赋予了完备的拓扑结构。 在测度理论的基础上，通过勒贝格积分定义函数的 p- 范数，使得我们可以衡量<strong>函数的大小</strong>和<strong>函数间的距离</strong>，这是将<strong>有限维欧氏空间的几何直观推广到无穷维函数空间的自然延伸</strong>。 这一构造最重要的意义在于其<strong>完备性</strong>：<strong>Lp 空间是巴拿赫空间（完备的赋范线性空间），这意味着任何柯西序列都收敛于空间内部的一点，从而保证了极限运算的封闭性与稳定性</strong>，为泛函分析理论的建立提供了最重要和最典型的范例。</p>
+<p>在高等概率论中，整个理论框架都构建于测度论之上，一个概率空间本质上就是一个总测度为 1 的测度空间。在此背景下，Lp 空间的意义尤为重大：<strong>它为随机变量的分类和收敛性分析提供了严格的数学语言。一个随机变量可看作是概率空间上的一个可测函数，其 p 次绝对矩的有限性就等价于该函数属于相应的 Lp 空间。</strong> 因此，Lp 空间成了研究随机变量不同性质（如方差、偏度）的天然场所，并且定义了概率论中重要的收敛模式，例如 <strong>“均方收敛”</strong>（即 L2 空间中的收敛），为中心极限定理等核心结果的精确阐述与证明奠定了不可或缺的分析基础。</p>
+</section>
+<section id="定义" class="level1">
+<h1>定义</h1>
+<div id="def-lp" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 1 (Lp 空间)</strong></span> 设 <span class="math inline">\((X,\mathcal{F},\mu)\)</span> 是一个测度空间，<span class="math inline">\(1\leq p&lt;\infty\)</span>，定义</p>
+<p><span class="math display">\[
+L_{p}(X,\mathcal{F},\mu):=\left\{  f|f measurable, \int _{X}
+\left| f \right| ^{p} \, d\mu  &lt;\infty\right \},
+\]</span></p>
+<p>简记为 <span class="math inline">\(L_{p}\)</span>。此外，我们进一步定义</p>
+<p><span class="math display">\[
+||f||_{p}:=\left[ \int _{X}|f|^{p} \, d\mu  \right] ^{1/p},
+\]</span></p>
+<p>并且记 <span class="math inline">\(\lVert f \rVert=\lVert f \rVert_{1}\)</span>，容易有下面的结论</p>
+<p><span class="math display">\[
+f\in L_{p}\iff \lVert f \rVert _{p}&lt;\infty.
+\]</span></p>
+</div>
+</section>
+<section id="性质" class="level1">
+<h1>性质</h1>
+<p><span class="math inline">\(L_{p}\)</span> 空间中的函数存在一些值得讨论的性质，特别是一些不等式。</p>
+<section id="线性封闭性" class="level2">
+<h2 class="anchored" data-anchor-id="线性封闭性">线性封闭性</h2>
+<p>首先我们需要证明两个引理。</p>
+<div id="lem-lp-power-sum-bound" class="theorem lemma">
+<p><span class="theorem-title"><strong>引理 1 (Lemma)</strong></span> 对任何 <span class="math inline">\(a,b\in\mathbb{R}\)</span> 和 <span class="math inline">\(1\leq p&lt;\infty\)</span>，有</p>
+<p><span class="math display">\[
+\left| a+b \right| ^{p}\leq 2^{p-1}(\left| a \right| ^{p}+\left| b \right| ^{p})
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>当 <span class="math inline">\(a=0\)</span> 或 <span class="math inline">\(b=0\)</span> 或 <span class="math inline">\(p=1\)</span> 的时候，结论显然成立。我们现在只需要去证明其他的情况即可。 首先，我们来证明 <span class="math inline">\(a,b\in\mathbb{R}^{+}\)</span>，不等式 <a href="#eq-lp-convex-auxiliary">eq-lp-convex-auxiliary</a> 成立。</p>
+<p><span class="math display">\[
+2^{p-1}[x^{p}+(1-x)^{p}]\geq 1,\forall x \in (0,1)
+\]</span></p>
+<p><span id="eq-lp-convex-auxiliary"></span></p>
+<p>这个是容易证明的，只需要使用基础的微积分就可以解决。先对函数</p>
+<p><span class="math display">\[
+f(x)=2^{p-1}[x^{p}+(1-x)^{p}]
+\]</span></p>
+<p>求导，得到其导函数为</p>
+<p><span class="math display">\[
+f'(x)=2^{p-1}p[x^{p-1}-(1-x)^{p-1}].
+\]</span></p>
+<p><span id="eq-lp-convex-derivative"></span></p>
+<p>我们来分析 <a href="#eq-lp-convex-derivative">eq-lp-convex-derivative</a>，当 <span class="math inline">\(x\)</span> 较小（接近 0）的时候，<span class="math inline">\(f'(x)&lt;0\)</span>，当 <span class="math inline">\(x\)</span> 较大（接近 1）的时候，<span class="math inline">\(f'(x)&gt;0\)</span>，所以 <span class="math inline">\(f(x)\)</span> 在 <span class="math inline">\((0,1)\)</span> 中存在一个极小值，是 <span class="math inline">\(x=0.5\)</span> 的时候。此时，我们有 <span class="math inline">\(f(1/2)=1\)</span>。不等式 <a href="#eq-lp-convex-auxiliary">eq-lp-convex-auxiliary</a> 得到证明。</p>
+<p>因此，对于任何 <span class="math inline">\(a,b\in\mathbb{R}^{+}\)</span>，我们有</p>
+<p><span class="math display">\[
+\begin{align}
+&amp;2^{p-1}\left[ \left( \frac{a}{a+b} \right)^{p}+\left( \frac{b}{a+b} \right) ^{p}\right]\geq 1
+\implies
+2^{p-1}[a^{p}+b^{p}]\geq(a+b)^{p}.
+\end{align}
+\]</span></p>
+<p>当 <span class="math inline">\(a,b\in\mathbb{R}\)</span> 时，有</p>
+<p><span class="math display">\[
+\left| a+b \right| \leq \left| a \right| +\left| b \right| ,
+\]</span></p>
+<p>因此，有</p>
+<p><span class="math display">\[
+(\left| a+b \right|)^{p}\leq
+(\left| a \right| +\left| b \right|)^{p}\leq
+2^{p-1}[|a|^{p}+|b|^{p}].
+\]</span></p>
+<p>问题得证。</p>
+</div>
+<p>由上面的引理，关于 <span class="math inline">\(L_{p}\)</span> 我们有下面的性质：</p>
+<div id="thm-lp-linear-closure" class="theorem">
+<p><span class="theorem-title"><strong>定理 1 (线性封闭性)</strong></span> <span class="math inline">\(L_{p}\)</span> 对线性运算是封闭的，即 <span class="math inline">\(\forall 1\leq p&lt;\infty,\forall a,b\in\mathbb{R}\)</span>，有</p>
+<p><span class="math display">\[
+f,g\in L_{p}\implies af+bg\in L_{p}.
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span><span class="math display">\[
+\begin{align}
+\int \left| af+bg \right|^{p}  \, d\mu \leq
+2^{p-1}\left[
+\int \left| af \right|^{p} \, d\mu+\int \left| bg \right|^{p}  \, d\mu
+\right] \leq
+2^{p-1}\left[
+|a|^{p}\int \left| f \right|^{p} \, d\mu+|b|^{p}\int \left| g \right|^{p}  \, d\mu
+\right]
+&lt;\infty.
+\end{align}
+\]</span></p>
+</div>
+</section>
+<section id="积分不等式" class="level2">
+<h2 class="anchored" data-anchor-id="积分不等式">积分不等式</h2>
+<section id="holder-不等式" class="level3">
+<h3 class="anchored" data-anchor-id="holder-不等式">Holder 不等式</h3>
+<p>同样，首先我们先需要证明一个引理。</p>
+<div id="lem-young-inequality" class="theorem lemma">
+<p><span class="theorem-title"><strong>引理 2 (Lemma)</strong></span> 若 <span class="math inline">\(1&lt;p,q&lt;\infty\)</span> 且 <span class="math inline">\(\frac{1}{p}+\frac{1}{q}=1\)</span>，则对于任何 <span class="math inline">\(a,b\in\mathbb{R}\setminus\mathbb{R}^{-}\)</span>，有</p>
+<p><span class="math display">\[
+a^{1/p}b^{1/q}\leq \frac{a}{p}+\frac{b}{q},
+\]</span></p>
+<p>而且等号成立当且仅当 <span class="math inline">\(a=b\)</span>。</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>不难看出 <span class="math inline">\(ab=0\)</span> 时，引理成立。所以，不妨设 <span class="math inline">\(a,b\in\mathbb{R}^{+}\)</span>，容易证明上述不等式等价于证明</p>
+<p><span class="math display">\[
+\left[ \frac{a}{b} \right]^{1/p}\leq \frac{1}{p}\frac{a}{b}+\frac{1}{q}.
+\]</span></p>
+<p><span id="eq-young-ratio-form"></span></p>
+<p>令 <span class="math inline">\(\alpha=\frac{1}{p}\)</span>，证明不等式 <a href="#eq-young-ratio-form">eq-young-ratio-form</a> 等价于证明 <span class="math inline">\(\forall x \in\mathbb{R}^{+}\)</span> 有</p>
+<p><span class="math display">\[
+x^{\alpha}\leq 1+\alpha(x-1).
+\]</span></p>
+<p><span id="eq-young-tangent-bound"></span></p>
+<p>我们可以使用基本微积分的方式来证明上式： 令 <span class="math inline">\(f(x)=x^{\alpha}-\alpha(x-1)\)</span>，可以得到其导函数和二次导函数有</p>
+<p><span class="math display">\[
+\begin{align}
+&amp;f'(x)=\alpha x^{\alpha-1}-\alpha, \\
+&amp;f''(x)=\alpha(\alpha-1)x^{\alpha-2},
+\end{align}
+\]</span></p>
+<p>注意，这里的 <span class="math inline">\(\alpha&gt;1\)</span>。容易知道，<span class="math inline">\(\forall a\in\mathbb{R}^{+},f''(x)&gt;0\)</span>，<span class="math inline">\(f(x)\)</span> 是一个凸函数，有一个极小值。这个极小值是 <span class="math inline">\(x=1\)</span>，此时 <span class="math inline">\(f(1)=1\)</span>。这就证明了不等式 <a href="#eq-young-tangent-bound">eq-young-tangent-bound</a>，并且等号当且仅当 <span class="math inline">\(x=1\)</span> 时成立。利用我们前面的论述，引理得证。</p>
+</div>
+<p>下面，我们来证明下面的 Holder 不等式。</p>
+<div id="thm-holder-inequality" class="theorem">
+<p><span class="theorem-title"><strong>定理 2 (Holder 不等式)</strong></span> 如果 <span class="math inline">\(1&lt;p,q&lt;\infty\)</span>，并且满足 <span class="math inline">\(\frac{1}{p}+\frac{1}{q}=1\)</span>，则对于任何 <span class="math inline">\(f,g\in L_{p}\)</span>，有</p>
+<p><span class="math display">\[
+\lVert fg \rVert \leq \lVert f \rVert _{p}\lVert g \rVert _{q},
+\]</span></p>
+<p>并且等号成立的充分必要条件是存在不全为 0 的 <span class="math inline">\(\alpha,\beta\geq 0\)</span> 使得</p>
+<p><span class="math display">\[
+a\lvert f \rvert ^{p}=\beta \lvert g \rvert ^{q}\ a.e.
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>不难看出，如果 <span class="math inline">\(f=0\)</span> a.e.或 <span class="math inline">\(g=0\)</span> a.e.，等号成立。因此，我们不妨认为 <span class="math inline">\(f,g\neq 0\)</span> a.e.，也就是 <span class="math inline">\(0&lt;\lVert f \rVert_{p},\lVert g \rVert_{q}&lt;\infty\)</span>，令引理中的</p>
+<p><span class="math display">\[
+a=\left( \frac{\lvert f \rvert }{\lVert f \rVert }_{p} \right)^{p},\quad
+b=\left( \frac{\lvert g \rvert }{\lVert g \rVert }_{q} \right)^{q},
+\]</span></p>
+<p>根据 <a href="#lem-young-inequality" class="quarto-xref">引理&nbsp;2</a>，我们有</p>
+<p><span class="math display">\[
+\frac{\lvert fg \rvert }{\lVert f \rVert _{p}\lVert g \rVert _{q}}\leq
+\frac{1}{p}\frac{\lvert f \rvert ^{p}}{\lVert f \rVert _{p}^{p}}+
+\frac{1}{q}\frac{\lvert g \rvert ^{q}}{\lVert g \rVert ^{q}_{q}}
+\ a.e.,
+\]</span></p>
+<p><span id="eq-holder-normalized-bound"></span></p>
+<p>两端同时取积分，得到</p>
+<p><span class="math display">\[
+\lVert fg \rVert \leq \lVert f \rVert _{p}\lVert g \rVert _{q}.
+\]</span></p>
+<p><span id="eq-holder-integral-bound"></span></p>
+<p>注意到，由不等式 <a href="#eq-holder-normalized-bound">eq-holder-normalized-bound</a> 可以推知</p>
+<p><span class="math display">\[
+\frac{1}{p}\frac{\lvert f \rvert ^{p}}{\lVert f \rVert _{p}^{p}}+
+\frac{1}{q}\frac{\lvert g \rvert ^{q}}{\lVert g \rVert ^{q}_{q}}-
+\frac{\lvert fg \rvert }{\lVert f \rVert _{p}\lVert g \rVert _{q}}\geq 0
+\ a.e.
+\]</span></p>
+<p>根据前面的性质，我们可以知道，不等式 <a href="#eq-holder-integral-bound">eq-holder-integral-bound</a> 中等式成立当且仅当 <a href="#eq-holder-normalized-bound">eq-holder-normalized-bound</a> 等式成立。有根据 <a href="#lem-young-inequality" class="quarto-xref">引理&nbsp;2</a>，等号成立的充分比较条件为</p>
+<p><span class="math display">\[
+\left( \frac{\lvert f \rvert }{\lVert f \rVert }_{p} \right)^{p}=
+\left( \frac{\lvert g \rvert }{\lVert g \rVert }_{q} \right)^{q}
+\iff
+\lVert g \rVert ^{q}_{q}\lvert f \rvert ^{p}=
+\lVert f \rVert _{p}^{p}\lvert g \rvert ^{q},
+\]</span></p>
+<p><span id="eq-holder-equality-condition"></span></p>
+<p>考虑到 <span class="math inline">\(fg=0\)</span> a.e.的情况，这个条件就是定理中所描述的情况。我们可以简单证明一下，首先，容易知道</p>
+<p><span class="math display">\[
+\lVert g \rVert ^{q}_{q}\lvert f \rvert ^{p}=
+\lVert f \rVert _{p}^{p}\lvert g \rvert ^{q}
+\]</span></p>
+<p>和 <span class="math inline">\(fg=0\)</span> a.e.蕴含定理中的条件；那么若定理中的条件成立，并且 <span class="math inline">\(fg\neq 0\)</span> a.e.时，我们有</p>
+<p><span class="math display">\[
+\alpha \lVert f \rVert _{p}^{p}=\beta \lVert g \rVert ^{q}_{q} \implies
+\frac{\alpha \lvert f \rvert ^{p}}{\alpha \lVert f \rVert _{p}^{p}}
+=\frac{\beta \lvert g \rvert ^{q}}{\beta \lVert g \rVert ^{q}_{q}}
+\implies\frac{\lvert f \rvert ^{p}}{\lVert f \rVert _{p}^{p}}
+=\frac{\lvert g \rvert ^{q}}{\lVert g \rVert ^{q}_{q}},
+\]</span></p>
+<p>也就是式 <a href="#eq-holder-equality-condition">eq-holder-equality-condition</a>。</p>
+</div>
+<p>Holder 不等式的重要性不言而喻，更加重要的是要意识到什么时候去使用它。后面我们会知道，<span class="math inline">\(L_{p}\)</span> 其实是一个范数空间，所以涉及到<strong>两个函数相乘的范数</strong>或<strong>两个函数范数乘积</strong>时，<a href="#thm-holder-inequality" class="quarto-xref">定理&nbsp;2</a> 可能会起到作用。</p>
+</section>
+<section id="cauchy-schwarz-不等式" class="level3">
+<h3 class="anchored" data-anchor-id="cauchy-schwarz-不等式">Cauchy-Schwarz 不等式</h3>
+<p>根据 <a href="#thm-holder-inequality" class="quarto-xref">定理&nbsp;2</a>, 我们可以得到另外一个使用非常多的不等式, 即</p>
+<div id="thm-cauchy-schwarz-inequality" class="theorem">
+<p><span class="theorem-title"><strong>定理 3 (Cauchy-Schwarz 不等式)</strong></span> 对 <span class="math inline">\(f,g\in L_{2}\)</span>，有</p>
+<p><span class="math display">\[
+\lVert fg \rVert^{2} \leq \lVert f \rVert _{2}^{2}\lVert g \rVert _{2}^{2},
+\]</span></p>
+<p>并且等号成立的充分必要条件是存在不全为 0 的 <span class="math inline">\(\alpha,\beta\geq 0\)</span> 使得</p>
+<p><span class="math display">\[
+a\lvert f \rvert ^{2}=\beta \lvert g \rvert ^{2}\ a.e.
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>令 <span class="math inline">\(p=q=2\)</span>, 然后利用 Holder 不等式即可.</p>
+</div>
+<p>该不等式的一个重要作用是去证明 <strong>?@thm-covariance-inequality</strong>.</p>
+</section>
+<section id="liapounov-不等式" class="level3">
+<h3 class="anchored" data-anchor-id="liapounov-不等式">Liapounov 不等式</h3>
+<p>根据 <a href="#thm-holder-inequality" class="quarto-xref">定理&nbsp;2</a>, 我们还可以得到另外一个重要的不等式, 其描述了上标变化时的行为.</p>
+<div id="thm-liapounov-inequality" class="theorem">
+<p><span class="theorem-title"><strong>定理 4 (Liapounov 不等式)</strong></span> 对于任意 <span class="math inline">\(1\leq r\leq s\)</span>, 假设 <span class="math inline">\(f \in L_{s}\)</span>, 则有</p>
+<p><span class="math display">\[
+\lVert f \rVert _{r}\leq \lVert g \rVert _{s}.
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>对随机变量 <span class="math inline">\(\lvert f \rvert^{r}\)</span> 和 <span class="math inline">\(1\)</span>, 以及 <span class="math inline">\(p=\frac{s}{r},q=1 / \left( 1 - \frac{1}{p} \right)\)</span> 应用 Holder 不等式.</p>
+</div>
+</section>
+<section id="minkowski-不等式" class="level3">
+<h3 class="anchored" data-anchor-id="minkowski-不等式">Minkowski 不等式</h3>
+<p>我们可以使用 <a href="#thm-holder-inequality" class="quarto-xref">定理&nbsp;2</a> 直接得到 minkowski 不等式。</p>
+<div id="thm-minkowski-inequality" class="theorem">
+<p><span class="theorem-title"><strong>定理 5 (Minkowski 不等式)</strong></span> 设 <span class="math inline">\(1\leq p&lt;\infty\)</span>，则对于任何 <span class="math inline">\(f,g\in L_{p}\)</span>，有</p>
+<p>$$</p>
+<p>f+g <em>{p}f </em>{p}+ g _{p}. $$</p>
+<p>并且等号成立的充分必要条件是 (1) 当 <span class="math inline">\(p=1\)</span> 时，<span class="math inline">\(fg\geq 0\)</span> a.e.； (2) 当 <span class="math inline">\(1&lt;p&lt;\infty\)</span> 时，存在不全为 0 的 <span class="math inline">\(\alpha,\beta\geq 0\)</span> 使得 <span class="math inline">\(\alpha f=\beta g\)</span> a.e.。</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>当 <span class="math inline">\(p=1\)</span> 时，结论显然成立。因为根据实数的性质： <span class="math inline">\(\forall a,b\in\mathbb{R}\)</span>，有</p>
+<p><span class="math display">\[
+\lvert a+b \rvert \leq \lvert a \rvert +\lvert b \rvert ,
+\]</span></p>
+<p>其中等号成立当且仅当 <span class="math inline">\(ab\geq 0\)</span>。 当 <span class="math inline">\(1&lt;p&lt;\infty\)</span>，记 <span class="math inline">\(q=\frac{p}{p-1}\)</span>，可知 <span class="math inline">\(\frac{1}{p}+\frac{1}{q}=1\)</span>，则根据 <a href="#thm-holder-inequality" class="quarto-xref">定理&nbsp;2</a>，有</p>
+<p><span class="math display">\[
+\begin{align}
+\lVert f+g \rVert _{p}^{p}&amp;=
+\int _{x}\lvert f+g \rvert ^{p} \, d\mu \\
+&amp;\leq \int _{X}\lvert f \rvert \lvert f+g \rvert ^{p-1} \, d\mu
++\int _{X}\lvert g \rvert \lvert f+g \rvert ^{p-1} \, d\mu \\
+&amp;\leq \lVert f \rVert _{p}\lVert \lvert f+g \rvert ^{p-1} \rVert _{q}
++\lVert g \rVert _{p}\lVert \lvert f+g \rvert ^{p-1} \rVert _{q} \\
+&amp;=(\lVert f \rVert _{p}+\lVert g \rVert _{p})\lVert f+g \rVert _{p}^{p-1}
+\end{align}
+\]</span></p>
+<p><span id="eq-minkowski-holder-step"></span></p>
+<p>上述第三行使用到了 <a href="#thm-holder-inequality" class="quarto-xref">定理&nbsp;2</a>。当 <span class="math inline">\(\lVert f+g \rVert_{p}=0\)</span> 时， <a href="#thm-minkowski-inequality" class="quarto-xref">定理&nbsp;5</a> 显然成立，并且等号成立当且仅当 <span class="math inline">\(f=g=0\)</span> a.e.。当 <span class="math inline">\(\lVert f+g \rVert_{p}&gt;0\)</span> 时，则 <a href="#eq-minkowski-holder-step">eq-minkowski-holder-step</a> 式两端可以同时除以 <span class="math inline">\(\lVert f+g \rVert_{p}^{p-1}\)</span>，从而得到 <a href="#thm-minkowski-inequality" class="quarto-xref">定理&nbsp;5</a>。等号当且仅当 <a href="#eq-minkowski-holder-step">eq-minkowski-holder-step</a> 中两个不等号中等号成立。这意味着： (1) <span class="math inline">\(fg\geq 0\)</span> a.e.； (2) <span class="math inline">\(\exists\)</span> 不全为 0 的 <span class="math inline">\(a,b\geq 0\)</span> 和不全为 0 的 <span class="math inline">\(c,d\geq 0\)</span>，满足</p>
+<p><span class="math display">\[
+a\lvert f \rvert ^{p}=b\lvert f+g \rvert ^{p}\ a.e., \quad
+c\lvert g \rvert ^{p}=d\lvert f+g \rvert ^{p}\ a.e.
+\]</span></p>
+<p>这两个条件等价于定理中的条件 (2)。</p>
+</div>
+<p>当遇到两个函数<strong>加和的范数</strong>或<strong>范数的加和</strong>时，可以考虑 <a href="#thm-minkowski-inequality" class="quarto-xref">定理&nbsp;5</a>。此外，可以知道，该不等式其实是<strong>三角不等式</strong>（<span class="math inline">\(\lvert a+b \rvert\leq \lvert a \rvert+\lvert b \rvert\)</span>）的推广。而三角不等式是范数定义的重要部分。 <a href="#thm-minkowski-inequality" class="quarto-xref">定理&nbsp;5</a> 可以轻松推广到超过两个随机变量的情况.</p>
+</section>
+<section id="essen-bahr-不等式" class="level3">
+<h3 class="anchored" data-anchor-id="essen-bahr-不等式">Essen-Bahr 不等式</h3>
+<p>其不止将 <a href="#thm-minkowski-inequality" class="quarto-xref">定理&nbsp;5</a> 推广到了超过两个随机变量的情况, 并且得到了更紧的形式.</p>
+<div id="thm-essen-bahr-inequality" class="theorem">
+<p><span class="theorem-title"><strong>定理 6 (Essen-Bahr 不等式)</strong></span> 假设存在 <span class="math inline">\(f_{1},\dots,f_{n}\in L_{p}\)</span>, 并且有 <span class="math inline">\(\mathbb{E}f_{i}=0,\forall i=1,\dots,n\)</span>. 则有</p>
+<p><span class="math display">\[
+\mathbb{E}\left\lvert  \sum\limits_{i=1}^{n}f_{i}  \right\rvert ^{p}\leq
+C_{p,n}\sum\limits_{i=1}^{n}\mathbb{E}\lvert f_{i} \rvert ^{p},
+\]</span></p>
+<p>其中 - 若 <span class="math inline">\(p \in [1,2]\)</span>, 则 <span class="math inline">\(C_{p,n}=C_{p}\)</span> 仅依赖于 <span class="math inline">\(p\)</span>. - 若 <span class="math inline">\(p&gt;2\)</span>, 则 <span class="math inline">\(C_{p,n}=\frac{C_{p}}{n^{1-p/2}}\)</span>, 其中 <span class="math inline">\(C_{p}\)</span> 仅依赖于 <span class="math inline">\(p\)</span>.</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>略</p>
+</div>
+</section>
+<section id="jensen-不等式" class="level3">
+<h3 class="anchored" data-anchor-id="jensen-不等式">Jensen 不等式</h3>
+<div id="thm-jensen-inequality" class="theorem">
+<p><span class="theorem-title"><strong>定理 7 (Jensen 不等式)</strong></span> 存在一个 convex function <span class="math inline">\(g\)</span> 定义在一个 open convex <span class="math inline">\(A\in \mathbb{R}^{k}\)</span>, <span class="math inline">\(f\)</span> 是一个定义在概率空间中的随机向量, 并且有 <span class="math inline">\(\mathbb{E}f&lt;\infty\)</span> 和 <span class="math inline">\(P(f\in A)=1\)</span>, 则有</p>
+<p><span class="math display">\[
+g(\mathbb{E}f)\leq \mathbb{E}(g(f)).
+\]</span></p>
+<p>若 <span class="math inline">\(g\)</span> 是 strict convex, 则 <span class="math inline">\(\leq\)</span> 可以替换为 <span class="math inline">\(&lt;\)</span>, 除非 <span class="math inline">\(P(g(f)=\mathbb{E}g(f))=1\)</span>.</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>由 convex 的性质可知, <span class="math inline">\(\forall y\in A,\exists a_{y}\in A\)</span>,</p>
+<p><span class="math display">\[
+g(x)\geq g(y)+a_{y}(x-y)^{T}, \forall x \in A.
+\]</span></p>
+<p><span id="eq-convex-supporting-hyperplane"></span></p>
+<p>又因为</p>
+<p><span class="math display">\[
+P(f\in A)=1\implies \mathbb{E}f\in A,
+\]</span></p>
+<p>所以, 令 <span class="math inline">\(x=f,y=\mathbb{E}f\)</span>, 然后取期望, 得到</p>
+<p><span class="math display">\[
+\mathbb{E}(g(f))\geq g(\mathbb{E}f).
+\]</span></p>
+<p>其中 <span class="math inline">\(g(\mathbb{E}f)\)</span> 的积分存在性由 <strong>?@thm-integrable-exists</strong> 保证.</p>
+<p>如果 <span class="math inline">\(f\)</span> 是 strict convex, 则式 <a href="#eq-convex-supporting-hyperplane">eq-convex-supporting-hyperplane</a> 中的 <span class="math inline">\(\geq\)</span> 变为 <span class="math inline">\(&gt;\)</span>, 则加上 <strong>?@prp-order</strong> (3), 就完成了最后的证明.</p>
+</div>
+</section>
+</section>
+<section id="l_infty" class="level2">
+<h2 class="anchored" data-anchor-id="l_infty"><span class="math inline">\(L_{\infty}\)</span></h2>
+<p>实际上，上述的结论可以推广至 <span class="math inline">\(p=\infty\)</span> 的情况。</p>
+<div id="def-linfty" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 2 (Definition)</strong></span> 定义 <span class="math inline">\((X,\mathcal{F},\mu)\)</span> 上的所有 a.e. 有界可测函数的全体为 <span class="math inline">\(L_{\infty}(X,\mathcal{F},\mu)\)</span>，简记为 <span class="math inline">\(L_{\infty}\)</span>。对于其中的每个函数，定义</p>
+<p><span class="math display">\[
+\lVert f \rVert _{\infty}=\inf\{ a\in\mathbb{R}^{+}|\mu(\lvert f \rvert &gt;a)=0 \}.
+\]</span></p>
+</div>
+<div class="callout callout-style-default callout-note callout-empty-content callout-titled" title="可以理解为在去掉一些测度为 0 点后， $f$ 函数绝对值的最大值或上确界。">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>可以理解为在去掉一些测度为 0 点后， <span class="math inline">\(f\)</span> 函数绝对值的最大值或上确界。
+</div>
+</div>
+<div class="callout-body-container callout-body">
+
+</div>
+</div>
+<p>对于 <span class="math inline">\(L_{\infty}\)</span>，我们也可以得到类似 <a href="#thm-holder-inequality" class="quarto-xref">定理&nbsp;2</a> 和 <a href="#thm-minkowski-inequality" class="quarto-xref">定理&nbsp;5</a> 的结论。</p>
+<div id="thm-holder-minkowski-linfty" class="theorem">
+<p><span class="theorem-title"><strong>定理 8 (Holder 和 Minkowski 不等式扩展)</strong></span> 若 <span class="math inline">\(f\in L_{1},g\in L_{\infty}\)</span>，则有</p>
+<p><span class="math display">\[
+\lVert fg \rVert \leq \lVert f \rVert \lVert g \rVert _{\infty}.
+\]</span></p>
+<p>若 <span class="math inline">\(f,g\in L_{\infty}\)</span>，则有</p>
+<p><span class="math display">\[
+\lVert f+g \rVert _{\infty}\leq \lVert f \rVert _{\infty}+\lVert g \rVert _{\infty}.
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>根据 <a href="#def-linfty" class="quarto-xref">定义&nbsp;2</a>，我们有 <span class="math inline">\(\forall \epsilon&gt;0\)</span>，<span class="math inline">\(\lvert g \rvert\leq \lVert g \rVert_{\infty}+\epsilon\)</span> a.e.。所以有</p>
+<p><span class="math display">\[
+\begin{align}
+\lVert fg \rVert =\int _{X}\lvert fg \rvert  \, d\mu
+\leq (\lVert g \rVert _{\infty}+\epsilon)\int _{X}\lvert f \rvert  \, d\mu
+\leq \lVert g \rVert _{\infty}\lVert f \rVert+\epsilon\lVert f \rVert ,
+\end{align}
+\]</span></p>
+<p>令 <span class="math inline">\(\epsilon\to \infty\)</span>，我们得到第一个结论。 同样的道理，我们有</p>
+<p><span class="math display">\[
+\lvert f \rvert\leq \lVert f \rVert_{\infty}+\epsilon_{1},\quad
+\lvert g \rvert\leq \lVert g \rVert_{\infty}+\epsilon_{2},\quad
+\forall\epsilon_{1},\epsilon_{2}&gt;0,\quad a.e.
+\]</span></p>
+<p>进而有</p>
+<p><span class="math display">\[
+\lvert f+g \rvert \leq \lvert f \rvert +\lvert g \rvert \leq
+\lVert f \rVert_{\infty}+\lVert g \rVert _{\infty}+\epsilon_{1}+
+\epsilon_{2}\quad a.e.
+\]</span></p>
+<p>这意味着</p>
+<p><span class="math display">\[
+\lVert f+g \rVert _{\infty}\leq \lVert f \rVert _{\infty}+\lVert g \rVert _{\infty}.
+\]</span></p>
+</div>
+<p>注意到，<a href="#thm-holder-minkowski-linfty" class="quarto-xref">定理&nbsp;8</a> 中没有关于等式成立的条件。</p>
+</section>
+<section id="线性赋范空间" class="level2">
+<h2 class="anchored" data-anchor-id="线性赋范空间">线性赋范空间</h2>
+<p>根据上面得到的一些定理，我们实际上可以认识到，<span class="math inline">\(L_{p}\)</span> 实际上是一个具有特定代数和拓扑性质的结构。</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+注记
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>下面在证明中使用到了等价类的概念，如果不严格地来说，可以不使用这个概念，直接认为 <span class="math inline">\(f=g\ a.e.\)</span> 蕴含 <span class="math inline">\(f,g\)</span> 在 <span class="math inline">\(L_{p}\)</span> 中是相等的即可。当然这实际上是隐式地使用了等价类。 <strong>Theorem: 线性空间</strong> <span class="math inline">\(\forall 1\leq p\leq \infty\)</span>， <span class="math inline">\(L_{p}\)</span> 是一个实数域上的线性空间。</p>
+</div>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>因为有 almost everywhere 的存在，所以我们需要多做一些处理。</p>
+<p>首先，我们可以证明，almost everything equal 是一个等价关系，所以我们可以依据等价关系来构建不同的等价类，函数 <span class="math inline">\(f\)</span> 所对应的等价类用 <span class="math inline">\(\tilde{f}\)</span> 表示。现在我们可以认为空间 <span class="math inline">\(L_{p}\)</span> 的元素是这些等价类 <span class="math inline">\(\tilde{f}\)</span>。</p>
+<p>现在我们来定义元素之间的加法和数乘。我们定义</p>
+<p><span class="math display">\[
+\tilde{f}+\tilde{g}:=\tilde{f+g},\quad
+a \tilde{f}:=\tilde{af},
+\]</span></p>
+<p>容易证明，以上定义的运算是 well-defined。</p>
+<p>然后我们需要证明以上的运算是封闭的。当 <span class="math inline">\(1\leq p&lt;\infty\)</span> 时，可以通过 <a href="#thm-lp-linear-closure" class="quarto-xref">定理&nbsp;1</a> 直接得到。当 <span class="math inline">\(p=\infty\)</span> 时，显然也是封闭的。</p>
+<p>其次，我们需要去证明加法的结合律、交换律、单位元和逆元。结合律和交换律依赖于实数的结合律和交换律，容易证明是成立的。单位元是 <span class="math inline">\(\tilde{0}\)</span> 函数，逆元是 <span class="math inline">\(-\tilde{f}\)</span> ，容易证明是成立的。</p>
+<p>最后我们需要证明数乘的域单位元性质、对向量加法的分配率、对域加法的分配率、对域乘法的分配率。容易证明是成立的。于是，上述定理是成立的。</p>
+</div>
+<div id="thm-lp-normed-space" class="theorem">
+<p><span class="theorem-title"><strong>定理 9 (线性赋范空间)</strong></span> <span class="math inline">\(\forall 1\leq p\leq \infty\)</span>，<span class="math inline">\(\lVert f \rVert_{p}\)</span> 是一个范数，所以 <span class="math inline">\((L_{p},\lVert \cdot \rVert)\)</span> 是一个线性赋范空间。</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>我们只需要证明 <span class="math inline">\(\lVert \cdot \rVert\)</span> 是一个范数即可。首先，我们可以去定义</p>
+<p><span class="math display">\[
+\lVert \tilde{f} \rVert _{p}:=\lVert f \rVert _{p},
+\]</span></p>
+<p>容易证明，这个定义是 well-defined。</p>
+<p>这需要我们证明以下三个条件： (1) <span class="math inline">\(\lVert \tilde{f} \rVert_{p}\geq 0;\quad \lVert \tilde{f} \rVert_{p}=0\iff \tilde{f}=\tilde{0}\text{或}f=0\ a.e.\)</span>； (2) <span class="math inline">\(\lVert a\tilde{f} \rVert_{p}=\lvert a \rvert\lVert \tilde{f} \rVert_{p},\forall a\in \mathbb{R}\)</span>； (3) 三角不等式。</p>
+<ol type="1">
+<li>和 (2) 的证明是容易的，(3) 直接使用 <a href="#thm-minkowski-inequality" class="quarto-xref">定理&nbsp;5</a> 和 <a href="#thm-holder-minkowski-linfty" class="quarto-xref">定理&nbsp;8</a> 的结论即可。</li>
+</ol>
+</div>
+</section>
+<section id="完备性" class="level2">
+<h2 class="anchored" data-anchor-id="完备性">完备性</h2>
+<p>类似于数学分析中的柯西准则, 我们有如下的定理:</p>
+<div id="thm-09-lp-spaces-14" class="theorem">
+<p><span class="theorem-title"><strong>定理 10 (<span class="math inline">\(L_{p}\)</span> 空间的完备性)</strong></span> 设 <span class="math inline">\(0&lt;p\leq\infty\)</span>, 若 <span class="math inline">\(\{ f_{n} \}\subset L_{p}\)</span>, 并且满足</p>
+<p><span class="math display">\[
+\lim_{ n,m \to \infty } \lVert f_{n}-f_{m} \rVert_{p} =0,
+\]</span></p>
+<p>则存在 <span class="math inline">\(f\in L_{p}\)</span> 使得</p>
+<p><span class="math display">\[
+\lim_{ n \to \infty } \lVert f_{n}-f \rVert _{p}=0.
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>略</p>
+</div>
+<p>因此, 我们可以定义 <span class="math inline">\(L_{p},0&lt;p\leq \infty\)</span> 中的距离:</p>
+<p><span class="math display">\[
+\rho(f,g):= \lVert f-g \rVert _{p}.
+\]</span></p>
+<p>以上定理表明该<strong>距离具有完备性. 因此当 <span class="math inline">\(0&lt;p&lt;1\)</span> 时, <span class="math inline">\(L_{p}\)</span> 是一个完备的距离空间. 当 <span class="math inline">\(1\leq p\leq \infty\)</span> 时, <span class="math inline">\(L_{p}\)</span> 是一个 <a href="https://zh.wikipedia.org/wiki/%E5%B7%B4%E6%8B%BF%E8%B5%AB%E7%A9%BA%E9%97%B4">Banach 空间</a>, 也就是一个完备的 <a href="../../../src/learn/advanced-probability/08-integration.html#85cd4a">赋范线性空间</a> .</strong></p>
+</section>
+<section id="p1" class="level2">
+<h2 class="anchored" data-anchor-id="p1"><span class="math inline">\(0&lt;p&lt;1\)</span></h2>
+<p>以上的讨论只集中在 <span class="math inline">\(1\leq p\leq \infty\)</span> 的范围内，那对于 <span class="math inline">\(0&lt;p&lt;1\)</span> 的范围内，会有怎样的结论呢？</p>
+<p>我们依然定义</p>
+<p><span class="math display">\[
+L_{p}:=\left\{  f\mid\int _{X}\lvert f \rvert^{p}  \, d\mu &lt;\infty  \right\},
+\]</span></p>
+<p><strong>但是 <span class="math inline">\(\lVert \cdot \rVert_{p}\)</span> 的定义与之前不同（没有 <span class="math inline">\(1/p\)</span> 次幂）</strong>：</p>
+<p><span class="math display">\[
+\lVert f \rVert _{p}:=\int _{X}\lvert f \rvert^{p}  \, d\mu.
+\]</span></p>
+<p>这导致了</p>
+<p><span class="math display">\[
+\lVert af \rVert _{p}=\lvert a \rvert ^{p}\lVert f \rVert _{p},
+\]</span></p>
+<p>所以其不满足范数定义的第二个条件，<span class="math inline">\(\lVert \cdot \rVert_{p}\)</span> 不再是范数。但是，我们可以证明一个 Minkowski 不等式的类似物。</p>
+<div id="lem-quasi-norm-subadditivity" class="theorem lemma">
+<p><span class="theorem-title"><strong>引理 3 (Lemma)</strong></span> 若 <span class="math inline">\(0&lt;p&lt;1\)</span>，则 <span class="math inline">\(\lvert a+b \rvert^{p}\leq \lvert a \rvert^{p}+\lvert b \rvert^{p}\)</span>，<span class="math inline">\(\forall a,b\in\mathbb{R}\)</span>。</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>我们首先证明 <span class="math inline">\(f(x)=(1-x)^{p}+x^{p}\geq 1,\forall x \in(0,1)\)</span>。 我们可以直接使用微积分的方法，得到</p>
+<p><span class="math display">\[
+\begin{align}
+&amp;f'(x)=p(x^{p-1}-(1-x)^{p-1}), \\
+&amp;f''(x)=p(p-1)(x^{p-2}+(1-x)^{p-2}),
+\end{align}
+\]</span></p>
+<p>因为 <span class="math inline">\(p&lt;1\)</span>，所以 <span class="math inline">\(f''(x)\leq 0\)</span>，也就是说 <span class="math inline">\(f(x)\)</span> 是一个凹函数，<span class="math inline">\(f'(x)=0\implies x=1/2\)</span> 时 <span class="math inline">\(f(x)=2^{1-p}\)</span> 取到最大值，下界在 <span class="math inline">\(x\to0,1\)</span> 时取到， 我们有</p>
+<p><span class="math display">\[
+\lim_{ x \to 0 }f(x) =\lim_{ x \to 1 } f(x)=1,
+\]</span></p>
+<p>所以 <span class="math inline">\(f(x)\geq 1,\forall x \in(0,1)\)</span>。</p>
+<p>当 <span class="math inline">\(a,b&gt;0\)</span> 时，利用上面证明的结论，我们有</p>
+<p><span class="math display">\[
+\begin{align}
+\left( \frac{a}{a+b} \right)^{p}+\left( \frac{b}{a+b} \right)^{p}\geq 1
+\implies
+(a+b)^{p}\leq a^{p}+b^{p} \implies
+\lvert a+b \rvert ^{p}\leq \lvert a \rvert ^{p}+\lvert b \rvert ^{p}.
+\end{align}
+\]</span></p>
+<p>当 <span class="math inline">\(a\)</span> 或 <span class="math inline">\(b=0\)</span> 时，则结论显然成立。 当 <span class="math inline">\(a,b\in\mathbb{R}\)</span> 时，则</p>
+<p><span class="math display">\[
+\lvert a+b \rvert ^{p}\leq \lvert \lvert a \rvert +\lvert b \rvert  \rvert ^{p}\leq\lvert a \rvert ^{p}+\lvert b \rvert ^{p}.
+\]</span></p>
+<p>证毕。</p>
+</div>
+<div id="thm-quasi-minkowski-inequality" class="theorem">
+<p><span class="theorem-title"><strong>定理 11 (Minkowski 类似物)</strong></span> 若 <span class="math inline">\(0&lt;p&lt;1\)</span>，则 <span class="math inline">\(\lVert f+g \rVert_{p}\leq \lVert f \rVert_{p}+\lVert g \rVert_{p}\)</span>。</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>直接使用 <a href="#lem-quasi-norm-subadditivity" class="quarto-xref">引理&nbsp;3</a> 即可完成证明。</p>
+</div>
+<p>这使得我们可以通过这个定理形成一个 <span class="math inline">\(L_{p}\)</span> 上的距离，从而构成一个<strong>距离空间</strong>。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Question">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>为什么不加 <span class="math inline">\(1/p\)</span> 次幂？这会带来什么样的影响？</p>
+</div>
+</div>
+<p>注意，当 <span class="math inline">\(1\leq p\leq \infty\)</span> 时，我们可以通过范数来诱导一个距离。所以当 <span class="math inline">\(0&lt;p\leq \infty\)</span> 时，<span class="math inline">\(L_{p}\)</span> 都是一个距离空间，我可以讨论其上的拓扑性质。最<strong>显然的一个结论是：在这个距离下，<span class="math inline">\(L_{p}\)</span> 是完备的。因此，<span class="math inline">\(0&lt;p&lt;1\)</span> 时，<span class="math inline">\(L_{p}\)</span> 是一个完备的距离空间；<span class="math inline">\(1\leq p\leq \infty\)</span> 时，<span class="math inline">\(L_{p}\)</span> 是一个 Banach 空间。</strong>相关的信息将在 <a href="../../../src/learn/advanced-probability/19-convergence-theory.html">19_收敛理论</a> 中进一步进行讨论。</p>
+<div class="callout callout-style-default callout-important callout-titled" title="不等式逐步证明方法">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">重要</span>不等式逐步证明方法
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>这一节中证明了多个不等式，这些不等式的证明方法存在一些共性，我将其称为<strong>不等式逐步证明方法</strong>，总结如下。 1. 我们首先可以想一想，当将结论集中在一个子集中时，是否可以将结论推广至全集。比如，我们可以先假设结论在 <span class="math inline">\(\mathbb{R}^{+}\)</span> 上成立，看看是否可以在此基础上推广至 <span class="math inline">\(\mathbb{R}\)</span>。这样，我们就可以把问题集中在这个子集（<span class="math inline">\(\mathbb{R}^{+}\)</span>）上解决，降低了问题的复杂度。 2. 在上一步的基础上，我们查看一下是否可以削减变元的数量，比如将两个变元（<span class="math inline">\(a,b\)</span>）修改为一个变元（<span class="math inline">\(x\)</span>）。这样，我们实际上等价于在证明只含有一个变量的函数的不等式。 3. 在上一步的基础上，我们就可以利用简单微积分的知识来进行证明这个函数一个变量的函数的不等式。然后反向推导到第一层，完成整个证明。</p>
+</div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script>
+(function () {
+  function makeProofsCollapsible() {
+    const proofs = document.querySelectorAll("div.proof");
+
+    proofs.forEach(function (proof) {
+      if (proof.dataset.collapsibleReady === "true") return;
+
+      const details = document.createElement("details");
+
+      details.className = proof.className;
+      details.classList.add("proof-collapsible");
+      details.dataset.collapsibleReady = "true";
+
+      if (proof.id) {
+        details.id = proof.id;
+      }
+
+      details.open = proof.classList.contains("open");
+
+      const summary = document.createElement("summary");
+      const title = proof.querySelector(".proof-title");
+
+      if (title) {
+        summary.innerHTML = title.innerHTML;
+        title.remove();
+      } else {
+        summary.innerHTML = "<strong>Proof</strong>";
+      }
+
+      details.appendChild(summary);
+
+      while (proof.firstChild) {
+        details.appendChild(proof.firstChild);
+      }
+
+      proof.replaceWith(details);
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", makeProofsCollapsible);
+  } else {
+    makeProofsCollapsible();
+  }
+})();
+</script>
+<script>
+(function () {
+  function fixTheoremTitleSpacing() {
+    const titleSelectors = [
+      ".theorem-title",
+      ".lemma-title",
+      ".corollary-title",
+      ".proposition-title",
+      ".conjecture-title",
+      ".definition-title",
+      ".example-title",
+      ".exercise-title",
+      ".solution-title",
+      ".remark-title",
+      ".algorithm-title",
+      ".proof-title"
+    ].join(",");
+
+    document.querySelectorAll(titleSelectors).forEach(function (title) {
+      const p = title.parentElement;
+
+      if (!p || p.tagName.toLowerCase() !== "p") return;
+
+      /*
+        Quarto/Pandoc often inserts a text node like:
+        <p><span class="theorem-title">...</span>&nbsp;</p>
+
+        Remove whitespace-only text nodes, including non-breaking spaces.
+      */
+      Array.from(p.childNodes).forEach(function (node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          const cleaned = node.textContent.replace(/\u00a0/g, " ").trim();
+          if (cleaned === "") {
+            node.remove();
+          }
+        }
+      });
+
+      p.classList.add("math-env-title-p");
+
+      /*
+        If the paragraph only contains the title span after cleanup,
+        mark it as title-only.
+      */
+      const meaningfulChildren = Array.from(p.childNodes).filter(function (node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          return node.textContent.replace(/\u00a0/g, " ").trim() !== "";
+        }
+        return true;
+      });
+
+      if (meaningfulChildren.length === 1 && meaningfulChildren[0] === title) {
+        p.classList.add("math-env-title-only");
+      }
+
+      /*
+        If the title-only paragraph is followed by a list,
+        compress the gap between title and list.
+      */
+      const next = p.nextElementSibling;
+      if (
+        p.classList.contains("math-env-title-only") &&
+        next &&
+        (next.tagName.toLowerCase() === "ol" || next.tagName.toLowerCase() === "ul")
+      ) {
+        p.classList.add("math-env-title-before-list");
+      }
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", fixTheoremTitleSpacing);
+  } else {
+    fixTheoremTitleSpacing();
+  }
+})();
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "已复制");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "已复制");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/luyiyun\.github\.io\/Notes\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

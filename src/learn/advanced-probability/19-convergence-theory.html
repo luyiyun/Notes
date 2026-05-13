@@ -1,0 +1,2498 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="荣志炜">
+
+<title>收敛理论 – Rong’s Notes</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-7dba656801d47940102fc4ffc3dc1a54.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../../styles.css">
+</head>
+
+<body class="nav-sidebar docked nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">Rong’s Notes</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="搜索"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="展开或折叠导航栏" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="../../../index.html" aria-current="page"> 
+<span class="menu-text">首页</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../src/learn/index.html"> 
+<span class="menu-text">专题学习</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../about.html"> 
+<span class="menu-text">关于</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/index.html">高等概率论</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/19-convergence-theory.html">收敛理论</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">首页</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../../src/learn/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">专题学习</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../../src/learn/advanced-probability/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">高等概率论</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/01-introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">介绍</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/02-sigma-field.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sigma 域</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/03-measure.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">测度</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/04-outer-measure.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">外测度</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/05-measure-extension.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">测度扩张</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/06-distribution-function.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">分布函数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/07-measurable-functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">可测函数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/08-integration.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">积分</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/09-lp-spaces.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lp 空间</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/10-signed-measures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">符号测度</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/11-radon-nikodym-derivative.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R-N 导数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/12-lebesgue-decomposition.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lebesgue 分解</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/13-finite-product-spaces.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">有限乘积空间</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/14-infinite-product-spaces.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">无限乘积空间</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/15-independence-and-conditional-expectation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">独立和条件期望</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/16-markov-chains-and-martingales.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">马尔可夫链与鞅</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/17-statistical-distributions-and-density-functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">统计分布与密度函数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/18-moments.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">矩</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/19-convergence-theory.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">收敛理论</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../../src/learn/prml/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">PRML</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/prml/06-kernel-methods.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">核方法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/prml/07-sparse-kernel-machines.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">稀疏核机器</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../about.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">关于</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#19-convergence-theory-引言" id="toc-19-convergence-theory-引言" class="nav-link active" data-scroll-target="#19-convergence-theory-引言">引言</a></li>
+  <li><a href="#收敛定义" id="toc-收敛定义" class="nav-link" data-scroll-target="#收敛定义">收敛定义</a>
+  <ul class="collapse">
+  <li><a href="#几乎处处收敛" id="toc-几乎处处收敛" class="nav-link" data-scroll-target="#几乎处处收敛">几乎处处收敛</a></li>
+  <li><a href="#几乎一致收敛" id="toc-几乎一致收敛" class="nav-link" data-scroll-target="#几乎一致收敛">几乎一致收敛</a></li>
+  <li><a href="#依测度收敛" id="toc-依测度收敛" class="nav-link" data-scroll-target="#依测度收敛">依测度收敛</a></li>
+  <li><a href="#依分布收敛-弱收敛" id="toc-依分布收敛-弱收敛" class="nav-link" data-scroll-target="#依分布收敛-弱收敛">依分布收敛 (弱收敛)</a></li>
+  <li><a href="#平均收敛" id="toc-平均收敛" class="nav-link" data-scroll-target="#平均收敛">平均收敛</a></li>
+  </ul></li>
+  <li><a href="#收敛之间的关系" id="toc-收敛之间的关系" class="nav-link" data-scroll-target="#收敛之间的关系">收敛之间的关系</a>
+  <ul class="collapse">
+  <li><a href="#由强到弱" id="toc-由强到弱" class="nav-link" data-scroll-target="#由强到弱">由强到弱</a></li>
+  <li><a href="#反例" id="toc-反例" class="nav-link" data-scroll-target="#反例">反例</a></li>
+  <li><a href="#由弱到强" id="toc-由弱到强" class="nav-link" data-scroll-target="#由弱到强">由弱到强</a></li>
+  </ul></li>
+  <li><a href="#收敛速度-渐进记号" id="toc-收敛速度-渐进记号" class="nav-link" data-scroll-target="#收敛速度-渐进记号">收敛速度 (渐进记号)</a></li>
+  <li><a href="#弱收敛-依分布收敛" id="toc-弱收敛-依分布收敛" class="nav-link" data-scroll-target="#弱收敛-依分布收敛">弱收敛 (依分布收敛)</a></li>
+  <li><a href="#函数变换下的收敛" id="toc-函数变换下的收敛" class="nav-link" data-scroll-target="#函数变换下的收敛">函数变换下的收敛</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/index.html">高等概率论</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/19-convergence-theory.html">收敛理论</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">收敛理论</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">作者</div>
+    <div class="quarto-title-meta-contents">
+             <p>荣志炜 </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">发布于</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">2024年5月17日</p>
+    </div>
+  </div>
+  
+    <div>
+    <div class="quarto-title-meta-heading">修改于</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date-modified">2026年5月13日</p>
+    </div>
+  </div>
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="19-convergence-theory-引言" class="level1">
+<h1>引言</h1>
+<p>收敛理论 (或渐进理论) 研究随机变量的极限行为, 以及在极限时的分布情况. 这在统计分析中非常重要. 鉴于该部分内容实在太多, 我们分成几个部分进行介绍. 在本节中, 我们将主要介绍各种类型的可测函数收敛, 以及这些收敛之间的强弱关系.</p>
+<p>在本章中, 因为大多涉及到随机向量的定义, 所以我们利用 <span class="math inline">\(\lvert f \rvert\)</span> 来统一表示范数的概念. 也就是说, 如果 <span class="math inline">\(f=(f_{1},f_{2},\dots,f_{k})\)</span>, 则有 <span class="math display">\[
+\lvert f \rvert_{p} =\left( \sum\limits_{i=1}^{k}\lvert f_{i} \rvert ^{p} \right)^{\frac{1}{p}},
+\]</span> 默认是 <span class="math inline">\(p=2\)</span>. 至于 <strong>?@def-lp</strong> 中关于积分范数的定义, 我们使用 <span class="math display">\[
+\lVert f \rVert_{p}=\left( \int \lvert f \rvert^{p}_{p} \, d\mu \right)^{\frac{1}{p}}=\left( \int \sum\limits_{i=1}^{k}\lvert f_{i} \rvert ^{p} \right)^{\frac{1}{p}}
+=\left( \sum\limits_{i=1}^{k}\int \lvert f_{i} \rvert ^{p}  \right)^{\frac{1}{p}},
+\]</span> 当 <span class="math inline">\(f\)</span> 是一个随机向量时, 上述积分范数的定义将与 <a href="../../../src/learn/advanced-probability/08-integration.html">8_积分</a> 中的一致.</p>
+</section>
+<section id="收敛定义" class="level1">
+<h1>收敛定义</h1>
+<section id="几乎处处收敛" class="level2">
+<h2 class="anchored" data-anchor-id="几乎处处收敛">几乎处处收敛</h2>
+<div id="def-19-convergence-theory-1" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 1 (几乎处处收敛)</strong></span> 设 <span class="math inline">\(\{ f_{n},n=1,2,\dots \}\)</span> 和 <span class="math inline">\(f\)</span> 都是测度空间中 <span class="math inline">\((\Omega,\mathcal{F},\mu)\)</span> 上的<strong>可测函数</strong>或<strong>随机向量</strong>, 若 $$</p>
+<p>(<em>{ n }f</em>{n}f )=0, $$ 则称可测函数列 <span class="math inline">\(\{ f_{n},n=1,2,\dots \}\)</span> <strong>几乎处处以 <span class="math inline">\(f\)</span> 为极限</strong>, 记作 <span class="math inline">\(f_{n}\overset{ a.e. }{ \longrightarrow }f\)</span>. 若 <span class="math inline">\(f\)</span> <strong>a.e.有限</strong>(或者 <span class="math inline">\(f\in\mathbb{R}^{k}\)</span> a.e.) 并且 <span class="math inline">\(f_{n}\overset{ a.e. }{ \longrightarrow }f\)</span>, 则称 <span class="math inline">\(\{ f_{n},n=1,2,3,\dots \}\)</span> <strong>几乎处处收敛至 <span class="math inline">\(f\)</span></strong>. 如果 <span class="math inline">\(\mu\)</span> 是一个概率测度, 则我们也称 <span class="math inline">\(\{ f_{n} \}\)</span> <strong>几乎必然收敛至 <span class="math inline">\(f\)</span></strong>, 记作 <span class="math inline">\(f_{n}\overset{ a.s. }{ \longrightarrow }f\)</span>.</p>
+</div>
+<p>之后, 如果不做特殊说明, <span class="math inline">\(f_{n}\overset{ a.e. }{ \longrightarrow }f\)</span> 均代表<strong>几乎处处收敛至 <span class="math inline">\(f\)</span></strong>, 也就是 <span class="math inline">\(f\in\mathbb{R}^{k}\)</span> a.e.的。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="为什么我们要限制 $\lvert f \rvert=\infty$?">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>为什么我们要限制 <span class="math inline">\(\lvert f \rvert=\infty\)</span>?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>当存在 <span class="math inline">\(\lvert f \rvert=\infty\)</span> 时, <span class="math inline">\(\lim_{ n \to \infty }f_{n}(x)=f(x)=\infty\)</span> 并不代表 <span class="math inline">\(f_{n}\)</span> 会收敛至 <span class="math inline">\(f\)</span>, 因为无穷大的差可能也是无穷大. 为了避免这种情况, <span class="math inline">\(\lvert f \rvert=\infty\)</span> 的点不能太多, 最好是一个零测集.</p>
+</div>
+</div>
+<p>很多时候, 我们直接利用定义来证明几乎处处收敛是比较难的, 下面我们将介绍它的一个等价的测度表示, 可以用于证明:</p>
+<div id="prp-ae-convergence-equivalent" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 1 (几乎处处收敛的等价命题)</strong></span> <span class="math inline">\(f_{n}\overset{ a.e. }{ \longrightarrow }f\)</span> 当且仅当 <span class="math display">\[
+\mu(\mathop{\lim\sup}_{ n \to \infty } \{ \lvert f_{n}-f \rvert &gt;\epsilon \})=
+\mu\left( \bigcap_{m=1}^{\infty}
+\bigcup_{n=m}^{\infty}\{ \lvert f_{n}-f \rvert \geq\epsilon \} \right)
+=0,\quad
+\forall\epsilon&gt;0.
+\]</span></p>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="约定">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>约定
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>注意, 这里将 <span class="math inline">\(f_{n}(x)-f(x)\)</span> 没有定义的点也计入到 <span class="math inline">\(\{ \lvert f_{n}-f \rvert&gt;\epsilon \}\)</span> 中.</p>
+</div>
+</div>
+<p><span id="note-ae-convergence-convention"></span></p>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>我们首先来证明下面的一个等式 <span class="math display">\[
+\{ \lim_{ n \to \infty } f_{n}\neq f \}\cup \{ \lvert f \rvert =\infty \}
+=\bigcup_{k=1}^{\infty}\bigcap_{m=1}^{\infty}\bigcup_{n=m}^{\infty}
+\left\{  \lvert f_{n}-f \rvert \geq \frac{1}{k}  \right\}.
+\]</span></p>
+<p><span id="eq-ae-convergence-set-identity"></span></p>
+<p>首先, 我们证明左边 <span class="math inline">\(\subset\)</span> 右边. 若 <span class="math inline">\(\lvert f(x) \rvert=\infty\)</span>, 则不论 <span class="math inline">\(f_{n}(x)\)</span> 是有限还是无限, <span class="math inline">\(\lvert f_{n}(x)-f(x) \rvert\)</span> 都是 <span class="math inline">\(\infty\)</span> 或无定义, 包含在 <span class="math inline">\(\left\{  \lvert f_{n}-f \rvert&gt;\frac{1}{k}  \right\}\)</span> 中, 所以有 <span class="math display">\[
+\{ \lvert f \rvert =\infty \} \subset
+\bigcup_{k=1}^{\infty}\bigcap_{m=1}^{\infty}\bigcup_{n=m}^{\infty}
+\left\{  \lvert f_{n}-f \rvert \geq \frac{1}{k}  \right\}.
+\]</span> 若 <span class="math inline">\(\lvert f(x) \rvert&lt;\infty\)</span>, 利用极限的定义, 可以知道 <span class="math display">\[
+\begin{align}
+&amp;x \in \{ \lim_{ n \to \infty }f_{n}\neq f  \}\implies \\
+&amp;\exists k\in \mathbb{N}^{+},\forall m\in\mathbb{N}^{+},\exists
+n\geq m, \lvert f_{n}(x)-f(x) \rvert \geq \frac{1}{k} \implies \\
+&amp;x \in \bigcup_{k=1}^{\infty}\bigcap_{m=1}^{\infty}
+\bigcup_{n=m}^{\infty}\left\{  \lvert f_{n}-f \rvert \geq \frac{1}{k}  \right\}.
+\end{align}
+\]</span> 然后, 我们证明左边 <span class="math inline">\(\supset\)</span> 右边. 根据定义和 <a href="#note-ae-convergence-convention">约定</a> , 我们可以得到 <span class="math display">\[
+\left\{  \lvert f_{n}-f \rvert &gt;\frac{1}{k} \right\}=
+\left\{  \lvert f_{n}-f \rvert &gt;\frac{1}{k},\lvert f \rvert &lt;\infty \right\}
+\cup \{ \lvert f \rvert =\infty \},
+\]</span> 所以, 我们可以得到右侧等于 <span class="math display">\[
+\left( \bigcup_{k=1}^{\infty}\bigcap_{m=1}^{\infty}
+\bigcup_{n=m}^{\infty}\left\{  \lvert f_{n} -f \rvert&gt;\frac{1}{k}  \right\} \cap \{ \lvert f \rvert &lt;\infty \} \right) \cup
+\{ \lvert f \rvert =\infty \},
+\]</span> 若 <span class="math inline">\(x\)</span> 在第一项中, 则蕴含 <span class="math display">\[
+x \in \{ \lim_{ n \to \infty } f_{n}\neq f \},
+\]</span> 这意味着左边 <span class="math inline">\(\supset\)</span> 右边,</p>
+<p>通过等式 <a href="#eq-ae-convergence-set-identity">eq-ae-convergence-set-identity</a> 可以很容易得到几乎处处收敛至 <span class="math inline">\(f\)</span>.</p>
+</div>
+</section>
+<section id="几乎一致收敛" class="level2">
+<h2 class="anchored" data-anchor-id="几乎一致收敛">几乎一致收敛</h2>
+<div id="def-19-convergence-theory-3" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 2 (几乎一致收敛)</strong></span> 设 <span class="math inline">\(\{ f_{n},n=1,2,\dots \}\)</span> 和 <span class="math inline">\(f\)</span> 都是测度空间中 <span class="math inline">\((\Omega,\mathcal{F},\mu)\)</span> 上的<strong>可测函数</strong>或<strong>随机向量</strong>, 若 <span class="math inline">\(\forall\epsilon&gt;0,\exists A\in\mathcal{F},\mu(A)&lt;\epsilon\)</span> 使得 <span class="math display">\[
+\lim_{ n \to \infty } \sup\limits_{x\not\in A}
+\lvert f_{n}(x)-f(x) \rvert = 0,
+\]</span> 则称 <span class="math inline">\(\{ f_{n} \}\)</span> <strong>几乎一致收敛至 <span class="math inline">\(f\)</span></strong>, 记作 <span class="math inline">\(f_{n}\overset{ a.u. }{ \longrightarrow }f\)</span>.</p>
+</div>
+<p>关于它等价的测度集合表示是</p>
+<div id="prp-au-convergence-equivalent" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 2 (几乎一致收敛的等价命题)</strong></span> <span class="math inline">\(f_{n}\overset{ a.u. }{ \longrightarrow }f\)</span> 当且仅当 <span class="math display">\[
+\lim_{ m \to \infty } \mu \left( \bigcup_{n=m}^{\infty}  \{ \lvert f_{n}-f \rvert \geq\epsilon \}\right) =0,
+\quad \forall\epsilon&gt;0.
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>我们先来证明必要性. 假设 <span class="math inline">\(f_{n}\overset{ a.u. }{ \longrightarrow }f\)</span>, 则使用 <span class="math inline">\(\epsilon-\delta\)</span> 语言将定义写为 <span class="math display">\[
+\begin{align}
+&amp;\forall\delta&gt;0,\exists A\in\mathcal{F},\mu(A)&lt;\delta, \\
+&amp;\forall\epsilon&gt;0,\exists m\in\mathbb{N}^{+},\forall n&gt;m,\forall x \not\in A, \\
+&amp;\lvert f_{n}(x)-f(x) \rvert &lt;\epsilon,
+\end{align}
+\]</span> 也就是 <span class="math display">\[
+\begin{align}
+&amp;\forall\delta&gt;0,\exists A\in\mathcal{F},\mu(A)&lt;\delta, \\
+&amp;\forall\epsilon&gt;0,\exists m\in\mathbb{N}^{+},\forall n&gt;m,\\
+&amp;A^{c}\subset\{ \lvert f_{n}(x)-f(x) \rvert &lt;\epsilon \},
+\end{align}
+\]</span> 也就是 <span class="math display">\[
+\begin{align}
+&amp;\forall\delta&gt;0,\exists A\in\mathcal{F},\mu(A)&lt;\delta, \\
+&amp;\forall\epsilon&gt;0,\exists m\in\mathbb{N}^{+},\\
+&amp;\bigcup_{n=m}^{\infty}\{ \lvert f_{n}(x)-f(x) \rvert \geq\epsilon \} \subset A,
+\end{align}
+\]</span> 也就是 <span class="math display">\[
+\begin{align}
+&amp;\forall\delta&gt;0,\exists A\in\mathcal{F}, \forall\epsilon&gt;0,\exists m\in\mathbb{N}^{+},\\
+&amp;\mu\left( \bigcup_{n=m}^{\infty}\{ \lvert f_{n}-f \rvert \geq\epsilon \} \right)\leq \mu(A)&lt;\delta.
+\end{align}
+\]</span> <span class="math inline">\(m\)</span> 越大, <span class="math inline">\(\mu\left( \bigcup_{n=m}^{\infty}\{ \lvert f_{n}-f \rvert \geq\epsilon \} \right)\)</span> 越小, 再令 <span class="math inline">\(\delta\to0\)</span>, 得到 <span class="math display">\[
+\lim_{ m \to \infty } \mu\left( \bigcup_{n=m}^{\infty}\{ \lvert f_{n}-f \rvert \geq\epsilon \} \right) = 0.
+\]</span> 然后, 我们证明充分性. 若命题中的条件成立, 则 <span class="math display">\[
+\begin{align}
+&amp;\forall k\in\mathbb{N}^{+},\forall \delta&gt;0,\exists m_{k}(\delta),\forall m&gt;m_{k}(\delta) \\
+&amp;\mu\left( \bigcup_{n=m_{k(\delta)}}^{\infty}\left\{  \lvert f_{n}-f \rvert \geq \frac{1}{k}  \right\} \right)&lt;\frac{\delta}{2^{k}},
+\end{align}
+\]</span> 令 <span class="math display">\[
+A=\bigcup_{k=1}^{\infty}\bigcup_{n=m_{k(\delta)}}^{\infty}\left\{  \lvert f_{n}-f \rvert \geq \frac{1}{k}  \right\},
+\]</span> 则有 <span class="math display">\[
+\begin{align}
+\mu(A)\leq \sum\limits_{k=1}^{\infty}
+\mu\left( \bigcup_{n=m_{k(\delta)}}^{\infty}\left\{  \lvert f_{n}-f \rvert \geq \frac{1}{k}  \right\} \right) &lt;\delta.
+\end{align}
+\]</span> 因此, <span class="math inline">\(\forall k\in\mathbb{N}^{+},\exists m_{k}(\delta),\forall n&gt;m_{k}(\delta),\forall x \in A^{c}=\bigcap_{k=1}^{\infty}\bigcap_{n=m_{k}(\delta)}^{\infty}\left\{  \lvert f_{n}-f \rvert &lt;\frac{1}{k}  \right\}\)</span>, 有 <span class="math display">\[
+\begin{align}
+\lvert f_{n}(x)-f(x) \rvert &lt;\frac{1}{k}.
+\end{align}
+\]</span> 这就是 <span class="math display">\[
+\lim_{ n \to \infty } \sup\limits_{x \not\in A}
+\lvert f_{n}(x)-f(x) \rvert = 0
+\]</span> 的定义. 证毕</p>
+</div>
+</section>
+<section id="依测度收敛" class="level2">
+<h2 class="anchored" data-anchor-id="依测度收敛">依测度收敛</h2>
+<div id="def-convergence-in-measure" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 3 (依测度收敛)</strong></span> 设 <span class="math inline">\(\{ f_{n},n=1,2,\dots \}\)</span> 和 <span class="math inline">\(f\)</span> 都是测度空间中 <span class="math inline">\((\Omega,\mathcal{F},\mu)\)</span> 上的<strong>可测函数</strong>或<strong>随机向量</strong>, 若 <span class="math display">\[
+\lim_{ n \to \infty } \mu(\lvert f_{n}-f \rvert &gt;\epsilon)
+=0,\quad \forall \epsilon&gt;0,
+\]</span> 则称 <span class="math inline">\(\{ f_{n} \}\)</span> <strong>依测度收敛至 <span class="math inline">\(f\)</span></strong>, 记作 <span class="math inline">\(f_{n}\overset{ \mu }{ \longrightarrow }f\)</span>. 若 <span class="math inline">\(\mu\)</span> 是一个概率测度 <span class="math inline">\(P\)</span>, 也可以叫做<strong>依概率收敛</strong>, 记作 <span class="math inline">\(f_{n}\overset{ P }{ \longrightarrow }f\)</span>.</p>
+</div>
+<p>依测度收敛是统计中非常重要的收敛模式, 一个重要的例子就是弱大数律, 我们后面将会介绍.</p>
+<div id="prp-convergence-in-measure-components" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 3 (依测度收敛的等价命题)</strong></span> 若 <span class="math inline">\(f_{n},f\)</span> 均为 <span class="math inline">\(k\)</span> 维随机向量, 则有 <span class="math inline">\(f_{n}\overset{ \mu }{ \longrightarrow }f\)</span> 当且仅当 <span class="math inline">\(f_{n[i]}\overset{ \mu }{ \longrightarrow }f_{[i]},\forall i=1,\dots,k\)</span>, 其中 <span class="math inline">\(f_{[i]}\)</span> 表示 <span class="math inline">\(f\)</span> 的第 <span class="math inline">\([i]\)</span> 个分量.</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>注意到 当随机变量是高维时, 则 <span class="math inline">\(g_{n}=\lvert f_{n}-f \rvert=\left( \sum\limits_{i=1}^{k}\lvert f_{n[i]}-f_{[i]} \rvert^{2} \right)^{\frac{1}{2}}\)</span>, 进而有 <span class="math display">\[
+g_{n}&gt;\epsilon\implies
+g_{n}^{2}&gt;\epsilon^{2}\implies
+\exists i\in\{ 1,\dots,k \},
+\lvert f_{n[i]}-f_{[i]} \rvert^{2}&gt;\frac{\epsilon^{2}}{k},
+\]</span> 因此有 <span class="math display">\[
+\begin{align}
+P(g_{n}\geq\epsilon)&amp;=
+\sum\limits_{i=1}^{k}P\left( \lvert f_{n[i]}-f_{[i]} \rvert &gt;\frac{\epsilon}{\sqrt{ k }} \right),
+\end{align}
+\]</span></p>
+</div>
+</section>
+<section id="依分布收敛-弱收敛" class="level2">
+<h2 class="anchored" data-anchor-id="依分布收敛-弱收敛">依分布收敛 (弱收敛)</h2>
+<div id="def-19-convergence-theory-7" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 4 (依分布收敛 (弱收敛))</strong></span> <span class="math inline">\(\{ F_{n} \}\)</span> 和 <span class="math inline">\(F\)</span> 都是非降实值函数, 若 <span class="math display">\[
+F_{n}\to F
+\]</span> 对 <span class="math inline">\(F\)</span> 的每个连续点成立, 则称 <span class="math inline">\(\{ F_{n} \}\)</span> <strong>弱收敛至 <span class="math inline">\(F\)</span></strong>, 记作 <span class="math inline">\(F_{n}\overset{ \omega }{ \longrightarrow }F\)</span>. 准分布函数是非降右连续的实值函数, 因此其也可以讨论弱收敛的讨论.</p>
+<p>假设 <span class="math inline">\(\{ P_{n} \}\)</span> 和 <span class="math inline">\(P\)</span> 分别是对应分布函数 <span class="math inline">\(\{ F_{n} \}\)</span> 和 <span class="math inline">\(F\)</span> 的概率测度, 且 <span class="math inline">\(F_{n}\overset{ \omega }{ \longrightarrow }F\)</span>, 则称 <span class="math inline">\(\{ P_{n} \}\)</span> 弱收敛至 <span class="math inline">\(P\)</span>, 记作 <span class="math inline">\(P_{n}\overset{ \omega }{ \longrightarrow }P\)</span>.</p>
+<p>假设存在<strong>随机向量</strong>序列 <span class="math inline">\(\{ X_{n} \}\)</span> 和分布函数 <span class="math inline">\(F\)</span>, 并且有 $$</p>
+<p>X_{n}F_{n},F_{n}F, $$ 则称 <span class="math inline">\(\{ X_{n} \}\)</span> <strong>依分布收敛至 <span class="math inline">\(F\)</span></strong> , 记作 <span class="math inline">\(X_{n}\overset{ d }{ \longrightarrow }F\)</span>; 若存在<strong>随机向量</strong> <span class="math inline">\(X\sim F\)</span>, 则也可以称 <span class="math inline">\(\{ X_{n} \}\)</span> <strong>依分布收敛至 <span class="math inline">\(X\)</span></strong>, 记作 <span class="math inline">\(X_{n}\overset{ d }{ \longrightarrow }X\)</span>. <strong>Note: 无论是随机变量还是随机向量, <span class="math inline">\(F\)</span> 都是一维的, 所以后面在计算 <span class="math inline">\(F\)</span> 的距离时使用 <span class="math inline">\(\lvert \cdot \rvert\)</span> 即可.</strong></p>
+</div>
+<p>在 <a href="../../../src/learn/advanced-probability/06-distribution-function.html">6_分布函数</a> 中, 针对一维分布函数, 我们介绍了 <strong>?@def-left-inv</strong> 的概念. 注意到, 左连续逆也是一个非降实值函数 (只是左连续的), 因此也可以有弱收敛的概念, 并且有下面的一个引理 (后面会用).</p>
+<div id="lem-left-inverse-weak-convergence" class="theorem lemma">
+<p><span class="theorem-title"><strong>引理 1 (左连续逆的弱收敛)</strong></span> 若 <span class="math inline">\(\{ F_{n} \},F\)</span> 都是一维分布函数, 则有 <span class="math display">\[
+F_{n}\overset{ \omega }{ \longrightarrow }F
+\implies
+F_{n}^{\leftarrow}\overset{ \omega }{ \longrightarrow }F^{\leftarrow}.
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>根据 <strong>?@prp-left-inv</strong> (5), 我们可以得到: <span class="math inline">\(\forall t\in(0,1)\)</span>, 并且 <span class="math inline">\(F^{\leftarrow}\)</span> 在 <span class="math inline">\(t\)</span> 上连续, 有 <span class="math display">\[
+F(x-\epsilon)&lt;t,\quad F(x+\epsilon)&gt;t,\quad \forall\epsilon&gt;0.
+\]</span></p>
+<p><span id="eq-quantile-neighborhood-inequalities"></span></p>
+<p>其中 <span class="math inline">\(F^{\leftarrow}(t)=x\)</span> .注意到, 因为 <span class="math inline">\(F\)</span> 的单调性, 其不连续点的总数量是至多可数的. 所以针对任意的 <span class="math inline">\(\epsilon\)</span>, 我们肯定能够找到 <span class="math inline">\(0&lt;\epsilon'\leq\epsilon\)</span> 使得在两个点 <span class="math inline">\(x-\epsilon',x+\epsilon'\)</span> 上 <span class="math inline">\(F\)</span> 是连续的. 此时, 根据依分布收敛的定义,有 <span class="math display">\[
+\lim_{ n \to \infty } F_{n}(x-\epsilon')=F(x-\epsilon')&lt;t,\quad
+\lim_{ n \to \infty } F_{n}(x+\epsilon')=F(x+\epsilon')&gt;t.
+\]</span> 因此, 有 <span class="math display">\[
+\exists N,\forall n&gt;N,\quad
+F_{n}(x-\epsilon')&lt;t,F_{n}(x+\epsilon')&gt;t.
+\]</span> 这蕴含 <span class="math display">\[
+x-\epsilon\leq x-\epsilon'\leq F_{n}^{\leftarrow}(t)\leq x+\epsilon'\leq x+\epsilon,
+\]</span> 即 <span class="math display">\[
+\lvert F^{\leftarrow}(t)-F_{n}^{\leftarrow}(t) \rvert \leq \epsilon.
+\]</span></p>
+<p><span id="eq-quantile-inverse-bound"></span></p>
+<p>综合来看, 我们得到了 <span class="math display">\[
+\forall\epsilon&gt;0,\exists N,\forall n&gt;N,
+\lvert F^{\leftarrow}(t)-F_{n}^{\leftarrow}(t) \rvert \leq \epsilon,
+\]</span> 这其实就是 <span class="math inline">\(F_{n}^{\leftarrow}(t)\to F^{\leftarrow}(t)\)</span>.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="证明要点">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>证明要点
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>整个证明过程中, 有这样几个要点需要注意到: 1. 对于固定的一个连续点 <span class="math inline">\(t\)</span>, 使用新的符号 <span class="math inline">\(x=F^{\leftarrow}(t)\)</span>, 这样就可以非常自然地得到式 <a href="#eq-quantile-inverse-bound">eq-quantile-inverse-bound</a>, 便于进行后面的讨论. 2. 要更加关注 <span class="math inline">\(x\pm\epsilon\)</span> 的影响, 而不是 <span class="math inline">\(t\pm \epsilon\)</span>. 3. 需要能够意识到, 不论 <span class="math inline">\(F(x)&gt;t\)</span> 或 <span class="math inline">\(F(x)=t\)</span> 时, 都可以得到式 <a href="#eq-quantile-neighborhood-inequalities">eq-quantile-neighborhood-inequalities</a>. 特别是当 <span class="math inline">\(F(x)=t\)</span> 时, 需要使用到 <span class="math inline">\(t\)</span> 是连续点的条件. 4. 单调函数的不连续点至多可数, 所以我们可以将 <span class="math inline">\(\epsilon\)</span> 放缩一下, 保证 <span class="math inline">\(x\pm\epsilon\)</span> 都是 <span class="math inline">\(F\)</span> 的连续点, 从而利用弱收敛的条件.</p>
+</div>
+</div>
+</div>
+<p>需要注意到, 对于依分布收敛, 我们只需要 <span class="math inline">\(F_{n}\)</span> 与 <span class="math inline">\(F\)</span> 收敛即可, 这意味着 <span class="math inline">\(X_{n}\)</span> 和 <span class="math inline">\(X\)</span> 可以完全不一样, 甚至不在同一个概率空间中都可以.</p>
+<p>尽管我们在定义时只要求在连续点收敛, 但是如果 <span class="math inline">\(F\)</span> 在所有的点都是连续的, 则我们可以有以下更强的结论.</p>
+<div id="prp-19-convergence-theory-9" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 4 (Polya 定理)</strong></span> 如果 <span class="math inline">\(\{ F_{n} \},F\)</span> 都是 (<span class="math inline">\(k\)</span> 元) 分布函数, <span class="math inline">\(F_{n}\overset{ \omega }{ \longrightarrow }F\)</span>, 并且 <span class="math inline">\(F\)</span> 在 <span class="math inline">\(\mathbb{R}^{k}\)</span> 上是连续的, 则有 <span class="math inline">\(F_{n}\)</span> 一致收敛至 <span class="math inline">\(F\)</span>, 即 <span class="math display">\[
+\lim_{ n \to \infty } \sup\limits_{x \in\mathbb{R}^{k}}\lvert F_{n}(x)-F(x) \rvert =0.
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>我们首先来证明一维时的特殊情况. 因为 <span class="math inline">\(F\)</span> 是连续的, 所以对于任意的正整数 <span class="math inline">\(m\)</span>, 我们可以找到一系列的点 <span class="math inline">\(-\infty=x_{0}&lt;x_{1}&lt;\dots&lt;x_{m}=+\infty\)</span> 满足 <span class="math display">\[
+F(x_{i})=\frac{i}{m}.
+\]</span> 再根据 <span class="math inline">\(F_{n},F\)</span> 的单调性, 我们有 <span class="math inline">\(\forall x \in (x_{i-1},x_{i})\)</span>, <span class="math display">\[
+\begin{align}
+&amp;F_{n}(x)-F(x)\leq F_{n}(x_{i})-F(x_{i-1})=F_{n}(x_{i})-F(x_{i})+\frac{1}{m}, \\
+&amp;F_{n}(x)-F(x)\geq F_{n}(x_{i-1})-F(x_{i})=F_{n}(x_{i-1})-F(x_{i-1})-\frac{1}{m},
+\end{align}
+\]</span> 所以, 我们有 <span class="math display">\[
+\sup\limits_{x \in\mathbb{R}} \lvert F_{n}(x)-F(x) \rvert
+\leq \max\limits_{i=0,1,\dots,m}\lvert F_{n}(x_{i})-F(x_{i}) \rvert +
+\frac{1}{m},
+\]</span> 由弱收敛的条件我们可知 <span class="math inline">\(\max\limits_{i=0,1,\dots,k}\lvert F_{n}(x_{i})-F(x_{i}) \rvert\to0,n\to \infty,\forall m\)</span>, 此时, 又因为 <span class="math inline">\(m\)</span> 的任意性, 我们就得到了最终想要证明的结果.</p>
+</div>
+<p>下面, 我们介绍一个与弱收敛相关的非常重要的定理, 在分析时非常常用:</p>
+<div id="thm-helly-selection" class="theorem">
+<p><span class="theorem-title"><strong>定理 1 (Helly selection theorem)</strong></span> 对于任何分布函数序列 <span class="math inline">\(F_{n}\)</span>, 其存在一个子列 <span class="math inline">\(\{ F_{n_{k}} \}\)</span> 和<strong>一个非降右连续的函数</strong>（不一定是分布函数） <span class="math inline">\(F\)</span> 满足 <span class="math display">\[
+\lim_{ k \to \infty } F_{n_{k}}(x)=F(x),\quad x \in C_{F},
+\]</span> 其中 <span class="math inline">\(C_{F}\)</span> 是 <span class="math inline">\(F\)</span> 的连续点.</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>首先我们介绍一个叫做 <strong>diagonal method</strong> 的技巧, 对于下面的可数个序列 (每一行看做一个序列) <span class="math display">\[
+\begin{matrix}
+x_{1,1} &amp; x_{1,2} &amp; \dots \\
+x_{2,1} &amp; x_{2,2} &amp; \dots \\
+\vdots &amp; \vdots &amp; \vdots \\
+x_{n,1} &amp; x_{n,2} &amp; \dots \\
+\vdots &amp; \vdots &amp; \vdots \\
+\end{matrix}
+\]</span> 若每一个序列都是 bounded, 则我们可以找到增长的整数列 <span class="math inline">\(\{ n_{k} \}\)</span>, 使得对于每个 <span class="math inline">\(r=1,2,\dots\)</span>, <span class="math inline">\(\lim_{ k \to \infty }x_{r,n_{k}}\)</span> 都是存在的.</p>
+<p>我们可以这样去操作, 首先对于第一行, 我们可以找到一个子列, 其坐标我们表示为 <span class="math inline">\(\{ n_{1s} \}\)</span>, 使得 <span class="math display">\[
+\lim_{ s \to \infty } x_{1,n_{1s}} \text{ exists}.
+\]</span> 将这个坐标用于第二行, 我们得到了第二行的一个子列, 但是这个子列不一定会收敛. 但是这个子列依然是 bounded, 因此我们依然可以再从中选择出一个子列, 其坐标我们表示为 <span class="math inline">\(\{ n_{2s} \}\)</span>, 使得 <span class="math display">\[
+\lim_{ s \to \infty } x_{2,n_{2s}} \text{ exists}.
+\]</span> 将以上过程继续下去, 我们就得到了一系列的坐标: <span class="math display">\[
+\begin{matrix}
+n_{11} &amp; n_{12} &amp; \dots \\
+n_{21} &amp; n_{22} &amp; \dots \\
+\vdots &amp; \vdots &amp; \vdots \\
+\end{matrix}
+\]</span> 其中每一行都是一个递增的整数列 (也就是一个子列的坐标), 并且<strong>每一行都是前一行的子列</strong>. 现在我们令 <span class="math inline">\(n_{k}=n_{k,k}\)</span>, 则 <span class="math inline">\(\{ n_{r},n_{r+1},\dots \}\)</span> 正好是坐标矩阵第 <span class="math inline">\(r\)</span> 行的子列（并且它是递增的）, 因此, 我们可知它就是我们想要的整数列.</p>
+<p>现在对于每个有理数 <span class="math inline">\(r\)</span>, 我们可以构造一个序列 <span class="math inline">\(\{ F_{n}(r) \}\)</span> 作为每一行. 应用 diagonal method, 我们得到了一个指标列 <span class="math inline">\(\{ n_{k} \}\)</span> 使得 <span class="math display">\[
+G(r)=\lim_{ k \to \infty } F_{n_{k}}(r)\ \text{exists}.
+\]</span> 定义 <span class="math display">\[
+F(x)=\inf\{ G(r): x&lt;r \},
+\]</span> 容易知道 <span class="math inline">\(F(x)\)</span> 是非降的.</p>
+<p><span class="math inline">\(\forall x\)</span> 和 <span class="math inline">\(\epsilon&gt;0\)</span>, 由下确界的定义有 <span class="math display">\[
+\exists r,\quad x &lt; r,\quad G(r)&lt;F(x)+\epsilon,
+\]</span> 若 <span class="math inline">\(x\leq y&lt;r\)</span>, 则有 <span class="math display">\[
+F(x)\leq F(y)\leq G(r)&lt;F(x)+\epsilon,
+\]</span> 这意味着 <span class="math inline">\(F\)</span> 是右连续的.</p>
+<p>若 <span class="math inline">\(F\)</span> 在 <span class="math inline">\(x\)</span> 是连续的, 我们可以找到一个 <span class="math inline">\(y&lt;x\)</span> 使得 <span class="math inline">\(F(x)-\epsilon&lt;F(y)\)</span>. 进而, 我们可以选择有理数 <span class="math inline">\(r,s\)</span> 使得 <span class="math inline">\(y&lt;r&lt;x&lt;s\)</span> 和 <span class="math inline">\(G(s)&lt;F(x)+\epsilon\)</span>. 因此我们有 <span class="math display">\[
+F(x)-\epsilon&lt;F(y)\leq G(r)\leq G(s)&lt;F(x)+\epsilon,\quad
+F_{n_{k}}(r)\leq F_{n_{k}}(x)\leq F_{n_{k}}(s),
+\]</span> 令 <span class="math inline">\(k\to \infty\)</span>, 我们得到 <span class="math display">\[
+F(x)-\epsilon&lt; G(r) = \lim_{ k \to \infty } F_{n_{k}}(r)\leq \lim_{ k \to \infty } F_{n_{k}}(x)\leq \lim_{ k \to \infty } F_{n_{k}}(s)=G(s) &lt; F(x)+\epsilon,
+\]</span> 令 <span class="math inline">\(\epsilon\to0\)</span>, 我们得到了我们想要的结论.</p>
+</div>
+<div class="callout callout-style-default callout-important callout-titled" title="Helly selection theorem 的作用">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">重要</span>Helly selection theorem 的作用
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>这个定理的核心作用，是在分布函数序列不一定整体收敛时，保证我们总能抽出一个在某个非降右连续函数连续点上收敛的子列。换句话说，它为“先找到一个候选极限”提供了存在性工具。</p>
+<p>这里需要特别注意：这个抽出来的子列，其极限对象首先只是一个<strong>非降右连续函数</strong>，它<strong>不一定已经是分布函数</strong>。也就是说，Helly selection theorem 本身只能保证“存在某种极限形状”，但还不能自动保证这个极限对应一个概率分布。</p>
+<p>在实际证明中，它最常见的用途是： 1. 先从原序列中抽出一个收敛子列； 2. 再分析这个子列极限具有哪些性质，并进一步判断它是否真的是分布函数； 3. 若能进一步证明任何收敛子列的极限都必须相同，就有机会反推出整个序列收敛。</p>
+<p>因此，Helly selection theorem 是研究弱收敛存在性时最基础的“抽子列定理”之一。</p>
+</div>
+</div>
+</section>
+<section id="平均收敛" class="level2">
+<h2 class="anchored" data-anchor-id="平均收敛">平均收敛</h2>
+<p>承袭自 <a href="../../../src/learn/advanced-probability/09-lp-spaces.html">9_Lp空间</a> 中的讨论, 我们可以定义如下的收敛:</p>
+<div id="def-19-convergence-theory-11" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 5 (平均收敛)</strong></span> 设 <span class="math inline">\(0&lt;p&lt;\infty\)</span>, 有<strong>可测函数</strong>或<strong>随机向量</strong> <span class="math inline">\(\{ f_{n} \},f\in L_{p}\)</span>, 并且满足 $$</p>
+<p><em>{ n } f</em>{n}-f <em>{p}^{p} =</em>{ n } f_{n}-f <em>{p}^{p} , d =</em>{ n } <em>{i=1}^{k}f</em>{n[i]}-f_{[i]} ^{p} , d, $$ 其中 <span class="math inline">\(f_{n[i]}\)</span> 和 <span class="math inline">\(f_{[i]}\)</span> 分别表示 <span class="math inline">\(f_{n}\)</span> 和 <span class="math inline">\(f\)</span> 的第 <span class="math inline">\(i\)</span> 个分量, 则称 <span class="math inline">\(\{ f_{n} \}\)</span> <strong>(<span class="math inline">\(p\)</span> 阶) 平均收敛至 <span class="math inline">\(f\)</span></strong>, 记作 <span class="math inline">\(f_{n}\overset{ L_{p} }{ \longrightarrow }f\)</span>. 当 <span class="math inline">\(p=2\)</span> 时, 也被称为<strong>均方收敛</strong>.</p>
+</div>
+<p>根据以上定义, 我们由下面的一个等价命题</p>
+<div id="prp-lp-convergence-components" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 5 (平均收敛的等价命题)</strong></span> 对于 <span class="math inline">\(k\)</span> 维随机向量 <span class="math inline">\(f_{n}\)</span> 和 <span class="math inline">\(f\)</span>, <span class="math inline">\(f_{n},f\in L_{p}\)</span>, 则有 <span class="math inline">\(\{ f_{n} \}\)</span> (<span class="math inline">\(p\)</span> 阶) 平均收敛至 <span class="math inline">\(f\)</span> 当且仅当 <span class="math inline">\(\{ f_{n} \}\)</span> 的每个分量 (<span class="math inline">\(p\)</span> 阶) 平均收敛至 <span class="math inline">\(f\)</span> 的每个分量.</p>
+</div>
+</section>
+</section>
+<section id="收敛之间的关系" class="level1">
+<h1>收敛之间的关系</h1>
+<p>以上介绍了 5 种收敛模式, 这些收敛模式之间存在强弱之分: 更强的收敛模式蕴含较弱的收敛模式, 或者说较弱的收敛模式需要额外的条件才能推出更强的收敛.</p>
+<p>这些收敛之间的相互关系涉及到非常多的定理和命题, 我们将尽量将其总结在本节中.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Excalidraw drawing pending export">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>Excalidraw drawing pending export
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>原 Obsidian 图形已保留为附件：<a href="../../../assets/attachments/advanced-probability/excalidraw/convergence-theory-2024-10-01-161536.excalidraw.md">800|center</a>。</p>
+</div>
+</div>
+<section id="由强到弱" class="level2">
+<h2 class="anchored" data-anchor-id="由强到弱">由强到弱</h2>
+<div id="thm-au-ae-equivalence" class="theorem">
+<p><span class="theorem-title"><strong>定理 2 (<span class="math inline">\(a.e.\)</span> 和 <span class="math inline">\(a.u.\)</span>)</strong></span> $$ f_{n}ff_{n}f.&nbsp;</p>
+<p>$$ 若测度空间是有限的, 即 <span class="math inline">\(\mu(\Omega)&lt;\infty\)</span>, 则有 <span class="math inline">\(f_{n}\overset{ a.u. }{ \longrightarrow }f\iff f_{n}\overset{ a.e. }{ \longrightarrow }f\)</span>.</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>直接根据 <a href="#prp-ae-convergence-equivalent" class="quarto-xref">命题&nbsp;1</a> 和 <a href="#prp-au-convergence-equivalent" class="quarto-xref">命题&nbsp;2</a> 可以推出第一条. 如果测度空间有限, 则根据 1.1 测度空间和概率空间 (<code>1.1 测度空间和概率空间#^0d834d</code>) 中 5 上连续性和两个等价命题, 直接可以得到 <span class="math inline">\(a.e.\implies a.u.\)</span> .</p>
+</div>
+<div id="thm-au-implies-in-measure" class="theorem">
+<p><span class="theorem-title"><strong>定理 3 (<span class="math inline">\(a.u.\implies \mu\)</span>)</strong></span> <span class="math display">\[
+f_{n}\overset{ a.u. }{ \longrightarrow }f\implies
+f_{n}\overset{ \mu }{ \longrightarrow }f
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>利用 <a href="#prp-au-convergence-equivalent" class="quarto-xref">命题&nbsp;2</a> 和 <a href="#def-convergence-in-measure" class="quarto-xref">定义&nbsp;3</a> 可以直接得到证明.</p>
+</div>
+<div id="thm-19-convergence-theory-15" class="theorem">
+<p><span class="theorem-title"><strong>定理 4 (<span class="math inline">\(L_{p}\implies \mu\)</span>)</strong></span> <span class="math display">\[
+f_{n}\overset{ L_{p} }{ \longrightarrow }f,p&gt;0\implies
+f_{n}\overset{ \mu }{ \longrightarrow }f,\lVert f_{n} \rVert_{p} \to
+\lVert f \rVert_{p}
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>我们先证明当所有的随机变量都是 1 维时成立: 我们令 <span class="math inline">\(g_{n}=\lvert f_{n}-f \rvert\)</span>, <span class="math inline">\(\forall\epsilon&gt;0\)</span>, 有 <span class="math display">\[
+\begin{align}
+P(g_{n}\geq\epsilon)&amp;=\int _{\{ g_{n}\geq\epsilon \}}1 \, d\mu \\
+&amp;\leq \int _{\{ g_{n}\geq\epsilon \}}\left(\frac{g_{n}}{\epsilon}\right)^{p} \, d\mu \\
+&amp;\leq \int \left(\frac{g_{n}}{\epsilon}\right)^{p} \, d\mu \\
+&amp;=\frac{1}{\epsilon^{p}}\int \lvert f_{n}-f \rvert ^{p} \, d\mu
+\end{align}
+\]</span> 根据上面的结果, 我们可以知道, 定理结果成立.</p>
+<p>当随机变量是高维时, 则 <span class="math inline">\(g_{n}=\lvert f_{n}-f \rvert=\left( \sum\limits_{i=1}^{k}\lvert f_{n[i]}-f_{[i]} \rvert^{2} \right)^{\frac{1}{2}}\)</span>, 进而有 <span class="math display">\[
+g_{n}&gt;\epsilon\implies
+g_{n}^{2}&gt;\epsilon^{2}\implies
+\exists i\in\{ 1,\dots,k \},
+\lvert f_{n[i]}-f_{[i]} \rvert^{2}&gt;\frac{\epsilon^{2}}{k},
+\]</span> 因此有 <span class="math display">\[
+\{ g_{n}&gt;\epsilon \}\subset \bigcup_{i=1}^{k}\left\{  \lvert f_{n[i]}-f_{[i]} \rvert^{2}&gt;\frac{\epsilon^{2}}{k}   \right\},
+\]</span> 也就是 <span class="math display">\[
+\begin{align}
+P(g_{n}\geq\epsilon)&amp;\leq
+\sum\limits_{i=1}^{k}P\left( \lvert f_{n[i]}-f_{[i]} \rvert &gt;\frac{\epsilon}{\sqrt{ k }} \right),
+\end{align}
+\]</span> 根据 <a href="#prp-lp-convergence-components" class="quarto-xref">命题&nbsp;5</a>, 平均收敛意味着每个分量的平均收敛, 进而有每个分量上的依测度收敛, 进而有得到我们的结论.</p>
+<p>至于 <span class="math inline">\(\lVert f_{n} \rVert_{p} \to\lVert f \rVert_{p}\)</span>, 我们可以分情况来看. 当 <span class="math inline">\(p\geq 1\)</span> 时, 由 Minkowski 不等式得到 <span class="math display">\[
+\left\lvert \lVert f_{n} \rVert_{p}-\lVert f \rVert_{p} \right\rvert
+\leq \lVert f_{n}-f \rVert_{p}\to0.
+\]</span> 当 <span class="math inline">\(0&lt;p&lt;1\)</span> 时, 虽然 <span class="math inline">\(\lVert \cdot \rVert_{p}\)</span> 不是范数, 但对非负实数有 <span class="math inline">\(\lvert a^{p}-b^{p} \rvert\leq \lvert a-b \rvert^{p}\)</span>, 因而 <span class="math display">\[
+\left\lvert \lVert f_{n} \rVert_{p}^{p}-\lVert f \rVert_{p}^{p} \right\rvert
+\leq \lVert f_{n}-f \rVert_{p}^{p}\to0.
+\]</span> 再由函数 <span class="math inline">\(x\mapsto x^{1/p}\)</span> 的连续性, 也可以得到 <span class="math inline">\(\lVert f_{n} \rVert_{p}\to \lVert f \rVert_{p}\)</span>.</p>
+</div>
+<div id="thm-19-convergence-theory-16" class="theorem">
+<p><span class="theorem-title"><strong>定理 5 (<span class="math inline">\(\mu\implies d\)</span>)</strong></span> <span class="math display">\[
+f_{n}\overset{ \mu }{ \longrightarrow }f\implies
+f_{n}\overset{ d }{ \longrightarrow }f.
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span><span class="math inline">\(\forall \mathbf{x}\in\mathbb{R}^{k}\)</span>, <span class="math inline">\(\forall\epsilon&gt;0\)</span>, 有 <span class="math display">\[
+\begin{align}
+F_{f}(\mathbf{x}-\epsilon \mathbf{1})
+&amp;=P(f\in(-\infty,\mathbf{x}-\epsilon \mathbf{1}]) \\
+&amp;\leq P(f_{n}\in(-\infty,\mathbf{x}])+
+P(f\in(-\infty,\mathbf{x}-\epsilon \mathbf{1}],f_{n}\not\in(-\infty,\mathbf{x}]) \\
+&amp;\leq F_{f_{n}}(\mathbf{x})+P(\lvert f_{n}-f \rvert  &gt;\epsilon),
+\end{align}
+\]</span> 其中 <span class="math inline">\(\mathbf{1}=(1,\dots,1)\)</span> 是一个 <span class="math inline">\(k\)</span> 维向量, 而第三行是因为 <span class="math display">\[
+f\in(-\infty,\mathbf{x}-\epsilon \mathbf{1}],f_{n}\not\in(-\infty,\mathbf{x}]\implies
+\lvert f_{n}-f \rvert &gt;\epsilon.
+\]</span> （以上内容可以通过分析单个分量，然后加总得到）</p>
+<p>令 <span class="math inline">\(n\to \infty\)</span>, 配合依测度收敛, 我们得到 <span class="math display">\[
+F_{f}(\mathbf{x}-\epsilon \mathbf{1})\leq \mathop{\lim\inf}_{ n \to \infty } F_{f_{n}}(\mathbf{x}).
+\]</span> 使用相同的原理, 我们还可以得到 <span class="math display">\[
+F_{f}(\mathbf{x}+\epsilon \mathbf{1})\geq \mathop{\lim\sup}_{ n \to \infty } F_{f_{n}}(\mathbf{x}).
+\]</span> 然后令 <span class="math inline">\(\epsilon\to0\)</span> 以及 <span class="math inline">\(\mathbf{x}\)</span> 在 <span class="math inline">\(F_{f}\)</span> 的连续点时, 我们得到依分布收敛.</p>
+</div>
+</section>
+<section id="反例" class="level2">
+<h2 class="anchored" data-anchor-id="反例">反例</h2>
+<p>除了上述我们介绍的蕴含关系, 其他的关于这些收敛之间的蕴含关系都是错误的, 这里我们介绍一些反例, 用于加深他们之间的理解.</p>
+<div id="exm-ae-not-in-measure" class="theorem example">
+<p><span class="theorem-title"><strong>例 1 (a.e. 不蕴含 a.u.)</strong></span> 定义 L 测度空间中的可测函数列 <span class="math display">\[
+f_{n}(x)=\left\{\begin{matrix}
+0,\lvert x \rvert \leq n, \\
+1,\lvert x \rvert &gt;n,
+\end{matrix}\right.
+\]</span> 容易有 <span class="math inline">\(f_{n}\overset{ a.e. }{ \longrightarrow }0\)</span> (实际上是 <span class="math inline">\(f_{n}\to0\)</span>), 但是 <span class="math inline">\(f_{n}\overset{ a.u. }{ \longrightarrow }0\)</span> 不成立. <strong>Example: <span class="math inline">\(a.e.\)</span> 不蕴含 <span class="math inline">\(\mu\)</span></strong> 在 <span class="math inline">\((\mathbb{R},\mathcal{B}_{\mathbb{R}},m)\)</span> 上定义 <span class="math display">\[
+f_{n}(x)=I_{(n,n+1]}(x).
+\]</span> 对任意固定的 <span class="math inline">\(x\in\mathbb{R}\)</span>, 当 <span class="math inline">\(n\)</span> 充分大时都有 <span class="math inline">\(x\notin(n,n+1]\)</span>, 因此 <span class="math display">\[
+f_{n}\overset{ a.e. }{ \longrightarrow }0.
+\]</span> 但是, 对任意 <span class="math inline">\(0&lt;\epsilon&lt;1\)</span>, <span class="math display">\[
+m(\lvert f_{n} \rvert&gt;\epsilon)=m((n,n+1])=1,
+\]</span> 所以 <span class="math inline">\(f_{n}\)</span> 不依测度收敛到 <span class="math inline">\(0\)</span>. 这个例子说明, 在无限测度空间中, <span class="math inline">\(a.e.\)</span> 收敛不一定蕴含依测度收敛.</p>
+</div>
+<div id="exm-in-measure-not-ae-au" class="theorem example">
+<p><span class="theorem-title"><strong>例 2 (<span class="math inline">\(\mu\)</span> 不蕴含 <span class="math inline">\(a.e.\)</span> 或 <span class="math inline">\(a.u.\)</span>)</strong></span> 在 <span class="math inline">\(((0,1],\mathcal{B}_{(0,1]},m)\)</span> 上, 对 <span class="math inline">\(r=0,1,2,\dots\)</span> 和 <span class="math inline">\(k=0,1,\dots,2^{r}-1\)</span>, 定义 <span class="math display">\[
+f_{2^{r}+k}(x)=I_{\left( \frac{k}{2^{r}},\frac{k+1}{2^{r}} \right]}(x).
+\]</span> 当 <span class="math inline">\(n=2^{r}+k\)</span> 时, <span class="math display">\[
+m(\lvert f_{n} \rvert&gt;\epsilon)=2^{-r}\to0,\quad 0&lt;\epsilon&lt;1,
+\]</span> 因而 <span class="math inline">\(f_{n}\overset{ \mu }{ \longrightarrow }0\)</span>.</p>
+<p>但是对任意 <span class="math inline">\(x\in(0,1]\)</span>, 在每一层 <span class="math inline">\(r\)</span> 中恰好有一个 <span class="math inline">\(k\)</span> 使得 <span class="math inline">\(f_{2^{r}+k}(x)=1\)</span>, 同时也有许多 <span class="math inline">\(k\)</span> 使得 <span class="math inline">\(f_{2^{r}+k}(x)=0\)</span>. 因此 <span class="math inline">\(\{ f_{n}(x) \}\)</span> 会不断在 <span class="math inline">\(0\)</span> 和 <span class="math inline">\(1\)</span> 之间出现, 不会收敛到 <span class="math inline">\(0\)</span>. 所以 <span class="math inline">\(f_{n}\not\overset{ a.e. }{ \longrightarrow }0\)</span>.</p>
+<p>又因为 <span class="math inline">\(a.u.\)</span> 收敛一定蕴含 <span class="math inline">\(a.e.\)</span> 收敛, 所以 <span class="math inline">\(f_{n}\)</span> 也不可能几乎一致收敛到 <span class="math inline">\(0\)</span>。（就是让等于 1 的点再某个固定的区间内循环往复，但是总的来说等于 1 的区间在逐渐变小）</p>
+</div>
+<div id="exm-in-distribution-not-in-probability" class="theorem example">
+<p><span class="theorem-title"><strong>例 3 (<span class="math inline">\(d\)</span> 不蕴含 <span class="math inline">\(\mu\)</span>)</strong></span> 令 <span class="math inline">\(\Omega=\{-1,1\}\)</span>, <span class="math inline">\(P(\{-1\})=P(\{1\})=\frac{1}{2}\)</span>, 并令 <span class="math inline">\(X(\omega)=\omega\)</span>, <span class="math inline">\(X_{n}=-X\)</span>. 此时 <span class="math inline">\(X_{n}\)</span> 和 <span class="math inline">\(X\)</span> 的分布完全相同, 因而 <span class="math display">\[
+X_{n}\overset{ d }{ \longrightarrow }X.
+\]</span> 但是对任意 <span class="math inline">\(0&lt;\epsilon&lt;2\)</span>, <span class="math display">\[
+P(\lvert X_{n}-X \rvert&gt;\epsilon)=1,
+\]</span> 所以 <span class="math inline">\(X_{n}\)</span> 不依概率收敛到 <span class="math inline">\(X\)</span>. 这说明依分布收敛只比较分布, 并不控制同一个概率空间中随机变量之间的距离.</p>
+</div>
+<div id="exm-in-measure-not-lp" class="theorem example">
+<p><span class="theorem-title"><strong>例 4 (<span class="math inline">\(\mu\)</span> 不蕴含 <span class="math inline">\(L_{p}\)</span>)</strong></span> 在 <span class="math inline">\(((0,1],\mathcal{B}_{(0,1]},m)\)</span> 上, 固定 <span class="math inline">\(p&gt;0\)</span>, 定义 <span class="math display">\[
+f_{n}(x)=n^{1/p}I_{\left(0,\frac{1}{n}\right]}(x).
+\]</span> 对任意 <span class="math inline">\(\epsilon&gt;0\)</span>, 当 <span class="math inline">\(n\)</span> 足够大时, <span class="math display">\[
+m(\lvert f_{n} \rvert&gt;\epsilon)=\frac{1}{n}\to0,
+\]</span> 因此 <span class="math inline">\(f_{n}\overset{ \mu }{ \longrightarrow }0\)</span>.</p>
+<p>但是 <span class="math display">\[
+\lVert f_{n} \rVert_{p}^{p}
+=\int_{0}^{1} \lvert f_{n}(x) \rvert^{p}\,dx
+=\int_{0}^{1/n}n\,dx=1,
+\]</span> 所以 <span class="math inline">\(f_{n}\)</span> 不会 <span class="math inline">\(L_{p}\)</span> 收敛到 <span class="math inline">\(0\)</span>. 这个例子说明, 依测度收敛只要求“偏离集合的测度变小”, 并不控制偏离幅度的大小.</p>
+</div>
+</section>
+<section id="由弱到强" class="level2">
+<h2 class="anchored" data-anchor-id="由弱到强">由弱到强</h2>
+<p>尽管正常来说, 由较弱的收敛无法推导出较强的收敛, 但是如果能够增加一些特定的条件, 那么就可以成立或部分成立. <a href="#thm-au-ae-equivalence" class="quarto-xref">定理&nbsp;2</a> 中 <span class="math inline">\(\mu(\Omega)&lt;\infty\)</span> 就是一个例子. 接下来, 我们将讨论其他的可能性.</p>
+<div id="thm-skorohod-representation" class="theorem">
+<p><span class="theorem-title"><strong>定理 6 (Skorohod, <span class="math inline">\(d\implies a.u.\)</span>)</strong></span> 若随机向量 <span class="math inline">\(X_{n}\overset{ d }{ \longrightarrow }X\)</span>, 则存在 <span class="math inline">\(Y,Y_{1},Y_{2},\dots\)</span> (可能定义在与 <span class="math inline">\(X_{n},X\)</span> 不同的概率空间中), 满足 <span class="math display">\[
+P_{Y}=P_{X},P_{Y_{n}}=P_{X_{n}},\forall n=1,2,\dots,
+\]</span> 和 <span class="math display">\[
+Y_{n}\overset{ a.s. }{ \longrightarrow }Y.
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>高维空间的情况比较困难, 我们略过, 下面只证明 1 维的情况. 我们首先构建一个新的概率空间 <span class="math inline">\(((0,1),(0,1)\cap \mathcal{B}_{\mathbb{R}},\tilde{P})\)</span>, 其中 <span class="math inline">\(\tilde{P}\)</span> 是 <span class="math inline">\(L\)</span> 测度. 令 <span class="math inline">\(U\)</span> 是该空间上的服从均匀分布的随机变量, 则令 <span class="math display">\[
+Y=F_{X}^{\leftarrow}(U),\quad
+Y_{n}=F_{X_{n}}^{\leftarrow}(U),\forall n=1,2,\dots,
+\]</span> 由 <a href="../../../src/learn/advanced-probability/07-measurable-functions.html#6a18be">7_可测函数</a> 中的证明可知, <span class="math inline">\(X\)</span> 和 <span class="math inline">\(Y\)</span>, <span class="math inline">\(X_{n}\)</span> 和 <span class="math inline">\(Y_{n}\)</span> 拥有相同的分布, 第一条得到证明. 根据 <a href="#lem-left-inverse-weak-convergence" class="quarto-xref">引理&nbsp;1</a>, 我们有 <span class="math display">\[
+X_{n}\overset{ d }{ \longrightarrow }X
+\implies F_{X_{n}}\overset{ \omega }{ \longrightarrow }F_{X}
+\implies F^{\leftarrow}_{X_{n}}\overset{ \omega }{ \longrightarrow }F_{X}^{\leftarrow},
+\]</span> 又因为左连续逆的单调性保证了其不连续点的至多可数, 其 L 测度为 0, 这保证了 <span class="math display">\[
+F^{\leftarrow}_{X_{n}}\overset{ \omega }{ \longrightarrow }F_{X}^{\leftarrow}
+\implies F^{\leftarrow}_{X_{n}}(U)\overset{ a.s. }{ \longrightarrow }F_{X}^{\leftarrow}(U)
+\implies Y_{n}\overset{ a.s. }{ \longrightarrow }Y.
+\]</span></p>
+</div>
+<div id="thm-weak-convergence-to-constant" class="theorem">
+<p><span class="theorem-title"><strong>定理 7 (<span class="math inline">\(d\implies \mu\)</span>)</strong></span> <span class="math inline">\(X_{n}\overset{ d }{ \longrightarrow }X\)</span>, 并且 <span class="math inline">\(P(X=c)=1\)</span>, 其中 <span class="math inline">\(c\in\mathbb{R}^{k}\)</span> 是一个 constant vector, 则有 <span class="math display">\[
+X_{n}\overset{ P }{ \longrightarrow }c.
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>我们首先证明 1 维随机变量时的情况, <span class="math inline">\(\forall\epsilon&gt;0\)</span>, 我们有 <span class="math display">\[
+\begin{align}
+P(\lvert X_{n}-c \rvert &gt;\epsilon)
+&amp;=P(X_{n}&lt;c-\epsilon)+P(X_{n}&gt;c+\epsilon) \\
+&amp;\leq F_{X_{n}}(c-\epsilon)-F_{X_{n}}(c+\epsilon)+1,
+\end{align}
+\]</span> 因为 <span class="math inline">\(P(X=c)=1\)</span>, 所以 <span class="math inline">\(F_{X}\)</span> 是 <span class="math display">\[
+F_{X}(x)=\left\{\begin{matrix}
+0, x&lt; c, \\
+1,x\geq c.
+\end{matrix}\right.
+\]</span> 因此, 在 <span class="math inline">\(c-\epsilon,c+\epsilon\)</span> <span class="math inline">\(F_{X}\)</span> 均连续. 令 <span class="math inline">\(n\to \infty\)</span>, 我们有 <span class="math display">\[
+\lim_{ n \to \infty } P(\lvert X_{n}-c \rvert &gt;\epsilon)\leq
+F_{X}(c-\epsilon)-F_{X}(c+\epsilon)+1=0,
+\]</span> 命题得证. 当是 <span class="math inline">\(k\)</span> 维随机向量时, 我们可以先证明每个分量上的依分布收敛, 然后结合 1 维的结果证明每个分量上的依测度收敛, 进而证明整个向量的依测度收敛.</p>
+</div>
+<div id="thm-19-convergence-theory-23" class="theorem">
+<p><span class="theorem-title"><strong>定理 8 (<span class="math inline">\(\mu\implies a.u.\)</span>)</strong></span> <span class="math inline">\(f_{n}\overset{ \mu }{ \longrightarrow }f\)</span> 当且仅当 <span class="math inline">\(\{ f_{n} \}\)</span> 的任意子列都存在该子列的子列 <span class="math inline">\(f_{n}'\)</span> 使得 <span class="math display">\[
+f_{n}'\overset{ a.u. }{ \longrightarrow }f.
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>我们首先证明依测度收敛成立可以推导出子列的几乎一致收敛。根据依测度收敛的定义，<span class="math inline">\(\forall k=1,2,\dots\)</span>, 都可以找到一个 <span class="math inline">\(n_{k}\)</span>, 使得有 <span class="math display">\[
+\mu\left( \lvert f_{n_{k}}-f \rvert \geq \frac{1}{k} \right)&lt;\frac{1}{2^{k}},
+\]</span> <span class="math inline">\(\forall m=1,2,\dots\)</span>, 我们有 <span class="math display">\[
+\mu\left( \bigcup_{k=m}^{\infty}\left\{  \lvert f_{n_{k}}-f \rvert \geq \frac{1}{k}  \right\} \right)
+\leq \sum\limits_{k=m}^{\infty}\frac{1}{2^{k}}=\frac{1}{2^{m-1}},
+\]</span> 现在 <span class="math inline">\(\forall\epsilon&gt;0\)</span>, 我们总能找到一个 <span class="math inline">\(\frac{1}{k}&lt;\epsilon\)</span>, 此时 <span class="math display">\[
+\left\{  \lvert f_{n_{k}}-f \rvert \geq \frac{1}{k}  \right\}
+\supset
+\{ \lvert f_{n_{k}}-f \rvert \geq\epsilon \},
+\]</span> 则存在一个 <span class="math inline">\(M\in\mathbb{N}^{+}\)</span>, <span class="math inline">\(\forall m&gt;M\)</span>, 有 <span class="math display">\[
+\mu\left( \bigcup_{k=m}^{\infty}\{ \lvert f_{n_{k}}-f \rvert \geq\epsilon \} \right)\leq \mu\left( \bigcup_{k=m}^{\infty}\{ \lvert f_{n_{k}}-f \rvert  \}\geq \frac{1}{k} \right)\leq \frac{1}{2^{m-1}},
+\]</span> 此时令 <span class="math inline">\(m\to \infty\)</span>, 我们得到 <span class="math display">\[
+\lim_{ m \to \infty } \mu\left( \bigcup_{k=m}^{\infty}\{ \lvert f_{n_{k}}-f \rvert \geq\epsilon \} \right)=0,
+\]</span> 根据 <a href="#prp-au-convergence-equivalent" class="quarto-xref">命题&nbsp;2</a> 可知几乎一致收敛成立.</p>
+<p>现在我们再来证明反面. 我们使用反证法, 假设依测度收敛不成立, 则 <span class="math inline">\(\exists\epsilon_{0}&gt;0,\delta_{0}&gt;0\)</span>, <span class="math inline">\(\forall N, \exists n_{k}&gt;N\)</span> 使得 <span class="math display">\[
+\mu(\lvert f_{n_{k}}-f \rvert \geq\epsilon_{0})\geq\delta_{0}
+\]</span> 也就是对于 <span class="math inline">\(\{ f_{n} \}\)</span> 的某个子列 <span class="math inline">\(\{ f_{n_{k}} \}\)</span> 成立. 则对该子列的任意一个子列 <span class="math inline">\(\{ f_{n_{kj}} \}\)</span> 我们总有 <span class="math display">\[
+\begin{align}
+\mu\left( \bigcup_{j=m}^{\infty}\{ \lvert f_{n_{kj}}-f \rvert\geq\epsilon_{0}  \} \right) \geq\delta_{0},\quad
+\forall m=1,2,\dots\\
+\implies \\
+\mathop{\lim\inf}_{ m \to \infty } \mu\left( \bigcup_{j=m}^{\infty}\{ \lvert f_{n_{kj}}-f \rvert\geq\epsilon_{0}  \} \right) \geq\delta_{0},
+\end{align}
+\]</span> 根据 <a href="#prp-au-convergence-equivalent" class="quarto-xref">命题&nbsp;2</a> 这与任意子列都存在一个子列的子列几乎一致收敛是矛盾的, 命题得证.</p>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="为什么要说“任意子列的子列”">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>为什么要说“任意子列的子列”
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>由依测度收敛确实可以推出：存在某个子列几乎一致收敛到 <span class="math inline">\(f\)</span>. 但是, 仅仅“存在一个好子列”太弱, 不能反推出整列依测度收敛.</p>
+<p>例如在任意概率空间上令 <span class="math inline">\(f_{2n-1}=0\)</span>, <span class="math inline">\(f_{2n}=1\)</span>, 并以 <span class="math inline">\(0\)</span> 为极限候选. 奇数子列恒等于 <span class="math inline">\(0\)</span>, 因而几乎一致收敛到 <span class="math inline">\(0\)</span>. 但是整列不依测度收敛到 <span class="math inline">\(0\)</span>, 因为 <span class="math display">\[
+P(\lvert f_{2n}-0 \rvert&gt;1/2)=1.
+\]</span></p>
+<p>所以, 要刻画整列依测度收敛, 必须要求一个更强的条件: <strong>任意子列都能再抽出一个几乎一致收敛到 <span class="math inline">\(f\)</span> 的子列</strong>. 这样才能排除某些坏项组成的子列一直偏离 <span class="math inline">\(f\)</span> 的情况.</p>
+</div>
+</div>
+<p>很多时候, 我们可能更加关注其中<strong>依测度收敛</strong>到<strong>几乎一致收敛</strong>的部分, 这一部分我们可以得到一个更加简介的推论</p>
+<div id="cor-19-convergence-theory-24" class="theorem corollary">
+<p><span class="theorem-title"><strong>推论 1 (<span class="math inline">\(\mu\implies a.u.\)</span>)</strong></span> <span class="math inline">\(f_{n}\overset{ \mu }{ \longrightarrow }f\)</span> 成立, 则存在 <span class="math inline">\(\{ f_{n} \}\)</span> 的某个子列 <span class="math inline">\(f_{n}'\)</span> 使得 <span class="math display">\[
+f_{n}'\overset{ a.u. }{ \longrightarrow }f.
+\]</span></p>
+</div>
+<p>接下来, 我们将介绍依测度收敛如何得到平均收敛.</p>
+<div id="thm-19-convergence-theory-25" class="theorem">
+<p><span class="theorem-title"><strong>定理 9 (<span class="math inline">\(\mu\implies L_{p}\)</span>)</strong></span> 若 <span class="math inline">\(f_{n},f\in L_{p}\)</span>, <span class="math inline">\(f_{n}\overset{ \mu }{ \longrightarrow }f\)</span>, <span class="math inline">\(\lVert f_{n} \rVert_{p}\to \lVert f \rVert_{p}\)</span>, 则有 <span class="math display">\[
+f_{n}\overset{ L_{p} }{ \longrightarrow }f.
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>因为 <a href="#prp-lp-convergence-components" class="quarto-xref">命题&nbsp;5</a> 和 <a href="#prp-convergence-in-measure-components" class="quarto-xref">命题&nbsp;3</a> 的存在, 我们只需要证明一维情况下该定理成立即可.</p>
+<p><span class="math inline">\(f_{n}\overset{ \mu }{ \longrightarrow }f\)</span>, 则对于 <span class="math inline">\(\{ f_{n} \}\)</span> 的任意子列, 都可以找到子列的子列 <span class="math inline">\(\{ f_{n'} \}\)</span> 使得 <span class="math inline">\(f_{n'}\overset{ a.e. }{ \longrightarrow }f\)</span>.令 <span class="math display">\[
+g_{n'}=C_{p}(\lvert f_{n'} \rvert ^{p}+\lvert f \rvert ^{p})-\lvert f_{n'}-f \rvert ^{p},
+\]</span> 其中 <span class="math display">\[
+C_{p}=\left\{\begin{matrix}
+2^{p-1},&amp;1\leq p\leq \infty, \\
+1,&amp;0&lt;p&lt;1.
+\end{matrix}\right.
+\]</span> 由 <strong>?@thm-minkowski-inequality</strong> 和 <strong>?@thm-quasi-minkowski-inequality</strong> 可知, <span class="math inline">\(g_{n'}\geq 0\)</span>, 并且根据 <span class="math inline">\(f_{n'}\overset{ a.e. }{ \longrightarrow }f\)</span> 有 <span class="math display">\[
+\lim_{ n' \to \infty } g_{n'}=C_{p}(\lim_{ n' \to \infty } \lvert f_{n'} \rvert ^{p}+\lvert f \rvert ^{p})-\lim_{ n' \to \infty } \lvert f_{n'}-f \rvert ^{p}=2C_{p}\lvert f \rvert ^{p},\quad a.e..
+\]</span> 当 <span class="math inline">\(\lVert f_{n} \rVert_{p}\to \lVert f \rVert_{p}\)</span> 成立时, 由 <strong>?@thm-fatou</strong> 得到 <span class="math display">\[
+\begin{align}
+2C_{p} \lVert f \rVert _{p}^{p} &amp;=
+\int (2C_{p}\lvert f \rvert ^{p}) \, d\mu \\
+&amp;=\int (\lim_{ n' \to \infty } g_{n'}) \, d\mu \\
+&amp;\leq \mathop{\lim\inf}_{ n' \to \infty } \int g_{n'} \, d\mu  \\
+&amp;=\mathop{\lim\inf}_{ n' \to \infty } \int C_{p}(\lvert f_{n'} \rvert^{p}+\lvert f \rvert ^{p} ) \, d\mu
+-\mathop{\lim\sup}_{ n' \to \infty } \int \lvert f_{n'}-f \rvert ^{p} \, d\mu \\
+&amp;=2C_{p}\lVert f \rVert _{p}^{p}-
+\mathop{\lim\sup}_{ n \to \infty } \int \lvert f_{n'}-f \rvert^{p}  \, dx ,
+\end{align}
+\]</span> 两端消去相同的项, 我们得到 <span class="math display">\[
+\lim_{ n' \to \infty } \int \lvert f_{n'}-f \rvert  \, d\mu=0.
+\]</span> 这意味着 <span class="math inline">\(\{ \lVert f_{n}-f \rVert _{p} \}\)</span> 的任意子列均存在子列的子列会 <span class="math inline">\(\to0\)</span>, 那么必然意味着 <span class="math inline">\(f_{n}\overset{ L_{p} }{ \longrightarrow }f\)</span> (反证法).</p>
+</div>
+<p>用上面证明中的 Fatou 思路, 我们还可以得到另一个常用的推论</p>
+<div id="cor-19-convergence-theory-26" class="theorem corollary">
+<p><span class="theorem-title"><strong>推论 2 (<span class="math inline">\(a.e.\implies L_{p}\)</span>)</strong></span> 若 <span class="math inline">\(f_{n},f\in L_{p}\)</span>, <span class="math inline">\(f_{n}\overset{ a.e. }{ \longrightarrow }f\)</span>, <span class="math inline">\(\lVert f_{n} \rVert_{p}\to \lVert f \rVert_{p}\)</span>, 则有 <span class="math display">\[
+f_{n}\overset{ L_{p} }{ \longrightarrow }f.
+\]</span> <strong>Theorem: <span class="math inline">\(a.u.\)</span> 的充分条件</strong> <span class="math inline">\(\forall\epsilon&gt;0\)</span>, <span class="math inline">\(\sum\limits_{n=1}^{\infty}\mu(\lvert X_{n}-X \rvert\geq\epsilon)&lt;\infty\)</span>, 则 <span class="math display">\[
+X_{n}\overset{ a.u. }{ \longrightarrow }X.
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span><span class="math inline">\(\sum\limits_{n=1}^{\infty}\mu(\lvert X_{n}-X \rvert\geq\epsilon)&lt;\infty\)</span> 意味着 <span class="math display">\[
+\lim_{ m \to \infty } \mu\left( \bigcup_{n=m}^{\infty}\{ \lvert X_{n}-X \rvert \geq\epsilon \} \right) \leq
+\lim_{ m \to \infty } \sum\limits_{i=m}^{\infty}\mu(\lVert X_{n}-X \rVert\geq\epsilon) =0.
+\]</span> 根据 <a href="#prp-au-convergence-equivalent" class="quarto-xref">命题&nbsp;2</a> 可知命题成立.</p>
+</div>
+<div id="def-uniform-integrability" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 6 (一致可积)</strong></span> 设 <span class="math inline">\(\{ Z_{n},n=1,2,\dots \}\)</span> 是一列可积随机变量. 若 <span class="math display">\[
+\lim_{ t \to \infty }
+\sup_{n}
+\mathbb{E}\left(
+\lvert Z_{n} \rvert I_{\{ \lvert Z_{n} \rvert&gt;t \}}
+\right)=0,
+\]</span> 则称 <span class="math inline">\(\{ Z_{n} \}\)</span> 是<strong>一致可积</strong>的.（尾部的绝对值积分会收敛到 0）</p>
+</div>
+<div id="thm-ui-under-distribution-convergence" class="theorem">
+<p><span class="theorem-title"><strong>定理 10 (依分布收敛下的一致可积)</strong></span> 假设 <span class="math inline">\(X_{n}\overset{ d }{ \longrightarrow }X\)</span>. 则对任意固定的 <span class="math inline">\(r&gt;0\)</span>, <span class="math display">\[
+\lim_{ n \to \infty } \lVert X_{n} \rVert ^{r}_{r}
+=\lVert X \rVert ^{r}_{r} &lt; \infty
+\]</span> 当且仅当 <span class="math inline">\(\{ \lvert X_{n} \rvert_{r}^{r} \}\)</span> 是一致可积的.</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>这里我们需要先注意几个概念之间的辨析, 因为我们使用了和书上不同的符号. <span class="math display">\[
+\begin{align}
+\lVert X \rVert _{r}=(\mathbb{E}\lvert X \rvert _{r}^{r})^{\frac{1}{r}}
+=\left( \int \lvert X \rvert _{r}^{r} \, dP  \right)^{\frac{1}{r}}
+=\left( \int \sum\limits_{i=1}^{k}\lvert X_{i} \rvert ^{r} \, dP  \right)
+^{\frac{1}{r}},
+\end{align}
+\]</span> 其中 <span class="math inline">\(\lVert \cdot \rVert\)</span> 表示积分范数, <span class="math inline">\(\lvert \cdot \rvert\)</span> 表示向量范数.</p>
+<p>因为该命题只依赖于 <span class="math inline">\(X_{n}\)</span> 和 <span class="math inline">\(X\)</span> 的分布, 根据 <a href="#thm-skorohod-representation" class="quarto-xref">定理&nbsp;6</a>, 不妨假设 <span class="math inline">\(X_{n}\)</span> 和 <span class="math inline">\(X\)</span> 定义在同一个概率空间中, 并且 <span class="math display">\[
+X_{n}\overset{ a.s. }{ \longrightarrow }X.
+\]</span> 这是因为 Skorohod 表示中得到的 <span class="math inline">\(Y_{n},Y\)</span> 与原来的 <span class="math inline">\(X_{n},X\)</span> 分布相同, 所以 <span class="math inline">\(\mathbb{E}\lvert X_{n} \rvert_{r}^{r}\)</span>、<span class="math inline">\(\mathbb{E}\lvert X \rvert_{r}^{r}\)</span> 以及一致可积性都不会改变.</p>
+<p>先证明充分性. 假设 <span class="math inline">\(\{ \lvert X_{n} \rvert_{r}^{r} \}\)</span> 一致可积. 由定义可知 <span class="math display">\[
+\begin{align}
+\sup_{n}\mathbb{E}\lvert X_{n} \rvert_{r}^{r}&amp;=
+\sup_{n}\mathbb{E}\{
+\lvert X_{n} \rvert ^{r}_{r}I_{\lvert X_{n} \rvert &gt;t}
++\lvert X_{n} \rvert ^{r}_{r}I_{\lvert X_{n} \rvert \leq t}
+\} \\
+&amp;\leq\sup_{n}\mathbb{E}\lvert X_{n} \rvert ^{r}_{r}I_{\lvert X_{n} \rvert &gt;t}
++t^{r} \\
+&amp;&lt;\infty,
+\end{align}
+\]</span> 因此由 Fatou 引理有 <span class="math display">\[
+\mathbb{E}\lvert X \rvert_{r}^{r}
+\leq \liminf_{ n \to \infty }\mathbb{E}\lvert X_{n} \rvert_{r}^{r}&lt;\infty.
+\]</span> 所以只需要证明 <span class="math display">\[
+\limsup_{ n \to \infty }\mathbb{E}\lvert X_{n} \rvert_{r}^{r}
+\leq \mathbb{E}\lvert X \rvert_{r}^{r}.
+\]</span> 任取 <span class="math inline">\(\epsilon&gt;0,t&gt;0\)</span>, 记 <span class="math display">\[
+A_{n}=\{ \lvert X_{n}-X \rvert_{r}\leq \epsilon \},
+\quad
+B_{n}=\{ \lvert X_{n} \rvert_{r}&gt;t \}.
+\]</span> 则 <span class="math display">\[
+\begin{align}
+\mathbb{E}\lvert X_{n} \rvert_{r}^{r}
+&amp;=\mathbb{E}(\lvert X_{n} \rvert_{r}^{r}I_{A_{n}^{c}\cap B_{n}})
++\mathbb{E}(\lvert X_{n} \rvert_{r}^{r}I_{A_{n}^{c}\cap B_{n}^{c}})
++\mathbb{E}(\lvert X_{n} \rvert_{r}^{r}I_{A_{n}})\\
+&amp;\leq
+\mathbb{E}(\lvert X_{n} \rvert_{r}^{r}I_{B_{n}})
++t^{r}P(A_{n}^{c})
++\mathbb{E}(\lvert X_{n}I_{A_{n}} \rvert_{r}^{r}).
+\end{align}
+\]</span> 若 <span class="math inline">\(0&lt;r\leq 1\)</span>, 利用 <span class="math inline">\((a+b)^{r}\leq a^{r}+b^{r}\)</span>, 有 <span class="math display">\[
+\begin{align}
+\mathbb{E}(\lvert X_{n}I_{A_{n}} \rvert_{r}^{r})
+&amp;\leq
+\mathbb{E}[(\lvert X_{n}-X \rvert_{r}^{r}+\lvert X \rvert_{r}^{r})I_{A_{n}}]\\
+&amp;\leq \epsilon^{r}+\mathbb{E}\lvert X \rvert_{r}^{r}.
+\end{align}
+\]</span> 若 <span class="math inline">\(r&gt;1\)</span>, 由 Minkowski 不等式有 <span class="math display">\[
+\begin{align}
+\mathbb{E}(\lvert X_{n}I_{A_{n}} \rvert_{r}^{r})
+&amp;=
+\mathbb{E}\lvert (X_{n}-X)I_{A_{n}}+XI_{A_{n}} \rvert_{r}^{r}\\
+&amp;\leq
+\left[
+\left(\mathbb{E}\lvert (X_{n}-X)I_{A_{n}} \rvert_{r}^{r}\right)^{\frac{1}{r}}
++
+\left(\mathbb{E}\lvert XI_{A_{n}} \rvert_{r}^{r}\right)^{\frac{1}{r}}
+\right]^{r}\\
+&amp;\leq
+\left[
+\epsilon+
+\left(\mathbb{E}\lvert X \rvert_{r}^{r}\right)^{\frac{1}{r}}
+\right]^{r}.
+\end{align}
+\]</span> 由于 <span class="math inline">\(\epsilon\)</span> 任意, 两种情形都给出 <span class="math display">\[
+\limsup_{ n \to \infty }
+\mathbb{E}(\lvert X_{n}I_{A_{n}} \rvert_{r}^{r})
+\leq \mathbb{E}\lvert X \rvert_{r}^{r}.
+\]</span> 又因为 <span class="math inline">\(X_{n}\overset{ a.s. }{ \longrightarrow }X\)</span>, 所以 <span class="math inline">\(P(A_{n}^{c})\to0\)</span>. 于是 <span class="math display">\[
+\begin{align}
+\limsup_{ n \to \infty }\mathbb{E}\lvert X_{n} \rvert_{r}^{r}
+&amp;\leq
+\limsup_{ n \to \infty }
+\mathbb{E}(\lvert X_{n} \rvert_{r}^{r}I_{B_{n}})
++\mathbb{E}\lvert X \rvert_{r}^{r}\\
+&amp;\leq
+\sup_{n}\mathbb{E}(
+\lvert X_{n} \rvert_{r}^{r}I_{\{ \lvert X_{n} \rvert_{r}&gt;t \}})
++\mathbb{E}\lvert X \rvert_{r}^{r}.
+\end{align}
+\]</span> 令 <span class="math inline">\(t\to\infty\)</span>, 再利用一致可积性, 得到 <span class="math display">\[
+\limsup_{ n \to \infty }\mathbb{E}\lvert X_{n} \rvert_{r}^{r}
+\leq \mathbb{E}\lvert X \rvert_{r}^{r}.
+\]</span> 结合前面的 Fatou 不等式, 便有 <span class="math display">\[
+\lim_{ n \to \infty }\mathbb{E}\lvert X_{n} \rvert_{r}^{r}
+=\mathbb{E}\lvert X \rvert_{r}^{r}&lt;\infty.
+\]</span></p>
+<p>再证明必要性. 假设 <span class="math display">\[
+\lim_{ n \to \infty }\mathbb{E}\lvert X_{n} \rvert_{r}^{r}
+=\mathbb{E}\lvert X \rvert_{r}^{r}&lt;\infty.
+\]</span> 仍令 <span class="math inline">\(B_{n}=\{ \lvert X_{n} \rvert_{r}&gt;t \}\)</span>, 并定义 <span class="math display">\[
+\xi_{n}
+=
+\lvert X_{n} \rvert_{r}^{r}I_{B_{n}^{c}}
+-\lvert X \rvert_{r}^{r}I_{B_{n}^{c}}.
+\]</span> 因为 <span class="math inline">\(X_{n}\overset{ a.s. }{ \longrightarrow }X\)</span>, 所以 <span class="math inline">\(\xi_{n}\to0\)</span> a.s.; 同时 <span class="math display">\[
+\lvert \xi_{n} \rvert
+\leq t^{r}+\lvert X \rvert_{r}^{r},
+\]</span> 右端可积. 由控制收敛定理, <span class="math display">\[
+\mathbb{E}\xi_{n}\to0.
+\]</span> 这与 <span class="math inline">\(\mathbb{E}\lvert X_{n} \rvert_{r}^{r}\to\mathbb{E}\lvert X \rvert_{r}^{r}\)</span> 合起来说明（注意 <span class="math inline">\(\xi_{n}\)</span> 中是 <span class="math inline">\(B^{c}_{n}\)</span>，下面的是 <span class="math inline">\(B_{n}\)</span>） <span class="math display">\[
+\mathbb{E}(\lvert X_{n} \rvert_{r}^{r}I_{B_{n}})
+-\mathbb{E}(\lvert X \rvert_{r}^{r}I_{B_{n}})
+\to0.
+\]</span> 另一方面, 若 <span class="math inline">\(\lvert X_{n} \rvert_{r}&gt;t\)</span>, 则必有 <span class="math display">\[
+\lvert X_{n}-X \rvert_{r}&gt;\frac{t}{2}
+\quad\text{或}\quad
+\lvert X \rvert_{r}&gt;\frac{t}{2},
+\]</span> 否则由三角不等式会得到 <span class="math inline">\(\lvert X_{n} \rvert_{r}\leq t\)</span>. 因此 <span class="math display">\[
+B_{n}\subset
+\left\{ \lvert X_{n}-X \rvert_{r}&gt;\frac{t}{2} \right\}
+\cup
+\left\{ \lvert X \rvert_{r}&gt;\frac{t}{2} \right\}.
+\]</span> 注意，<span class="math inline">\(\mathbb{E}(\lvert X \rvert^{r}_{r}I_{B_{n}})\)</span> 也和 <span class="math inline">\(n\)</span> 有关系，所以上式减号两端都是一个数列，两者可能都没有极限，于是 <span class="math display">\[
+\begin{align}
+&amp;\limsup_{ n \to \infty }
+\mathbb{E}(\lvert X_{n} \rvert_{r}^{r}I_{B_{n}})\\
+&amp;=\limsup_{ n \to \infty }
+\left[
+\mathbb{E}(\lvert X \rvert_{r}^{r}I_{B_{n}})
++
+\mathbb{E}(\lvert X_{n} \rvert_{r}^{r}I_{B_{n}})
+-\mathbb{E}(\lvert X \rvert_{r}^{r}I_{B_{n}})
+\right]\\
+&amp;\leq
+\limsup_{ n \to \infty }
+\mathbb{E}(\lvert X \rvert_{r}^{r}I_{B_{n}})
++
+\limsup_{ n \to \infty }
+\left[
+\mathbb{E}(\lvert X_{n} \rvert_{r}^{r}I_{B_{n}})
+-\mathbb{E}(\lvert X \rvert_{r}^{r}I_{B_{n}})
+\right]\\
+&amp;=
+\limsup_{ n \to \infty }
+\mathbb{E}(\lvert X \rvert_{r}^{r}I_{B_{n}}).
+\end{align}
+\]</span> 所以 <span class="math display">\[
+\begin{align}
+\limsup_{ n \to \infty }
+\mathbb{E}(\lvert X_{n} \rvert_{r}^{r}I_{B_{n}})
+&amp;\leq
+\limsup_{ n \to \infty }
+\mathbb{E}(\lvert X \rvert_{r}^{r}I_{B_{n}})\\
+&amp;\leq
+\limsup_{ n \to \infty }
+\mathbb{E}\left(
+\lvert X \rvert_{r}^{r}
+I_{\{ \lvert X_{n}-X \rvert_{r}&gt;t/2 \}}
+\right)
++\mathbb{E}\left(
+\lvert X \rvert_{r}^{r}
+I_{\{ \lvert X \rvert_{r}&gt;t/2 \}}
+\right).
+\end{align}
+\]</span> 对固定的 <span class="math inline">\(t\)</span>, 第一项由控制收敛定理趋于 <span class="math inline">\(0\)</span>; 第二项在 <span class="math inline">\(t\to\infty\)</span> 时也由控制收敛定理趋于 <span class="math inline">\(0\)</span>. 因而 <span class="math display">\[
+\lim_{ t \to \infty }
+\limsup_{ n \to \infty }
+\mathbb{E}(
+\lvert X_{n} \rvert_{r}^{r}
+I_{\{ \lvert X_{n} \rvert_{r}&gt;t \}}
+)=0.
+\]</span> 最后, 对任意有限个初项 <span class="math inline">\(n=1,\dots,N\)</span>, 因为 <span class="math inline">\(\mathbb{E}\lvert X_{n} \rvert_{r}^{r}&lt;\infty\)</span>, 有（与上面的内容无关，直接推导） <span class="math display">\[
+\lim_{ t \to \infty }
+\max_{1\leq n\leq N}
+\mathbb{E}(
+\lvert X_{n} \rvert_{r}^{r}
+I_{\{ \lvert X_{n} \rvert_{r}&gt;t \}}
+)=0.
+\]</span> 结合上一式就得到（因为 <span class="math inline">\(\mathop{\lim\sup}_{ n \to \infty }\)</span> 是 <span class="math inline">\(\lim_{ m \to \infty }\sup_{n\geq m}\)</span> 的意思） <span class="math display">\[
+\lim_{ t \to \infty }
+\sup_{n}
+\mathbb{E}(
+\lvert X_{n} \rvert_{r}^{r}
+I_{\{ \lvert X_{n} \rvert_{r}&gt;t \}}
+)=0,
+\]</span> 即 <span class="math inline">\(\{ \lvert X_{n} \rvert_{r}^{r} \}\)</span> 一致可积.</p>
+</div>
+<p>以上定理等价于</p>
+<div id="thm-19-convergence-theory-29" class="theorem">
+<p><span class="theorem-title"><strong>定理 11 (<span class="math inline">\(d\implies L_{p}\)</span>)</strong></span> 假设 <span class="math inline">\(X_{n}\overset{ d }{ \longrightarrow }X\)</span>. 则 <span class="math display">\[
+X_{n}\overset{ L_{r} }{ \longrightarrow }X,\quad r&gt;0
+\]</span> 当且仅当 <span class="math inline">\(\{ \lvert X_{n}-X \rvert_{r}^{r} \}\)</span> 是一致可积的.</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>根据后面关于依分布收敛的 transformation 性质, 我们有 <span class="math display">\[
+X_{n}\overset{ d }{ \longrightarrow }X
+\iff
+X_{n}-X\overset{ d }{ \longrightarrow }0
+\]</span> 然后利用 <a href="#thm-ui-under-distribution-convergence" class="quarto-xref">定理&nbsp;10</a> 即可.</p>
+</div>
+<p>这样, 如果我们想要在依分布收敛的基础上证明平均收敛, 只需要证明一致可积的充分条件即可, 而这样的充分条件是很多的, 比如</p>
+<div id="cor-ui-moment-sufficient" class="theorem corollary">
+<p><span class="theorem-title"><strong>推论 3 (一致可积的充分条件)</strong></span> <span class="math inline">\(\{ \lvert X_{n} \rvert^{r}_{r} \}\)</span> 一致可积的一个充分条件是 <span class="math display">\[
+\sup_{n}\mathbb{E}\lvert X_{n} \rvert ^{r+\delta}_{r}
+&lt;\infty,\quad
+\exists \delta&gt;0.
+\]</span></p>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+注记
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>注意，这里我们的符号基于 <a href="#19-convergence-theory-引言">引言</a> 中的规范。 <strong>Note: 注意，<span class="math inline">\(\lVert X_{n} \rVert^{r+\delta}_{r}=\left( \mathbb{E}\lvert X_{n} \rvert^{r}_{r} \right)^{\frac{r+\delta}{r}}\)</span>，其与 <span class="math inline">\(\mathbb{E}\lvert X_{n} \rvert_{r}^{r+\delta}\)</span> 还不太一样。</strong></p>
+</div>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>我们其实就是在证明 <span class="math display">\[
+\lim_{ M \to \infty } \sup_{n}\mathbb{E}[\lvert X_{n} \rvert _{r}^{r}I_{\lvert X_{n} \rvert ^{r}_{r}&gt;M}]=0.
+\]</span> 那我们先看看里面那个积分是什么： <span class="math display">\[
+\begin{align}
+\mathbb{E}[\lvert X_{n} \rvert_ {r}^{r}I_{\lvert X_{n} \rvert ^{r}_{r}&gt;M}] &amp;=
+\mathbb{E}\left[ \frac{\lvert X_{n} \rvert_ {r}^{r+\delta}}{\lvert X_{n} \rvert _{r}^{\delta}}
+I_{\lvert X_{n} \rvert ^{r}_{r}&gt;M}\right] \\
+&amp;&lt;M^{-\frac{\delta}{r}}\mathbb{E}\left[ \lvert X_{n} \rvert_ {r}^{r+\delta} I_{\lvert X_{n} \rvert ^{r}_{r}&gt;M} \right] \\
+&amp;&lt;M^{-\frac{\delta}{r}}\mathbb{E}[\lvert X_{n} \rvert ^{r+\delta}_{r}],
+\end{align}
+\]</span> 其中第二行成立的原理是因为 <span class="math display">\[
+\lvert X_{n} \rvert ^{r}_{r}&gt;M\implies \lvert X_{n} \rvert ^{\delta}_{r}=\left( \lvert X_{n} \rvert_ {r}^{r} \right) ^{\frac{\delta}{r}}&gt;M^{\frac{\delta}{r}}.
+\]</span> 所以有 <span class="math display">\[
+\sup_{n}\mathbb{E}\left[ \lvert X_{n} \rvert _{r}^{r}I_{\lvert X_{n} \rvert _{r}^{r}&gt;M} \right]
+\leq M^{-\frac{\delta}{r}}\sup_{n}\mathbb{E}\left[ \lvert X_{n} \rvert _{r}^{r+\delta} \right] ,
+\]</span> 由题设，令 <span class="math inline">\(\sup_{n}\mathbb{E}\left[ \lvert X_{n} \rvert_{r}^{r+\delta} \right]=C\)</span>，然后令 <span class="math inline">\(M\to \infty\)</span>，我们得到 <span class="math display">\[
+\lim_{ M \to \infty } \sup_{n}\mathbb{E}\left[ \lvert X_{n} \rvert _{r}^{r}I_{\lvert X_{n} \rvert_ {r}^{r}&gt;M} \right]=0.
+\]</span></p>
+</div>
+<p>接下来了, 我们将就一个例子来讨论 <a href="#thm-ui-under-distribution-convergence" class="quarto-xref">定理&nbsp;10</a> 的用途之一, 这个例子基于 <a href="../../../src/learn/advanced-probability/15-independence-and-conditional-expectation.html#exam-prediction">15_独立和条件期望</a>.</p>
+<div id="exm-prediction-2" class="theorem example">
+<p><span class="theorem-title"><strong>例 5 (预测问题 (续))</strong></span> 假设现在我们希望使用 <span class="math inline">\(n\)</span> 个随机变量组成的随机向量 <span class="math inline">\(Y=(Y_{1},\dots,Y_{n})\)</span> 来预测随机变量 <span class="math inline">\(X\)</span>. 根据 <a href="../../../src/learn/advanced-probability/15-independence-and-conditional-expectation.html#exam-prediction">15_独立和条件期望</a> 中的结论, 若 <span class="math inline">\(\mathbb{E}X^{2}&lt;\infty\)</span>, 在均方误差的角度下, 最优预测器是 <span class="math display">\[
+X_{n}=\mathbb{E}(X|Y_{1},\dots,Y_{n}).
+\]</span> 接下来, 我们将证明: 若假设 <span class="math inline">\(\sigma(X)\subset \mathcal{F}_{\infty}=\sigma(Y_{1},\dots)\)</span> (也就是说 <strong><span class="math inline">\(Y_{1},\dots\)</span> 的无限序列可以提供 <span class="math inline">\(X\)</span> 完整的信息</strong>), 则有 <span class="math inline">\(X_{n}\overset{ a.s. }{ \longrightarrow }X\)</span>.</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>根据 <strong>?@def-martingale</strong>, 我们可以知道 <span class="math inline">\(\{ X_{n} \}\)</span> 实际上是一个 martingale. 根据 <strong>?@thm-submartingale-convergence</strong>, 因为 <span class="math display">\[
+\sup_{n}\mathbb{E}\lvert X_{n} \rvert \leq
+\sup_{n}\mathbb{E}(\mathbb{E}(\lvert X \rvert |Y_{1},\dots,Y_{n}))
+=\mathbb{E}\lvert X \rvert &lt;\infty,
+\]</span></p>
+<p><span id="eq-example-1"></span></p>
+<p>因此, 存在某个随机变量 <span class="math inline">\(Z\)</span>, 使得 <span class="math display">\[
+X_{n}\overset{ a.s. }{ \longrightarrow }Z.
+\]</span> 现在我们需要证明 <span class="math inline">\(Z=X\ a.s.\)</span>. 首先, 因为 <span class="math inline">\(\sigma(X)\subset \mathcal{F}_{\infty}\)</span>, 所以有 <span class="math display">\[
+X=\mathbb{E}(X|\mathcal{F}_{\infty})\ a.s..
+\]</span> 因此我们只需要证明 <span class="math display">\[
+Z=\mathbb{E}(X|\mathcal{F}_{\infty}),\ a.s.
+\]</span> 即可. 根据 <strong>?@thm-prop-condi-expectation</strong>(7) 可知 <span class="math display">\[
+\mathbb{E}X_{n}^{2}=
+\mathbb{E}\left[ \mathbb{E}^{2}[X|Y_{1},\dots,X_{n}] \right]
+\leq \mathbb{E}\left[ \mathbb{E}[X^{2}|Y_{1},\dots,X_{n}] \right]
+=\mathbb{E}X^{2}&lt;\infty,
+\]</span> 这是 <span class="math inline">\(\{ \lvert X_{n} \rvert \}\)</span> 一致可积（这里的 <span class="math inline">\(r=1,\delta=1\)</span>）的充分条件 (<a href="#cor-ui-moment-sufficient" class="quarto-xref">推论&nbsp;3</a>). 再由 <a href="#thm-ui-under-distribution-convergence" class="quarto-xref">定理&nbsp;10</a> 可知 <span class="math display">\[
+\int _{A}X_{n} \, dP\to \int _{A}Z \, dP,\quad \forall A.  
+\]</span> 由条件期望的定义可知, 若 <span class="math inline">\(A\in\sigma(Y_{1},\dots,Y_{n})\)</span>, <span class="math display">\[
+\int _{A}X_{n} \, dP=\int _{A}X \, dP,  
+\]</span> 所以, 若 <span class="math inline">\(A\in\bigcup_{j=1}^{\infty}\sigma(Y_{1},\dots,Y_{j})\)</span>, 则有 <span class="math display">\[
+\int _{A}Z \, dP =
+\lim_{ n \to \infty } \int _{A}X_{n} \, dP=
+\lim_{ n \to \infty } \int _{A}X \, dP =
+\int _{A}X \, dP.
+\]</span> 进而容易证明 <span class="math inline">\(\forall A\in\mathcal{F}_{\infty}=\sigma(\bigcup_{j=1}^{\infty}\sigma(Y_{1},\dots,Y_{j}))\)</span>, <span class="math display">\[
+\int _{A}X \, dP=\int _{A}Z \, dP.  
+\]</span> (证明方法就是先假设一个满足上述等式的集合 <span class="math inline">\(\mathcal{F}\)</span>, 可知 <span class="math inline">\(\mathcal{F}\supset \bigcup_{j=1}^{\infty}\sigma(Y_{1},\dots,Y_{j})\)</span>, 再证明 <span class="math inline">\(\mathcal{F}\)</span> 是一个 <span class="math inline">\(\sigma\)</span> -field 即可). 根据条件期望的定义, 也就是 <span class="math display">\[
+Z=\mathbb{E}(X|\mathcal{F}_{\infty}).
+\]</span></p>
+</div>
+<div id="cor-exer-120" class="theorem corollary">
+<p><span class="theorem-title"><strong>推论 4 (exercise 120)</strong></span> <span class="math inline">\(Y\)</span> 是一个可积随机变量，<span class="math inline">\(\{ \mathcal{F}_{n} \}\)</span> 是一个 <span class="math inline">\(\sigma\)</span>-field 列，则 <span class="math inline">\(\{ \lvert \mathbb{E}(Y|\mathcal{F}_{n}) \rvert \}\)</span> 一定一致可积。</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span><span class="math inline">\(Y\)</span> 可积，意味着 <span class="math display">\[
+\mathbb{E}\lvert Y \rvert &lt;\infty.
+\]</span> 令 <span class="math inline">\(Z_{n}=\mathbb{E}[Y|\mathcal{F}_{n}]\)</span>，根据 <strong>?@thm-prop-condi-expectation</strong>(4)，有 <span class="math display">\[
+\lvert Z_{n} \rvert =\lvert \mathbb{E}[Y|\mathcal{F}_{n}] \rvert
+\leq \mathbb{E}[\lvert Y \rvert |\mathcal{F}_{n}].
+\]</span> 因为 <span class="math inline">\(\{ \lvert Z_{n} \rvert&gt;M\}\in \mathcal{F}_{n}\)</span>，所以有 <span class="math display">\[
+\mathbb{E}[\lvert Z_{n} \rvert 1_{\{ \lvert Z_{n} \rvert &gt;M \}}]
+\leq
+\mathbb{E}\left[ \mathbb{E}[\lvert Y \rvert |\mathcal{F}_{n}]1_{{ \lvert Z_{n} \rvert &gt;M }} \right]
+=\mathbb{E}[\lvert Y \rvert 1_{{ \lvert Z_{n} \rvert &gt;M }}].
+\]</span> 令 <span class="math inline">\(A_{n,M}=\{ \lvert Z_{n} \rvert&gt;M \}\)</span>，根据 <strong>?@thm-markov-inequality</strong>，有 <span class="math display">\[
+P(A_{n,M})\leq \frac{\mathbb{E}\lvert Z_{n} \rvert }{M}\leq
+\frac{\mathbb{E}[\mathbb{E}[\lvert Y \rvert |\mathcal{F}_{n}]]}{M}
+=\frac{\mathbb{E}\lvert Y \rvert }{M}.
+\]</span> 注意，上述不等式是对 <span class="math inline">\(\forall n\)</span> 成立的。</p>
+<p>根据 <a href="../../../src/learn/advanced-probability/08-integration.html#9b6249">8_积分</a>，<span class="math inline">\(Y\)</span> 有绝对连续性，所以 <span class="math inline">\(\forall\epsilon&gt;0,\exists\delta&gt;0\)</span>，使得 <span class="math inline">\(\forall A,P(A)&lt;\delta\)</span>，有 <span class="math display">\[
+\mathbb{E}[\lvert Y \rvert 1_{A}]&lt;\epsilon.
+\]</span> 现在我们针对这个 <span class="math inline">\(\delta\)</span>，找到一个 <span class="math inline">\(M'\)</span>，使得 <span class="math display">\[
+\frac{\mathbb{E}\lvert Y \rvert }{M'}&lt;\delta,
+\]</span> 显然 <span class="math inline">\(P(A_{n,M})&lt;\delta\)</span>，所以有 <span class="math display">\[
+\mathbb{E}[\lvert Y \rvert 1_{A_{n,M}}]&lt;\epsilon,\ \forall n.
+\]</span> 也就是 <span class="math display">\[
+\sup_{n}\mathbb{E}\left[ \lvert Z_{n} \rvert 1_{\{ \lvert Z_{n} \rvert &gt;M \}} \right]
+\leq \mathbb{E}\left[ \lvert Y \rvert 1_{\{ A_{n,M} \}} \right] &lt;\epsilon.
+\]</span> 这样，我们实际上就证明了一致可积性。</p>
+</div>
+<p>实际上，上面的推导过程中，用到 <span class="math inline">\(\mathbb{E}X^{2}&lt;\infty\)</span> 的地方有两个。第一是公式 <a href="#eq-example-1">eq-example-1</a>，这个显然只需要 <span class="math inline">\(\mathbb{E}\lvert X \rvert&lt;\infty\)</span> 即可。第二是作为一致可积的充分条件，而根据 <a href="#cor-exer-120" class="quarto-xref">推论&nbsp;4</a>，在我们的题设条件下也可出放宽到 <span class="math inline">\(\mathbb{E}\lvert X \rvert&lt;\infty\)</span>，所以，我们只需要 <span class="math inline">\(\mathbb{E}\lvert X \rvert&lt;\infty\)</span> 就可以得到 <a href="#exm-prediction-2" class="quarto-xref">例&nbsp;5</a> 中的结论。</p>
+</section>
+</section>
+<section id="收敛速度-渐进记号" class="level1">
+<h1>收敛速度 (渐进记号)</h1>
+<p>涉及到收敛, 一个需要讨论的问题是<strong>收敛速度的比较</strong>. 与数学分析中类似, 我们在这里也有一套大 O 记号来定义相对之间的收敛速率.</p>
+<p>首先我们需要回忆一下对于传统序列的大 O 记号的定义:</p>
+<div id="def-19-convergence-theory-33" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 7 (序列有界阶记号)</strong></span> 若序列 <span class="math inline">\(\{ a_{n} \},\{ b_{n} \}\)</span> (<span class="math inline">\(\{ b_{n} \}\)</span> 需要满足 <span class="math inline">\(\lvert b_{n} \rvert&gt;0,\forall n\)</span>) 满足下面的关系, 则称其满足 <span class="math inline">\(a_{n}=O(b_{n})\)</span>, <span class="math display">\[
+\lvert a_{n} \rvert \leq c\lvert b_{n} \rvert ,\forall n, \exists c.
+\]</span></p>
+<p>上述定义等价于</p>
+<p><span class="math display">\[
+\exists N,c,\forall n&gt;N,
+\lvert a_{n} \rvert \leq c\lvert b_{n} \rvert,
+\]</span> 因为我们只需要令 <span class="math inline">\(c'=\max\left\{  c,\frac{\lvert a_{1} \rvert}{\lvert b_{1} \rvert}+1,\dots,\frac{\lvert a_{N} \rvert}{\lvert b_{N} \rvert}+1  \right\}\)</span>, 则有 <span class="math inline">\(\lvert a_{n} \rvert \leq c\lvert b_{n} \rvert ,\forall n, \exists c.\)</span> <strong>Definition: 序列低阶小量记号</strong></p>
+<p>若序列 <span class="math inline">\(\{ a_{n} \},\{ b_{n} \} (\{ b_{n} \}\)</span> 需要满足 <span class="math inline">\(\lvert b_{n} \rvert&gt;0,\forall n\)</span>) 满足下面的关系, <span class="math display">\[
+\frac{a_{n}}{b_{n}}\to0,\quad n\to \infty.
+\]</span> 则称为 <span class="math inline">\(a_{n}=o(b_{n})\)</span>.</p>
+</div>
+<p>根据上面的定义我们知道, <span class="math display">\[
+a_{n}=o(b_{n})\implies a_{n}=O(b_{n}).
+\]</span> 此外, <span class="math inline">\(\{ a_{n} \}\)</span> bounded <span class="math inline">\(\iff a_{n}=O(1)\)</span>.</p>
+<p>接下来, 我们定义</p>
+<div id="def-landau-prob" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 8 (随机变量渐进记号)</strong></span> 假设 <span class="math inline">\(\{ X_{1},X_{2},\dots \}\)</span> 是一组随机<strong>向量</strong>, <span class="math inline">\(\{ Y_{1},Y_{2},\dots \}\)</span> 是一组随机<strong>变量</strong>, 它们都定义在相同的概率空间中. 我们定义 (1) <span class="math inline">\(X_{n}=O(Y_{n})\)</span> a.s. 当且仅当 <span class="math inline">\(P(\lvert X_{n} \rvert=O(\lvert Y_{n} \rvert))=1\)</span>. (2) <span class="math inline">\(X_{n}=o(Y_{n})\)</span> a.s.当且仅当 <span class="math inline">\(\frac{X_{n}}{Y_{n}}\overset{ a.s. }{ \longrightarrow }0\)</span>. (3) <span class="math inline">\(X_{n}=O_{p}(Y_{n})\)</span> 当且仅当 <span class="math inline">\(\forall\epsilon&gt;0,\exists C_{\epsilon}&gt;0,\)</span> <span class="math display">\[
+\sup_{n}P(\lvert X_{n} \rvert \geq C_{\epsilon}\lvert Y_{n} \rvert )&lt;\epsilon.
+\]</span> (4) <span class="math inline">\(X_{n}=o_{p}(Y_{n})\)</span> 当且仅当 <span class="math inline">\(\frac{X_{n}}{Y_{n}}\overset{ P }{ \longrightarrow }0\)</span>.</p>
+</div>
+<p>针对以上的定义, 我讨论一些细节:</p>
+<p>首先， <span class="math inline">\(o\)</span> 和 <span class="math inline">\(O\)</span> 后面会加 <span class="math inline">\(a.s.\)</span>, 也就是说其就是数列 <span class="math inline">\(o\)</span> 和 <span class="math inline">\(O\)</span> 加上 ” 几乎处处 ” 的概念后产生的; <span class="math inline">\(o_{p}\)</span> 和 <span class="math inline">\(O_{p}\)</span> 则不需要, 它们两个属于数列 <span class="math inline">\(o\)</span> 和 <span class="math inline">\(O\)</span> 的 ” 依测度收敛 ” 对应物.</p>
+<p>其次，<span class="math inline">\(X_{n}=O(Y_{n})\)</span> 表示几乎每个 <span class="math inline">\(a\in\Omega\)</span> 构成的数量 <span class="math inline">\(\{ \lvert X_{n}(a) \rvert \},\{ \lvert Y_{n}(a) \rvert \}\)</span> 都可以实现 <span class="math inline">\(\lvert X_{n}(a) \rvert\leq c_{a}\lvert Y_{n} \rvert,\forall n\)</span> , 但是不保证其所对应的 <span class="math inline">\(c_{a}\)</span> 是相同的, 所以也就是每个 <span class="math inline">\(a\)</span> 对应一个 <span class="math inline">\(c_{a}\)</span>. 因此, 其定义<strong>不是</strong> <span class="math inline">\(P\left( \bigcap_{n=1}^{\infty}\{ \lvert X_{n} \rvert\leq c\lvert Y_{n} \rvert \} \right)=1\)</span>. 最后，对于向量 <span class="math inline">\(X_{n}\)</span>, <span class="math inline">\(\lvert X_{n} \rvert=\left( \sum\limits_{i=1}^{k}\lvert X_{n[i]} \rvert^{r} \right)^{1/r}\)</span> 是向量范数, 一般默认 <span class="math inline">\(r=2\)</span>; 而对于随机变量 <span class="math inline">\(Y_{n}\)</span>, <span class="math inline">\(\lvert Y_{n} \rvert\)</span> 就是取绝对值.</p>
+<p>根据定义, 我们可以有下面的性质</p>
+<div id="prp-19-convergence-theory-35" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 6 (随机变量渐进性质)</strong></span> &nbsp;</p>
+<ol type="1">
+<li><span class="math inline">\(X_{n}=o_{p}(Y_{n})\implies X_{n}=O_{p}(Y_{n})\)</span></li>
+<li><span class="math inline">\(X_{n}=o(Y_{n})\ a.s.\implies X_{n}=O(Y_{n})\ a.s.\)</span>.</li>
+<li><span class="math inline">\(X_{n}=O_{p}(Y_{n}),Y_{n}=O_{p}(Z_{n})\implies X_{n}=O_{p}(Z_{n})\)</span>.</li>
+<li><span class="math inline">\(X_{n}=O(Y_{n})\ a.s.,Y_{n}=O(Z_{n})\ a.s.\implies X_{n}=O(Z_{n})\ a.s.\)</span>.</li>
+<li><span class="math inline">\(X_{n}=o_{p}(Y_{n}),Y_{n}=o_{p}(Z_{n})\implies X_{n}=o_{p}(Z_{n})\)</span>.</li>
+<li><span class="math inline">\(X_{n}=o(Y_{n})\ a.s.,Y_{n}=o(Z_{n})\ a.s.\implies X_{n}=o(Z_{n})\ a.s.\)</span>.</li>
+<li><span class="math inline">\(X_{n}\overset{ d }{ \longrightarrow }X\implies X_{n}=O_{p}(1)\)</span>, 此时 <span class="math inline">\(\{ X_{n} \}\)</span> 被称为<strong>依概率有限 (bounded in probability)</strong>.</li>
+</ol>
+</div>
+<p>上面的性质说明： 1. 随机变量的渐进记号拥有和序列渐进记号相似的性质：<span class="math inline">\(o\)</span> 蕴含 <span class="math inline">\(O\)</span>。 2. 所有的记号都有传递性。</p>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span></p>
+<ol type="1">
+<li><span class="math display">\[
+\begin{align}
+X_{n}=o_{p}(Y_{n})\implies \\
+\lim_{ n \to \infty } P\left( \left\lvert  \frac{X_{n}}{Y_{n}}  \right\rvert &gt;\epsilon \right)=1,\quad \forall\epsilon&gt;0\implies \\
+\forall\epsilon&gt;0,\exists N_{\epsilon},\forall n&gt;N_{\epsilon},
+P(\lvert X_{n} \rvert &gt;\epsilon \lvert Y_{n} \rvert )&lt;\epsilon.
+\end{align}
+\]</span> 对于 <span class="math inline">\(n\leq N_{\epsilon}\)</span>, 因为 <span class="math display">\[
+\lim_{ k \to \infty } P\left( \left\lvert  \frac{X_{n}}{Y_{n}}  \right\rvert &gt; k \right) =
+P\left( \bigcap_{k=1}^{\infty}\left\{  \left\lvert  \frac{X_{n}}{Y_{n}}  \right\rvert &gt;k  \right\} \right)=0,
+\]</span> 因此, 对于固定的某个 <span class="math inline">\(\epsilon&gt;0\)</span>, 一定存在某个 <span class="math inline">\(K_{n}^{\epsilon}\)</span>, 使得 <span class="math display">\[
+P\left( \left\lvert  \frac{X_{n}}{Y_{n}}  \right\rvert &gt;K_{n}^{\epsilon} \right) =
+P(\lvert X_{n} \rvert &gt;K^{\epsilon}_{n}\lvert Y_{n} \rvert )&lt;\epsilon,
+\]</span> 此时, 令 <span class="math inline">\(C_{\epsilon}=\max\{ K^{\epsilon}_{1},\dots,K^{\epsilon}_{N_{\epsilon}},\epsilon \}\)</span>, 可知 <span class="math display">\[
+\begin{align}
+P(\lvert X_{n} \rvert &gt;C_{\epsilon}\lvert Y_{n} \rvert ) &lt; \epsilon,\forall n\implies
+\sup_{n}P(\lvert X_{n} \rvert &gt;C_{\epsilon}\lvert Y_{n} \rvert )\leq\epsilon,
+\end{align}
+\]</span> 我们只需要在刚开始设置 <span class="math inline">\(\epsilon\)</span> 稍微放大一些, 就可以得到 <span class="math inline">\(X_{n}=O_{p}(Y_{n})\)</span> 的定义了.</li>
+<li>直接通过数列的性质推出.</li>
+<li>令 <span class="math inline">\(C_{3}=C_{1}C_{2}\)</span>, 则有 <span class="math display">\[
+\left\lvert  \frac{X_{n}}{Z_{n}}  \right\rvert =
+\left\lvert  \frac{X_{n}}{Y_{n}}  \right\rvert \left\lvert  \frac{Y_{n}}{Z_{n}}  \right\rvert \geq C_{3}
+\implies
+\left\lvert  \frac{X_{n}}{Y_{n}}  \right\rvert \geq C_{1} \quad\text{or}\quad
+\left\lvert  \frac{Y_{n}}{Z_{n}}  \right\rvert \geq C_{2},
+\]</span> 因此有 <span class="math display">\[
+P(\left\lvert  \frac{X_{n}}{Z_{n}}  \right\rvert\geq C_{3})\leq
+P(\left\lvert  \frac{X_{n}}{Y_{n}}  \right\rvert \geq C_{1})+
+P(\left\lvert  \frac{Y_{n}}{Z_{n}}  \right\rvert \geq C_{2}),
+\]</span> 据此, 命题是容易证明的.</li>
+<li><ol start="5" type="1">
+<li><ol start="6" type="1">
+<li>方式类似, 也比较容易, 略.</li>
+</ol></li>
+</ol></li>
+<li>注意到 <span class="math display">\[
+\begin{align}
+P(\lvert X_{n} \rvert \geq C)=F_{X_{n}}(-C)+1-F_{X_{n}}(C),
+\end{align}
+\]</span> 根据 <span class="math inline">\(X_{n}\overset{ d }{ \longrightarrow }X\)</span>, 若 <span class="math inline">\(C\)</span> 在 <span class="math inline">\(F_{X}\)</span> 上连续, 则有 <span class="math display">\[
+\lim_{ n \to \infty } P(\lvert X_{n} \rvert \geq C)=P(\lvert X \rvert &gt;C).
+\]</span> 则 <span class="math inline">\(\forall\epsilon&gt;0\)</span>, 我们可以找到一个 <span class="math inline">\(C_{\epsilon}^{1}\)</span>, 使得 <span class="math display">\[
+P(\lvert X \rvert &gt;C_{\epsilon}^{1}) &lt; \frac{\epsilon}{2},
+\]</span> 进一步, 我们可以找到一个 <span class="math inline">\(N_{\epsilon}\)</span>, <span class="math inline">\(\forall n&gt;N_{\epsilon}\)</span>, 使得 <span class="math display">\[
+P(\lvert X_{n} \rvert \geq C_{\epsilon}^{1}) &lt; \epsilon.
+\]</span> 至于 <span class="math inline">\(n\leq N_{\epsilon}\)</span> 的情况, 我们为每个 <span class="math inline">\(X_{n}\)</span> 找到一个 <span class="math inline">\(\hat{C}_{\epsilon}^{n}\)</span> 使得 <span class="math display">\[
+P(\lvert X_{n} \rvert \geq\hat{C}_{\epsilon}^{n}) &lt;\epsilon,\quad
+\forall n\leq N_{\epsilon},
+\]</span> 令 <span class="math inline">\(C_{\epsilon}=\max\{ C_{\epsilon}^{1},\hat{C}_{\epsilon}^{1},\dots,\hat{C}_{\epsilon}^{N_{\epsilon}} \}\)</span>, 可知其满足 <span class="math inline">\(O_{p}\)</span> 定义中的情况, 也就是说 <span class="math display">\[
+X_{n}=O_{p}(1).
+\]</span></li>
+</ol>
+</div>
+</section>
+<section id="弱收敛-依分布收敛" class="level1">
+<h1>弱收敛 (依分布收敛)</h1>
+<p>我们针对弱收敛进行一些更多的讨论. 我们首先去补充一个类似 ” 列紧 ” 的定义.</p>
+<div id="def-19-convergence-theory-36" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 9 (概率列紧)</strong></span> 假设在 <span class="math inline">\((\mathbb{R}^{k},\mathcal{B}^{k})\)</span> 上存在一个测度序列 <span class="math inline">\(\{ P_{n} \}\)</span>, 我们称其为 <strong>tight</strong>, 如果 <span class="math inline">\(\forall\epsilon&gt;0,\exists\)</span> 紧集 <span class="math inline">\(C \subset \mathbb{R}^{k}\)</span>, 使得 <span class="math display">\[
+\inf_{n}P_{n}(C)&gt;1 - \epsilon.
+\]</span></p>
+</div>
+<p>注意, 根据 <a href="https://zh.wikipedia.org/wiki/%E6%B5%B7%E6%B6%85-%E5%8D%9A%E9%9B%B7%E5%B0%94%E5%AE%9A%E7%90%86" title="海涅-博雷尔定理">海涅-博雷尔定理</a>, <strong><span class="math inline">\(\mathbb{R}^{k}\)</span> 中的子集是紧集当且仅当是有界闭集</strong>, 所以有下面的一个简单的推论</p>
+<div id="prp-tightness-bounded-in-probability" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 7 (tightness 和 boundedness)</strong></span> 随机向量 <span class="math inline">\(\{ X_{n} \}\)</span> 对应的概率序列 <span class="math inline">\(\{ P_{X_{n}} \}\)</span> 是 tight 当且仅当 <span class="math inline">\(\{ \lvert X_{n} \rvert \}\)</span> 是有界的 (<span class="math inline">\(\lvert X_{n} \rvert=O_{p}(1)\)</span>).</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>首先证明 <span class="math inline">\(\implies\)</span>. <span class="math inline">\(\{ P_{X_{n}} \}\)</span> 是 tight 的, 则 <span class="math inline">\(\exists\)</span> 紧集 <span class="math inline">\(C \subset \mathbb{R}^{k}\)</span>, 使得 <span class="math display">\[
+\forall n, P_{X_{n}}(C)&gt;1-\epsilon,
+\]</span> 因为 <span class="math inline">\(C\)</span> 是有界闭的, 所以可以找到一个 constant <span class="math inline">\(c_{\epsilon}\)</span>, <span class="math inline">\(\{ x \in\mathbb{R}^{k}|\lvert x \rvert&lt;c_{\epsilon} \}\supset C\)</span>, 所以有 <span class="math display">\[
+\begin{align}
+\forall n, P(\lvert X_{n} \rvert &lt;c_{\epsilon})\geq P_{X_{n}}(C)&gt;1-\epsilon
+\implies
+\forall n,P(\lvert X_{n} \rvert \geq c_{\epsilon})\leq 1-\epsilon.
+\end{align}
+\]</span> 也就是 <span class="math inline">\(\lvert X_{n} \rvert=O_{p}(1)\)</span>. 然后再证明另一个方向. 当 <span class="math inline">\(\lvert X_{n} \rvert=O_{p}(1)\)</span> 时, 我们只需要令这个紧集 <span class="math display">\[
+C=\{ x \in\mathbb{R}^{k}|\lvert x \rvert \leq C_{\epsilon} \}
+\]</span> 即可.</p>
+</div>
+<p><span class="math inline">\(\{ P_{n} \}\)</span> 的 tightness 和序列的弱收敛非常相关, 这个关系可以总结为下面的性质</p>
+<div id="prp-19-convergence-theory-38" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 8 (tightness 和弱收敛)</strong></span> %% label: test %% 假设 <span class="math inline">\(\{ P_{n} \}\)</span> 是在 <span class="math inline">\((\mathbb{R}^{k},\mathcal{B}^{k})\)</span> 上的一个概率测度序列, 则有 (1) <span class="math inline">\(\{ P_{n} \}\)</span> 的 tightness 的一个<strong>充分必要条件</strong>是对于 <span class="math inline">\(\{ P_{n} \}\)</span> 的每一个子列, 都存在一个子列的子列 <span class="math inline">\(\{ P_{n_{j}} \}\)</span> 和一个额外的 <span class="math inline">\((\mathbb{R}^{k},\mathcal{B}^{k})\)</span> 上的概率测度 <span class="math inline">\(P\)</span> 使得 <span class="math display">\[
+P_{n_{j}}\overset{ \omega }{ \longrightarrow }P.
+\]</span> (2) 如果 <span class="math inline">\(\{ P_{n} \}\)</span> 是 tight, 并且其<strong>每个弱收敛子列</strong>都收敛到相同的概率测度 <span class="math inline">\(P\)</span>, 则有 <span class="math display">\[
+P_{n}\overset{ \omega }{ \longrightarrow }P.
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span></p>
+<ol type="1">
+<li>首先我们证明 <span class="math inline">\(\implies\)</span>. 因为 <span class="math inline">\(\{ P_{n} \}\)</span> 是 tightness, 则其子列也一定是 tightness 的 (根据定义), 所以我们只需要证明: 存在 <span class="math inline">\(\{ P_{n} \}\)</span> 的子列其可以弱收敛到某个概率测度 <span class="math inline">\(P\)</span> 即可 (这可以被视为 <a href="#thm-helly-selection" class="quarto-xref">定理&nbsp;1</a> 的高维版本, 比一维的版本多了一个 tightness 的条件).</li>
+</ol>
+<p>基本思路和 <a href="#thm-helly-selection" class="quarto-xref">定理&nbsp;1</a> 中的证明思路是类似的, 我们首先构造 <span class="math display">\[
+F_{n}(\mathbf{x})=P_{n}((-\infty,\mathbf{x}]).
+\]</span> 然后, 我们找到 <span class="math inline">\(\mathbb{R}^{k}\)</span> 上的所有有理数点 <span class="math inline">\(\mathbf{r}\)</span> (每个分量都是有理数), 这些点的数量是可数的. 因此可以应用 diagonal method, 找到一个整数列 <span class="math inline">\(\{ n_{i} \}\)</span> 使得 <span class="math display">\[
+\forall r,\quad G(\mathbf{r})=\lim_{ i \to \infty } F_{n_{i}}(\mathbf{r})\ \text{exists}.
+\]</span> 然后我们定义 <span class="math display">\[
+F(\mathbf{x})=\inf\{ G(\mathbf{r})|\mathbf{r}\in(\mathbf{x},\infty) \}
+=\inf\{ G(\mathbf{r})| r_{j}&gt;x_{j},\forall j=1,\dots,k \},
+\]</span> 容易证明 <span class="math inline">\(F\)</span> 在每个分量上是非降的. 若 <span class="math inline">\(x_{i}\leq y_{i}\)</span>, 则有 <span class="math display">\[
+\{ G(\mathbf{r})|\mathbf{r}\in((x_{1},\dots,x_{i-1},x_{i},x_{i+1},\dots,x_{k}),\infty) \}\supset
+\{ G(\mathbf{r})|\mathbf{r}\in((x_{1},\dots,x_{i-1},y_{i},x_{i+1},\dots,x_{k}),\infty) \}
+\]</span> 这也就意味着 <span class="math display">\[
+F(x_{1},\dots,x_{i-1},x_{i},x_{i+1},\dots,x_{k})\leq
+F(x_{1},\dots,x_{i-1},y_{i},x_{i+1},\dots,x_{k}).
+\]</span></p>
+<p>但是, 其作为高维分布函数, 还需要进一步证明其 ” 高阶增量 “&gt;0 才行 (1.1 测度空间和概率空间 (<code>1.1 测度空间和概率空间#^b233c4</code>)). <span class="math inline">\(\forall\epsilon&gt;0, A=(\mathbf{a},\mathbf{b}]\)</span>, <span class="math inline">\(A\)</span> 有 <span class="math inline">\(2^{k}\)</span> 个顶点 (使用 <span class="math inline">\(\mathbf{x}\)</span> 表示), 我们可以找到一个 <span class="math inline">\(\delta\)</span>, 使得满足 <span class="math display">\[
+\mathbf{x}&lt;\mathbf{r}&lt;\mathbf{x}+\mathbf{z},\quad
+\mathbf{z}=(\delta,...,\delta)
+\]</span></p>
+<p><span id="eq-tightness-rational-approximation"></span></p>
+<p>的有理数点 <span class="math inline">\(\mathbf{r}\)</span> 满足下面的关系: <span class="math display">\[
+\lvert F(\mathbf{x})-G(\mathbf{r}) \rvert &lt;\frac{\epsilon}{2^{k}}.
+\]</span> (找法是这样的: 首先, 我们肯定能够找到一个 <span class="math inline">\(\mathbf{r}\)</span> 满足 <span class="math inline">\(\mathbf{r}\in(\mathbf{x},\infty)\)</span> 且 <span class="math inline">\(F(\mathbf{x})\leq F(\mathbf{r})\leq F(\mathbf{x})+\epsilon\)</span>, 然后令 <span class="math inline">\(\delta=\min\{ r_{i}-x_{i},\forall i=1,\dots,k \}\)</span>, 利用 <span class="math inline">\(F\)</span> 在每个分量上的单调性, 可以证明这个 <span class="math inline">\(\delta\)</span> 就是我们想要找的 <span class="math inline">\(\delta\)</span>.)</p>
+<p>利用同样的原理, 我们可以找到两个有理数点 <span class="math inline">\(\mathbf{s},\mathbf{t}\)</span> 满足 <span class="math display">\[
+\mathbf{a}&lt;\mathbf{s}&lt;\mathbf{a}+\mathbf{z},\quad
+\mathbf{b}&lt;\mathbf{t}&lt;\mathbf{b}+\mathbf{z},
+\]</span> 令 <span class="math inline">\(B=(\mathbf{s},\mathbf{t}]\)</span>, 则我们有 <span class="math display">\[
+\lvert \Delta_{A}F-\Delta_{B}G \rvert &lt; \epsilon
+\]</span> 其中 $$ <span class="math display">\[\begin{align}
+&amp;\Delta_{A}F=\sum\limits_{c\in C}^{}(-1)^{n(c)}F(c),
+\quad
+C=\{ (c_{1},\dots,c_{k})|c_{i}\in\{ a_{i},b_{i} \},\forall i=1,\dots,k \},
+n(c)=\#\{ c_{i}=a_{i} \} \\
+&amp;\Delta_{B}G=\sum\limits_{c\in C}^{}(-1)^{n(c)}G(c),
+\quad
+C=\{ (c_{1},\dots,c_{k})|c_{i}\in\{ s_{i},t_{i} \},\forall i=1,\dots,k \},
+n(c)=\#\{ c_{i}=s_{i} \}
+\end{align}\]</span></p>
+<p><span class="math display">\[
+(这是因为 $B$ 的每个顶点正好就在式 [eq-tightness-rational-approximation](#eq-tightness-rational-approximation) 确定的 $\mathbf{r}$ 中, 而这些顶点与 $A$ 的顶点相差都不超过 $\frac{\epsilon}{2^{k}}$, 则 " 高阶增量 " 的差距不会超过 $\epsilon$.)
+又由构造 $F$ 的过程我们知道
+\]</span> <em>{B}G=</em>{ i } <em>{B}F</em>{n_{i}}, $$ 而 <span class="math inline">\(\epsilon\)</span> 可以任意小, 这意味着 <span class="math inline">\(\Delta_{A}F\geq 0\)</span>. 也就是说, 高维分布函数的 ” 非降 ” 性质我们证明完成.</p>
+<p>接下来, 我们证明 ” 右连续 ” 性质, 也就是证明在固定其他分量的情况下, 剩下的单个分量是右连续的. 对于某个 <span class="math inline">\(\mathbf{x}\)</span>, 我们可以找到一个 <span class="math inline">\(\mathbf{r}\)</span> 满足 <span class="math display">\[
+\mathbf{x}&lt;\mathbf{r}&lt;\mathbf{x}+\mathbf{z},\quad
+F(\mathbf{x})\leq F(\mathbf{r})=G(\mathbf{r})&lt;F(\mathbf{x})+\epsilon,
+\]</span> 我们定义 <span class="math inline">\(\mathbf{y}=(x_{1},\dots,x_{i-1},r_{i},x_{i+1},\dots,x_{k})\)</span>, 则有 <span class="math display">\[
+F(\mathbf{x})\leq F(\mathbf{y})\leq G(r)&lt;F(\mathbf{x})+\epsilon,
+\]</span> 因为每个分量上的单调性, 我们可以知道在 <span class="math inline">\(\forall y_{i}\in(x_{i},r_{i})\)</span>, 都满足 <span class="math display">\[
+F(\mathbf{x})\leq F(x_{1},\dots,x_{i-1},y_{i},x_{i+1},\dots,x_{k})&lt;F(\mathbf{x})+\epsilon,
+\]</span> 这其实就证明了 <span class="math inline">\(F\)</span> 在第 <span class="math inline">\(i\)</span> 个分量上的右连续性.</p>
+<p>接下来, 我们来证明在连续点 <span class="math inline">\(F_{n_{i}}(\mathbf{x})\to F(\mathbf{x})\)</span>. 因为我们已经证明了可以去找式 <a href="#eq-tightness-rational-approximation">eq-tightness-rational-approximation</a> 那样的有理数, 这使得我们可以按照和 <a href="#thm-helly-selection" class="quarto-xref">定理&nbsp;1</a> 中方法来完成高维情况下的证明, 因此这里具体的细节略过.</p>
+<p>其实现在我们已经证明了 <span class="math inline">\(F\)</span> 是一个准分布函数, 但是其是不是一个分布函数还无法知道. 只要我们能够证明其是一个分布函数, 则根据 1.1 测度空间和概率空间 (<code>1.1 测度空间和概率空间#6.2 多维准分布函数</code>) 中的方法生成一个概率测度, 也就可以作为我们这里的 <span class="math inline">\(P\)</span>. 否则, 我们只能生成一个普通测度. 因为 <span class="math inline">\(\{ P_{n} \}\)</span> 的 tightness, 所以我们知道对于任意的 <span class="math inline">\(\epsilon&gt;0\)</span>, 存在一个有界闭集 <span class="math inline">\(C\)</span> ,使得 <span class="math display">\[
+P_{n}(C)&gt;1-\epsilon,\forall n.
+\]</span> 进一步, 我们可以找到一个实数 <span class="math inline">\(t\)</span>, 使得 <span class="math display">\[
+P_{n}([-\mathbf{t},\mathbf{t}])\geq P_{n}(C)&gt;1-\epsilon,\forall n,
+\]</span> 其中 <span class="math inline">\(\mathbf{t}=(t, \dots, t)\)</span>. 现在, 对于某个 <span class="math inline">\(\mathbf{x}\in\mathbb{R}^{k}\)</span>, 其可能存在以下两种情况 (这两种情况并不覆盖所有): (a), <span class="math inline">\(\mathbf{x}\)</span> 的所有分量都在 <span class="math inline">\(&gt;t\)</span>, 则对于所有 <span class="math inline">\(\mathbf{r}&gt;\mathbf{x}\)</span>, 我们有 <span class="math display">\[
+F_{n}(\mathbf{r})&gt;1-\epsilon\implies G(\mathbf{r})\geq 1-\epsilon
+\implies F(\mathbf{x})\geq 1-\epsilon.
+\]</span></p>
+<p><span id="eq-tightness-upper-tail-control"></span></p>
+<p>(b), <span class="math inline">\(\mathbf{x}\)</span> 的部分分量 <span class="math inline">\(&lt;-t\)</span>, 此时, 我们依然可以找到一个有理点 <span class="math inline">\(\mathbf{r}\)</span> 使得 <span class="math inline">\(\mathbf{r}&gt;\mathbf{x}\)</span> ,并且 <span class="math inline">\(\mathbf{r}\)</span> 的对应分量也 <span class="math inline">\(&lt; -t\)</span>. 此时 <span class="math inline">\((-\infty,\mathbf{r})\subset[-\mathbf{t},\mathbf{t}]^{c}\)</span> 所以有 <span class="math display">\[
+F_{n}(\mathbf{r})&lt;\epsilon\implies G(\mathbf{r})\leq\epsilon
+\implies F(\mathbf{x})\leq\epsilon.
+\]</span></p>
+<p><span id="eq-tightness-lower-tail-control"></span></p>
+<p>根据 1.1 测度空间和概率空间 (<code>1.1 测度空间和概率空间#^e71daf</code>) 定义一个测度 <span class="math inline">\(\mu\)</span>, 根据上面的推导我们可以知道: <span class="math display">\[
+\mu((-\infty,\mathbf{x}])=
+\lim_{ s \to \infty } \mu((-\mathbf{s},\mathbf{x}])=
+\lim_{ s \to \infty } \Delta_{(-\mathbf{s},\mathbf{x}]}F,
+\]</span> 其中 <span class="math inline">\(\mathbf{s}=(s, \dots,s)\)</span>. 当 <span class="math inline">\(s\to \infty\)</span> 时, <span class="math inline">\((-\mathbf{s},\mathbf{x})\)</span> 的 <span class="math inline">\(2^{k}\)</span> 个顶点中, 除了 <span class="math inline">\(\mathbf{x}\)</span>, 其他的顶点因为都有 <span class="math inline">\(\mathbf{s}\)</span> 的部分所以都 <span class="math inline">\(\leq\epsilon\)</span> (根据式 <a href="#eq-tightness-lower-tail-control">eq-tightness-lower-tail-control</a>), 因为 <span class="math inline">\(\epsilon\)</span> 的任意性得到 <span class="math display">\[
+\mu((-\infty,\mathbf{x}])=F(\mathbf{x}).
+\]</span> 当 <span class="math inline">\(\mathbf{x}\to \infty\)</span> 时, 根据式 <a href="#eq-tightness-upper-tail-control">eq-tightness-upper-tail-control</a>, 利用相似的思路又可以得到 <span class="math display">\[
+\mu(\mathbb{R}^{k})=F(\infty)=1.
+\]</span> 当 <span class="math inline">\(\mathbf{x}\to-\infty\)</span> 时, <span class="math inline">\(F(\mathbf{x})=\mu(\emptyset)=0\)</span>, 这样, 我们就证明了 <span class="math inline">\(\mu\)</span> 是一个概率测度, <span class="math inline">\(F\)</span> 是其对应的分布函数.</p>
+<p>至此, 我们完成了 <span class="math inline">\(\implies\)</span> 的证明.</p>
+<p>接下来, 我们证明另一个推导的方向. 若 tightness 不成立, 则意味着 <span class="math inline">\(\exists\epsilon\)</span>, 对于所有的有界闭集 <span class="math inline">\(C\)</span>, 有 <span class="math display">\[
+\inf_{n}\{ P_{n}(C) \}\leq 1-\epsilon\implies \exists n,P_{n}(C)\leq 1-\epsilon.
+\]</span> 对于 <span class="math inline">\((-\mathbf{i},\mathbf{i}]\)</span> (其中 <span class="math inline">\(\mathbf{i}=(i, \dots,i)\)</span>), 我们可以找到一个 <span class="math inline">\(n_{i}\)</span> 满足 <span class="math display">\[
+P_{n_{i}}((-\mathbf{i},\mathbf{i}])\leq 1-\epsilon.
+\]</span> 根据我们的条件, 假设 <span class="math inline">\(\{ P_{n_{i}} \}\)</span> 的某个子列 <span class="math inline">\(\{ P_{n_{i(j)}} \}\)</span> 弱收敛到某个 <span class="math inline">\(P\)</span>. 根据测度的性质,我们总可以选择出一个 <span class="math inline">\((\mathbf{a},\mathbf{b}]\)</span> 令其满足下面的条件 <span class="math display">\[
+P(\{ \mathbf{a} \})=P(\{ \mathbf{b} \})=0,\quad
+P((\mathbf{a},\mathbf{b}])&gt;1-\epsilon.
+\]</span></p>
+<p><span id="eq-tightness-contradiction-rectangle"></span></p>
+<p>当 <span class="math inline">\(j\)</span> 足够大时, 有 <span class="math inline">\((\mathbf{a},\mathbf{b}]\subset(-\mathbf{i(j)}, \mathbf{i(j)}]\)</span> ,因此有 <span class="math display">\[
+1-\epsilon\geq P_{n_{i(j)}}((-\mathbf{i(j)}, \mathbf{i(j)}])\geq
+P_{n}((\mathbf{a},\mathbf{b}])\to P((\mathbf{a},\mathbf{b}]),
+\]</span> 这意味着 <span class="math display">\[
+P((\mathbf{a},\mathbf{b}]) \leq 1-\epsilon,
+\]</span> 这与式 <a href="#eq-tightness-contradiction-rectangle">eq-tightness-contradiction-rectangle</a> 中的设置产生矛盾, 命题得证.</p>
+<ol start="2" type="1">
+<li>由 (1) 结合题设, 对于每个子列, 都存在子列的子列弱收敛到 <span class="math inline">\(P\)</span>. 假设 <span class="math inline">\(P_{n}\overset{ \omega }{ \longrightarrow }P\)</span> 不成立, 这意味着对于一些连续点 <span class="math inline">\(\mathbf{x}\)</span> (<span class="math inline">\(P\{ \mathbf{x} \}=0\)</span>) <span class="math display">\[
+\lim_{ n \to \infty } P_{n}((-\infty, \mathbf{x}])\neq P((-\infty, \mathbf{x}]),
+\]</span> 这也就是意味着存在无限多项 <span class="math inline">\(\{ n_{k} \}\)</span> 使得 <span class="math display">\[
+\lvert P_{n}((-\infty, \mathbf{x}])- P((-\infty, \mathbf{x}]) \rvert \geq\epsilon,
+\]</span> 这表明 <span class="math inline">\(\{ P_{n_{k}} \}\)</span> 中没有子列会弱收敛到 <span class="math inline">\(P\)</span>, 这与题设得到的结论产生矛盾, 命题得证.</li>
+</ol>
+</div>
+<p>接下来, 我们将证明几个依分布收敛的充要条件, 这些条件在后续的内容中扮演着非常重要的角色.</p>
+<div id="thm-portmanteau" class="theorem">
+<p><span class="theorem-title"><strong>定理 12 (依分布收敛的 any 等价)</strong></span> <span class="math inline">\(X,X_{1},X_{2},\dots\)</span> 是 <span class="math inline">\(k\)</span> 维随机向量, 则 <span class="math inline">\(X_{n}\overset{ d }{ \longrightarrow }X\)</span> 与下面的任意一个条件等价: (1) <span class="math inline">\(\mathbb{E}[h(X_{n})]\to \mathbb{E}[h(X)]\)</span> 对于每个有界连续函数成立. (2) <span class="math inline">\(\mathop{\lim\sup}_{ n \to \infty }P_{X_{n}}(C)\leq P_{X}(C), \forall \text{closed set }C \subset \mathbb{R}^{k}\)</span>. (3) <span class="math inline">\(\mathop{\lim\inf}_{ n \to \infty }P_{X_{n}}(O)\geq P_{X}(O), \forall \text{open set }O \subset \mathbb{R}^{k}\)</span>.</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>我们使用循环证明方式.</p>
+<p>我们首先证明依分布收敛蕴含 (1). 利用 <a href="#thm-skorohod-representation" class="quarto-xref">定理&nbsp;6</a> 定理, 可以找到分布相关的 <span class="math inline">\(Y,Y_{1},Y_{2},\dots\)</span> ,使得 <span class="math display">\[
+Y_{n}\overset{ a.s. }{ \longrightarrow }Y,
+\]</span> 则对于有界连续函数 <span class="math inline">\(h\)</span> 有 <span class="math display">\[
+h(Y_{n})\overset{ a.s. }{ \longrightarrow }h(Y),
+\]</span> 进而根据 <a href="../../../src/learn/advanced-probability/08-integration.html#7ffb80">8_积分</a> <span class="math display">\[
+\mathbb{E}[h(Y_{n})]\to \mathbb{E}[h(Y)].
+\]</span> 进而注意到 <span class="math display">\[
+\mathbb{E}[h(Y)]=\int h(Y) \, dP=\int h(x) \, dP_{Y}  =\int _{h(x)} \, dP_{X}=\mathbb{E}[h(X)],
+\]</span> 必要性得证.</p>
+<p>然后我们来证明 <span class="math inline">\((1)\implies(2)\)</span>. 我们定义 <span class="math display">\[
+f_{C}(\mathbf{x})=\inf\{ \lvert \mathbf{x}-\mathbf{y} \rvert : \mathbf{y}\in C \},
+\]</span> 可以证明 <span class="math inline">\(f_{C}\)</span> 是连续的. 再定义 <span class="math display">\[
+\phi_{j}=I_{(-\infty,0]}+(1-jt)I_{(0,j^{-1}]},\quad \forall j=1,2,\dots,
+\]</span> 我们可以知道 <span class="math display">\[
+h_{j}(\mathbf{x})=\phi_{j}(f_{C}(\mathbf{x}))
+\]</span> 是 bounded continuous, 并且有 <span class="math display">\[
+h_{j}\geq h_{j+1},\quad \lim_{ j \to \infty } h_{j}(\mathbf{x})=I_{C}(\mathbf{x}).
+\]</span> 因此, 我们有 <span class="math display">\[
+\begin{align}
+\mathop{\lim\sup}_{ n \to \infty } P_{X_{n}}(C)&amp;=
+\mathop{\lim\sup}_{ n \to \infty } \int I_{C}(X_{n}) \, dP \\
+&amp;\leq \lim_{ n \to \infty } \int h_{j}(X_{n}) \, dP \\
+&amp;=\mathbb{E}[h_{j}(X_{n})]=\mathbb{E}[h_{j}(X)],\quad \forall j.
+\end{align}
+\]</span> 其中第三行用到了 (a). 进而我们使用控制收敛定理, 得到 <span class="math display">\[
+\lim_{ j \to \infty } \mathbb{E}[h_{j}(X)]=\mathbb{E}[I_{C}(X)]=P_{X}(C).
+\]</span></p>
+<p>注意到任意闭集的补都是开集, 所以 <span class="math inline">\((2)\iff(3)\)</span>.</p>
+<p>现在我们来证明 <span class="math inline">\((2),(3)\)</span> 蕴含依分布收敛. 对于 <span class="math inline">\(\mathbf{x}\in\mathbb{R}^{k}\)</span>, 我们有 <span class="math display">\[
+\begin{align}
+P_{X}((-\infty,\mathbf{x}))&amp;\leq \mathop{\lim\inf}_{ n \to \infty } P_{X_{n}}((-\infty,\mathbf{x})) \\
+&amp;\leq \mathop{\lim\inf}_{ n \to \infty } F_{X_{n}}(\mathbf{x}) \\
+&amp;\leq \mathop{\lim\sup}_{ n \to \infty } F_{X_{n}}(\mathbf{x}) \\
+&amp;=\mathop{\lim\sup}_{ n \to \infty } P_{X_{n}}((-\infty,\mathbf{x}]) \\
+&amp;\leq P_{X}((-\infty,\mathbf{x}))=F_{X}(\mathbf{x}).
+\end{align}
+\]</span></p>
+<p><span id="eq-portmanteau-sandwich"></span></p>
+<p>其中第一行使用了 (3), 最后一行使用了 (2). 若 <span class="math inline">\(\mathbf{x}\)</span> 是 <span class="math inline">\(F_{X}\)</span> 的连续点, 则有 <span class="math display">\[
+P_{X}((-\infty,\mathbf{x}))=F_{X}(\mathbf{x}),
+\]</span> 这导致等式 <a href="#eq-portmanteau-sandwich">eq-portmanteau-sandwich</a> 的不等号全部变为等号, 也就得到了依分布收敛的定义.</p>
+</div>
+<div id="thm-levy-cramer-continuity" class="theorem">
+<p><span class="theorem-title"><strong>定理 13 (Levy-Cramer 连续定理)</strong></span> <span class="math inline">\(X,X_{1},X_{2},\dots\)</span> 是 <span class="math inline">\(k\)</span> 维随机向量, <span class="math inline">\(\phi_{X},\phi_{X_{1}},\phi_{X_{2}},\dots\)</span> 是对应的 ch.&nbsp;f., 则 <span class="math inline">\(X_{n}\overset{ d }{ \longrightarrow }X\)</span> 当且仅当 <span class="math display">\[
+\lim_{ n \to \infty } \phi_{X_{n}}(\mathbf{t})=\phi_{X}(\mathbf{t}),\quad
+\forall \mathbf{t}\in\mathbb{R}^{k}.
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>我们首先证明条件的必要性. 这个可以直接利用 <span class="math display">\[
+e^{i\mathbf{t}^{T}\mathbf{x}}=\cos(\mathbf{t}^{T}\mathbf{x})+i\sin(\mathbf{t}^{T}\mathbf{x})
+\]</span> , <span class="math inline">\(\cos,\sin\)</span> 的有界连续性和 <a href="#thm-portmanteau" class="quarto-xref">定理&nbsp;12</a> (1) 直接得到.</p>
+<p>然后我们来证明条件的充分性. 我们先证明 1 维情况, 此时对于任意的 <span class="math inline">\(u&gt;0\)</span>, <span class="math display">\[
+\begin{align}
+\frac{1}{u}\int _{-u}^{u}[1-\phi_{X_{n}}(t)] \, dt
+&amp;=\frac{1}{u}\int _{-u}^{u}\left[ 1-\int _{-\infty}^{\infty}e^{itx} \, dP_{X_{n}}(x)  \right] \, dt \\
+&amp;=\int _{-\infty}^{\infty}\left[ \frac{1}{u}\int _{-u}^{u}(1-e^{itx}) \, dt  \right] \, dP_{X_{n}}(x) \\
+&amp;=2\int _{-\infty}^{\infty}\left( 1-\frac{\sin ux}{ux} \right) \, dP_{X_{n}}(x) \\
+&amp;\geq 2\int _{\lvert x \rvert &gt;2u^{-1}}\left( 1-\frac{1}{\lvert ux \rvert } \right) \, dP_{X_{n}}(x) \\
+&amp;\geq P_{X_{n}}((-\infty,-2u^{-1})\cup(2u^{-1},\infty)).
+\end{align}
+\]</span></p>
+<p><span id="eq-levy-tightness-bound"></span></p>
+<p>其中第二行使用到了 <a href="../../../src/learn/advanced-probability/13-finite-product-spaces.html#9068d0">1.5 乘积空间和高维随机变量</a>.</p>
+<p>因为 <span class="math inline">\(\phi_{X}(t)\)</span> 在 <span class="math inline">\(0\)</span> 点连续, 并且 <span class="math inline">\(\phi_{X}(0)=1\)</span>, 所以对于任意的 <span class="math inline">\(\epsilon&gt;0\)</span>, 我们都可以找到一个 <span class="math inline">\(u&gt;0\)</span> 使得 <span class="math display">\[
+u^{-1}\int _{-u}^{u}[1-\phi_{X}(t)] \, dt &lt; \frac{\epsilon}{2}.
+\]</span> 又因为 <span class="math inline">\(\phi_{X_{n}}\to \phi_{X}\)</span>, 再根据 <a href="../../../src/learn/advanced-probability/08-integration.html#7ffb80">8_积分</a> 得到 <span class="math display">\[
+\lim_{ n \to \infty } h_{n}(u)= u^{-1}\int _{-u}^{u}[1-\phi_{X_{n}}(t)] \, dt=u^{-1}\int _{-u}^{u}[1-\phi_{X}(t)] \, dt&lt;\frac{\epsilon}{2}.
+\]</span> 这样, 我们可以找到一个 <span class="math inline">\(N\)</span>, <span class="math inline">\(\forall n&gt;N\)</span> 满足 <span class="math display">\[
+h_{n}(u) &lt; \epsilon,
+\]</span> 而对于 <span class="math inline">\(n\leq N\)</span> 的 <span class="math inline">\(h_{n}(u)\)</span>, 我们可以通过调整 <span class="math inline">\(u\)</span> 的大小来满足上式, 这样, 我们就找到了一个 <span class="math inline">\(u&gt;0\)</span>, 满足 <span class="math display">\[
+\sup_{n}\left\{  u^{-1}\int _{-u}^{u}[1-\phi_{X_{n}}(t)] \, dt   \right\}&lt;\epsilon,
+\]</span> 进而结合式 <a href="#eq-levy-tightness-bound">eq-levy-tightness-bound</a>, 我们得到 <span class="math display">\[
+\inf_{n}P_{X_{n}}([-2u^{-1},2u^{-1}])\geq
+1-\sup_{n}\{ u^{-1}\int _{-u}^{u}[1-\phi_{X_{n}}(t)] \, dt \}
+\geq 1-\epsilon.
+\]</span> 也就是说 <span class="math inline">\(\{ P_{X_{n}} \}\)</span> 是 tight.</p>
+<p>利用 <a href="#prp-tightness-bounded-in-probability" class="quarto-xref">命题&nbsp;7</a> (1), 对于任意弱收敛的子列 <span class="math inline">\(\{ P_{X_{n_{j}}} \}\)</span> ,其会收敛到一个概率分布 <span class="math inline">\(P\)</span>, 然后利用已经证明的条件的必要性可知这个 <span class="math inline">\(P\)</span> 的 ch.&nbsp;f.是 <span class="math inline">\(\phi_{X}\)</span>. 由 <a href="../../../src/learn/advanced-probability/17-statistical-distributions-and-density-functions.html#b8ee09">17_统计分布与密度函数</a> 可知, <span class="math inline">\(P=P_{X}\)</span>. 再根据 <a href="#prp-tightness-bounded-in-probability" class="quarto-xref">命题&nbsp;7</a> (2) 可知 <span class="math display">\[
+X_{n}\overset{ d }{ \longrightarrow }X.
+\]</span></p>
+<p>接下来, 我们来证明 <span class="math inline">\(k\)</span> 维的情况. 其实根据上面的过程, 我们发现我们只需要证明 <span class="math inline">\(P_{X_{n}}\)</span> 的 tightness 即可, 其后续使用的定理和思路可以完美推广至 <span class="math inline">\(k\)</span> 维的情况. 我们令 <span class="math inline">\(Y_{nj},Y_{j}\)</span> 分别是 <span class="math inline">\(X_{n},X\)</span> 的第 <span class="math inline">\(j\)</span> 个分量. 由 <a href="../../../src/learn/advanced-probability/17-statistical-distributions-and-density-functions.html#615f98">17_统计分布与密度函数</a> (4), 可知 <span class="math display">\[
+\phi_{Y_{nj}}\to \phi_{Y_{j}},\quad \forall j=1,\dots,k.
+\]</span> 根据之前证明的 1 维的结论, 这意味着 <span class="math inline">\(Y_{nj}\overset{ d }{ \longrightarrow }Y_{j}\)</span>, 进而意味着 <span class="math inline">\(\{ P_{Y_{nj}} \}\)</span> 是 tight 的. 对于任意的 <span class="math inline">\(\epsilon&gt;0\)</span>, 我们都可以找到一个 <span class="math inline">\(C_{j}\)</span> 使得 <span class="math display">\[
+\forall n, P_{Y_{nj}}(C_{j})&gt;1-\epsilon,
+\]</span> 令 <span class="math display">\[
+C=\left( \prod\limits_{j=1}^{k}C_{j}^{c} \right) ^{c},
+\]</span> 可知 <span class="math display">\[
+P_{X_{n}}(C^{c})\leq P_{Y_{nj}}(C_{j}),\forall j,\implies
+P_{X_{n}}(C^{c})\leq\epsilon\implies
+P_{X_{n}}(C)&gt;1-\epsilon,
+\]</span> 也就是说 <span class="math inline">\(\{ P_{X_{n}} \}\)</span> 是 tight. 根据我们之前的讨论, 我们已经能够证明依分布收敛了.</p>
+</div>
+<div id="thm-cramer-wold-device" class="theorem">
+<p><span class="theorem-title"><strong>定理 14 (Cramer-Wold device)</strong></span> <span class="math inline">\(X,X_{1},X_{2},\dots\)</span> 是 <span class="math inline">\(k\)</span> 维随机向量, 则 <span class="math inline">\(X_{n}\overset{ d }{ \longrightarrow }X\)</span> 当且仅当 <span class="math display">\[
+\mathbf{c}^{T}X_{n}\overset{ d }{ \longrightarrow }\mathbf{c}^{T}X,
+\quad
+\forall \mathbf{c}\in\mathbb{R}^{k}.
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>根据 <a href="../../../src/learn/advanced-probability/17-statistical-distributions-and-density-functions.html#615f98">17_统计分布与密度函数</a> (4), 我们可知 <span class="math display">\[
+\phi_{\mathbf{c}^{T}X_{n}}(u)=\phi_{X_{n}}(c^{T}u),\quad
+\phi_{\mathbf{c}^{T}X}(u)=\phi_{X}(c^{T}u).
+\]</span> 自然 <span class="math inline">\(\phi_{X_{n}}\to \phi_{X}\)</span> 可以等价于 <span class="math display">\[
+\phi_{\mathbf{c}^{T}X_{n}}\to \phi_{\mathbf{c}^{T}X},
+\]</span> 根据 <a href="#thm-levy-cramer-continuity" class="quarto-xref">定理&nbsp;13</a>, 这等价于依分布收敛.</p>
+</div>
+<p>上述几个定理已经非常强大, 能够让我们去得到一些非常强的结论. 比如, 下面将要介绍的大数定律和中心极限定理的简单版本.</p>
+<div id="exm-lln-simple" class="theorem example">
+<p><span class="theorem-title"><strong>例 6 (大数定律的简单版本)</strong></span> <span class="math inline">\(X_{1},\dots,X_{n}\)</span> 是独立同分布的随机变量, 令 <span class="math inline">\(T_{n}=\sum\limits_{i=1}^{n}X_{i}\)</span>, 假设 <span class="math inline">\(\mathbb{E}\lvert X_{1} \rvert&lt;\infty\)</span> 且有 <span class="math inline">\(\mu=\mathbb{E}X_{1}\)</span>, 则我们有 <span class="math display">\[
+\frac{T_{n}}{n}\overset{ d }{ \longrightarrow }\mu
+\]</span> 进一步根据 <a href="#thm-weak-convergence-to-constant" class="quarto-xref">定理&nbsp;7</a> 可知 <span class="math display">\[
+\frac{T_{n}}{n}\overset{ P }{ \longrightarrow }\mu .
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>根据 <a href="../../../src/learn/advanced-probability/17-statistical-distributions-and-density-functions.html#615f98">17_统计分布与密度函数</a>, 求解 ch.&nbsp;f.的展开式, 得到 <span class="math display">\[
+\phi_{X_{1}}(t)=\phi_{X_{1}}(0)+i \mu t+o(\lvert t \rvert ),\quad
+\lvert t \rvert \to0,
+\]</span> 进一步, 我们可以计算得到 <span class="math inline">\(\frac{T_{n}}{n}\)</span> 的 ch.&nbsp;f. <span class="math display">\[
+\phi_{\frac{T_{n}}{n}}=\left[ \phi_{X_{1}}\left( \frac{t}{n} \right) \right]^{n}
+=\left[ 1+\frac{i \mu t}{n}+o\left( \frac{t}{n} \right) \right]^{n},
+\]</span> 当 <span class="math inline">\(n\to \infty\)</span> 时, 根据 <span class="math display">\[
+\left( 1+\frac{c_{n}}{n} \right)^{n}\to e^{c},\quad
+\text{if}\  c_{n}\to c,
+\]</span> 可知 <span class="math display">\[
+\phi_{\frac{T_{n}}{n}}(t)\to e^{i \mu t},
+\]</span> 这是仅在 <span class="math inline">\(\mu\)</span> 这一点概率为 1 的概率分布的 ch.&nbsp;f., 根据 <a href="#thm-levy-cramer-continuity" class="quarto-xref">定理&nbsp;13</a>, 可知 <span class="math display">\[
+\frac{T_{n}}{n}\overset{ d }{ \longrightarrow }\mu.
+\]</span></p>
+</div>
+<div id="exm-clt-simple" class="theorem example">
+<p><span class="theorem-title"><strong>例 7 (中心极限定理的简单版本)</strong></span> <span class="math inline">\(X_{1},\dots,X_{n}\)</span> 是独立同分布的随机变量, 令 <span class="math inline">\(T_{n}=\sum\limits_{i=1}^{n}X_{i}\)</span>, 假设 <span class="math inline">\(\mu=\mathbb{E}\lvert X_{1} \rvert=0,\sigma^{2}=Var(X_{1})&lt;\infty\)</span> , 则有 <span class="math display">\[
+\frac{T_{n}}{\sqrt{ n }}\overset{ d }{ \longrightarrow }
+\mathcal{N}(0,\sigma^{2}).
+\]</span> 若 <span class="math inline">\(\mu\neq 0\)</span>, 则根据期望的计算公式可知 <span class="math display">\[
+\frac{T_{n}-n\mu}{\sqrt{ n }}\overset{ d }{ \longrightarrow }
+\mathcal{N}(0,\sigma^{2}).
+\]</span> 如果是 <span class="math inline">\(k\)</span> 维随机向量, 并且 <span class="math inline">\(\boldsymbol{\mu}=\mathbb{E}X_{1},\Sigma=Var(X_{1})\)</span> 是有限的, 则对于任意的 <span class="math inline">\(\mathbf{c}\in\mathbb{R}^{k}\)</span> ,根据上面的讨论有 <span class="math display">\[
+\frac{\mathbf{c}^{T}T_{n}-n\mathbf{c}^{T}\boldsymbol{\mu}}{\sqrt{ n }}
+\overset{ d }{ \longrightarrow }\mathcal{N}(0,\mathbf{c}^{T}\Sigma \mathbf{c}^{T}),
+\]</span> 再根据 <a href="#thm-cramer-wold-device" class="quarto-xref">定理&nbsp;14</a> 可知 <span class="math display">\[
+\frac{T_{n}-n\boldsymbol{\mu}}{\sqrt{ n }}\overset{ d }{ \longrightarrow }
+\mathcal{N}_{k}(0,\Sigma).
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>同样利用展开式 (但是要展开到二阶项), 可以得到 <span class="math display">\[
+\phi_{\frac{T_{n}}{\sqrt{ n }}}(t)
+=\left[ 1-\frac{\sigma^{2}t^{2}}{2n}+o\left( \frac{t^{2}}{n} \right) \right]^{n},
+\]</span> 这蕴含 <span class="math display">\[
+\phi_{\frac{T_{n}}{\sqrt{ n }}}(t)\to e^{-\sigma^{2}t^{2}/2},
+\]</span> 这是 <span class="math inline">\(\mathcal{N}(0,\sigma^{2})\)</span> 的 ch.&nbsp;f., 因此得到 <span class="math display">\[
+\frac{T_{n}}{\sqrt{ n }}\overset{ d }{ \longrightarrow }\mathcal{N}(0,\sigma^{2}).
+\]</span></p>
+</div>
+<p>以上的例子展示了一种非常常用的证明策略.</p>
+<div class="callout callout-style-default callout-important callout-titled" title="利用特征函数">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">重要</span>利用特征函数
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>为了证明某个随机变量序列依分布收敛于另一个随机变量, 我们可以去探索其对应的 ch.&nbsp;f.之间关系, 根据 <a href="#thm-levy-cramer-continuity" class="quarto-xref">定理&nbsp;13</a> 从而证明依分布收敛. ch.&nbsp;f.是单纯的复变函数, 可以使用更多分析的工具来处理它.</p>
+</div>
+</div>
+<p>利用这个策略, 我们还有下面的一个例子, 这个例子证明了: 条件 <span class="math inline">\(\mathbb{E}\lvert X_{1} \rvert&lt;\infty\)</span> 对于 <a href="#exm-lln-simple" class="quarto-xref">例&nbsp;6</a> 是必要的.</p>
+<div id="exm-19-convergence-theory-44" class="theorem example">
+<p><span class="theorem-title"><strong>例 8 (大数定律的反例)</strong></span> <span class="math inline">\(X_{1},\dots,X_{n}\)</span> 是独立同分布的随机变量, 其 p.d.f.是 <span class="math display">\[
+f(x)=\frac{1-\cos x}{\pi x^{2}},
+\]</span> 其 ch.&nbsp;f.是 <span class="math display">\[
+\phi_{X_{1}}(t)=\max\{ 1-\lvert t \rvert ,0 \},
+\]</span> 则可以得到 <span class="math display">\[
+\phi_{T_{n} / n}=\left( \max\left\{  1-\frac{\lvert t \rvert }{n},0  \right\} \right)^{n}\to e^{-\lvert t \rvert },
+\]</span> 这是 Cauchy 分布 (<span class="math inline">\(C(0,1)\)</span>) 的 ch.&nbsp;f..</p>
+</div>
+<p>在这一节, 我们最后介绍一个关于 p.d.f.的定理, 请可以用来检查 <span class="math inline">\(X_{n}\overset{ d }{ \longrightarrow }X\)</span> 是否成立, 其中 <span class="math inline">\(X_{n},X\)</span> 均有 p.d.f..</p>
+<div id="prp-19-convergence-theory-45" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 9 (Proposition)</strong></span> <span class="math inline">\(X,X_{1},X_{2},\dots\)</span> 是 <span class="math inline">\(k\)</span> 维随机向量, 其有 Lebesgue p.d.f. <span class="math inline">\(f, f_{1},f_{2},\dots\)</span>, 则 <span class="math display">\[
+X_{n}\overset{ d }{ \longrightarrow }X
+\implies
+\lim_{ n \to \infty } f_{n}=f\ a.e..
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>因为 <span class="math inline">\(P_{X},P_{X_{n}}\)</span> 相对于 Lebesgue 测度都有 p.d.f., 则说明其对应的分布函数 <span class="math inline">\(F_{X},F_{X_{n}}\)</span> 都是连续的.</p>
+<p>在 <span class="math inline">\(\mathbf{x}\)</span> 上 <span class="math display">\[
+P_{X_{n}}((-\infty, \mathbf{x}])\to P_{X}((-\infty,\mathbf{x}]),
+\]</span> 利用 <strong>?@thm-mct</strong>, 可知 <span class="math display">\[
+\int _{(-\infty,\mathbf{x}]}f_{n} \to \int _{(-\infty,\mathbf{x}]}f.
+\]</span> 我们令 <span class="math display">\[
+\mathcal{F}:=\left\{  A\in\mathcal{B}^{k}| \int _{A}f_{n}\to \int _{A}f \right\},
+\]</span> 则可知 <span class="math display">\[
+\mathcal{F}\supset \{ (-\infty,\mathbf{x}) \},
+\]</span> 然后, 我们再证明 <span class="math inline">\(\mathcal{F}\)</span> 是一个 <span class="math inline">\(\sigma\)</span> -field, 这样我们就可以证明 <span class="math display">\[
+\mathcal{F}=\mathcal{B}^{k},
+\]</span> 进而再根据 <strong>?@thm-order</strong> (5) 就能得到我们的结论.</p>
+</div>
+<div id="thm-19-convergence-theory-46" class="theorem">
+<p><span class="theorem-title"><strong>定理 15 (Scheffe 定理)</strong></span> 假设 <span class="math inline">\(\{ f_{n} \}\)</span> 是一列 <span class="math inline">\(\mathbb{R}^{k}\)</span> 上的 p.d.f.(相对于测度 <span class="math inline">\(\nu\)</span>), 并且有 <span class="math display">\[
+\lim_{ n \to \infty } f_{n}(x)=f(x)\ a.e.\ \nu,
+\]</span> 其中 <span class="math inline">\(f(x)\)</span> 是另外一个 p.d.f.(相对于 <span class="math inline">\(\nu\)</span>). 则 <span class="math display">\[
+\lim_{ n \to \infty } \int \lvert f_{n}(x)-f(x) \rvert  \, d\nu=0.
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>令 <span class="math display">\[
+g_{n}(x)=[f(x)-f_{n}(x)]I_{\{ f\geq f_{n} \}}(x),\quad
+\forall n=1,2,\dots,
+\]</span> 和 <span class="math display">\[
+h_{n}(x)=[f_{n}(x)-f(x)]I_{\{ f&lt; f_{n} \}}(x),\quad
+\forall n=1,2,\dots.
+\]</span> 则有 <span class="math display">\[
+\int \lvert f_{n}(x)-f(x) \rvert  \, d\nu=
+\int g_{n}(x) \, d\nu +\int h_{n}(x) \, d\nu
+\]</span> 注意到有关系 <span class="math display">\[
+0\leq g_{n}(x)\leq f(x),0\leq h_{n}(x)\leq f_{n}(x)\quad
+g_{n}\to0\ a.e., h_{n}\to0\ a.e..
+\]</span> 所以可以用 <a href="../../../src/learn/advanced-probability/08-integration.html#7ffb80">8_积分</a> 得到定理结论.</p>
+</div>
+</section>
+<section id="函数变换下的收敛" class="level1">
+<h1>函数变换下的收敛</h1>
+<p>在统计中, 我们时常会对随机变量进行变换, 因此我们可能更感兴趣 <span class="math inline">\(g(X_{n})\)</span> 是否收敛到 <span class="math inline">\(g(X)\)</span> 这样的问题.</p>
+<p>变换的类型有很多, 这里我们将着重介绍 3 种, 其基本覆盖我们会碰到的情况: 1. 连续且不随 <span class="math inline">\(n\)</span> 发生变化; 2. 涉及到 2 个及以上的随机变量; 3. 随着 <span class="math inline">\(n\)</span> 发生变化的变换.</p>
+<div id="thm-continuous-mapping" class="theorem">
+<p><span class="theorem-title"><strong>定理 16 (连续函数变换下的收敛)</strong></span> <span class="math inline">\(X,X_{1},X_{2},\dots\)</span> 是随机向量, <span class="math inline">\(g\)</span> 是 <span class="math inline">\((\mathbb{R}^{k},\mathcal{B}^{k})\to(\mathbb{R}^{l},\mathcal{B}^{l})\)</span> 的可测函数, 假设 <span class="math inline">\(g\)</span> 是连续的 <span class="math inline">\(a.s.\ P_{X}\)</span>. 则 (1) <span class="math inline">\(X_{n}\overset{ a.s. }{ \longrightarrow }X\implies g(X_{n})\overset{ a.s. }{ \longrightarrow }g(X)\)</span>. (2) <span class="math inline">\(X_{n}\overset{ P }{ \longrightarrow }X\implies g(X_{n})\overset{ P }{ \longrightarrow }g(X)\)</span>. (3) <span class="math inline">\(X_{n}\overset{ d }{ \longrightarrow }X\implies g(X_{n})\overset{ d }{ \longrightarrow }g(X)\)</span>.</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span></p>
+<ol type="1">
+<li>若 <span class="math inline">\(g\)</span> 连续, 则 <span class="math display">\[
+\lim_{ n \to \infty } g(X_{n})=g(\lim_{ n \to \infty } X_{n}),
+\]</span> 若进一步 <span class="math inline">\(\lim_{ n \to \infty }X_{n}=X\)</span>, 则有 <span class="math inline">\(\lim_{ n \to \infty }g(X_{n})=g(X)\)</span>. 所以 <span class="math display">\[
+P(\lim_{ n \to \infty } g(X_{n})\neq g(X))\leq P_{X}(g \text{ is not continue}) + P(\lim_{ n \to \infty } X_{n}\neq X)=0.
+\]</span></li>
+<li>若 <span class="math inline">\(g(x)\)</span> 连续，根据其定义，有 <span class="math display">\[
+\forall\epsilon&gt;0,\exists\sigma&gt;0,\forall t, \lvert t-x \rvert&lt;\sigma \implies
+\lvert g(t)-g(x) \rvert &lt; \epsilon,
+\]</span> 这等价于 <span class="math display">\[
+\forall\epsilon&gt;0,\exists\sigma&gt;0,\forall t, \lvert g(t)-g(x) \rvert \geq \epsilon\implies\lvert t-x \rvert\geq\sigma
+.
+\]</span> 现在，对于特定的 <span class="math inline">\(\epsilon\)</span>，我们可以将下面的概率分解为 <span class="math display">\[
+\begin{align}
+P(\lvert g(X_{n})-g(X) \rvert &gt;\epsilon)
+&amp;\leq P(\lvert g(X_{n})-g(X) \rvert &gt;\epsilon,\lvert X_{n}-X \rvert \leq\sigma,g(X) \text{ is continue}) \\
+&amp;+P(\lvert X_{n}-X \rvert &gt; \sigma)+P(g(X) \text{ is not continue})
+\\
+\end{align}
+\]</span> 根据上面连续定义推出的结论， <span class="math display">\[
+P(\lvert g(X_{n})-g(X) \rvert &gt;\epsilon,\lvert X_{n}-X \rvert \leq\epsilon,g(X) \text{ is continue}) = 0,
+\]</span> 根据 <span class="math inline">\(X_{n}\overset{ P }{ \longrightarrow }X\)</span> 可知第二项在 <span class="math inline">\(n\to \infty\)</span> 时为 0，第三项则根据 <span class="math inline">\(g\)</span> 的连续性可知为 0，命题得证。 （3）我们定义函数 <span class="math display">\[
+h(x)=e^{itg(x)},
+\]</span> 可知该函数是有界连续的。根据 <a href="#thm-portmanteau" class="quarto-xref">定理&nbsp;12</a>（1）可知 <span class="math display">\[
+\mathbb{E}(h(X_{n}))\to \mathbb{E}(h(X)),
+\]</span> 也就是 <span class="math display">\[
+\phi_{g(X_{n})}\to \phi_{g(X)},
+\]</span> 再根据 <a href="#thm-levy-cramer-continuity" class="quarto-xref">定理&nbsp;13</a> 可知 <span class="math display">\[
+g(X_{n})\overset{ d }{ \longrightarrow }g(X).
+\]</span></li>
+</ol>
+</div>
+<p>针对定理 <a href="#thm-continuous-mapping" class="quarto-xref">定理&nbsp;16</a>，我们讨论如下的几个例子</p>
+<div id="exm-joint-convergence-counterexample" class="theorem example">
+<p><span class="theorem-title"><strong>例 9 (Example)</strong></span> 假设存在随机变量 <span class="math inline">\(X,X_{1},X_{2},\dots\)</span>，并且有 <span class="math inline">\(X_{n}\overset{ d }{ \longrightarrow }X\)</span>，假设 <span class="math inline">\(X\sim N(0,1)\)</span>，则有 <span class="math inline">\(X_{n}^{2}\overset{ d }{ \longrightarrow }Y\sim \chi^{2}_{1}\)</span>。 <strong>Example: 假设 <span class="math inline">\((X_{n},Y_{n})\)</span> 是两个随机变量，并且满足 <span class="math inline">\((X_{n},Y_{n})\overset{ d }{ \longrightarrow }(X,Y)\)</span>。现在如果 <span class="math inline">\(X,Y\)</span> 是独立的，并且服从 <span class="math inline">\(N(0,1)\)</span> 的分布，则有</strong> <span class="math display">\[
+X_{n} / Y_{n} \overset{ d }{ \longrightarrow }X / Y\sim C(0,1).
+\]</span> 即 Cauchy 分布。</p>
+</div>
+<p>注意到，上面例子中 <span class="math inline">\((X_{n},Y_{n})\overset{ d }{ \longrightarrow }(X,Y)\)</span> 不能被放宽到 <span class="math inline">\(X_{n}\overset{ d }{ \longrightarrow }X,Y_{n}\overset{ d }{ \longrightarrow }Y\)</span>。</p>
+<p>现在，我们来关注一下当有多个变量时的情况。当涉及到多个随机变量时，多个随机变量的运算可以被看做是这多个随机变量组成的随机向量的一个函数变换，进而有机会利用 <a href="#thm-continuous-mapping" class="quarto-xref">定理&nbsp;16</a> 来证明收敛。</p>
+<p>这个思路的关键在于：各个分量的收敛能够蕴含向量的收敛。根据处处收敛的定义和 <a href="#prp-convergence-in-measure-components" class="quarto-xref">命题&nbsp;3</a> 可以知道，这个关键对于处处收敛和依测度收敛是成立的，因此我们有如下推论：</p>
+<div id="cor-arithmetic-under-as-and-in-probability" class="theorem corollary">
+<p><span class="theorem-title"><strong>推论 5 (处处收敛和依测度收敛的四则运算)</strong></span> 假设 <span class="math inline">\(X,X_{1},X_{2},\dots,Y_{1},Y_{2}\)</span> 是随机变量，并且有 <span class="math inline">\(X_{n}\overset{ a.s. }{ \longrightarrow }X,Y_{n}\overset{ a.s. }{ \longrightarrow }Y\)</span> (或者 <span class="math inline">\(X_{n}\overset{ P }{ \longrightarrow }X,Y_{n}\overset{ P }{ \longrightarrow }Y\)</span>)，则有 1. <span class="math inline">\(X_{n}+Y_{n}\overset{ a.s. }{ \longrightarrow }X+Y\)</span> (<span class="math inline">\(X_{n}+Y_{n}\overset{ P }{ \longrightarrow }X+Y\)</span>); 2. <span class="math inline">\(X_{n}Y_{n}\overset{ a.s. }{ \longrightarrow }XY\)</span> (<span class="math inline">\(X_{n}Y_{n}\overset{ P }{ \longrightarrow }XY\)</span>); 3. <span class="math inline">\(X_{n}/Y_{n}\overset{ a.s. }{ \longrightarrow }X/Y\)</span> (<span class="math inline">\(X_{n}/Y_{n}\overset{ P }{ \longrightarrow }X/Y\)</span>)，其中 <span class="math inline">\(Y\neq 0\ a.s.\)</span></p>
+</div>
+<p>但是根据 <a href="#exm-joint-convergence-counterexample" class="quarto-xref">例&nbsp;9</a>，这显然对于依分布收敛是不成立的，所以其需要单独讨论，或者给予更强的条件。这就是下面的定理。</p>
+<div id="thm-slutsky" class="theorem">
+<p><span class="theorem-title"><strong>定理 17 (Slutsky)</strong></span> 假设 <span class="math inline">\(X,X_{1},X_{2},\dots,Y_{1},Y_{2}\)</span> 是随机变量，并且有 <span class="math inline">\(X_{n}\overset{ d }{ \longrightarrow }X,Y_{n}\overset{ P }{ \longrightarrow }c\)</span> ，其中 <span class="math inline">\(c\)</span> 是一个实数，则有 1. <span class="math inline">\(X_{n}+Y_{n}\overset{ d }{ \longrightarrow }X+c\)</span>； 2. <span class="math inline">\(X_{n}Y_{n}\overset{ d }{ \longrightarrow }cX\)</span>； 3. <span class="math inline">\(X_{n} / Y_{n}\overset{ d }{ \longrightarrow }X / c\)</span>，如果 <span class="math inline">\(c\neq 0\)</span>。</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>（1）假设 <span class="math inline">\(t\in\mathbb{R},\epsilon&gt;0\)</span>，则有 <span class="math display">\[
+\begin{align}
+F_{X_{n}+Y_{n}}(t)&amp;=P(X_{n}+Y_{n}\leq t) \\
+&amp;\leq P(\{ X_{n}+Y_{n}\leq t \}\cap \{ \lvert Y_{n}-c \rvert &lt;\epsilon \})
++P(\lvert Y_{n}-c \rvert \geq\epsilon) \\
+&amp;\leq P(X_{n}\leq t-c+\epsilon)+P(\lvert Y_{n}-c \rvert \geq\epsilon),
+\end{align}
+\]</span> 类似的，我们可以得到 <span class="math display">\[
+F_{X_{n}+Y_{n}}(t)\geq P(X_{n}\leq t-c-\epsilon)-P(\lvert Y_{n}-c \rvert \geq\epsilon).
+\]</span> 利用 <span class="math inline">\(Y_{n}\overset{ P }{ \longrightarrow }c\)</span>，我们可以得到 <span class="math display">\[
+F_{X}(t-c-\epsilon)\leq \mathop{\lim\inf}_{ n \to \infty } F_{X_{n}+Y_{n}}(t)
+\leq \mathop{\lim\sup}_{ n \to \infty } F_{X_{n}+Y_{n}}(t)
+\leq F_{X}(t-c+\epsilon),
+\]</span> 因为 <span class="math inline">\(\epsilon\)</span> 是任意的，所以有 <span class="math display">\[
+\lim_{ n \to \infty } F_{X_{n}+Y_{n}}(t)=F_{X}(t-c),
+\]</span> 以上的推导是在 <span class="math inline">\(t-c,t-c+\epsilon,t-c-\epsilon\)</span> 是 <span class="math inline">\(F_{X}\)</span> 的连续点的前提下进行的，因为 <span class="math inline">\(F_{X}\)</span> 是单调的，不连续点至多可数个。又注意到 <span class="math inline">\(F_{X+c}(t)=F_{X}(t-c)\)</span>，于是得到我们需要证明的命题。 （2）和（3）证明比较类似，就略过了。</p>
+</div>
+<p>根据以上定理，我们还可以得到下面这个有用的结果，其中函数变换还涉及到 <span class="math inline">\(n\)</span> 的参与。</p>
+<div id="thm-19-convergence-theory-51" class="theorem">
+<p><span class="theorem-title"><strong>定理 18 (可微函数变换下的依分布收敛)</strong></span> 假设 <span class="math inline">\(Y,X_{1},X_{2},\dots\)</span> 是随机 <span class="math inline">\(k\)</span> 维向量，并且满足 <span class="math display">\[
+a_{n}(X_{n}-c)\overset{ d }{ \longrightarrow }Y,
+\]</span> 其中 <span class="math inline">\(c\in\mathbb{R}^{k}\)</span>，并且 <span class="math inline">\(\{ a_{n} \}\in\mathbb{R}^{+},\lim_{ n \to \infty }a_{n}=\infty\)</span>。令 <span class="math inline">\(g:\mathbb{R}^{k}\to \mathbb{R}\)</span> 是一个函数，则有 （1）如果 <span class="math inline">\(g\)</span> 在 <span class="math inline">\(c\)</span> 点可微，则有 <span class="math display">\[
+a_{n}[g(X_{n})-g(c)]\overset{ d }{ \longrightarrow }[\nabla g(c)]^{T}Y,
+\]</span> （2）如果 <span class="math inline">\(g\)</span> 在 <span class="math inline">\(c\)</span> 的邻域内有 <span class="math inline">\(m&gt;1\)</span> 阶的连续偏导数，其中所有在 <span class="math inline">\(c\)</span> 点的 <span class="math inline">\(j\)</span> 阶偏导数都为 0（<span class="math inline">\(1\leq j\leq m-1\)</span>），但是 <span class="math inline">\(m\)</span> 阶偏导数不为 0，则有 <span class="math display">\[
+a^{m}_{n}[g(X_{n})-g(c)]\overset{ d }{ \longrightarrow }
+\frac{1}{m!}\sum\limits_{i_{1}=1}^{k}\cdots \sum\limits_{i_{m}=1}^{k}
+\frac{\partial^{m}g}{\partial x_{i_{1}}\dots \partial x_{i_{m}}}|_{x=c}
+Y_{i_{1}}\dots y_{i_{m}}.
+\]</span> 其中 <span class="math inline">\(Y_{j}\)</span> 是 <span class="math inline">\(Y\)</span> 的第 <span class="math inline">\(j\)</span> 个分量。</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>我们令 <span class="math display">\[
+Z=a_{n}[g(X_{n})-g(c)]-a_{n}[\nabla g(c)]^{T}(X_{n}-c),
+\]</span> 如果我们能够证明 <span class="math inline">\(Z\overset{ P }{ \longrightarrow }0\)</span>，则根据题设和 <a href="#thm-slutsky" class="quarto-xref">定理&nbsp;17</a>，就可以得到 <span class="math display">\[
+Z+a_{n}[\nabla g(c)]^{T}(X_{n}-c)=
+a_{n}[g(X_{n})-g(c)]\overset{ d }{ \longrightarrow }
+0+[\nabla g(c)]^{T}Y=[\nabla g(c)]^{T}Y.
+\]</span> <span class="math inline">\(g\)</span> 在 <span class="math inline">\(c\)</span> 点的可微性蕴含：<span class="math inline">\(\forall\epsilon&gt;0,\exists\delta_{\epsilon}&gt;0\)</span>, <span class="math display">\[
+\lvert g(x)-g(c)-[\nabla g(c)]^{T}(x-c) \rvert \leq\epsilon \lvert x-c \rvert ,
+\quad \forall x,\lvert x-c \rvert &lt;\delta_{\epsilon},
+\]</span></p>
+<p><span id="eq-delta-method-differentiability-bound"></span></p>
+<p>因此，我们有 $$ <span class="math display">\[\begin{align}
+P(\lvert Z_{n} \rvert \geq \eta) &amp;=
+P(\lvert Z_{n} \rvert\geq \eta ,\lvert X_{n}-c \rvert \geq\delta_{\epsilon})
++P(\lvert Z_{n} \rvert \geq \eta,\lvert X_{n}-c \rvert \leq \delta_{\epsilon}) \\
+&amp;\leq P(\lvert X_{n}-c \rvert \geq\delta_{\epsilon}) +
+P(\lvert Z_{n} \rvert\geq \eta ,\lvert X_{n}-c \rvert \leq\delta_{\epsilon}) \\
+&amp;\leq P(\lvert X_{n}-c \rvert \geq\delta_{\epsilon}) +
+P(a_{n}\lvert X_{n}-c \rvert \geq \eta / \epsilon) \\
+\end{align}\]</span></p>
+<p>$$</p>
+<p><span id="eq-delta-method-probability-bound"></span></p>
+<p>又因为 <span class="math inline">\(a_{n}\to \infty\)</span>，所以，<span class="math inline">\(\frac{1}{a_{n}}\to0\)</span>， <span class="math display">\[
+X_{n}-c=a_{n}(X_{n}-c)\frac{1}{a_{n}}\overset{ d }{ \longrightarrow }
+0\implies X_{n}-c\overset{ P }{ \longrightarrow }0\implies X_{n}\overset{ P }{ \longrightarrow }c,
+\]</span> 这里使用了 <a href="#thm-slutsky" class="quarto-xref">定理&nbsp;17</a> (2) 和 <a href="#thm-weak-convergence-to-constant" class="quarto-xref">定理&nbsp;7</a> 以及 <a href="#cor-arithmetic-under-as-and-in-probability" class="quarto-xref">推论&nbsp;5</a> 的结果。</p>
+<p>根据题设，直接使用 <a href="#thm-continuous-mapping" class="quarto-xref">定理&nbsp;16</a> (3)，我们又可以得到 (这里使用到的连续函数是 <span class="math inline">\(\sqrt{ x^{T}x }\)</span>) <span class="math display">\[
+a_{n}\lvert X_{n}-c \rvert \overset{ d }{ \longrightarrow }
+\lvert Y \rvert ,
+\]</span></p>
+<p><span id="eq-delta-method-norm-convergence"></span></p>
+<p>因此，再根据式 <a href="#eq-delta-method-probability-bound">eq-delta-method-probability-bound</a> 得到 <span class="math display">\[
+\begin{align}
+\mathop{\lim\sup}_{ n \to \infty } P(\lvert Z_{n} \rvert \geq \eta)&amp;\leq
+\lim_{ n \to \infty } P(\lvert X_{n}-c \rvert \geq\delta_{\epsilon})
++\lim_{ n \to \infty } P(a_{n}\lvert X_{n}-c \rvert \geq \eta / \epsilon) \\
+&amp;=P(\lvert Y \rvert \geq \eta / \epsilon),
+\end{align}
+\]</span> 这里分别用到了 <span class="math inline">\(X_{n}\overset{ P }{ \longrightarrow }c\)</span> 和式 <a href="#eq-delta-method-norm-convergence">eq-delta-method-norm-convergence</a> 的结果。根据 <span class="math inline">\(\epsilon\)</span> 的任意性，可以得到 <span class="math display">\[
+\lim_{ n \to \infty } P(\lvert Z_{n} \rvert \geq \eta)=0,
+\]</span> 也就完成了我们的证明。</p>
+<p>至于对于 (2) 的证明，无非是修改式 <a href="#eq-delta-method-differentiability-bound">eq-delta-method-differentiability-bound</a> 而已。</p>
+</div>
+<p>以上定理的一个直接推论在数理统计中非常常用，成为 delta-method，其内容如下</p>
+<div id="cor-19-convergence-theory-52" class="theorem corollary">
+<p><span class="theorem-title"><strong>推论 6 (delta-method)</strong></span> 假设 <span class="math inline">\(Y,X_{1},X_{2},\dots\)</span> 是随机 <span class="math inline">\(k\)</span> 维向量，并且满足 <span class="math display">\[
+a_{n}(X_{n}-c)\overset{ d }{ \longrightarrow }Y,
+\]</span> 其中 <span class="math inline">\(c\in\mathbb{R}^{k}\)</span>，并且 <span class="math inline">\(\{ a_{n} \}\in\mathbb{R}^{+},\lim_{ n \to \infty }a_{n}=\infty\)</span>。令 <span class="math inline">\(g:\mathbb{R}^{k}\to \mathbb{R}\)</span> 是一个函数。如果 <span class="math inline">\(Y\sim N_{k}(0,\Sigma)\)</span>，则有 <span class="math display">\[
+a_{n}[g(X_{n})-g(c)]\overset{ d }{ \longrightarrow }
+N(0,[\nabla g(c)]^{T}\Sigma \nabla g(c)).
+\]</span></p>
+</div>
+<p>利用以上 delta-method 的一个经典例子是这样的，根据 <a href="#exm-clt-simple" class="quarto-xref">例&nbsp;7</a>，我们知道 <span class="math display">\[
+\sqrt{ n }\left( \frac{T_{n}}{n}-\mu \right)\overset{ d }{ \longrightarrow }
+N_{k}(0,\Sigma),
+\]</span> 因此有 <span class="math display">\[
+\sqrt{ n }\left( g\left( \frac{T_{n}}{n} \right)-g(\mu) \right)
+\overset{ d }{ \longrightarrow }
+N_{k}(0,(\nabla g)^{T}\Sigma(\nabla g)).
+\]</span></p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script>
+(function () {
+  function makeProofsCollapsible() {
+    const proofs = document.querySelectorAll("div.proof");
+
+    proofs.forEach(function (proof) {
+      if (proof.dataset.collapsibleReady === "true") return;
+
+      const details = document.createElement("details");
+
+      details.className = proof.className;
+      details.classList.add("proof-collapsible");
+      details.dataset.collapsibleReady = "true";
+
+      if (proof.id) {
+        details.id = proof.id;
+      }
+
+      details.open = proof.classList.contains("open");
+
+      const summary = document.createElement("summary");
+      const title = proof.querySelector(".proof-title");
+
+      if (title) {
+        summary.innerHTML = title.innerHTML;
+        title.remove();
+      } else {
+        summary.innerHTML = "<strong>Proof</strong>";
+      }
+
+      details.appendChild(summary);
+
+      while (proof.firstChild) {
+        details.appendChild(proof.firstChild);
+      }
+
+      proof.replaceWith(details);
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", makeProofsCollapsible);
+  } else {
+    makeProofsCollapsible();
+  }
+})();
+</script>
+<script>
+(function () {
+  function fixTheoremTitleSpacing() {
+    const titleSelectors = [
+      ".theorem-title",
+      ".lemma-title",
+      ".corollary-title",
+      ".proposition-title",
+      ".conjecture-title",
+      ".definition-title",
+      ".example-title",
+      ".exercise-title",
+      ".solution-title",
+      ".remark-title",
+      ".algorithm-title",
+      ".proof-title"
+    ].join(",");
+
+    document.querySelectorAll(titleSelectors).forEach(function (title) {
+      const p = title.parentElement;
+
+      if (!p || p.tagName.toLowerCase() !== "p") return;
+
+      /*
+        Quarto/Pandoc often inserts a text node like:
+        <p><span class="theorem-title">...</span>&nbsp;</p>
+
+        Remove whitespace-only text nodes, including non-breaking spaces.
+      */
+      Array.from(p.childNodes).forEach(function (node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          const cleaned = node.textContent.replace(/\u00a0/g, " ").trim();
+          if (cleaned === "") {
+            node.remove();
+          }
+        }
+      });
+
+      p.classList.add("math-env-title-p");
+
+      /*
+        If the paragraph only contains the title span after cleanup,
+        mark it as title-only.
+      */
+      const meaningfulChildren = Array.from(p.childNodes).filter(function (node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          return node.textContent.replace(/\u00a0/g, " ").trim() !== "";
+        }
+        return true;
+      });
+
+      if (meaningfulChildren.length === 1 && meaningfulChildren[0] === title) {
+        p.classList.add("math-env-title-only");
+      }
+
+      /*
+        If the title-only paragraph is followed by a list,
+        compress the gap between title and list.
+      */
+      const next = p.nextElementSibling;
+      if (
+        p.classList.contains("math-env-title-only") &&
+        next &&
+        (next.tagName.toLowerCase() === "ol" || next.tagName.toLowerCase() === "ul")
+      ) {
+        p.classList.add("math-env-title-before-list");
+      }
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", fixTheoremTitleSpacing);
+  } else {
+    fixTheoremTitleSpacing();
+  }
+})();
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "已复制");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "已复制");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/luyiyun\.github\.io\/Notes\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

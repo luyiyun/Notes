@@ -1,0 +1,2042 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="荣志炜">
+
+<title>积分 – Rong’s Notes</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-7dba656801d47940102fc4ffc3dc1a54.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../../styles.css">
+</head>
+
+<body class="nav-sidebar docked nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">Rong’s Notes</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="搜索"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="展开或折叠导航栏" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="../../../index.html" aria-current="page"> 
+<span class="menu-text">首页</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../src/learn/index.html"> 
+<span class="menu-text">专题学习</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../about.html"> 
+<span class="menu-text">关于</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/index.html">高等概率论</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/08-integration.html">积分</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">首页</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../../src/learn/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">专题学习</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../../src/learn/advanced-probability/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">高等概率论</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/01-introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">介绍</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/02-sigma-field.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sigma 域</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/03-measure.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">测度</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/04-outer-measure.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">外测度</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/05-measure-extension.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">测度扩张</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/06-distribution-function.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">分布函数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/07-measurable-functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">可测函数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/08-integration.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">积分</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/09-lp-spaces.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lp 空间</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/10-signed-measures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">符号测度</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/11-radon-nikodym-derivative.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R-N 导数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/12-lebesgue-decomposition.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lebesgue 分解</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/13-finite-product-spaces.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">有限乘积空间</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/14-infinite-product-spaces.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">无限乘积空间</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/15-independence-and-conditional-expectation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">独立和条件期望</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/16-markov-chains-and-martingales.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">马尔可夫链与鞅</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/17-statistical-distributions-and-density-functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">统计分布与密度函数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/18-moments.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">矩</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/19-convergence-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">收敛理论</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../../src/learn/prml/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">PRML</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/prml/06-kernel-methods.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">核方法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/prml/07-sparse-kernel-machines.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">稀疏核机器</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../about.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">关于</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#几乎处处成立" id="toc-几乎处处成立" class="nav-link active" data-scroll-target="#几乎处处成立">几乎处处成立</a></li>
+  <li><a href="#定义" id="toc-定义" class="nav-link" data-scroll-target="#定义">定义</a>
+  <ul class="collapse">
+  <li><a href="#非负简单函数的积分" id="toc-非负简单函数的积分" class="nav-link" data-scroll-target="#非负简单函数的积分">非负简单函数的积分</a></li>
+  <li><a href="#非负可测函数的积分" id="toc-非负可测函数的积分" class="nav-link" data-scroll-target="#非负可测函数的积分">非负可测函数的积分</a></li>
+  <li><a href="#一般可测函数的积分" id="toc-一般可测函数的积分" class="nav-link" data-scroll-target="#一般可测函数的积分">一般可测函数的积分</a></li>
+  </ul></li>
+  <li><a href="#性质" id="toc-性质" class="nav-link" data-scroll-target="#性质">性质</a>
+  <ul class="collapse">
+  <li><a href="#积分存在和可积性的相关性质" id="toc-积分存在和可积性的相关性质" class="nav-link" data-scroll-target="#积分存在和可积性的相关性质">积分存在和可积性的相关性质</a></li>
+  <li><a href="#线性性质" id="toc-线性性质" class="nav-link" data-scroll-target="#线性性质">线性性质</a></li>
+  <li><a href="#序关系性质" id="toc-序关系性质" class="nav-link" data-scroll-target="#序关系性质">序关系性质</a></li>
+  <li><a href="#绝对连续性" id="toc-绝对连续性" class="nav-link" data-scroll-target="#绝对连续性">绝对连续性</a></li>
+  <li><a href="#收敛性" id="toc-收敛性" class="nav-link" data-scroll-target="#收敛性">收敛性</a>
+  <ul class="collapse">
+  <li><a href="#单调收敛定理" id="toc-单调收敛定理" class="nav-link" data-scroll-target="#单调收敛定理">单调收敛定理</a></li>
+  <li><a href="#08-integration-fatou-引理" id="toc-08-integration-fatou-引理" class="nav-link" data-scroll-target="#08-integration-fatou-引理">Fatou 引理</a></li>
+  <li><a href="#控制收敛定理" id="toc-控制收敛定理" class="nav-link" data-scroll-target="#控制收敛定理">控制收敛定理</a></li>
+  </ul></li>
+  <li><a href="#换元积分" id="toc-换元积分" class="nav-link" data-scroll-target="#换元积分">换元积分</a></li>
+  <li><a href="#08-integration-积分和微分的交换性" id="toc-08-integration-积分和微分的交换性" class="nav-link" data-scroll-target="#08-integration-积分和微分的交换性">积分和微分的交换性</a></li>
+  </ul></li>
+  <li><a href="#lebesgue-积分和-riemann-积分" id="toc-lebesgue-积分和-riemann-积分" class="nav-link" data-scroll-target="#lebesgue-积分和-riemann-积分">Lebesgue 积分和 Riemann 积分</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/index.html">高等概率论</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/08-integration.html">积分</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">积分</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">作者</div>
+    <div class="quarto-title-meta-contents">
+             <p>荣志炜 </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">发布于</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">2024年5月4日</p>
+    </div>
+  </div>
+  
+    <div>
+    <div class="quarto-title-meta-heading">修改于</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date-modified">2026年5月13日</p>
+    </div>
+  </div>
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>测度论和实变函数论中将<strong>积分</strong>作为首先介绍的概念，并通过<strong>积分</strong>来定义<strong>导数</strong>。</p>
+<section id="几乎处处成立" class="level1">
+<h1>几乎处处成立</h1>
+<p>对于测度空间 <span class="math inline">\(X,\mathcal{F},\mu\)</span> 上的 <span class="math inline">\(X\)</span> 的一个元素 <span class="math inline">\(x\)</span> 的命题，若存在 <span class="math inline">\((X,\mathcal{F},\mu)\)</span> 上的一个零测集 <span class="math inline">\(N\)</span> ，使得该命题对所有 <span class="math inline">\(x \in N^{c}\)</span> 成立，则称该命题<strong>几乎处处成立</strong>，记作 <strong>a.e.</strong> (almost everywhere) 。</p>
+<p>若该测度空间是一个概率空间，则几乎处处成立也被称为<strong>几乎必然成立</strong>，记作 <strong>a.s.</strong> (almost surely)。</p>
+</section>
+<section id="定义" class="level1">
+<h1>定义</h1>
+<p>我们使用 <a href="../../../src/learn/advanced-probability/07-measurable-functions.html#typical-method">典型方法</a> 来定义积分，整个过程分为三个步骤。</p>
+<section id="非负简单函数的积分" class="level2">
+<h2 class="anchored" data-anchor-id="非负简单函数的积分">非负简单函数的积分</h2>
+<div id="def-inte-simple-func" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 1 (非负简单函数的积分)</strong></span> 设 <span class="math inline">\(f\)</span> 是 <span class="math inline">\((X,\mathcal{F},\mu)\)</span> 一个非负简单函数，其可以表示为</p>
+<p><span class="math display">\[
+f=\sum\limits_{i=1}^{n}a_{i}I_{A_{i}},
+\]</span></p>
+<p>称 <span class="math inline">\(\sum\limits_{i=1}^{n}a_{i}\mu(A_{i})\)</span> 是 <span class="math inline">\(f\)</span> 的<strong>积分</strong>，记作 <span class="math inline">\(\int _{X}fd\mu\)</span> 或 <span class="math inline">\(\int _{X}f(x) \, \mu(dx)\)</span>。</p>
+</div>
+<p>注意到，不同的 <span class="math inline">\(\{ a_{i},A_{i} \}\)</span> 可能会对应相同的非负简单函数，比如：</p>
+<p><span class="math display">\[
+2I_{(0,1)}(x)+I_{[1,2]}(x)=2I_{(0,1)}(x)+I_{[1,1.5]}(x)+I_{(1.5,2]}(x),
+\]</span></p>
+<p>这些不同的形式是否会计算出不同的积分呢？答案是否定的。</p>
+<div id="thm-08-integration-2" class="theorem">
+<p><span class="theorem-title"><strong>定理 1 (非负简单函数积分的一意性 (well defined))</strong></span> 相同的非负简单函数，不论表达形式如何，其积分必然相同。</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>假设某个简单函数可以表示为两种形式：</p>
+<p><span class="math display">\[
+f=\sum\limits_{i=1}^{n}a_{i}I_{A_{i}}=\sum\limits_{j=1}^{m}b_{j}I_{B_{j}},
+\]</span></p>
+<p>注意，<span class="math inline">\(\{ A_{i} \}\)</span> 和 <span class="math inline">\(\{ B_{j} \}\)</span> 都是对 <span class="math inline">\(X\)</span> 的分割，进一步，我们可以构造一个新的分割 <span class="math inline">\(\{ C_{ij}=A_{i}\cap B_{j} \}\)</span>。因为两种形式是一个函数，所以必然有</p>
+<p><span class="math display">\[
+C_{ij}\neq \emptyset\implies a_{i}=b_{j}.
+\]</span></p>
+<p>所以我们可以来计算两种形式各自的积分</p>
+<p><span class="math display">\[
+\begin{align}
+\sum\limits_{i=1}^{n}a_{i}\mu(A_{i})
+&amp;=\sum\limits_{i=1}^{n}a_{i}\sum\limits_{j=1}^{m}\mu(C_{ij}) \\
+&amp;=\sum\limits_{i=1}^{n}\sum\limits_{j=1}^{m}a_{i}\mu(C_{ij}) \\
+&amp;=\sum\limits_{i=1}^{n}\sum\limits_{j=1}^{m}b_{i}\mu(C_{ij}) \\
+&amp;=\sum\limits_{j=1}^{m}b_{i}\mu(B_{j}) \\
+\end{align}
+\]</span></p>
+<p>证明结束</p>
+</div>
+<p>接下来，我们将证明一些非负简单函数的性质</p>
+<div id="prp-inte-simple-func" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 1 (非负简单函数积分的性质)</strong></span> 设 <span class="math inline">\(f,g,\{ f_{n},n=1,2,\dots \}\)</span> 都是测度空间 <span class="math inline">\((X,\mathcal{F},\mu)\)</span> 上的非负简单函数，则</p>
+<ol type="1">
+<li><span class="math inline">\(\int _{X}I_{A} \, d\mu=\mu(A),\forall A\in\mathcal{F}\)</span>,</li>
+<li><span class="math inline">\(\int _{X}f \, d\mu\geq 0\)</span>,</li>
+<li><span class="math inline">\(\int _{X}af \, d\mu=a \int _{X}f \, d\mu,\forall a\in\mathbb{R},a\geq 0\)</span>,</li>
+<li><span class="math inline">\(\int _{X}(f+g) \, d\mu= \int _{X}f \, d\mu + \int _{X}g \, d\mu\)</span>,</li>
+<li><span class="math inline">\(f\geq g\implies\int _{X}f \, d\mu\geq \int _{X}g \, d\mu\)</span>,</li>
+<li><span class="math inline">\(f_{n}\uparrow \text{且} \lim_{ n \to \infty }f_{n}\geq g\implies \lim_{ n \to \infty }\int _{X}f_{n} \, d\mu\geq \int _{X}g \, d\mu\)</span>,</li>
+</ol>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>通过定义可以直接证明 (1), (2), (3) 。 (4) <span class="math inline">\(f+g\)</span> 也还是简单函数，若 <span class="math inline">\(f=\sum\limits_{i=1}^{n}a_{i}I_{A_{i}}\)</span> ，<span class="math inline">\(g=\sum\limits_{j=1}^{m}b_{j}I_{B_{j}}\)</span>，则</p>
+<p><span class="math display">\[
+f+g=\sum\limits_{i=1}^{n}\sum\limits_{j=1}^{m}(a_{i}+b_{j})I_{A_{i}\cap B_{j}},
+\]</span></p>
+<p>因此，有</p>
+<p><span class="math display">\[
+\begin{align}
+\int _{X}f+g \, d \mu&amp;=\sum\limits_{i=1}^{n}\sum\limits_{j=1}^{m}
+(a_{i}+b_{j})\mu(A_{i}\cap B_{j}) \\
+&amp;=\sum\limits_{i=1}^{n}\sum\limits_{j=1}^{m}a_{i}\mu(A_{i}\cap B_{j})+
+\sum\limits_{i=1}^{n}\sum\limits_{j=1}^{m}b_{i}\mu(A_{i}\cap B_{j}) \\
+&amp;=\sum\limits_{i=1}^{n}a_{i}\mu(A_{i})+\sum\limits_{j=1}^{m}b_{i}\mu(B_{j}) \\
+&amp;=\int _{X}f \, d\mu+\int _{X}g \, d \mu
+\end{align}
+\]</span></p>
+<ol start="4" type="1">
+<li>得证。</li>
+<li>我们构造 <span class="math inline">\(h=f-g\geq 0\)</span>，可知 <span class="math inline">\(h\)</span> 也是简单函数，利用 (2), (3), (4) 的结论，我们有</li>
+</ol>
+<p><span class="math display">\[
+\int _{X}f \, d \mu=\int _{X}g+h \, d \mu
+=\int_{X} g \, d \mu+\int_{X} h \, d \mu \geq \int _{X}g \, d \mu
+\]</span></p>
+<ol start="6" type="1">
+<li>取 <span class="math inline">\(\alpha \in(0,1)\)</span>，然后令 <span class="math inline">\(A_{n}(\alpha)=\{ f_{n}\geq \alpha g \}\)</span>。不妨我们将 <span class="math inline">\(g\)</span> 表示为 <span class="math inline">\(g=\sum\limits_{j=1}^{m}b_{j}I_{B_{j}}\)</span>，注意到 <span class="math inline">\(f_{n}I_{A_{n}(\alpha)}\)</span> 和 <span class="math inline">\(gI_{A_{n}(\alpha)}\)</span> 依然是简单函数，并且有 <span class="math inline">\(f_{n}I_{A_{n}(\alpha)}\geq \alpha gI_{A_{n}(\alpha)}\)</span>，因此由 (5) 可知</li>
+</ol>
+<p><span class="math display">\[
+\int _{X}f \, d\mu\geq \int _{X}f_{n}I_{A_{n}(\alpha)} \, d \mu
+\geq \alpha \int _{X}gI_{A_{n}(\alpha)} \, d \mu=
+\alpha \sum\limits_{j=1}^{m}b_{j}\mu(B_{j}\cap A_{n}(\alpha)).
+\]</span></p>
+<p><span id="e7de7b"></span></p>
+<p>又因为</p>
+<p><span class="math display">\[
+\begin{align}
+f_{n}\uparrow &amp;\implies A_{n}(\alpha)\uparrow \\
+\lim_{ n \to \infty } f_{n}\geq g &amp;\implies A_{n}(\alpha)\uparrow X
+\end{align}
+\]</span></p>
+<p>(第二行结论可以使用反证法证明) 。所以， 令式 <a href="#e7de7b">e7de7b</a> 右侧 <span class="math inline">\(n\to \infty\)</span>，有</p>
+<p><span class="math display">\[
+\int _{X}f \, d\mu\geq \alpha \sum\limits_{j=1}^{m}b_{j}\lim_{ n \to \infty } \mu(B_{j}\cap A_{n}(\alpha))=\alpha \sum\limits_{j=1}^{m}b_{j}\mu(B_{j})
+=\alpha \int _{X}g \, d \mu.
+\]</span></p>
+<p>因为上式中 <span class="math inline">\(\alpha \in(0,1)\)</span> 是任取的，令 <span class="math inline">\(\alpha\to1\)</span> 即可得到 (6) 的结论。(如果想不通，还是也可通过反证法来证明)</p>
+</div>
+</section>
+<section id="非负可测函数的积分" class="level2">
+<h2 class="anchored" data-anchor-id="非负可测函数的积分">非负可测函数的积分</h2>
+<div id="def-inte-noneg-func" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 2 (非负可测函数的积分)</strong></span> 设 <span class="math inline">\(f\)</span> 是 <span class="math inline">\((X,\mathcal{F},\mu)\)</span> 上的非负可测函数，称</p>
+<p><span class="math display">\[
+\sup \left\{  \int _{X}g \, d\mu\ |\ g\text{非负简单且}g\leq f  \right\}
+\]</span></p>
+<p>为 <span class="math inline">\(f\)</span> 的积分，记作 <span class="math inline">\(\int _{X}f \, d\mu\)</span>.</p>
+</div>
+<ul>
+<li>以上的定义是 well defined，因为上确界的定义本身就是 well defined。</li>
+<li>以上的定义意味着，<strong>非负可测函数的积分一定存在，要么是 <span class="math inline">\(+\infty\)</span>，要么是 <span class="math inline">\(&gt;0\)</span> 的实数</strong>。</li>
+<li>如果 <span class="math inline">\(f\)</span> 是简单函数，则 <a href="#def-inte-simple-func" class="quarto-xref">定义&nbsp;1</a> 和 <a href="#def-inte-noneg-func" class="quarto-xref">定义&nbsp;2</a> 会提供两个不同的定义，这两个定义会一样吗？后面性质的第一条给出了肯定的答案。</li>
+</ul>
+<div id="prp-inte-noneg-func" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 2 (非负可测函数积分的性质)</strong></span> 设 <span class="math inline">\(f\)</span> 是测度空间 <span class="math inline">\((X, \mathcal{F}, \mu)\)</span> 上的非负可测函数，则 (1) 若 <span class="math inline">\(f\)</span> 是非负简单函数，则由 <a href="#def-inte-simple-func" class="quarto-xref">定义&nbsp;1</a> 和 <a href="#def-inte-noneg-func" class="quarto-xref">定义&nbsp;2</a> 确定的 <span class="math inline">\(\int _{X}f \, d\mu\)</span> 相同。 (2) 若 <span class="math inline">\(\{ f_{n},n=1,2,\dots \}\)</span> 是非负简单函数，且 <span class="math inline">\(f_{n}\uparrow f\)</span>，则有 <span class="math inline">\(\lim_{ n \to \infty }\int _{X}f_{n} \, d\mu=\int _{X}f \, d\mu\)</span>。 (3) 由 <a href="#def-inte-noneg-func" class="quarto-xref">定义&nbsp;2</a> 确定的积分值为</p>
+<p><span class="math display">\[
+\int _{X}f \, d \mu=\lim_{ n \to \infty } \left[
+\sum\limits_{k=0}^{n2^{n}-1}\frac{k}{2^{n}}\mu\left( \frac{k}{2^{n}}
+\leq f&lt;\frac{k+1}{2^{n}} \right)+n\mu(f\geq n) \right] .
+\]</span></p>
+<ol start="4" type="1">
+<li><span class="math inline">\(\int _{X}f \, d\mu\geq 0\)</span>。</li>
+<li><span class="math inline">\(\int _{X}(af) \, d\mu=a\int _{X}f \, d\mu,\forall a\geq 0\)</span>。</li>
+<li><span class="math inline">\(\int _{X}(f+g) \, d\mu=\int _{X}f \, d\mu+\int _{X}g \, d\mu\)</span>。</li>
+<li><span class="math inline">\(f\geq g\implies\int _{X}f \, d\mu\geq\int _{X}g \, d\mu\)</span>。</li>
+</ol>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span></p>
+<ol type="1">
+<li>证明非常简单，只需要明确知道，<span class="math inline">\(f\)</span> 本身也是 <span class="math inline">\(\leq f\)</span> 的 <span class="math inline">\(g\)</span> 中的一员即可。</li>
+<li>由定义可知 <span class="math inline">\(\int _{X}f_{n} \, d\mu\leq \int _{X}f \, d\mu\)</span>，因此有 <span class="math inline">\(\lim_{ n \to \infty }\int _{X}f_{n} \, d\mu\leq \int _{X}f \, d\mu\)</span>。又因为 <span class="math inline">\(\forall g\leq f\)</span>，<span class="math inline">\(g\)</span> 是简单函数，所有有关系</li>
+</ol>
+<p><span class="math display">\[
+\lim_{ n \to \infty } f_{n}\geq g,
+\]</span></p>
+<p>根据 <a href="#prp-inte-simple-func" class="quarto-xref">命题&nbsp;1</a> 中的第 6 条可知，<span class="math inline">\(\lim_{ n \to \infty }\int _{X}f_{n} \, d\mu\geq \int _{X}g \, d\mu,\forall g\leq f\)</span>，因此有 <span class="math inline">\(\lim_{ n \to \infty }\int _{X}f_{n} \, d\mu\geq \int _{X}f \, d\mu\)</span>。命题得证。 (3) 将 (2) 应用于 <strong>?@thm-simple-func-converge</strong> 中构造的那一列简单函数即可。 (4) 由定义和 <a href="#prp-inte-simple-func" class="quarto-xref">命题&nbsp;1</a> 中的第 2 条直接推出。 (5) 由 <strong>?@thm-simple-func-converge</strong> 可知，任意非负可测函数都可以找到一列非负简单函数 <span class="math inline">\(f_{n}\)</span> 来向上逼近它，再根据这场的 (2) 和 <a href="#prp-inte-simple-func" class="quarto-xref">命题&nbsp;1</a> 中的 (3) 可以得到</p>
+<p><span class="math display">\[
+\begin{align}
+\int _{X}(af) \, d\mu&amp;=\lim_{ n \to \infty } \int _{X}(af_{n}) \, d\mu  \\
+&amp;=\lim_{ n \to \infty } a\int _{X}f_{n} \, d\mu \\
+&amp;=a\lim_{ n \to \infty } \int _{X}f_{n} \, d\mu =a\int _{X}f \, d\mu
+\end{align}
+\]</span></p>
+<p>不难证明，当 <span class="math inline">\(a=\infty\)</span> 时，以上还是成立的。 (6) 证明方法与 (5) 类似。 (7) 由定义可以直接得到。</p>
+</div>
+<p>注意，根据 <strong>?@thm-simple-func-converge</strong>，任意非负可测函数都能够找到一列非负简单函数列来向上逼近它，而又根据上面的性质 (2)，这一列非负简单函数列的积分的极限等于非负可测函数的积分，这其实体现了非负可测函数积分的另一种定义方式。</p>
+<div id="def-inte-noneg-func-2" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 3 (非负可测函数的积分 2)</strong></span> 对于任意的非负可测函数 <span class="math inline">\(f\)</span>，找到一列非负简单函数 <span class="math inline">\(f_{n}\)</span> 满足 <span class="math inline">\(f_{n}\uparrow f\)</span>，则定义 <span class="math inline">\(f\)</span> 的积分为</p>
+<p><span class="math display">\[
+\int _{X}f \, d\mu:=\lim_{ n \to \infty } \int _{X}f_{n} \, d\mu.
+\]</span></p>
+</div>
+<p>关于这两个定义之间的关系，需要说明几点： - <a href="#def-inte-noneg-func" class="quarto-xref">定义&nbsp;2</a> 需要进一步讨论其一意性，因为每个 <span class="math inline">\(f\)</span> 可能有不同的逼近方式。但根据以上的性质 (2)，该一意性得到保证。 - 同样根据性质 (2)，我们知道，两者定义是等价的。 - 根据性质 (3)，我们甚至能够实际写出定义的表达式，只需要将简单函数列固定到 <strong>?@thm-simple-func-converge</strong> 所构造的那个简单函数列即可。</p>
+</section>
+<section id="一般可测函数的积分" class="level2">
+<h2 class="anchored" data-anchor-id="一般可测函数的积分">一般可测函数的积分</h2>
+<ul>
+<li>这里讨论的一般可测函数，既可以是广义可测函数，也可以是 Borel 函数。</li>
+<li>一般可测函数的积分并不总是存在的，因此，我们需要定义两个前置条件。</li>
+</ul>
+<div id="def-inte-func" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 4 (积分存在)</strong></span> 测度空间 <span class="math inline">\((X,\mathcal{F},\mu)\)</span> 上的可测函数 <span class="math inline">\(f\)</span> 若满足</p>
+<p><span class="math display">\[
+\min\left\{  \int _{X}f^{+} \, d\mu,\int _{X}f^{-} \, d\mu    \right\} &lt; \infty,
+\]</span></p>
+<p>则称其<strong>积分存在</strong>或<strong>积分有意义</strong>（<strong>exists</strong>）。 <strong>Definition: 可积性</strong> 若 <span class="math inline">\(f\)</span> 满足</p>
+<p><span class="math display">\[
+\max\left\{  \int _{X}f^{+} \, d\mu,\int _{X}f^{-} \, d\mu    \right\} &lt; \infty,
+\]</span></p>
+<p>则称 <span class="math inline">\(f\)</span> 是<strong>可积的</strong>（<strong>integrable</strong>）。 <strong>Definition: 一般可测函数的积分</strong> 当测度空间 <span class="math inline">\((X,\mathcal{F},\mu)\)</span> 上的可测函数 <span class="math inline">\(f\)</span> 积分存在时，定义</p>
+<p><span class="math display">\[
+\int _{X}f^{+} \, d\mu-\int _{X}f^{-} \, d\mu
+\]</span></p>
+<p>为 <span class="math inline">\(f\)</span> 的积分，记为 <span class="math inline">\(\int _{X}f \, d\mu\)</span>。容易知道，<strong>积分有限当且仅当函数可积</strong>。</p>
+</div>
+<div id="def-08-integration-8" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 5 (集合上的积分)</strong></span> <span class="math inline">\(\forall A\in\mathcal{F}\)</span> ，若 <span class="math inline">\(fI_{A}\)</span> 积分存在，则定义</p>
+<p><span class="math display">\[
+\int _{X}fI_{A} \, d\mu
+\]</span></p>
+<p>为 <span class="math inline">\(f\)</span> 在集合 <span class="math inline">\(A\)</span> 上的积分，记为 <span class="math inline">\(\int _{A}f \, d\mu\)</span>。容易知道，<strong><span class="math inline">\(f\)</span> 积分存在（可积）则 <span class="math inline">\(f\)</span> 在任意 <span class="math inline">\(A\in\mathcal{F}\)</span> 上积分存在（可积）</strong>。 <strong>Example: L-S 积分和 L 积分</strong> 略</p>
+</div>
+</section>
+</section>
+<section id="性质" class="level1">
+<h1>性质</h1>
+<section id="积分存在和可积性的相关性质" class="level2">
+<h2 class="anchored" data-anchor-id="积分存在和可积性的相关性质">积分存在和可积性的相关性质</h2>
+<p>根据上面的定义，我们知道，讨论函数的积分，需要先讨论函数积分是否存在。因此，这里我们将先去讨论一下函数积分存在（可积）相关的一些性质和重要结论。</p>
+<div id="thm-inte-exists" class="theorem">
+<p><span class="theorem-title"><strong>定理 2 (积分存在 (可积) 的性质)</strong></span> 设 <span class="math inline">\(f,g\)</span> 是测度空间 <span class="math inline">\((X,\mathcal{F},\mu)\)</span> 上的可测函数，则 (1) 若 <span class="math inline">\(f\)</span> 积分存在，则 <span class="math inline">\(|\int _{X}f \, d\mu|\leq\int _{X}|f| \, d\mu\)</span>; (2) <span class="math inline">\(f\)</span> 可积，当且仅当 <span class="math inline">\(|f|\)</span> 可积; (3) 若 <span class="math inline">\(f\)</span> 可积，则 <span class="math inline">\(|f|&lt;\infty\)</span> a.e.; (4) 若 <span class="math inline">\(f\)</span> 积分存在，则</p>
+<p><span class="math display">\[
+\forall A\in\mathcal{F},\mu(A)=0\implies \int _{A}f \, d\mu=0;
+\]</span></p>
+<ol start="5" type="1">
+<li>若 <span class="math inline">\(f,g\)</span> 积分存在且 <span class="math inline">\(f\geq g\)</span> a.e.，则 <span class="math inline">\(\int _{X}f \, d\mu\geq \int _{X}g \, d\mu\)</span>;</li>
+<li>若 <span class="math inline">\(f=g\)</span> a.e.，则其中一个积分存在 (可积)，另一个也积分存在 (可积)，并且两个的积分值相同；</li>
+<li>若 <span class="math inline">\(f=0\)</span> a.e.，则 <span class="math inline">\(\int _{X}f \, d\mu=0\)</span>；若 <span class="math inline">\(\int _{X}f \, d\mu=0\)</span>，且 <span class="math inline">\(f\geq 0\)</span> a.e.，则 <span class="math inline">\(f=0\)</span> a.e.。</li>
+</ol>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span></p>
+<ol type="1">
+<li>根据 <a href="#prp-inte-noneg-func" class="quarto-xref">命题&nbsp;2</a> (7)，有</li>
+</ol>
+<p><span class="math display">\[
+\left|\int _{X}f \, d\mu \right|=\left|\int _{X}f^{+} \, d\mu -\int _{X}f^{-} \, d\mu \right|
+\leq \max\left\{  \int _{X}f^{+} \, d\mu,\int _{X}f^{-} \, d\mu    \right\}
+\leq \int _{X}\left| f \right|  \, d\mu.
+\]</span></p>
+<ol start="2" type="1">
+<li>同样根据 <a href="#prp-inte-noneg-func" class="quarto-xref">命题&nbsp;2</a> (7)，我们有</li>
+</ol>
+<p><span class="math display">\[
+\max\left\{  \int _{X}f^{+} \, d\mu,\int _{X}f^{-} \, d\mu    \right\}
+\leq \int _{X}\left| f \right|  \, d\mu,
+\]</span></p>
+<p>则 <span class="math inline">\(|f|\)</span> 可积蕴含 <span class="math inline">\(f\)</span> 可积。若 <span class="math inline">\(f\)</span> 可积，则</p>
+<p><span class="math display">\[
+\int _{X}\left| f \right|  \, d\mu=\int _{X}f^{+} \, d\mu+\int _{X}f^{-} \, d\mu&lt;\infty  ,
+\]</span></p>
+<p>因此 <span class="math inline">\(|f|\)</span> 可积。 (3) 我们只需要证明对于所有的非负可测函数成立 (3) 即可。使用反证法，若不成立，则表明 <span class="math inline">\(\mu u(f=\infty)&gt;0\)</span> ，则有</p>
+<p><span class="math display">\[
+\int _{X}f \, d\mu\geq \int _{X}fI_{f=\infty} \, d\mu\geq n\mu(f=\infty)  ,
+\]</span></p>
+<p>其中 <span class="math inline">\(n\)</span> 可以任意大，这显然与 <span class="math inline">\(|f|\)</span> 可积矛盾。 (4) 使用典型方法，容易证明当 <span class="math inline">\(f\)</span> 是简单函数时成立。利用 <a href="#prp-inte-noneg-func" class="quarto-xref">命题&nbsp;2</a> (2) 可以证明 <span class="math inline">\(f\)</span> 是非负可测函数时也成立。再利用一般可测函数积分的定义得到最终的证明。 (5) 我们先证明 <span class="math inline">\(f,g\geq 0\)</span> 的情况。令 <span class="math inline">\(A={f&lt;g}\)</span>，则由条件可知 <span class="math inline">\(\mu(A)=0\)</span> ，有 (4) 的结论可知</p>
+<p><span class="math display">\[
+\begin{align}
+\int _{X}f \, d\mu &amp;=\int _{X}fI_{A} \, d\mu +\int _{X}fI_{A^{c}} \, d\mu \\
+&amp;=\int _{X}fI_{A^{c}} \, d\mu \\
+&amp;\geq \int _{X}gI_{A^{c}} \, d\mu \\
+&amp;=\int _{X}gI_{A} \, d\mu +\int _{X}gI_{A^{c}} \, d\mu \\
+&amp;=\int _{X}g \, d\mu
+\end{align}
+\]</span></p>
+<p>其中 1、5 行源于 <a href="#prp-inte-noneg-func" class="quarto-xref">命题&nbsp;2</a> (6)，第 2、4 行源于本定理的 (4)，第 3 行源于 <a href="#prp-inte-noneg-func" class="quarto-xref">命题&nbsp;2</a> (7) 。 现在讨论一般情况，<span class="math inline">\(f\geq g\)</span> a.e.，蕴含 <span class="math inline">\(f^{+}\geq g^{+}\)</span> a.e.和 <span class="math inline">\(f^{-}\leq g^{-}\)</span> a.e.，进而由刚才证明的情况，得到</p>
+<p><span class="math display">\[
+\int _{X}f^{+} \, d\mu\geq \int _{X}g^{+} \, d\mu,\
+\int _{X}f^{-} \, d\mu\leq \int _{X}g^{-} \, d\mu .
+\]</span></p>
+<p><span id="c43562"></span></p>
+<p>进而根据一般可测函数积分的定义得到我们最终要证明的结果。 (6) 注意 (5) 的证明中，得到式 <a href="#c43562">c43562</a> 的过程不需要 <span class="math inline">\(f,g\)</span> 的积分存在性。则由</p>
+<p><span class="math display">\[
+f=g\ a.e.\implies f\geq g,g\leq f\ a.\mathbf{e}
+\]</span></p>
+<p>可进一步推出：</p>
+<p><span class="math display">\[
+\int _{X}f^{+} \, d\mu= \int _{X}g^{+} \, d\mu,\
+\int _{X}f^{-} \, d\mu= \int _{X}g^{-} \, d\mu ,
+\]</span></p>
+<p>这意味着 <span class="math inline">\(f\)</span> 和 <span class="math inline">\(g\)</span> 的积分是同时存在且相同的。 (7) 第一部分直接由 (6) 得到。第二部分的证明采用反证法，这意味 <span class="math inline">\(\mu(f&gt;0)=\mu\left( \bigcup_{i=1}^{n}\{ f\geq 1/n \} \right)&gt;0\)</span>。这意味着必然存在一个 <span class="math inline">\(n_{0}\)</span>，使得</p>
+<p><span class="math display">\[
+\mu(f\geq 1/n_{0})&gt;0,
+\]</span></p>
+<p>使用上面的各项性质，有</p>
+<p><span class="math display">\[
+\begin{align}
+0=\int _{X}f \, d\mu&amp;=\int _{X}fI_{\{ f\geq 0 \}} \, dx
+=\int _{X}fI_{\{ f&gt; 0 \}} \, dx + \int _{X}fI_{\{ f= 0 \}} \, dx
+=\int _{X}fI_{\{ f&gt; 0 \}} \, dx \\
+&amp;\geq \int _{X}fI_{\{ f&gt;1/n_{0} \}} \, dx \geq \frac{1}{n_{0}}\mu(f\geq 1/n_{0})&gt;0,
+\end{align}
+\]</span></p>
+<p>出现矛盾，命题得证。</p>
+</div>
+<p><strong>?@prp-inte-exists</strong> (6) 表达了一个非常重要的观点：<strong>任意涂改一个可测函数在零测集上的值不会影响积分的存在性、可积性和积分值</strong>。因此根据这个，我们可以将积分的定义进行扩充。</p>
+<div id="def-inte-func-general" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 6 (广义上的积分)</strong></span> 若 <span class="math inline">\(f\)</span> 是一个 a.e.定义的可测函数（可以在某个零测集上的没有定义），另外还有一个函数 <span class="math inline">\(\tilde{f}\)</span> 满足 <span class="math inline">\(\mu(f\neq \tilde{f})=0\)</span>，若 <span class="math inline">\(\tilde{f}\)</span> 的积分存在，则我们就认为 <span class="math inline">\(f\)</span> 积分存在，并将积分定义为</p>
+<p><span class="math display">\[
+\int _{X}f \, d\mu :=\int _{X}\tilde{f} \, d\mu.
+\]</span></p>
+</div>
+<p><strong>从此之后，我们讨论的可测函数的积分，均可以理解为 a.e.定义的可测函数积分。</strong></p>
+<p>这里我们再补充一个推论, 用于更好地讨论后面的情况.</p>
+<div id="prp-integrable-exists" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 3 (可积性保证积分存在)</strong></span> 设 <span class="math inline">\(f,g\)</span> 是测度空间 <span class="math inline">\((X,\mathcal{F},\mu)\)</span> 上的两个可测函数，则若存在</p>
+<p><span class="math display">\[
+f\geq g\ a.e.,
+\]</span></p>
+<p>并且 <span class="math inline">\(f,g\)</span> 其中之一<strong>可积</strong>, 则另外一个一定<strong>积分存在</strong>, 并且有</p>
+<p><span class="math display">\[
+\int f \, d\mu\geq \int g \, d\mu.  
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>若 <span class="math inline">\(f\)</span> 可积, 则 <span class="math inline">\(\lvert f \rvert\)</span> 可积, 并且有</p>
+<p><span class="math display">\[
+\lvert f \rvert \geq f\geq g\implies
+\lvert f \rvert(x) \geq g(x),\forall x \in\{ g\geq 0 \},
+\]</span></p>
+<p>因此有</p>
+<p><span class="math display">\[
+\int g^{+} \, d\mu\leq \int \lvert f \rvert  \, d\mu&lt;\infty,  
+\]</span></p>
+<p>这就已经证明了 <span class="math inline">\(g\)</span> 一定积分存在.</p>
+<p>若 <span class="math inline">\(g\)</span> 可积, 则有</p>
+<p><span class="math display">\[
+\int f^{-} d\mu=\int _{\{ f&lt;0 \}}-f \, d\mu
+\leq \int _{\{ f&lt;0 \}}-g \, d\mu =
+\int _{\{ f&lt;0 \}}\lvert g \rvert  \, d\mu &lt;\infty.
+\]</span></p>
+<p>这也证明了 <span class="math inline">\(f\)</span> 一定积分存在.</p>
+<p>再根据 <strong>?@prp-inte-exists</strong> (5), 得到第二个不等式.</p>
+</div>
+</section>
+<section id="线性性质" class="level2">
+<h2 class="anchored" data-anchor-id="线性性质">线性性质</h2>
+<div id="thm-linear" class="theorem">
+<p><span class="theorem-title"><strong>定理 3 (积分的线性性质)</strong></span> 设 <span class="math inline">\(f,g\)</span> 是测度空间 <span class="math inline">\((X,\mathcal{F},\mu)\)</span> 上积分存在的两个可测函数，则 (1) <span class="math inline">\(\forall a\in\mathbb{R}\)</span>，<span class="math inline">\(af\)</span> 积分存在且 <span class="math inline">\(\int _{X}af \, d\mu=a\int _{X}f \, d\mu\)</span>; (2) 若 <span class="math inline">\(\int _{X}f \, d\mu+\int _{X}g \, d\mu\)</span> 有意义，则 <span class="math inline">\(f+g\)</span> a.e.有定义，积分存在，且</p>
+<p>$$</p>
+<p><em>{X}f+g , d=</em>{X}f , d+_{X}g , d. $$</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span></p>
+<ol type="1">
+<li>当 <span class="math inline">\(a\geq0\)</span> 且 <span class="math inline">\(f\)</span> 是非负可测函数时，由 <a href="#prp-inte-noneg-func" class="quarto-xref">命题&nbsp;2</a> 知命题成立。若 <span class="math inline">\(a\geq 0\)</span> 且 <span class="math inline">\(f\)</span> 是一般可测函数时，我们有</li>
+</ol>
+<p><span class="math display">\[
+(af)^{+}=af^{+}, (af)^{-}=af^{-},
+\]</span></p>
+<p>因此，<span class="math inline">\(f\)</span> 积分存在蕴含 <span class="math inline">\(af\)</span> 积分存在，且</p>
+<p><span class="math display">\[
+\begin{align}
+\int_{X} af \, d\mu&amp;=\int _{X}(af)^{+} \, d\mu-\int _{X}(af)^{-} \, d\mu \\
+&amp;=\int _{X}af^{+} \, d\mu-\int _{X}af^{-} \, d\mu \\
+&amp;=a\left(\int _{X}f^{+} \, d\mu-\int _{X}f^{-} \, d\mu\right) \\
+&amp;=a\int _{X}f \, d\mu .
+\end{align}
+\]</span></p>
+<p>当 <span class="math inline">\(a&lt;0\)</span> 时，则</p>
+<p><span class="math display">\[
+(af)^{+}=(-a)f^{-}, (af)^{-}=(-a)f^{+},
+\]</span></p>
+<p>因此使用相同的思路可以证明 <span class="math inline">\(af\)</span> 积分存在且等式成立。 (2) 该定理的证明有些复杂，我们分为三步走。 <strong>第一步</strong> 若 <span class="math inline">\(f,g\geq 0\)</span> a.e.，且两者均可积，<span class="math inline">\(f-g\)</span> a.e.有定义，则 <span class="math inline">\(f-g\)</span> 积分存在且</p>
+<p><span class="math display">\[
+\int _{X}(f-g) \, d\mu=\int _{X}f \, d\mu-\int _{X}g \, d\mu   .
+\]</span></p>
+<p><strong>证</strong>: 由上述条件可知</p>
+<p><span class="math display">\[
+\begin{align}
+&amp;f-g\leq f\ a.e.\implies(f-g)^{+}\leq f\ a.e. \\
+&amp;f-g\geq (-g)\ a.e.\implies(f-g)^{-}\leq (-g)^{-}=g\ a.e. \\
+\end{align}
+\]</span></p>
+<p>由 <a href="#prp-inte-noneg-func" class="quarto-xref">命题&nbsp;2</a> (7) 可以知道</p>
+<p><span class="math display">\[
+\min\left\{  \int _{X}(f-g)^{+} \, d\mu,\int _{X}(f-g)^{-} \, d\mu    \right\}\leq \min\left\{  \int _{X}f \, d\mu,\int _{X}g \, d\mu    \right\}&lt;\infty.
+\]</span></p>
+<p><span id="f7807f"></span></p>
+<p>因此，<span class="math inline">\(f-g\)</span> 积分存在。 注意到有如下等式</p>
+<p><span class="math display">\[
+f-g=(f-g)^{+}-(f-g)^{-}\ a.e. \implies
+f+(f-g)^{-}=(f-g)^{+}+g\ a.e.,
+\]</span></p>
+<p>由 <a href="#prp-inte-noneg-func" class="quarto-xref">命题&nbsp;2</a> (6) 可知</p>
+<p><span class="math display">\[
+\int _{X}f \, d\mu +\int _{X}(f-g)^{-} \, d\mu=\int _{X}g \, d\mu+\int _{X}(f-g)^{+} \, d\mu ,
+\]</span></p>
+<p>加上式 <a href="#f7807f">f7807f</a>， 进而有</p>
+<p><span class="math display">\[
+\begin{align}
+\int _{X}(f-g) \, d\mu&amp;=\int _{X}(f-g)^{+} \, dx -\int _{X}(f-g)^{-} \, d\mu \\
+&amp;=\int _{X}f \, d\mu -\int _{X}g \, d\mu .
+\end{align}
+\]</span></p>
+<p><strong>第二步</strong> 若 <span class="math inline">\(\int _{X}f \, d\mu+\int _{X}g \, d\mu\)</span> 有意义，则 <span class="math inline">\((f^{+}+g^{+})-(f^{-}+g^{-})\)</span> a.e. 有意义，并且</p>
+<p><span class="math display">\[
+\min\left\{  \int _{X}(f^{+}+g^{+}) \, d\mu,
+\int _{X}(f^{-}+g^{-}) \, d\mu
+   \right\} &lt; \infty.
+\]</span></p>
+<p><span id="334006"></span></p>
+<p><strong>证</strong>: 我们首先使用反证法证明 <span class="math inline">\((f^{+}+g^{+})-(f^{-}+g^{-})\)</span> a.e. 有意义。现在假设其不成立，则表示</p>
+<p><span class="math display">\[
+\mu(\{ (f^{+}+g^{+})=\infty,(f^{-}+g^{-})=\infty \})&gt;0,
+\]</span></p>
+<p>或</p>
+<p><span class="math display">\[
+\mu((f^{+}+g^{+})无意义)&gt;0,
+\]</span></p>
+<p>或</p>
+<p><span class="math display">\[
+\mu((f^{-}+g^{-})无意义)&gt;0.
+\]</span></p>
+<p><span class="math inline">\(\int _{X}f \, d\mu+\int _{X}g \, d\mu\)</span> 有意义可以推知其中每个都有意义，进而推知后两种情况不成立，即只能是第一种情况。而第一种情况进一步可以分解为</p>
+<p><span class="math display">\[
+\begin{align}
+&amp;\mu(\{ (f^{+}+g^{+})=\infty,(f^{-}+g^{-})=\infty \}) \\
+=&amp;\mu(\{ f^{+}=\infty,(f^{-}+g^{-})=\infty \})+
+\mu(\{ f^{+}&lt;\infty,g^{+}=\infty,(f^{-}+g^{-})=\infty \}) \\
+=&amp;\mu(\{ f^{+}=\infty,f^{-}=\infty \})+
+\mu(f^{+}=\infty,f^{-}&lt;\infty,g^{-}=\infty) \\
+&amp;+\mu(\{ f^{+}&lt;\infty,g^{+}=\infty,f^{-}=\infty \})
++\mu(\{ f^{+}&lt;\infty,g^{+}=\infty,f^{-}&lt;\infty,g^{-}=\infty \})
+\end{align}
+\]</span></p>
+<p>由 <span class="math inline">\(\int _{X}f \, d\mu\)</span> 和 <span class="math inline">\(\int _{X}g \, d\mu\)</span> 有意义可知</p>
+<p><span class="math display">\[
+\mu(\{ f^{+}=\infty,f^{-}=\infty \})=\mu(\{ f^{+}&lt;\infty,g^{+}=\infty,f^{-}&lt;\infty,g^{-}=\infty \})=0
+\]</span></p>
+<p><span class="math inline">\(\mu(f^{+}=\infty,f^{-}&lt;\infty,g^{-}=\infty)&gt;0\)</span> 意味着 <span class="math inline">\(\mu(f=\infty,g=-\infty)&gt;0\)</span> ，这会导致 <span class="math inline">\(\int _{X}f \, d\mu +\int _{X}g \, d\mu\)</span> 无意义，所以必然是 <span class="math inline">\(\mu(f^{+}=\infty,f^{-}&lt;\infty,g^{-}=\infty)=0\)</span>。同理也可以证明 <span class="math inline">\(\mu(\{ f^{+}&lt;\infty,g^{+}=\infty,f^{-}=\infty \})=0\)</span>。也就是说，</p>
+<p><span class="math display">\[
+\mu(\{ (f^{+}+g^{+})=\infty,(f^{-}+g^{-})=\infty \})=0,
+\]</span></p>
+<p>这与假设不符，出现矛盾。 进而我们再来证明式 <a href="#334006">334006</a>。这只需要证明以下两个命题成立</p>
+<p><span class="math display">\[
+\begin{align}
+&amp;\int _{X}(f^{+}+g^{+}) \, d \mu=\infty\implies
+\int _{X}(f^{-}+g^{-}) \, d\mu&lt;\infty, \\
+&amp;\int _{X}(f^{-}+g^{-}) \, d \mu=\infty\implies
+\int _{X}(f^{+}+g^{+}) \, d\mu&lt;\infty.
+\end{align}
+\]</span></p>
+<p>两个命题的证明方法类似，以下只证明第一个。若 <span class="math inline">\(\int _{X}(f^{+}+g^{+}) \, d\mu=\infty\)</span> 成立，则根据 <a href="#prp-inte-noneg-func" class="quarto-xref">命题&nbsp;2</a> (6)，必然有 <span class="math inline">\(\int _{X}f^{+} \, d\mu=\infty\)</span> 和 <span class="math inline">\(\int _{X}g^{+} \, d\mu=\infty\)</span> 之一成立。 若 <span class="math inline">\(\int _{X}f^{+} \, d\mu=\infty\)</span> 成立，则必然有 <span class="math inline">\(\int _{X}f^{-} \, d\mu&lt;\infty\)</span> ，进而必然有 <span class="math inline">\(\int _{X}g^{-} \, d\mu&lt;\infty\)</span>（不然 <span class="math inline">\(\int _{X}f \, d\mu+\int _{X}g \, d\mu=\infty-\infty\)</span>），这就证明了 <span class="math inline">\(\int _{X}(f^{-}+g^{-}) \, d\mu&lt;\infty\)</span>。 同理也可以证明当 <span class="math inline">\(\int _{X}g^{+} \, d\mu=\infty\)</span> 成立时，有相同的结果。证明结束。</p>
+<p><strong>第三步</strong> 定理 (2) 的结论成立。 <strong>证</strong>: 因为</p>
+<p><span class="math display">\[
+\begin{align}
+(f+g)^{+}\leq f^{+}+g^{+}\ a.e. \\
+(f+g)^{-}\leq f^{-}+g^{-}\ a.e.
+\end{align}
+\]</span></p>
+<p>再加上第二步的结论，可知 <span class="math inline">\(f+g\)</span> a.e.有意义且 <span class="math inline">\(f+g\)</span> 的积分存在。于是有</p>
+<p><span class="math display">\[
+\begin{align}
+\int _{X}(f+g) \, d\mu&amp;=\int _{X}(f^{+}-f^{-}+g^{+}-g^{-}) \, d\mu   \\
+&amp;=\int _{X}[(f^{+}+g^{+})-(f^{-}+g^{-})] \, d\mu\\
+&amp;=\int _{X}(f^{+}+g^{+}) \, d\mu-\int _{X}(f^{-}+g^{-}) \, d\mu \\
+&amp;=\left( \int _{X}f^{+} \, d\mu+\int _{X}g^{+} \, d\mu-\left(
+\int _{X}f^{-} \, d\mu+\int _{X}g^{-} \, d\mu
+\right)   \right) \\
+&amp;=\left( \int _{X}f^{+} \, d\mu-\int _{X}f^{-} \, d\mu   \right)+
+\left( \int _{X}g^{+} \, d\mu -\int _{X}g^{-} \, d\mu  \right) \\
+&amp;=\int _{X}f \, d\mu+\int _{X}g \, d\mu,
+\end{align}
+\]</span></p>
+<p>其中第二行能够成立是因为式 <a href="#334006">334006</a> 的成立，第三行成立是因为第一步的结论，第四行是因为 <a href="#prp-inte-noneg-func" class="quarto-xref">命题&nbsp;2</a> (6)，定理证毕。</p>
+</div>
+</section>
+<section id="序关系性质" class="level2">
+<h2 class="anchored" data-anchor-id="序关系性质">序关系性质</h2>
+<div id="thm-order" class="theorem">
+<p><span class="theorem-title"><strong>定理 4 (序关系)</strong></span> 设 <span class="math inline">\(f,g\)</span> 是测度空间 <span class="math inline">\((X,\mathcal{F},\mu)\)</span> 上的可测函数，则 (1) 若 <span class="math inline">\(f,g\)</span> 积分存在且 <span class="math inline">\(f\geq g\)</span> a.e.，则 <span class="math inline">\(\int _{X}f \, d\mu\geq \int _{X}g \, d\mu\)</span>; (2) 若 <span class="math inline">\(f=g\)</span> a.e.，则其中一个积分存在 (可积)，另一个也积分存在 (可积)，并且两个的积分值相同； (3) 若 <span class="math inline">\(f=0\)</span> a.e.，则 <span class="math inline">\(\int _{X}f \, d\mu=0\)</span>；若 <span class="math inline">\(\int _{X}f \, d\mu=0\)</span>，且 <span class="math inline">\(f\geq 0\)</span> a.e.，则 <span class="math inline">\(f=0\)</span> a.e.； (4) 若 <span class="math inline">\(\int _{A}f \, d\mu\geq \int _{A}g \, d\mu\)</span> 对每个 <span class="math inline">\(A\in\mathcal{F}\)</span> 都成立，则 <span class="math inline">\(f\geq g\)</span> a.e.； (5) 若 <span class="math inline">\(\int _{A}f \, d\mu= \int _{A}g \, d\mu\)</span> 对每个 <span class="math inline">\(A\in\mathcal{F}\)</span> 都成立，则 <span class="math inline">\(f= g\)</span> a.e.；</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>其中第 (1)-(3) 条对应于 <strong>?@prp-inte-exists</strong> 的 (5)-(7) 条，这里只是将其重新归类到此处。 (4) 可以直接推出 (5)，所以我们只需要证明 (4) 即可。 令 <span class="math inline">\(B=\{ f&lt;g \}\)</span> ，则由 <a href="#prp-inte-noneg-func" class="quarto-xref">命题&nbsp;2</a> (4) 有</p>
+<p><span class="math display">\[
+\int _{B}(g-f) \, d \mu=\int _{X}(g-f)I_{B} \, d\mu\geq 0，
+\]</span></p>
+<p>又由 <strong>?@prp-linear</strong> (2) 以及命题条件可知</p>
+<p><span class="math display">\[
+\int _{B}(g-f) \, d\mu=\int _{B}g \, d\mu-\int _{B}f \, d\mu\leq 0,
+\]</span></p>
+<p>所以有 <span class="math inline">\(\int _{B}(g-f) \, d\mu=0\)</span>，由 (3) 可知</p>
+<p><span class="math display">\[
+(g-f)I_{B}=0\ a.e.
+\]</span></p>
+<p>又因为在 <span class="math inline">\(B\)</span> 上 <span class="math inline">\(g&gt;f\)</span>，所以 <span class="math inline">\(I_{B}=0\)</span> a.e.，即 <span class="math inline">\(\mu(f&lt;g)=\mu(B)=0\)</span>，也就是 <span class="math inline">\(f\geq g\)</span> a.e.。</p>
+</div>
+</section>
+<section id="绝对连续性" class="level2">
+<h2 class="anchored" data-anchor-id="绝对连续性">绝对连续性</h2>
+<div id="thm-9b6249" class="theorem">
+<p><span class="theorem-title"><strong>定理 5 (绝对连续性)</strong></span> 若 <span class="math inline">\(f\)</span> 可积，则 <span class="math inline">\(\forall \epsilon&gt;0,\exists\delta&gt;0\)</span> ，使得 <span class="math inline">\(\forall A\in\mathcal{F},\mu(A)&lt;\delta\)</span>，有</p>
+<p><span class="math display">\[
+\int _{A}\left| f \right|  \, d\mu&lt;\epsilon.
+\]</span></p>
+</div>
+<div class="callout callout-style-default callout-note callout-empty-content callout-titled" title="这个定理告诉我们，当 $f$ 可积时，$A$ 越小则积分越小，当 $A\to$ 零测集时，积分也会 $\to0$ 。">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>这个定理告诉我们，当 <span class="math inline">\(f\)</span> 可积时，<span class="math inline">\(A\)</span> 越小则积分越小，当 <span class="math inline">\(A\to\)</span> 零测集时，积分也会 <span class="math inline">\(\to0\)</span> 。
+</div>
+</div>
+<div class="callout-body-container callout-body">
+
+</div>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>由 <strong>?@prp-inte-exists</strong> (2) 可知，<span class="math inline">\(\left| f \right|\)</span> 可积，可以找到非负简单函数 <span class="math inline">\(g_{n}\uparrow |f|\)</span>，使得</p>
+<p><span class="math display">\[
+\lim_{ n \to \infty } \int _{X}g_{n} \, d\mu\uparrow \int _{X}|f| \, d\mu.
+\]</span></p>
+<p>因此，<span class="math inline">\(\forall\epsilon&gt;0,\exists N\in\mathbb{N}\)</span>，使得 <span class="math inline">\(\forall A\in\mathcal{F}\)</span> 有</p>
+<p><span class="math display">\[
+\int _{A}|f| \, d\mu- \int _{A}g_{N} \, d\mu \leq
+\int _{X}|f| \, d\mu- \int _{X}g_{N} \, d\mu&lt;\frac{\epsilon}{2} .
+\]</span></p>
+<p>令 <span class="math inline">\(M=\max_{x \in X}g_{N}(x)\)</span>，则有</p>
+<p><span class="math display">\[
+\int _{A}|f| \, d \mu&lt;\frac{\epsilon}{2}+\int _{A}g_{N} \, d\mu \leq
+\frac{\epsilon}{2}+M\mu(A),
+\]</span></p>
+<p>我们只需要取 <span class="math inline">\(\delta=\epsilon / (2M)\)</span>，就得到了定理的结论。</p>
+</div>
+</section>
+<section id="收敛性" class="level2">
+<h2 class="anchored" data-anchor-id="收敛性">收敛性</h2>
+<p>本节将讨论可测函数列极限的积分性质，其核心问题是<strong>什么时候极限运算和积分运算可以互换位置</strong>。其一共涉及到 3 个主要的定理，介绍如下。</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+注记
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>这里涉及到的收敛主要是 a.e. 收敛。</p>
+</div>
+</div>
+<section id="单调收敛定理" class="level3">
+<h3 class="anchored" data-anchor-id="单调收敛定理">单调收敛定理</h3>
+<div id="thm-mct" class="theorem">
+<p><span class="theorem-title"><strong>定理 6 (单调收敛定理, Levi 定理, MCT)</strong></span> <span class="math inline">\(\{ f_{n},n=1,2,\dots \}\)</span> 和 <span class="math inline">\(f\)</span> 均为 a.e.非负可测函数，若 <span class="math inline">\(f_{n}\uparrow f\)</span> a.e.，则</p>
+<p><span class="math display">\[
+\int _{X}f_{n} \, d\mu\uparrow \int _{X}f \, d\mu
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>根据 <strong>?@prp-inte-exists</strong> (6) ，我们不妨认为 <span class="math inline">\(f_{n}\uparrow f\)</span>。<span class="math inline">\(\forall n\)</span>，根据 <strong>?@thm-simple-func-converge</strong> 和 <a href="#prp-inte-noneg-func" class="quarto-xref">命题&nbsp;2</a> (2)，可以找到 <span class="math inline">\(\{ f_{n,k},k=1,\dots \}\)</span>，且满足</p>
+<p><span class="math display">\[
+f_{n,k}\uparrow f_{n}.
+\]</span></p>
+<p>令 <span class="math inline">\(g_{k}=\max_{1\leq n\leq k}f_{n,k}\)</span>，则 (1) <span class="math inline">\(g_{k}\)</span> 是非负简单函数； (2) 由于</p>
+<p><span class="math display">\[
+g_{k}=\mathop{\max}_{1\leq n\leq k}f_{n,k}\leq
+\mathop{\max}_{1\leq n\leq k}f_{n,k+1}\leq
+\mathop{\max}_{1\leq n\leq k+1}f_{n,k+1}=g_{k+1},
+\]</span></p>
+<p>所以，<span class="math inline">\(g_{k}\uparrow\)</span> 。 (3) 又因为</p>
+<p><span class="math display">\[
+g_{k}=\mathop{\max}_{1\leq n\leq k}f_{n,k}\leq
+\mathop{\max}_{1\leq n\leq k}f_{n} =f_{k},
+\]</span></p>
+<p>所以有</p>
+<p><span class="math display">\[
+\int _{X}g_{k} \, d\mu\leq \int _{X}f_{k} \, d\mu\leq \int _{X}f \, d\mu,\quad \forall k=1,2,\dots,
+\]</span></p>
+<p><span id="710f62"></span></p>
+<p>并且有</p>
+<p><span class="math display">\[
+\lim_{ k \to \infty } g_{k}\leq \lim_{ k \to \infty } f_{k}=f.
+\]</span></p>
+<p><span id="e53eb1"></span></p>
+<ol start="4" type="1">
+<li>还有</li>
+</ol>
+<p><span class="math display">\[
+g_{k}=\mathop{\max}_{1\leq n\leq k}f_{n,k}\geq f_{n,k},
+\]</span></p>
+<p>所以</p>
+<p><span class="math display">\[
+\lim_{ k \to \infty } g_{k}\geq \lim_{ k \to \infty } f_{n,k}=f_{n},\quad \forall n,
+\]</span></p>
+<p>因此</p>
+<p><span class="math display">\[
+\lim_{ k \to \infty } g_{k}\geq \lim_{ n \to \infty } f_{n}=f.
+\]</span></p>
+<p><span id="1bea85"></span></p>
+<div class="callout callout-style-default callout-note callout-titled" title="图像说明">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>图像说明
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div class="callout callout-style-default callout-note callout-titled" title="Excalidraw drawing pending export">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>Excalidraw drawing pending export
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>原 Obsidian 图形已保留为附件：<a href="../../../assets/attachments/advanced-probability/excalidraw/integration-2024-05-14-091547.excalidraw.md">center</a>。</p>
+</div>
+</div>
+</div>
+</div>
+<p>合并 (1) 、式 <a href="#e53eb1">e53eb1</a> 和 <a href="#1bea85">1bea85</a>，得到</p>
+<p><span class="math display">\[
+g_{n}\uparrow f,
+\]</span></p>
+<p>根据 <a href="#prp-inte-noneg-func" class="quarto-xref">命题&nbsp;2</a> (2) 有</p>
+<p><span class="math display">\[
+\int _{X}g_{n} \, d\mu\uparrow\int _{X}f \, d\mu
+\]</span></p>
+<p>再结合式 <a href="#710f62">710f62</a>，我们有</p>
+<p><span class="math display">\[
+\int _{X}f_{n} \, d\mu\uparrow \int _{X}f \, d\mu.
+\]</span></p>
+<p>问题得证。</p>
+</div>
+<p>基于该定理，我们还可以得到一个常用的推论。这个推论涉及到一个新的概念：可测分割（注意，之前在定义简单函数时我们使用到的是 <strong>?@def-finite-measurable-partition</strong> ，可测分割是其可数推广）。</p>
+<div id="def-08-integration-16" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 7 (可测分割)</strong></span> 两两不交的集合序列 <span class="math inline">\(\{ A_{n}\in\mathcal{F},n=1,2,\dots \}\)</span> 若满足 <span class="math inline">\(\bigcup_{n=1}^{\infty}A_{n}=X\)</span>，则称其为是可测空间 <span class="math inline">\((X,\mathcal{F})\)</span> 的一个可列可测分割，简称为可测分割。</p>
+</div>
+<p>由 <a href="#thm-mct" class="quarto-xref">定理&nbsp;6</a> 可以得到下面的推论：</p>
+<div id="cor-measurable-seperate" class="theorem corollary">
+<p><span class="theorem-title"><strong>推论 1 (可测分割)</strong></span> 若 <span class="math inline">\(f\)</span> 的积分存在，则对于任意可测分割 <span class="math inline">\(\{ A_{n},n=1,2,\dots \}\)</span>，有</p>
+<p><span class="math display">\[
+\int _{X}f \, d\mu=\sum\limits_{n=1}^{\infty}\int _{A_{n}}f \, d\mu.
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>注意有</p>
+<p><span class="math display">\[
+I_{X}=\sum_{n}I_{A_{n}}
+\]</span></p>
+<p>因此有</p>
+<p><span class="math display">\[
+\sum_{i=1}^{n}fI_{{A_{i}}}\uparrow f.
+\]</span></p>
+<p>直接利用 <a href="#thm-mct" class="quarto-xref">定理&nbsp;6</a> 有</p>
+<p><span class="math display">\[
+\int _{X}\sum\limits_{i=1}^{n}fI_{A_{i}} \, d\mu=
+\sum\limits_{i=1}^{n}\int _{A_{n}}f \, d\mu\uparrow\int _{X}f \, d\mu，
+\]</span></p>
+<p>也就是</p>
+<p><span class="math display">\[
+\sum\limits_{n=1}^{\infty}\int _{A_{n}}f \, d\mu=\int _{X}f \, d\mu.
+\]</span></p>
+</div>
+</section>
+<section id="08-integration-fatou-引理" class="level3">
+<h3 class="anchored" data-anchor-id="08-integration-fatou-引理">Fatou 引理</h3>
+<p>接下来一个重要的定理涉及到达布极限和积分的交换：</p>
+<div id="thm-fatou" class="theorem">
+<p><span class="theorem-title"><strong>定理 7 (Fatou 引理)</strong></span> 对于任何 a.e. 非负可测函数列 <span class="math inline">\(\{ f_{n},n=1,2,\dots \}\)</span>，有</p>
+<p><span class="math display">\[
+\int _{X}\mathop{\lim\inf}_{n\to \infty}f_n \, d \mu\leq
+\mathop{\lim\inf}_{n\to \infty}\int _{X}f_{n} \, d\mu.
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>令 <span class="math inline">\(g_{k}=\mathop{\inf}_{n\geq k}f_{n}\)</span>，则有 <span class="math inline">\(g_{k}\uparrow \mathop{\lim\inf}_{n\to \infty}f_{n}\)</span>，利用 <a href="#thm-mct" class="quarto-xref">定理&nbsp;6</a>，有</p>
+<p><span class="math display">\[
+\int _{X}\mathop{\lim\inf}_{n\to \infty}f_n \, d \mu =
+\lim_{ n \to \infty } \int _{X}g_{n} \, d\mu
+\]</span></p>
+<p>因为 <span class="math inline">\(\forall k,f_{n}\geq g_{n}\)</span>，所以 <span class="math inline">\(\int _{X}f_{n} \, d\mu\geq \int _{X}g_{n} \, d\mu\)</span>，因此有</p>
+<p><span class="math display">\[
+\lim_{ n \to \infty } \int _{X}g_{n} \, d\mu\leq \mathop{\lim\inf}_{n\to \infty}\int _{X}f_{n} \, d\mu .
+\]</span></p>
+<p>证毕。</p>
+</div>
+<p>注意到，我们不能直接将 <a href="#thm-fatou" class="quarto-xref">定理&nbsp;7</a> 中的 <span class="math inline">\(\inf\)</span> 换成 <span class="math inline">\(\sup\)</span> 还保证成立（将 <span class="math inline">\(\leq\)</span> 换成 <span class="math inline">\(\geq\)</span> 也不行）。这是因为我们面向的是非负可测函数列，其值域被限制在 <span class="math inline">\([0,+\infty]\)</span>，是不对称的。所以正确的做法是将值域也翻转过来，我们就可以得到下面的额 Reverse version。</p>
+<div id="thm-08-integration-19" class="theorem">
+<p><span class="theorem-title"><strong>定理 8 (Reverse Fatou 引理)</strong></span> 对于任何 a.e. 非<strong>正</strong>可测函数列 <span class="math inline">\(\{ f_{n},n=1,2,\dots \}\)</span>，有</p>
+<p><span class="math display">\[
+\int _{X}\mathop{\lim\sup}_{n\to \infty}f_n \, d \mu\geq
+\mathop{\lim\sup}_{n\to \infty}\int _{X}f_{n} \, d\mu.
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>易得 <span class="math inline">\(g_{n}=-f_{n}\)</span> 是非负可测函数列，运用 <a href="#thm-fatou" class="quarto-xref">定理&nbsp;7</a>，有</p>
+<p><span class="math display">\[
+\int _{X}\mathop{\lim\inf}_{ n \to \infty } g_{n} \, d\mu
+\leq
+\mathop{\lim\inf}_{ n \to \infty } \int _{X}g_{n} \, d\mu.
+\]</span></p>
+<p>不等号前面</p>
+<p><span class="math display">\[
+\mathop{\lim\inf}_{ n \to \infty } g_{n}=
+\mathop{\lim\inf}_{ n \to \infty } (-f_{n})=
+-\mathop{\lim\sup}_{ n \to \infty } f_{n},
+\]</span></p>
+<p>不等号后面</p>
+<p><span class="math display">\[
+\int _{X}g_{n} \, d\mu=-\int _{X}f_{n} \, d\mu.
+\]</span></p>
+<p>代入第一个公式，然后同时乘以 <span class="math inline">\(-1\)</span> 就得到了我们的结论。<strong>注意，以上证明过程中始终使用了一个结论：非正可测函数一定积分存在</strong>。</p>
+</div>
+<p>我们也可以使用另外的一种形式来表示 Fatou 引理，其和上面的 Fatou 引理（Reverse Fatou 引理）是等价的，可以互相推导。但其将非负 (正) 函数列推广到了任意可测函数列:</p>
+<div id="cor-fatou" class="theorem corollary">
+<p><span class="theorem-title"><strong>推论 2 (Fatou 推论)</strong></span> 设 <span class="math inline">\(\{ f_{n},n=1,2,\dots \}\)</span> 是可测函数列， (1) 若存在可积函数 <span class="math inline">\(g\)</span> 使得 <span class="math inline">\(f_{n}\geq g\)</span> 对每个 <span class="math inline">\(n=1,2,3,\dots\)</span> 成立，则 <span class="math inline">\(f_{n}, \mathop{\lim\inf}_{n\to \infty}f_{n}\)</span> 积分存在且下式成立</p>
+<p><span class="math display">\[
+\int _{X}\mathop{\lim\inf}_{n\to \infty}f_n \, d \mu\leq
+\mathop{\lim\inf}_{n\to \infty}\int _{X}f_{n} \, d\mu.
+\]</span></p>
+<ol start="2" type="1">
+<li>若存在可积函数 <span class="math inline">\(g\)</span> 使得 <span class="math inline">\(f_{n}\leq g\)</span> 对每个 <span class="math inline">\(n=1,2,3,\dots\)</span> 成立，则 <span class="math inline">\(f_{n},\mathop{\lim\sup}_{n\to \infty}f_{n}\)</span> 积分存在且下式成立</li>
+</ol>
+<p><span class="math display">\[
+\int _{X}\mathop{\lim\sup}_{n\to \infty}f_n \, d \mu\geq
+\mathop{\lim\sup}_{n\to \infty}\int _{X}f_{n} \, d\mu.
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span></p>
+<ol type="1">
+<li>因为 <span class="math inline">\(f_{n}\geq g\)</span>，所以有 <span class="math inline">\(\mathop{\lim\inf}_{ n \to \infty }f_{n}\geq g\)</span>。现在我们来证明，如果可测函数 <span class="math inline">\(f\)</span> 满足 <span class="math inline">\(f\geq g\)</span> ，则 <span class="math inline">\(f\)</span> 积分存在。</li>
+</ol>
+<p><span class="math display">\[
+f\geq g\implies f^{+}\geq g+,f^{-}\leq g^{-}\implies
+\int _{X}f^{+} \, d\mu\geq \int _{X}g^{+} \, d\mu,
+\int _{X}f^{-} \, d\mu\leq \int _{X}g^{-} \, d\mu,
+\]</span></p>
+<p>再有 <span class="math inline">\(g\)</span> 可积可知 <span class="math inline">\(\int _{X}f^{-} \, d\mu&lt;\infty\)</span> ，自然 <span class="math inline">\(f\)</span> 积分存在。所以现在我们知道了 <span class="math inline">\(f_{n}\)</span> 和 <span class="math inline">\(\mathop{\lim\inf}_{ n \to \infty }f_{n}\)</span> 都是积分存在的。 我们可以构造 <span class="math inline">\(h_{n}=f_{n}-g\geq 0\)</span>，这是一个非负可测函数列，所以可以利用 <a href="#thm-fatou" class="quarto-xref">定理&nbsp;7</a> 得到</p>
+<p><span class="math display">\[
+\int _{X}\mathop{\lim\inf}_{ n \to \infty } h_{n} \, d\mu
+=\int _{X}\mathop{\lim\inf}_{ n \to \infty } (f_{n}-g) \, d\mu
+\leq \mathop{\lim\inf}_{ n \to \infty } \int _{X}(f_{n}-g) \, dx .
+\]</span></p>
+<p>又因为</p>
+<p><span class="math display">\[
+\mathop{\lim\inf}_{ n \to \infty } (f_{n}-g)=
+\mathop{\lim\inf}_{ n \to \infty } f_{n}-g,
+\]</span></p>
+<p>所以有</p>
+<p><span class="math display">\[
+\int _{X}\mathop{\lim\inf}_{ n \to \infty } f_{n} \, d\mu-
+\int _{X}g \, d\mu\leq
+\mathop{\lim\inf}_{ n \to \infty } \int _{X}f_{n} \, d\mu-
+\int _{X}g \, d\mu,
+\]</span></p>
+<p>再次利用 <span class="math inline">\(g\)</span> 的可积性，两侧的 <span class="math inline">\(\int _{X}g \, d\mu\)</span> 可以被约去，得到我们需要证明的结论。 <strong>我们也可以使用该推论来证明 <a href="#thm-fatou" class="quarto-xref">定理&nbsp;7</a>，只需要将 <span class="math inline">\(g\equiv0\)</span> 即可。</strong> (2) 的证明类似。</p>
+</div>
+</section>
+<section id="控制收敛定理" class="level3">
+<h3 class="anchored" data-anchor-id="控制收敛定理">控制收敛定理</h3>
+<p><a href="#thm-mct" class="quarto-xref">定理&nbsp;6</a> 仅适用于非负可测函数列，<a href="#thm-fatou" class="quarto-xref">定理&nbsp;7</a> 和 <a href="#cor-fatou" class="quarto-xref">推论&nbsp;2</a> 则表示的是达布极限和不等式关系，那对于任意可测函数序列的极限是否存在相关的定理呢？下面我们来介绍</p>
+<div id="thm-7ffb80" class="theorem">
+<p><span class="theorem-title"><strong>定理 9 (控制收敛定理, DCT)</strong></span> <span class="math inline">\(\{ f_{n},n=1,2,\dots \}\)</span> 和 <span class="math inline">\(f\)</span> 是可测函数，若存在非负<strong>可积</strong>函数 <span class="math inline">\(g\)</span> 使得满足 <span class="math inline">\(\left| f_{n} \right|\leq g\)</span> a.e.对于任意 <span class="math inline">\(n\)</span> 成立，则 <span class="math inline">\(f_{n}\overset{a.e.}{\longrightarrow}f\)</span> (或 <span class="math inline">\(f_{n}\overset{ \mu }{ \longrightarrow }f\)</span>) 蕴含</p>
+<p><span class="math display">\[
+\lim_{ n \to \infty } \int _{X}f_{n} \, d\mu =\int _{X}f \, d\mu.
+\]</span></p>
+</div>
+<div class="callout callout-style-default callout-note callout-empty-content callout-titled" title="$f_{n}\overset{a.e.}{\longrightarrow}f$ 和 $f_{n}\overset{ \mu }{ \longrightarrow }f$ 的概念将在 [19_收敛理论](19-convergence-theory.qmd) 进行详细介绍。">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span><span class="math inline">\(f_{n}\overset{a.e.}{\longrightarrow}f\)</span> 和 <span class="math inline">\(f_{n}\overset{ \mu }{ \longrightarrow }f\)</span> 的概念将在 <a href="../../../src/learn/advanced-probability/19-convergence-theory.html">19_收敛理论</a> 进行详细介绍。
+</div>
+</div>
+<div class="callout-body-container callout-body">
+
+</div>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span><span class="math inline">\(\left| f_{n} \right|\leq g\)</span> a.e.蕴含</p>
+<p><span class="math display">\[
+f_{n}\geq-g\ a.e.,\quad f_{n}\leq g\ a.e.,
+\]</span></p>
+<p>因此，我们可以利用 <a href="#cor-fatou" class="quarto-xref">推论&nbsp;2</a>，得到</p>
+<p><span class="math display">\[
+\begin{align}
+\int _{X}f \, d\mu&amp;=\int _{X}\lim_{ n \to \infty } f_{n} \, d\mu
+=\int _{X}\mathop{\lim\inf}_{ n \to \infty } f_{n} \, d\mu\leq
+\mathop{\lim\inf}_{ n \to \infty } \int _{X}f_{n} \, d\mu \\
+&amp;\leq \mathop{\lim\sup}_{ n \to \infty } \int _{X}f_{n} \, d\mu\leq
+\int _{X}\mathop{\lim\sup}_{ n \to \infty } f_{n} \, d\mu=
+\int _{X}\lim_{ n \to \infty } f_{n} \, d\mu=\int _{X}f \, d\mu  
+\end{align}
+\]</span></p>
+<p>因此 a.e.的情况得到证明。<span class="math inline">\(\mu\)</span> 的情况只需要找到 <span class="math inline">\(\{ f_{n} \}\)</span> 的 a.e.收敛的子列即可。</p>
+</div>
+<p>由 DCT 可以推出下面的一个非常常用的推论</p>
+<div id="cor-fct" class="theorem corollary">
+<p><span class="theorem-title"><strong>推论 3 (有界收敛定理)</strong></span> 设 <span class="math inline">\(\{ f_{n},n=1,2,\dots \}\)</span> 和 <span class="math inline">\(f\)</span> 是<strong>有限</strong>测度空间 <span class="math inline">\((X,\mathcal{F},\mu)\)</span> 上的可测函数。若存在 <span class="math inline">\(M&gt;0\)</span> 使得 <span class="math inline">\(\left| f_{n} \right|\leq M\)</span> a.e.对每个 <span class="math inline">\(n\)</span> 成立并且 <span class="math inline">\(f_{n}\overset{ a.e. }{ \longrightarrow }f\)</span> 或 <span class="math inline">\(f_{n}\overset{ \mu }{ \longrightarrow }f\)</span>，则</p>
+<p><span class="math display">\[
+\lim_{ n \to \infty } \int _{X}f_{n} \, d\mu=\int _{X}f \, d\mu.  
+\]</span></p>
+</div>
+</section>
+</section>
+<section id="换元积分" class="level2">
+<h2 class="anchored" data-anchor-id="换元积分">换元积分</h2>
+<div id="thm-inte-by-subs" class="theorem">
+<p><span class="theorem-title"><strong>定理 10 (换元积分法)</strong></span> 设 <span class="math inline">\(g\)</span> 是由测度空间 <span class="math inline">\((X,\mathcal{F},\mu)\)</span> 到可测空间 <span class="math inline">\((Y,\mathcal{T})\)</span> 的可测映射。 (1) 令 <span class="math inline">\(\nu=\mu \circ g^{-1}\)</span>，则 <span class="math inline">\((Y,\mathcal{T},\nu)\)</span> 是一个测度空间； (2) 对于 <span class="math inline">\((Y,\mathcal{T},\nu)\)</span> 上的任何可测函数 <span class="math inline">\(f\)</span>，只要等式</p>
+<p><span class="math display">\[
+\int _{Y}f \, d\nu =\int _{X}f\circ g \, d\mu,  
+\]</span></p>
+<p>之一端有意义，就一定成立。</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span></p>
+<ol type="1">
+<li>由 <strong>?@def-rv-dist</strong> 中的内容可以直接证明。</li>
+<li>我们使用典型方法来证明。假设 <span class="math inline">\(f\)</span> 是一个简单函数，即</li>
+</ol>
+<p><span class="math display">\[
+\begin{align}
+&amp;f=\sum\limits_{i=1}^{n}a_{n}I_{B_{i}}, \\
+&amp;f\circ g = \sum\limits_{i=1}^{n}a_{n}I_{g^{-1}(B_{i})}
+\end{align}
+\]</span></p>
+<p>则</p>
+<p><span class="math display">\[
+\begin{align}
+\int _{Y}f \, d\nu&amp;=\sum\limits_{i=1}^{n}a_{n}\nu(B_{i}),\\
+\int _{X}f\circ g \, d\mu &amp;= \sum\limits_{i=1}^{n}a_{n}\mu(g^{-1}(B_{i})) \\
+&amp;=\sum\limits_{i=1}^{n}a_{n}\nu(B_{i}),
+\end{align}
+\]</span></p>
+<p>等式成立。 若 <span class="math inline">\(f\)</span> 是一个非负可测函数，则我们可以找到一个简单函数列 <span class="math inline">\(\{ f_{n} \}\)</span>，满足 <span class="math inline">\(f_{n}\uparrow f\)</span>，且有</p>
+<p><span class="math display">\[
+\begin{align}
+\int _{Y}f \, d\nu&amp;=\lim_{ n \to \infty } \int _{Y}f_{n} \, d\nu \\
+&amp;=\lim_{ n \to \infty } \int _{X}f_{n}\circ g \, d\mu  \\
+&amp;=\int _{X}\lim_{ n \to \infty } f_{n}\circ g \, d\mu \\
+&amp;=\int _{X}f\circ g \, d \mu,
+\end{align}
+\]</span></p>
+<p>其中第一行是由于非负可测函数积分的定义，第二行是根据上面的证明结论，第三行是因为 <a href="#thm-mct" class="quarto-xref">定理&nbsp;6</a> ，第四行则是根据 <span class="math inline">\(f_{n}\uparrow f\)</span> 可以直接推导出来。 若 <span class="math inline">\(f\)</span> 是一个一般可测函数，则我们可以表示为 <span class="math inline">\(f=f^{+}-f^{-}\)</span>，并且有</p>
+<p><span class="math display">\[
+(f\circ g)^{+}=f^{+}\circ g,\quad (f\circ g)^{-}=f^{-}\circ g.
+\]</span></p>
+<p>进一步利用上一步证明的结论，定理得证。</p>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+注记
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>注意，与黎曼积分的换元积分法不同。黎曼积分换元积分法可以表示为下面的形式：</p>
+<p><span class="math display">\[
+\int _{a}^b g(y) \, dy = \int _{c}^{d}g(f(x))f'(x) \, dx,\quad
+y=f(x).
+\]</span></p>
+<p>这里涉及到两方面的改变： - 换元，将 <span class="math inline">\(y\)</span> 修改为 <span class="math inline">\(x\)</span>，这导致了 <span class="math inline">\(g(y)\)</span> 变成了 <span class="math inline">\(g(f(x))\)</span>，<span class="math inline">\(dy\)</span> 变成了 <span class="math inline">\(dx\)</span>，积分范围由 <span class="math inline">\([a,b]\)</span> 变为 <span class="math inline">\([c,d]\)</span>。这其实对应于 <a href="#thm-inte-by-subs" class="quarto-xref">定理&nbsp;10</a> 中的改变。 - 增加了一个因子 <span class="math inline">\(f'(x)\)</span>，该部分并没有在上述定理中展示出来。该部分完整的理解可能需要在学习完整个积分内容后，但是现在我们也可以去用下面的方式来简单的理解。</p>
+<p>所有的积分都可以被理解为“高度”（函数 <span class="math inline">\(f\)</span>）和“宽度”（积分区间 <span class="math inline">\([a,b]\)</span> 或测度论中的 <span class="math inline">\(X\)</span>）的乘积。黎曼积分的“宽度”是均匀的、等密度的（对应于测度论中的勒贝格积分），而测度论中的积分的“宽度”是不均匀的，或者说在“宽度”这个轴上存在着不均匀的“密度”，这个不均匀的性质被记录在测度 <span class="math inline">\(\mu,\nu\)</span> 中。</p>
+<p>注意到，因为变元函数 <span class="math inline">\(y=f(x)\)</span> 的存在，<strong>在变元后，“宽度”很有可能会变得不均匀。这对于测度论积分来说没有关系，这些信息都会被汇总到新的测度 <span class="math inline">\(\nu=\mu \circ f^{-1}\)</span> 中。但是这对于黎曼积分是无法做到的，所以它的做法是将这个“密度”提取出来作为一个新的函数，或者换句话说，这个“密度”信息被汇总到了“高度”上了。</strong></p>
+<p>这里需要注意到，测度论中的积分相比于黎曼积分，是一个更大的概念，准确的说，<strong>黎曼积分是对应于勒贝格积分的</strong>。要想完整地对应于黎曼积分中的换元积分法，则需要将换元后的哪个部分的“宽度”也对齐到勒贝格测度即可。这在学习了 RN 导数的概念后是可以做到的，也就是计算 <span class="math inline">\(\nu\)</span> 相对于勒贝格测度的 RN 导数，这个导数就叫做“密度”。 <strong>Note: 利用 <a href="#thm-inte-by-subs" class="quarto-xref">定理&nbsp;10</a>，我们还可以简化积分计算。比如对于一个可测函数的积分</strong></p>
+<p><span class="math display">\[
+\int _{X}f \, d\mu,
+\]</span></p>
+<p>这个可测函数所在的测度空间 <span class="math inline">\((X,\mathcal{F},\mu)\)</span> 可能非常 crazy，可能是任意的东西，但是我们都可以将其转换为 <span class="math inline">\((\mathbb{R},\mathcal{B})\)</span> 上的积分</p>
+<p><span class="math display">\[
+\int _{\mathbb{R}}x \, d(\mu \circ f^{-1}) ,
+\]</span></p>
+<p>积分总是可以转换到实数域上，这是我们研究的比较多的可测空间，容易处理。再比如</p>
+<p><span class="math display">\[
+\int _{X}f\circ g \, d\mu ,
+\]</span></p>
+<p>我们可以有两种处理方法</p>
+<p><span class="math display">\[
+\int _{\mathbb{R}}x \, d(\mu \circ(f\circ g)^{-1}),\quad
+\int _{\mathbb{R}}f(x) \, d(\mu \circ g^{-1}) ,
+\]</span></p>
+<p>我们可以判断一下哪个积分更容易处理，然后选择其进行处理。这个例子非常常见，比如我们有两个随机变量 <span class="math inline">\(X_{1}\)</span> 和 <span class="math inline">\(X_{2}\)</span>，计算 <span class="math inline">\(\int X_{1}+X_{2} \, dP\)</span>，则我们有两种处理方法：</p>
+<p><span class="math display">\[
+\begin{align}
+&amp;\int X_{1} \, dP+\int X_{2} \, dP
+=\int _{\mathbb{R}}x \, d(P \circ X_{1})^{-1}  +
+\int _{\mathbb{R}}x \, d(P \circ X_{2})^{-1}, \\
+&amp;\int _{\mathbb{R}}x \, d(P\circ (X_{1}+X_{2})^{-1}) ,
+\end{align}
+\]</span></p>
+<p>其中第一行用到了积分的线性性质。一般来说，第一种处理方法更方便一些，因为第二种需要处理两个随机变量的联合分布。</p>
+</div>
+</div>
+</section>
+<section id="08-integration-积分和微分的交换性" class="level2">
+<h2 class="anchored" data-anchor-id="08-integration-积分和微分的交换性">积分和微分的交换性</h2>
+<p>这里的微分是数学分析中的微分和导数。</p>
+<div id="thm-b0ea08" class="theorem">
+<p><span class="theorem-title"><strong>定理 11 (积分微分的交换性)</strong></span> 假设有测度空间 <span class="math inline">\((X,\mathcal{F},\mu)\)</span>，其中对于每个 <span class="math inline">\(\theta \in\mathbb{R}\)</span>，<span class="math inline">\(f(x,\theta)\)</span> 都是其上面的一个<del>可测</del>可积函数。假设 <span class="math inline">\(\frac{ \partial f }{ \partial \theta }\)</span> 在 <span class="math inline">\(\theta \in(a,b)\subset\mathbb{R}\)</span> a.e. 存在，并且满足 <span class="math inline">\(\left| \frac{ \partial f }{ \partial \theta } \right|\leq g(x)\)</span> a.e.，<span class="math inline">\(g\)</span> 是一个 <span class="math inline">\(X\)</span> 上的可积函数。则对于每个 <span class="math inline">\(\theta \in(a,b)\)</span>，<span class="math inline">\(\frac{ \partial f }{ \partial \theta }\)</span> 是可积的，并且有</p>
+<p><span class="math display">\[
+\frac{d}{d\theta}\int _{X}f(x,\theta) \, d\mu=
+\int _{X}\frac{ \partial f(x,\theta) }{ \partial \theta }  \, d \mu
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>首先，因为 <span class="math inline">\(\left| \frac{ \partial f }{ \partial \theta } \right|\leq g(x)\)</span> a.e.，可以直接得到 <span class="math inline">\(\frac{ \partial f }{ \partial \theta }\)</span> 是可积的。</p>
+<p>注意到，在已知导数存在的情况下，导数我们是可以表示为一个函数序列的。不影响证明地，我们认为所有的 <span class="math inline">\(\theta+1/n\in(a,b)\)</span> （如果不符合，我们就只取较大的 <span class="math inline">\(n\)</span> 即可）</p>
+<p><span class="math display">\[
+\frac{ \partial f(x,\theta) }{ \partial \theta } =
+\lim_{ n \to \infty } \frac{f\left( x,\theta+1 / n \right)-f(x,\theta)}{1 / n}=\lim_{ n \to \infty } h_{n}(x,\theta).
+\]</span></p>
+<p>我们现在来证明 <span class="math inline">\(\forall x \in X, \forall \theta \in(a,b),|h_{n}(x,\theta)|\leq g(x)\)</span>。利用牛顿莱布尼兹公式，我们有</p>
+<p><span class="math display">\[
+\left| f(x,\theta_{2})-f(x,\theta_{1}) \right| =
+\left|
+\int _{\theta_{1}}^{\theta_{2}}
+\frac{ \partial f }{ \partial \theta } \, d\theta
+\right|  \leq
+\int _{\theta_{1}}^{\theta_{2}}
+\left| \frac{ \partial f }{ \partial \theta } \right|  \, d\theta \leq
+\int _{\theta_{1}}^{\theta_{2}}g(x)d\theta=
+g(x)(\theta_{2}-\theta_{1})
+\]</span></p>
+<p><span id="7cc7ac"></span></p>
+<p>其中 <span class="math inline">\(\theta_{1}&lt;\theta_{2},\theta_{1},\theta_{2}\in(a,b)\)</span>。令 <span class="math inline">\(\theta_{1}=\theta,\theta_{2}=\theta+1/n\)</span>，就可以得到我们要证明的结论了。</p>
+<p>现在，我们可以使用 <a href="#7ffb80">7ffb80</a>，有</p>
+<p><span class="math display">\[
+\begin{align}
+\int _{X}\frac{ \partial f(x,\theta) }{ \partial \theta }  \, d \mu
+&amp;=\int _{X}\lim_{ n \to \infty } h_{n}(x,\theta) \, d\mu \\
+&amp;=\lim_{ n \to \infty } \int _{X}h_{n}(x,\theta) \, d\mu \\
+&amp;=\lim_{ n \to \infty } \int _{X}\frac{
+f\left( x,\theta+1 / n \right)-f(x,\theta)
+}{1 / n} \, d\mu \\
+&amp;=\lim_{ n \to \infty }n\left[
+\int _{X}f(x,\theta+1/n) \, d \mu- \int _{X}f(x,\theta)
+\right]  \, d\mu \\
+&amp;= \frac{d}{d\theta}\int _{X}f(x,\theta) \, d\mu
+\end{align}
+\]</span></p>
+<p>其中第四行的等号是由 <strong>?@prp-linear</strong> (2) 保证的。</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+注记
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>这里需要注意，我们 <strong>?@prp-linear</strong> (2) 需要条件 :</p>
+<p><span class="math display">\[
+\int _{X}f(x,\theta+1/n) \, d\mu- \int _{X}f(x,\theta) \, d\mu
+\]</span></p>
+<p>是有意义的。这暂时是无法证明的，所以我们又把条件加强了一些。</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="lebesgue-积分和-riemann-积分" class="level1">
+<h1>Lebesgue 积分和 Riemann 积分</h1>
+<p>我们在为微积分中学习了 Riemann 积分，其易于计算，并且在很多领域中有非常好的性质（比如场论中的很多观点，Gauss 定理、斯托克斯定理等）。然后，Riemann 积分存在一个难以解决的问题，即<strong>对函数性质的要求过于严格</strong>。注意： - Riemann 积分仅定义在闭区间上，对于无穷区间（比如 <span class="math inline">\(\mathbb{R}\)</span>）需要反常积分进行扩展； - Riemann 可积的<strong>充分必要条件</strong>是<strong>函数有界</strong>且<strong>不连续点的 Lebesgue 测度为 0</strong>； - Riemann 积分中，可积 <span class="math inline">\(\implies\)</span> 绝对可积；反常积分中，绝对可积 <span class="math inline">\(\implies\)</span> 可积；两者反之都不成立； - Riemann 可积构成的空间不是完备的（基于测度定义的积分的完备性将在 <a href="../../../src/learn/advanced-probability/09-lp-spaces.html">Lp空间</a> 中进行讨论）； - Riemann 积分与极限运算之间可换序的条件非常严格，是<strong>一致收敛</strong>。</p>
+<p>以上这些性质导致 Riemann 积分在很多时候并不十分好用，<strong>因此才会发展测度论和实变函数论以扩展积分理论，而概率理论的公理化反而是一个副产品</strong>。扩展积分理论的最重要产物就是 Lebesgue 积分，其能够解决上面的这些问题。Lebesgue 积分的定义如下。</p>
+<div id="def-08-integration-25" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 8 (Lebesgue 积分)</strong></span> 对于定义在 <span class="math inline">\((\mathbb{R},\mathcal{B},m)\)</span> 上的可测函数 <span class="math inline">\(f\)</span>，其中 <span class="math inline">\(m\)</span> 是 Lebesgue 测度，按照 <a href="#def-inte-func" class="quarto-xref">定义&nbsp;4</a> （或 <a href="#def-inte-func-general" class="quarto-xref">定义&nbsp;6</a>）得到的积分</p>
+<p><span class="math display">\[
+\begin{align}
+&amp;\int _{\mathbb{R}}f \, dx  :=\int _{\mathbb{R}}f \, dm \\
+&amp;\int _{A}f \, dx :=\int _{\mathbb{R}}fI_{A} \, dm
+\end{align}
+\]</span></p>
+<p>称为 <strong>Lebesgue 积分</strong>。</p>
+</div>
+<p>从定义中可以知道，Lebesgue 积分不止适用于闭区间上，还可以在任何可测区间上进行，这便解决了 Riemann 积分的<strong>第一个问题</strong>。</p>
+<p>接下来，我们将证明 Riemann 可积则一定 Lebesgue 可积。</p>
+<div id="thm-08-integration-26" class="theorem">
+<p><span class="theorem-title"><strong>定理 12 (Lebesgue vs Riemann)</strong></span> Riemann 可积函数一定（在对应的闭区间上） Lebesgue 可积，并且两者的积分值相同。</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>首先，根据 Riemann 可积的充要条件可知，Riemann 可积函数 <span class="math inline">\(f\)</span> 一定有界且 a.e. 连续。根据 <a href="../../../src/learn/advanced-probability/07-measurable-functions.html#d0017d">7_可测函数</a> 可知 <span class="math inline">\(f\)</span>a.e. 可测，因此，就可以根据 <a href="#def-inte-func-general" class="quarto-xref">定义&nbsp;6</a> 来定义 Lebesgue 积分。</p>
+<p>因为 <span class="math inline">\(f\)</span> 有界（假设 <span class="math inline">\(\lvert f \rvert&lt;M\)</span>），所以在闭区间 <span class="math inline">\(A\)</span> 上的积分 <span class="math inline">\(\int_{A}\lvert f \rvert  \, dx\)</span> 一定存在且 <span class="math inline">\(\leq Mm(A)\)</span>，这就意味着 <span class="math inline">\(f\)</span> Lebesgue 可积。</p>
+<p><strong>对于非负函数</strong>，根据 Riemann 积分的相关理论，对于闭区间 <span class="math inline">\([a,b]\)</span>，以及上面的任何一个分割 <span class="math inline">\(T\)</span>，我们可以定义上、下达布和</p>
+<p><span class="math display">\[
+\begin{align}
+&amp;S(T) = \sum\limits_{i=1}^{n}\sup_{x \in\Delta_{i}}f(x)\Delta x_{i},\\
+&amp;s(T) = \sum\limits_{i=1}^{n}\inf_{x \in\Delta_{i}}f(x)\Delta x_{i},
+\end{align}
+\]</span></p>
+<p>其中 <span class="math inline">\(\Delta x_{i}\)</span> 是区间 <span class="math inline">\(\Delta_{i}\)</span> 的长度。当 Riemann 可积时，假设其积分值为 <span class="math inline">\(R\)</span>，则有</p>
+<p><span class="math display">\[
+S(T)\downarrow R,\quad s(T)\uparrow R.
+\]</span></p>
+<p>注意到，下达布和在 Lebesgue 积分理论中可以理解为一个简单函数的积分，并且该简单函数小于函数 <span class="math inline">\(f\)</span>。上达布和也是一个简单函数的积分，并且该简单函数大于 <span class="math inline">\(f\)</span>。因此我们有</p>
+<p><span class="math display">\[
+s(T)\leq \int _{[a,b]}f \, dx \leq S(T),
+\]</span></p>
+<p>取极限后知道 <span class="math inline">\(R=\int _{[a, b]}f \, dx\)</span>，即两个积分值相同。</p>
+<p>接下来，对于一般函数 <span class="math inline">\(f\)</span>，我们将其分为 <span class="math inline">\(f^{+}-f^{-}\)</span> 两个非负函数。根据 Riemann 积分的性质，可以知道：若 <span class="math inline">\(f\)</span> 可积，则 <span class="math inline">\(f^{+},f^{-}\)</span> 可积，并且</p>
+<p><span class="math display">\[
+\int _{a}^{b}f \, dx =\int _{a}^{b}f^{+} \, dx -\int _{a}^{b}f^{-} \, dx.
+\]</span></p>
+<p><span id="8e7f5d"></span></p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+注记
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>这是因为 <span class="math inline">\(f\)</span> Riemann 可积蕴含 <span class="math inline">\(\lvert f \rvert\)</span> Riemann 可积，则根据线性运算保持可积性，</p>
+<p><span class="math display">\[
+\max(f(x),g(x))=\frac{1}{2}(f(x)+g(x)+\lvert f(x)-g(x) \rvert ),
+\]</span></p>
+<p>也是可积的，<span class="math inline">\(\min(f(x),g(x))\)</span> 同理。则 <span class="math inline">\(f^{+}=max(f(x),0)\)</span> 和 <span class="math inline">\(f^{-}=\min(f(x),0)\)</span> 也是可积的。再通过线性运算，就可以得到 <a href="#8e7f5d">8e7f5d</a>。</p>
+</div>
+</div>
+<p>而这样的分解正是 Lebesgue 积分在一般函数上的定义，再利用上一步在非负函数上的结论，最终可以证明两者的积分值是相同的。</p>
+</div>
+<p>以上结论也让我们可以在大多数领域放心地用 Lebesgue 积分替代 Riemann 积分即可。当需要进行积分运算时，我们使用 Riemann 积分；当需要进行相关理论分析时，使用 Lebesgue 积分。</p>
+<p>但是以上结论<strong>对于反常积分不成立</strong>，下面是一个常用的反例。</p>
+<div id="exm-counterexample-inte" class="theorem example">
+<p><span class="theorem-title"><strong>例 1 (Example)</strong></span> 反常 Riemann 积分：</p>
+<p><span class="math display">\[
+\int _{0}^{+\infty}\frac{\sin x}{x} \, dx =\frac{\pi}{2},
+\]</span></p>
+<p>然而 Lebesgue 积分</p>
+<p><span class="math display">\[
+\int _{\mathbb{R}^{+}}\frac{\sin x}{x} \, dx
+\]</span></p>
+<p>不存在。</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>我们先来计算第一个结果。我们使用一个 Feynman technique。首先，我们构造一个新的函数，</p>
+<p><span class="math display">\[
+\begin{align}
+I(b)&amp;=\int _{0}^{\infty}\frac{\sin x}{x}e^{-bx} \, dx  \\
+\end{align}
+\]</span></p>
+<p><span id="21d420"></span></p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+注记
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>类似 laplacian 变换。</p>
+</div>
+</div>
+<p>注意到，我们想要求解的其实就是 <span class="math inline">\(I(0)\)</span>。则现在我们可以去探索一下这个函数是个什么形状，使用的方法是求导数。</p>
+<p><span class="math display">\[
+\begin{align}
+I'(b)&amp;=\frac{d\left( \lim_{ N \to \infty } \int _{0}^{N}\frac{\sin x}{x}e^{-bx} \, dx  \right)}{db} \\
+&amp;=\lim_{ N \to \infty } \frac{d\left( \int _{0}^{N}\frac{\sin x}{x}e^{-bx} \, dx  \right)}{db} \\
+&amp;=\lim_{ N \to \infty } \int _{0}^{N}\frac{d\left( \frac{\sin x}{x}e^{-bx} \right)}{db} \, dx \\
+&amp;=\int _{0}^{\infty}\frac{d\left( \frac{\sin x}{x}e^{-bx} \right)}{db} \, dx
+\end{align}
+\]</span></p>
+<p>其中第二行需要交换求导和极限运算，第三行需要交换求导和积分运算，或者直接到第四行，这被视为求导和反常积分的换序。反常积分和求导的换序需要以下三个条件成立：</p>
+<p>第一， <span class="math inline">\(\frac{d\left( \frac{\sin x}{x}e^{-bx} \right)}{db}\)</span> 关于 <span class="math inline">\(b,x\)</span> 连续，这是成立的； 第二， <span class="math inline">\(\int _{0}^{\infty}\frac{\sin x}{x}e^{-bx} \, dx\)</span> 是收敛的，成立； 第三， <span class="math inline">\(\int _{0}^{\infty}\frac{d\left( \frac{\sin x}{x}e^{-bx} \right)}{db} \, dx\)</span> 关于 <span class="math inline">\(b\)</span> 一致收敛，也就是 <span class="math inline">\(\forall\epsilon&gt;0\)</span>，存在 <span class="math inline">\(A'&gt;0\)</span>，<span class="math inline">\(\forall A&gt;A'\)</span>，有</p>
+<p><span class="math display">\[
+\lvert \int _{A}^{\infty}\frac{d\left( \frac{\sin x}{x}e^{-bx} \right)}{db} \, dx \rvert &lt; \epsilon.
+\]</span></p>
+<p>也容易证明这是成立的。</p>
+<p>然后，我们可以计算</p>
+<p><span class="math display">\[
+\frac{d\left( \frac{\sin x}{x}e^{-bx} \right)}{db}=-\sin xe^{-bx}\implies
+I'(b)=-\frac{1}{1+b^{2}},
+\]</span></p>
+<p>因此，我们可以得到</p>
+<p><span class="math display">\[
+I(b)=-\arctan(b)+C.
+\]</span></p>
+<p>现在我们需要去求解这个常数 <span class="math inline">\(C\)</span> 是多少。这里我们需要考虑式 <a href="#21d420">21d420</a>，然后考虑其极限：</p>
+<p><span class="math display">\[
+I(\infty)=-\arctan(\infty)+C=\int _{0}^{\infty}\frac{\sin x}{x}e^{-\infty x} \, dx,
+\]</span></p>
+<p>可以得到 <span class="math inline">\(C=\frac{\pi}{2}\)</span>。因此，我们可以得到</p>
+<p><span class="math display">\[
+I(0)=\frac{\pi}{2}.
+\]</span></p>
+<p>接下来，我们来证明第二个结论。首先，我们令 <span class="math inline">\(f(x)=\frac{\sin x}{x}\)</span>，根据我们对函数图像的了解，我们有下面的结论：</p>
+<p><span class="math display">\[
+\int _{\mathbb{R}^{+}}f^{+}(x) \, dx =\sum\limits_{k=0}^{\infty}\int _{2k\pi}^{(2k+1)\pi}\frac{\sin x}{x} \, dx,\quad
+\int _{\mathbb{R}^{+}}f^{-}(x) \, dx =-\sum\limits_{k=0}^{\infty}\int _{(2k+1)\pi}^{2(k+1)\pi}\frac{\sin x}{x} \, dx,
+\]</span></p>
+<p>然后我们有</p>
+<p><span class="math display">\[
+\begin{align}
+\int _{\mathbb{R}^{+}}f^{+}(x) \, dx&amp;=\sum\limits_{k=0}^{\infty}\int _{2k\pi}^{(2k+1)\pi}\frac{\sin x}{x} \, dx \\
+&amp;\geq \sum\limits_{k=0}^{\infty}\frac{1}{(2k+1)\pi}\int_{2k\pi}^{(2k+1)\pi} \sin x \, dx \\
+&amp;=\frac{2}{\pi}\sum\limits_{k=0}^{\infty}\frac{1}{(2k+1)}=\infty.
+\end{align}
+\]</span></p>
+<p>同理可以得到 <span class="math inline">\(\int _{\mathbb{R}^{+}}f^{-}(x) \, dx=\infty\)</span>，所以 <span class="math inline">\(\int _{\mathbb{R}^{+}}f \, dx\)</span> 积分不存在。</p>
+</div>
+<p>以上，我们算是已经讨论清楚了两个积分之间的关系。</p>
+<ul>
+<li><a href="https://zhuanlan.zhihu.com/p/365790972">黎曼积分与勒贝格积分概述</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/421613000">反常积分与勒贝格积分</a></li>
+<li><a href="https://chengzhaoxi.xyz/2f58ab4b.html">积分-求导-极限（级数）各种交换顺序</a></li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script>
+(function () {
+  function makeProofsCollapsible() {
+    const proofs = document.querySelectorAll("div.proof");
+
+    proofs.forEach(function (proof) {
+      if (proof.dataset.collapsibleReady === "true") return;
+
+      const details = document.createElement("details");
+
+      details.className = proof.className;
+      details.classList.add("proof-collapsible");
+      details.dataset.collapsibleReady = "true";
+
+      if (proof.id) {
+        details.id = proof.id;
+      }
+
+      details.open = proof.classList.contains("open");
+
+      const summary = document.createElement("summary");
+      const title = proof.querySelector(".proof-title");
+
+      if (title) {
+        summary.innerHTML = title.innerHTML;
+        title.remove();
+      } else {
+        summary.innerHTML = "<strong>Proof</strong>";
+      }
+
+      details.appendChild(summary);
+
+      while (proof.firstChild) {
+        details.appendChild(proof.firstChild);
+      }
+
+      proof.replaceWith(details);
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", makeProofsCollapsible);
+  } else {
+    makeProofsCollapsible();
+  }
+})();
+</script>
+<script>
+(function () {
+  function fixTheoremTitleSpacing() {
+    const titleSelectors = [
+      ".theorem-title",
+      ".lemma-title",
+      ".corollary-title",
+      ".proposition-title",
+      ".conjecture-title",
+      ".definition-title",
+      ".example-title",
+      ".exercise-title",
+      ".solution-title",
+      ".remark-title",
+      ".algorithm-title",
+      ".proof-title"
+    ].join(",");
+
+    document.querySelectorAll(titleSelectors).forEach(function (title) {
+      const p = title.parentElement;
+
+      if (!p || p.tagName.toLowerCase() !== "p") return;
+
+      /*
+        Quarto/Pandoc often inserts a text node like:
+        <p><span class="theorem-title">...</span>&nbsp;</p>
+
+        Remove whitespace-only text nodes, including non-breaking spaces.
+      */
+      Array.from(p.childNodes).forEach(function (node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          const cleaned = node.textContent.replace(/\u00a0/g, " ").trim();
+          if (cleaned === "") {
+            node.remove();
+          }
+        }
+      });
+
+      p.classList.add("math-env-title-p");
+
+      /*
+        If the paragraph only contains the title span after cleanup,
+        mark it as title-only.
+      */
+      const meaningfulChildren = Array.from(p.childNodes).filter(function (node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          return node.textContent.replace(/\u00a0/g, " ").trim() !== "";
+        }
+        return true;
+      });
+
+      if (meaningfulChildren.length === 1 && meaningfulChildren[0] === title) {
+        p.classList.add("math-env-title-only");
+      }
+
+      /*
+        If the title-only paragraph is followed by a list,
+        compress the gap between title and list.
+      */
+      const next = p.nextElementSibling;
+      if (
+        p.classList.contains("math-env-title-only") &&
+        next &&
+        (next.tagName.toLowerCase() === "ol" || next.tagName.toLowerCase() === "ul")
+      ) {
+        p.classList.add("math-env-title-before-list");
+      }
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", fixTheoremTitleSpacing);
+  } else {
+    fixTheoremTitleSpacing();
+  }
+})();
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "已复制");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "已复制");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/luyiyun\.github\.io\/Notes\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

@@ -1,0 +1,2702 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="PRML 第 7 章关于支持向量机、相关向量机、稀疏核展开、SVM 回归与 RVM 回归/分类">
+
+<title>稀疏核机器 – Rong’s Notes</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-7dba656801d47940102fc4ffc3dc1a54.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../../styles.css">
+</head>
+
+<body class="nav-sidebar docked nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">Rong’s Notes</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="搜索"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="展开或折叠导航栏" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="../../../index.html" aria-current="page"> 
+<span class="menu-text">首页</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../src/learn/index.html"> 
+<span class="menu-text">专题学习</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../about.html"> 
+<span class="menu-text">关于</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/prml/index.html">PRML</a></li><li class="breadcrumb-item"><a href="../../../src/learn/prml/07-sparse-kernel-machines.html">稀疏核机器</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">首页</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../../src/learn/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">专题学习</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../../src/learn/advanced-probability/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">高等概率论</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/01-introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">介绍</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/02-sigma-field.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sigma 域</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/03-measure.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">测度</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/04-outer-measure.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">外测度</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/05-measure-extension.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">测度扩张</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/06-distribution-function.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">分布函数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/07-measurable-functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">可测函数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/08-integration.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">积分</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/09-lp-spaces.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lp 空间</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/10-signed-measures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">符号测度</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/11-radon-nikodym-derivative.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R-N 导数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/12-lebesgue-decomposition.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lebesgue 分解</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/13-finite-product-spaces.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">有限乘积空间</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/14-infinite-product-spaces.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">无限乘积空间</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/15-independence-and-conditional-expectation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">独立和条件期望</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/16-markov-chains-and-martingales.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">马尔可夫链与鞅</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/17-statistical-distributions-and-density-functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">统计分布与密度函数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/18-moments.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">矩</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/19-convergence-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">收敛理论</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../../src/learn/prml/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">PRML</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/prml/06-kernel-methods.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">核方法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/prml/07-sparse-kernel-machines.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">稀疏核机器</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../about.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">关于</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#引言" id="toc-引言" class="nav-link active" data-scroll-target="#引言">引言</a></li>
+  <li><a href="#hard-margin-svm" id="toc-hard-margin-svm" class="nav-link" data-scroll-target="#hard-margin-svm">Hard-Margin SVM</a>
+  <ul class="collapse">
+  <li><a href="#从分类正确到间隔" id="toc-从分类正确到间隔" class="nav-link" data-scroll-target="#从分类正确到间隔">从分类正确到间隔</a></li>
+  <li><a href="#最大间隔的原始目标" id="toc-最大间隔的原始目标" class="nav-link" data-scroll-target="#最大间隔的原始目标">最大间隔的原始目标</a></li>
+  <li><a href="#canonical-representation" id="toc-canonical-representation" class="nav-link" data-scroll-target="#canonical-representation">Canonical representation</a></li>
+  <li><a href="#从最大间隔到二次规划" id="toc-从最大间隔到二次规划" class="nav-link" data-scroll-target="#从最大间隔到二次规划">从最大间隔到二次规划</a></li>
+  <li><a href="#与感知器的联系" id="toc-与感知器的联系" class="nav-link" data-scroll-target="#与感知器的联系">与感知器的联系</a></li>
+  <li><a href="#拉格朗日乘子与-kkt-条件" id="toc-拉格朗日乘子与-kkt-条件" class="nav-link" data-scroll-target="#拉格朗日乘子与-kkt-条件">拉格朗日乘子与 KKT 条件</a></li>
+  <li><a href="#svm-中的拉格朗日函数" id="toc-svm-中的拉格朗日函数" class="nav-link" data-scroll-target="#svm-中的拉格朗日函数">SVM 中的拉格朗日函数</a></li>
+  <li><a href="#svm-的-kkt-条件" id="toc-svm-的-kkt-条件" class="nav-link" data-scroll-target="#svm-的-kkt-条件">SVM 的 KKT 条件</a></li>
+  <li><a href="#kkt-给出全局最优" id="toc-kkt-给出全局最优" class="nav-link" data-scroll-target="#kkt-给出全局最优">KKT 给出全局最优</a></li>
+  <li><a href="#support-vectors-的来源" id="toc-support-vectors-的来源" class="nav-link" data-scroll-target="#support-vectors-的来源">Support vectors 的来源</a></li>
+  <li><a href="#求解-alpha-与偏置项-b" id="toc-求解-alpha-与偏置项-b" class="nav-link" data-scroll-target="#求解-alpha-与偏置项-b">求解 <span class="math inline">\(\alpha\)</span> 与偏置项 <span class="math inline">\(b\)</span></a></li>
+  <li><a href="#从-kkt-到核展开与-svm-预测" id="toc-从-kkt-到核展开与-svm-预测" class="nav-link" data-scroll-target="#从-kkt-到核展开与-svm-预测">从 KKT 到核展开与 SVM 预测</a></li>
+  <li><a href="#本节小结" id="toc-本节小结" class="nav-link" data-scroll-target="#本节小结">本节小结</a></li>
+  </ul></li>
+  <li><a href="#soft-margin-svm" id="toc-soft-margin-svm" class="nav-link" data-scroll-target="#soft-margin-svm">Soft-Margin SVM</a>
+  <ul class="collapse">
+  <li><a href="#从硬约束到无限惩罚损失" id="toc-从硬约束到无限惩罚损失" class="nav-link" data-scroll-target="#从硬约束到无限惩罚损失">从硬约束到无限惩罚损失</a></li>
+  <li><a href="#slack-variables-与-soft-margin-svm" id="toc-slack-variables-与-soft-margin-svm" class="nav-link" data-scroll-target="#slack-variables-与-soft-margin-svm">Slack variables 与 soft-margin SVM</a></li>
+  <li><a href="#hinge-loss-视角" id="toc-hinge-loss-视角" class="nav-link" data-scroll-target="#hinge-loss-视角">Hinge loss 视角</a></li>
+  <li><a href="#soft-margin-svm-的对偶形式" id="toc-soft-margin-svm-的对偶形式" class="nav-link" data-scroll-target="#soft-margin-svm-的对偶形式">Soft-margin SVM 的对偶形式</a></li>
+  <li><a href="#nu-svm" id="toc-nu-svm" class="nav-link" data-scroll-target="#nu-svm"><span class="math inline">\(\nu\)</span>-SVM</a></li>
+  <li><a href="#与-logistic-regression-的关系" id="toc-与-logistic-regression-的关系" class="nav-link" data-scroll-target="#与-logistic-regression-的关系">与 logistic regression 的关系</a></li>
+  </ul></li>
+  <li><a href="#多分类-svm" id="toc-多分类-svm" class="nav-link" data-scroll-target="#多分类-svm">多分类 SVM</a>
+  <ul class="collapse">
+  <li><a href="#one-versus-the-rest" id="toc-one-versus-the-rest" class="nav-link" data-scroll-target="#one-versus-the-rest">One-versus-the-rest</a></li>
+  <li><a href="#joint-multi-class-svm" id="toc-joint-multi-class-svm" class="nav-link" data-scroll-target="#joint-multi-class-svm">Joint Multi-Class SVM</a></li>
+  <li><a href="#one-versus-one" id="toc-one-versus-one" class="nav-link" data-scroll-target="#one-versus-one">One-versus-one</a></li>
+  <li><a href="#dagsvm" id="toc-dagsvm" class="nav-link" data-scroll-target="#dagsvm">DAGSVM</a></li>
+  <li><a href="#error-correcting-output-codes" id="toc-error-correcting-output-codes" class="nav-link" data-scroll-target="#error-correcting-output-codes">Error-correcting output codes</a></li>
+  <li><a href="#实践上的取舍" id="toc-实践上的取舍" class="nav-link" data-scroll-target="#实践上的取舍">实践上的取舍</a></li>
+  </ul></li>
+  <li><a href="#one-class-svm" id="toc-one-class-svm" class="nav-link" data-scroll-target="#one-class-svm">One-class SVM</a></li>
+  <li><a href="#svm-回归" id="toc-svm-回归" class="nav-link" data-scroll-target="#svm-回归">SVM 回归</a>
+  <ul class="collapse">
+  <li><a href="#epsilon-insensitive-loss" id="toc-epsilon-insensitive-loss" class="nav-link" data-scroll-target="#epsilon-insensitive-loss"><span class="math inline">\(\epsilon\)</span>-insensitive loss</a></li>
+  <li><a href="#slack-variables" id="toc-slack-variables" class="nav-link" data-scroll-target="#slack-variables">Slack variables</a></li>
+  <li><a href="#对偶形式" id="toc-对偶形式" class="nav-link" data-scroll-target="#对偶形式">对偶形式</a></li>
+  <li><a href="#kkt-条件与-support-vectors" id="toc-kkt-条件与-support-vectors" class="nav-link" data-scroll-target="#kkt-条件与-support-vectors">KKT 条件与 support vectors</a></li>
+  <li><a href="#偏置项-b" id="toc-偏置项-b" class="nav-link" data-scroll-target="#偏置项-b">偏置项 <span class="math inline">\(b\)</span></a></li>
+  <li><a href="#nu-svr" id="toc-nu-svr" class="nav-link" data-scroll-target="#nu-svr"><span class="math inline">\(\nu\)</span>-SVR</a></li>
+  <li><a href="#本节小结-1" id="toc-本节小结-1" class="nav-link" data-scroll-target="#本节小结-1">本节小结</a></li>
+  </ul></li>
+  <li><a href="#计算理论分析" id="toc-计算理论分析" class="nav-link" data-scroll-target="#计算理论分析">计算理论分析</a></li>
+  <li><a href="#svm-的注意事项" id="toc-svm-的注意事项" class="nav-link" data-scroll-target="#svm-的注意事项">SVM 的注意事项</a></li>
+  <li><a href="#rvm回归" id="toc-rvm回归" class="nav-link" data-scroll-target="#rvm回归">RVM回归</a>
+  <ul class="collapse">
+  <li><a href="#回归模型与-ard-先验" id="toc-回归模型与-ard-先验" class="nav-link" data-scroll-target="#回归模型与-ard-先验">回归模型与 ARD 先验</a></li>
+  <li><a href="#后验分布与-evidence-maximization" id="toc-后验分布与-evidence-maximization" class="nav-link" data-scroll-target="#后验分布与-evidence-maximization">后验分布与 evidence maximization</a></li>
+  <li><a href="#预测分布" id="toc-预测分布" class="nav-link" data-scroll-target="#预测分布">预测分布</a></li>
+  <li><a href="#稀疏性的质量" id="toc-稀疏性的质量" class="nav-link" data-scroll-target="#稀疏性的质量">稀疏性的质量</a></li>
+  <li><a href="#与-svm-回归的对比" id="toc-与-svm-回归的对比" class="nav-link" data-scroll-target="#与-svm-回归的对比">与 SVM 回归的对比</a></li>
+  </ul></li>
+  <li><a href="#rvm分类" id="toc-rvm分类" class="nav-link" data-scroll-target="#rvm分类">RVM分类</a>
+  <ul class="collapse">
+  <li><a href="#二分类模型" id="toc-二分类模型" class="nav-link" data-scroll-target="#二分类模型">二分类模型</a></li>
+  <li><a href="#为什么需要-laplace-approximation" id="toc-为什么需要-laplace-approximation" class="nav-link" data-scroll-target="#为什么需要-laplace-approximation">为什么需要 Laplace approximation</a></li>
+  <li><a href="#分类中的-relevance-vectors" id="toc-分类中的-relevance-vectors" class="nav-link" data-scroll-target="#分类中的-relevance-vectors">分类中的 relevance vectors</a></li>
+  <li><a href="#多分类扩展" id="toc-多分类扩展" class="nav-link" data-scroll-target="#多分类扩展">多分类扩展</a></li>
+  <li><a href="#本节小结-2" id="toc-本节小结-2" class="nav-link" data-scroll-target="#本节小结-2">本节小结</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/prml/index.html">PRML</a></li><li class="breadcrumb-item"><a href="../../../src/learn/prml/07-sparse-kernel-machines.html">稀疏核机器</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">稀疏核机器</h1>
+<p class="subtitle lead">Sparse Kernel Machines</p>
+</div>
+
+<div>
+  <div class="description">
+    PRML 第 7 章关于支持向量机、相关向量机、稀疏核展开、SVM 回归与 RVM 回归/分类
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">发布于</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">2026年4月30日</p>
+    </div>
+  </div>
+  
+    <div>
+    <div class="quarto-title-meta-heading">修改于</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date-modified">2026年5月13日</p>
+    </div>
+  </div>
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="引言" class="level1">
+<h1>引言</h1>
+<p>第 7 章讨论的核心，是在 <a href="../../../src/learn/prml/06-kernel-methods.html">核方法</a> 的基础上进一步追问：<strong>既然很多核模型的预测都可以写成训练样本核函数的线性组合，那么是否真的需要让所有训练样本都参与预测？</strong></p>
+<p>第 6 章已经说明，许多模型可以被改写成如下形式： <span class="math display">\[
+y(x)=\sum_{n=1}^{N} a_n k(x,x_n).
+\]</span> 这个表达揭示了 kernel trick 的力量：<strong>我们不必显式构造特征映射 <span class="math inline">\(\phi(x)\)</span>，只需要通过 <span class="math inline">\(k(x,x_n)\)</span> 计算样本之间的内积或相似性</strong>。然而，这种表示也带来一个直接问题：如果大多数系数 <span class="math inline">\(a_n\)</span> 都不为 0，那么每次预测新样本时都需要与几乎所有训练样本计算核函数。当训练集很大时，这会使预测阶段变得昂贵。</p>
+<p>第 7 章的标题是 <code>Sparse Kernel Machines</code>，其中的 sparse 指的正是这种结构上的稀疏性：<strong>模型最终只依赖训练样本中的少数关键点</strong>。PRML 主要通过两条路线展示这一思想：</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>方法</th>
+<th>稀疏性的来源</th>
+<th>留下来的点</th>
+<th>核心思想</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>SVM</td>
+<td>最大间隔优化与 KKT 条件</td>
+<td>support vectors</td>
+<td>决策边界只由边界附近样本决定</td>
+</tr>
+<tr class="even">
+<td>RVM</td>
+<td>ARD 先验与 evidence maximization</td>
+<td>relevance vectors</td>
+<td>不重要的基函数权重会被贝叶斯机制压到接近 0</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-note callout-titled" title="本章的主线">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>本章的主线
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>SVM 和 RVM 都会得到稀疏的核展开式，但二者的稀疏性来源完全不同。SVM 是优化视角下的最大间隔分类器，稀疏性来自约束优化中的互补松弛条件；RVM 是贝叶斯视角下的稀疏概率模型，稀疏性来自对权重精度参数的自动相关确定。</p>
+<p>因此，第 7 章不是简单介绍两个算法，而是在第 6 章核方法之后进一步回答一个问题：当模型可以通过训练样本来表达时，哪些训练样本真正重要？</p>
+</div>
+</div>
+</section>
+<section id="hard-margin-svm" class="level1">
+<h1>Hard-Margin SVM</h1>
+<p>这一节讨论 hard-margin SVM。它是理解整个 SVM 家族的起点，因为软间隔、核 SVM、支持向量回归和多分类扩展，都是在这一基本结构上继续发展出来的。</p>
+<p>从模型形式上看，SVM 仍然是一个线性分类器。给定特征映射 <span class="math inline">\(\phi(x)\)</span>，二分类标签取值为 <span class="math display">\[
+t_n\in\{-1,+1\},
+\]</span> 分类函数写成 <span class="math display">\[
+y(x)=w^\top\phi(x)+b,
+\]</span> 预测规则是 <span class="math display">\[
+\operatorname{sign}(y(x)).
+\]</span> 这个形式与感知器非常接近。感知器只要求找到一个能把训练数据正确分开的超平面，而 <strong>SVM 进一步要求在所有能分开的超平面中，选择几何间隔最大的那个</strong>。</p>
+<section id="从分类正确到间隔" class="level2">
+<h2 class="anchored" data-anchor-id="从分类正确到间隔">从分类正确到间隔</h2>
+<p>若样本 <span class="math inline">\(x_n\)</span> 被正确分类，则有 <span class="math display">\[
+t_n y(x_n)&gt;0.
+\]</span> 这是因为当 <span class="math inline">\(t_n=+1\)</span> 时，我们希望 <span class="math inline">\(y(x_n)&gt;0\)</span>；当 <span class="math inline">\(t_n=-1\)</span> 时，我们希望 <span class="math inline">\(y(x_n)&lt;0\)</span>。两种情况合并起来，就是标签与模型输出的乘积为正。</p>
+<p>由此可以定义 functional margin： <span class="math display">\[
+\hat{\gamma}_n=t_n(w^\top\phi(x_n)+b).
+\]</span> 它衡量样本被分到正确一侧的程度。但是 functional margin 不是几何距离，因为它会受到 <span class="math inline">\(w,b\)</span> 整体缩放的影响。对于任意 <span class="math inline">\(c&gt;0\)</span>，超平面 <span class="math display">\[
+w^\top\phi(x)+b=0
+\]</span> 和 <span class="math display">\[
+cw^\top\phi(x)+cb=0
+\]</span> 表示同一个决策边界，但 functional margin 会被放大为原来的 <span class="math inline">\(c\)</span> 倍。</p>
+<p>真正的几何距离需要除以法向量长度： <span class="math display">\[
+\gamma_n=\frac{t_n(w^\top\phi(x_n)+b)}{\|w\|}.
+\]</span> 这里的 <span class="math inline">\(w\)</span> 是超平面的法向量。<span class="math inline">\(w^\top\phi(x)+b\)</span> 可以理解为点到超平面的有符号距离再乘以 <span class="math inline">\(\|w\|\)</span>，因此除以 <span class="math inline">\(\|w\|\)</span> 后才得到带标签校正后的几何距离。</p>
+<div class="callout callout-style-default callout-warning callout-titled" title="functional margin 与 geometric margin">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">警告</span>functional margin 与 geometric margin
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>functional margin 依赖于参数尺度。同一个分类边界，只要把 <span class="math inline">\(w,b\)</span> 同时乘以正数，functional margin 就会改变。</p>
+<p>geometric margin 消除了 <span class="math inline">\(w,b\)</span> 的整体缩放自由度，因此才是 SVM 真正想最大化的几何间隔。不过它仍然依赖特征空间本身的尺度，这也是核函数选择会改变模型几何结构的原因。</p>
+</div>
+</div>
+<div id="fig-max-interval" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-max-interval-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/image-1-20260430214516754.webp" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-max-interval-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;1 最大间隔分类示意图
+</figcaption>
+</figure>
+</div>
+</section>
+<section id="最大间隔的原始目标" class="level2">
+<h2 class="anchored" data-anchor-id="最大间隔的原始目标">最大间隔的原始目标</h2>
+<p>从几何上看，最大间隔分类器想要解决的问题可以直接写成： <span class="math display">\[
+\max_{w,b}\min_n
+\frac{t_n(w^\top\phi(x_n)+b)}{\|w\|}.
+\]</span> 这个表达非常直观。<strong>对于每一个候选超平面，先找到离它最近的训练样本，再选择使这个最近距离最大的超平面</strong>。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="最大间隔的中央">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>最大间隔的中央
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>最大间隔超平面可以理解为两类样本之间最宽分隔带的中心位置。如果超平面向某一侧偏移，那么较近一侧的几何间隔会变小，因此不可能达到最大化最小间隔的目标。</p>
+</div>
+</div>
+<p>这也解释了 SVM 与感知器的差别。感知器的目标只是找到任意一个满足 <span class="math display">\[
+t_n(w^\top\phi(x_n)+b)&gt;0
+\]</span> 的超平面；SVM 的目标则是在所有正确分类的超平面中，选择最保守、最稳定、离训练样本边界最远的那个。</p>
+<p>不过，上面的 max-min 目标并不方便直接优化。它同时包含内部的 <span class="math inline">\(\min\)</span>、分母中的 <span class="math inline">\(\|w\|\)</span>，以及 <span class="math inline">\(w,b\)</span> 的尺度冗余。Bishop 在这里引入 canonical representation，目的就是把这个几何问题改写成更标准的凸优化问题。</p>
+</section>
+<section id="canonical-representation" class="level2">
+<h2 class="anchored" data-anchor-id="canonical-representation">Canonical representation</h2>
+<p>由于分类边界只取决于 <span class="math display">\[
+\operatorname{sign}(w^\top\phi(x)+b),
+\]</span> 所以把 <span class="math inline">\(w,b\)</span> 同时乘以任意正数都不会改变分类结果。这意味着，对于同一个几何超平面，我们可以自由选择参数尺度。</p>
+<p>SVM 选择的规范化方式是：令离边界最近的训练样本满足 <span class="math display">\[
+\min_n t_n(w^\top\phi(x_n)+b)=1.
+\]</span> 在这个规范化下，所有训练样本都满足 <span class="math display">\[
+t_n(w^\top\phi(x_n)+b)\ge 1.
+\]</span> 那些使等号成立的点，正好落在 margin boundary 上；那些严格大于 1 的点，则位于 margin 外侧。</p>
+<p>这里的常数 1 不是由数据天然决定的，而是利用参数尺度自由度做出的约定。理论上也可以选择其他正常数，但选择 1 会让后续优化形式最简洁。</p>
+<div class="callout callout-style-default callout-important callout-titled" title="为什么最近点可以规定为 1">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">重要</span>为什么最近点可以规定为 1
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>若某个超平面已经能够正确分开训练集，则所有 <span class="math inline">\(t_n(w^\top\phi(x_n)+b)\)</span> 都为正。由于整体缩放不改变分类边界，我们总可以选取一个缩放比例，使最小的 functional margin 恰好等于 1。这一步不是额外假设，而是对同一个分类边界选择一个方便的参数表示。</p>
+</div>
+</div>
+</section>
+<section id="从最大间隔到二次规划" class="level2">
+<h2 class="anchored" data-anchor-id="从最大间隔到二次规划">从最大间隔到二次规划</h2>
+<p>在 canonical representation 下，最近训练点到决策边界的几何距离为 <span class="math display">\[
+\frac{1}{\|w\|}.
+\]</span> 两条 margin boundary 分别是 <span class="math display">\[
+w^\top\phi(x)+b=1
+\]</span> 和 <span class="math display">\[
+w^\top\phi(x)+b=-1.
+\]</span> 它们之间的距离为 <span class="math display">\[
+\frac{2}{\|w\|}.
+\]</span> 因此，最大化 margin width <span class="math display">\[
+\frac{2}{\|w\|}
+\]</span> 等价于最小化 <span class="math inline">\(\|w\|\)</span>，通常进一步写成平方形式： <span class="math display">\[
+\min_{w,b}\frac12\|w\|^2
+\]</span> subject to <span class="math display">\[
+t_n(w^\top\phi(x_n)+b)\ge 1,\qquad n=1,\dots,N.
+\]</span></p>
+<p>这就是 hard-margin SVM 的 primal problem。它把原本直观但不便求解的 max-min 几何问题，改写成了一个目标函数为二次型、约束为线性不等式的凸优化问题。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="对这一节的理解方式">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>对这一节的理解方式
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>SVM 最大化的是 geometric margin，但它并不是直接对 max-min 形式求解。它先利用 <span class="math inline">\(w,b\)</span> 的尺度不变性，把最近点的 functional margin 规范化为 1，然后在这个规范化下最小化 <span class="math inline">\(\frac12\|w\|^2\)</span>。所以公式中出现的是 functional margin 约束，目标对应的却是 geometric margin 最大化。</p>
+</div>
+</div>
+</section>
+<section id="与感知器的联系" class="level2">
+<h2 class="anchored" data-anchor-id="与感知器的联系">与感知器的联系</h2>
+<p>SVM 与感知器共享同一种线性分类函数： <span class="math display">\[
+\operatorname{sign}(w^\top\phi(x)+b).
+\]</span> 二者的区别不在模型形式，而在选择超平面的原则。</p>
+<p>感知器只关心分类是否正确，只要找到一个 separating hyperplane 即可。在线性可分数据上，这样的超平面通常有无穷多个，因此感知器得到的结果会受到初始化、样本顺序和训练过程的影响。</p>
+<p>SVM 则在所有 separating hyperplanes 中加入了几何偏好：选择间隔最大的超平面。这个额外原则使 SVM 不只是追求训练集分类正确，还追求正确得有余量。也正是这个余量概念，为后续的软间隔 SVM、hinge loss 和泛化分析打下基础。</p>
+</section>
+<section id="拉格朗日乘子与-kkt-条件" class="level2">
+<h2 class="anchored" data-anchor-id="拉格朗日乘子与-kkt-条件">拉格朗日乘子与 KKT 条件</h2>
+<p>hard-margin SVM 的 primal problem 已经把最大间隔问题写成了一个标准约束优化问题： <span class="math display">\[
+\min_{w,b}\frac12\|w\|^2
+\]</span> subject to <span class="math display">\[
+t_n(w^\top\phi(x_n)+b)\ge 1,\qquad n=1,\dots,N.
+\]</span> 为了讨论它的解的性质，Bishop 接下来引入 Lagrange multiplier 和 KKT conditions,作为约束优化理论中刻画最优解结构的基本工具。</p>
+<div id="def-general-constrain-problem" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 1 (一般约束优化问题)</strong></span> <span class="math display">\[
+\min_x f(x)
+\]</span> subject to <span class="math display">\[
+g_i(x)\le 0,\qquad i=1,\dots,m,
+\]</span> 以及可能存在的等式约束 <span class="math display">\[
+h_j(x)=0,\qquad j=1,\dots,r.
+\]</span> 这里 <span class="math inline">\(f(x)\)</span> 是目标函数，<span class="math inline">\(g_i(x)\le 0\)</span> 是不等式约束，<span class="math inline">\(h_j(x)=0\)</span> 是等式约束。</p>
+</div>
+<p>其对应的拉格朗日函数定义为</p>
+<p><span class="math display">\[
+L(x,\alpha,\beta)
+=
+f(x)+\sum_{i=1}^m\alpha_i g_i(x)+\sum_{j=1}^r\beta_j h_j(x),
+\]</span> 其中 <span class="math inline">\(\alpha_i\)</span> 是不等式约束对应的 Lagrange multipliers，<span class="math inline">\(\beta_j\)</span> 是等式约束对应的 Lagrange multipliers。</p>
+<p>对于不等式约束，乘子必须满足 <span class="math display">\[
+\alpha_i\ge 0.
+\]</span> 这是因为我们采用的是 <span class="math inline">\(g_i(x)\le 0\)</span> 的约束形式。如果某个点违反约束，即 <span class="math inline">\(g_i(x)&gt;0\)</span>，非负的 <span class="math inline">\(\alpha_i\)</span> 会让拉格朗日函数变大，从而惩罚违反约束的点；若允许 <span class="math inline">\(\alpha_i&lt;0\)</span>，违反约束反而可能降低目标，这就破坏了约束的意义。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="几何直觉">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>几何直觉
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>在无约束优化中，最优点通常满足 <span class="math inline">\(\nabla f(x^\star)=0\)</span>。在有约束优化中，最优点可能位于约束边界上，此时 <span class="math inline">\(\nabla f(x^\star)\)</span> 不必为 0，而是会被活跃约束面的法向量所平衡。Lagrange multipliers 描述的正是这种平衡关系。</p>
+</div>
+</div>
+<p>Karush-Kuhn-Tucker conditions 是约束优化问题最优解需要满足的一组条件。</p>
+<div id="thm-KKT" class="theorem">
+<p><span class="theorem-title"><strong>定理 1 (Karush-Kuhn-Tucker conditions)</strong></span> 对于问题 <span class="math display">\[
+\min_x f(x)
+\]</span> subject to <span class="math display">\[
+g_i(x)\le 0,\qquad h_j(x)=0,
+\]</span></p>
+<p>假设满足以上条件的最优解为 <span class="math inline">\(x\star\)</span>，则在一定的正则条件下，其一定满足以下四个条件：</p>
+<ol type="1">
+<li><strong>primal feasibility</strong>，即原变量必须满足原始约束： <span class="math display">\[
+  g_i(x^\star)\le 0,\qquad h_j(x^\star)=0.
+  \]</span></li>
+<li><strong>dual feasibility</strong>，即不等式约束的乘子必须非负： <span class="math display">\[
+  \alpha_i^\star\ge 0.
+  \]</span></li>
+<li><strong>stationarity</strong>，即最优点处拉格朗日函数对原变量的梯度为零： <span class="math display">\[
+  \nabla_x L(x^\star,\alpha^\star,\beta^\star)=0.
+  \]</span></li>
+<li><strong>complementary slackness（互补松弛条件）</strong>，即每个不等式约束满足： <span class="math display">\[
+  \alpha_i^\star g_i(x^\star)=0.
+  \]</span></li>
+</ol>
+</div>
+<p>这个条件说明，对于每一个不等式约束，乘子和约束松弛量不能同时非零。若约束没有贴紧，即 <span class="math inline">\(g_i(x^\star)&lt;0\)</span>，则必须有 <span class="math inline">\(\alpha_i^\star=0\)</span>；若 <span class="math inline">\(\alpha_i^\star&gt;0\)</span>，则必须有 <span class="math inline">\(g_i(x^\star)=0\)</span>，说明该约束正好 active。</p>
+<div class="callout callout-style-default callout-important callout-titled" title="必要性与充分性">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">重要</span>必要性与充分性
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>在一般非凸问题中，KKT 条件通常只是局部最优解的<strong>一阶必要条件</strong>，还需要一定正则条件才能成立。对于<strong>凸优化问题</strong>，如果目标函数和不等式约束是凸函数、等式约束是仿射函数，并且满足适当的约束资格条件，例如 Slater 条件，那么 KKT 条件<strong>不仅必要，而且充分</strong>。此时满足 KKT 条件的点就是全局最优解。</p>
+</div>
+</div>
+</section>
+<section id="svm-中的拉格朗日函数" class="level2">
+<h2 class="anchored" data-anchor-id="svm-中的拉格朗日函数">SVM 中的拉格朗日函数</h2>
+<p>为了把 hard-margin SVM 写成标准形式，将约束改写为 <span class="math display">\[
+g_n(w,b)=1-t_n(w^\top\phi(x_n)+b)\le 0.
+\]</span> 于是 primal problem 为 <span class="math display">\[
+\min_{w,b}\frac12\|w\|^2
+\quad \text{s.t.}\quad
+g_n(w,b)\le 0.
+\]</span></p>
+<p>对应的拉格朗日函数是 <span class="math display">\[
+L(w,b,\alpha)
+=
+\frac12\|w\|^2
++\sum_{n=1}^N
+\alpha_n
+\left[
+1-t_n(w^\top\phi(x_n)+b)
+\right],
+\]</span> 其中 <span class="math display">\[
+\alpha_n\ge 0.
+\]</span> 等价地，也可以写成 Bishop 常用的形式： <span class="math display">\[
+L(w,b,\alpha)
+=
+\frac12\|w\|^2
+-\sum_{n=1}^N
+\alpha_n
+\{t_n(w^\top\phi(x_n)+b)-1\}.
+\]</span></p>
+</section>
+<section id="svm-的-kkt-条件" class="level2">
+<h2 class="anchored" data-anchor-id="svm-的-kkt-条件">SVM 的 KKT 条件</h2>
+<p>将一般 KKT 条件应用到 hard-margin SVM，可以得到以下四组条件。</p>
+<ol type="1">
+<li><p>Primal feasibility： <span class="math display">\[
+  t_n(w^\top\phi(x_n)+b)\ge 1,\qquad n=1,\dots,N.
+  \]</span></p></li>
+<li><p>Dual feasibility： <span class="math display">\[
+  \alpha_n\ge 0,\qquad n=1,\dots,N.
+  \]</span></p></li>
+<li><p>Stationarity 对 <span class="math inline">\(w\)</span> 求导： <span class="math display">\[
+  \frac{\partial L}{\partial w}
+  =
+  w-\sum_{n=1}^N\alpha_n t_n\phi(x_n)=0.
+  \]</span> 因此 <span class="math display">\[
+  w=\sum_{n=1}^N\alpha_n t_n\phi(x_n).
+  \]</span> 这个式子非常重要。它说明 <strong>hard-margin SVM 的最优法向量 <span class="math inline">\(w\)</span> 必然落在训练样本特征向量张成的子空间中，因此模型自然进入对偶表示</strong>。<br>
+Stationarity 对 <span class="math inline">\(b\)</span> 求导： <span class="math display">\[
+  \frac{\partial L}{\partial b}
+  =
+  -\sum_{n=1}^N\alpha_n t_n=0.
+  \]</span> 因此 <span class="math display">\[
+  \sum_{n=1}^N\alpha_n t_n=0.
+  \]</span></p></li>
+<li><p>Complementary slackness： <span class="math display">\[
+  \alpha_n
+  \left[
+  1-t_n(w^\top\phi(x_n)+b)
+  \right]=0.
+  \]</span> 也可以写成 <span class="math display">\[
+  \alpha_n
+  \{t_n(w^\top\phi(x_n)+b)-1\}=0.
+  \]</span></p></li>
+</ol>
+</section>
+<section id="kkt-给出全局最优" class="level2">
+<h2 class="anchored" data-anchor-id="kkt-给出全局最优">KKT 给出全局最优</h2>
+<p>hard-margin SVM 是一个凸优化问题。目标函数</p>
+<p><span class="math display">\[\frac12\|w\|^2\]</span></p>
+<p>是关于 <span class="math inline">\(w\)</span> 的凸函数；约束</p>
+<p><span class="math display">\[1-t_n(w^\top\phi(x_n)+b)\le 0\]</span></p>
+<p>是关于 <span class="math inline">\((w,b)\)</span> 的仿射函数，因此是凸约束。</p>
+<p>在线性可分且满足适当正则条件时，强对偶成立，KKT 条件<strong>不仅是必要条件，也是充分条件</strong>。因此，如果某组 <span class="math inline">\((w,b,\alpha)\)</span> 满足上述 KKT 条件，那么它给出的就是全局最优最大间隔分类器，而不是某个局部最优解。</p>
+</section>
+<section id="support-vectors-的来源" class="level2">
+<h2 class="anchored" data-anchor-id="support-vectors-的来源">Support vectors 的来源</h2>
+<p><strong>互补松弛条件</strong>是理解 SVM 稀疏性的关键。令 <span class="math display">\[
+y(x_n)=w^\top\phi(x_n)+b,
+\]</span> 则有 <span class="math display">\[
+\alpha_n\{t_n y(x_n)-1\}=0.
+\]</span> 因此，对每个训练样本只能出现两种情况。</p>
+<p>如果 <span class="math display">\[
+t_n y(x_n)&gt;1,
+\]</span> 说明样本位于 margin 外侧，约束没有贴紧。此时必须有 <span class="math display">\[
+\alpha_n=0.
+\]</span> <strong>这些点不会出现在最终分类器的核展开式中</strong>。</p>
+<p>如果 <span class="math display">\[
+\alpha_n&gt;0,
+\]</span> 则必须有 <span class="math display">\[
+t_n y(x_n)=1.
+\]</span> 这些点正好落在 margin boundary 上，它们就是 support vectors。</p>
+<p>这说明 SVM 的稀疏性不是额外加入的假设，而是由 KKT 条件自动推出的：<strong>远离决策边界的样本对应 <span class="math inline">\(\alpha_n=0\)</span>，不会影响最终预测；只有贴在 margin 上的样本可能拥有非零乘子，并决定最大间隔超平面的位置</strong>。</p>
+</section>
+<section id="求解-alpha-与偏置项-b" class="level2">
+<h2 class="anchored" data-anchor-id="求解-alpha-与偏置项-b">求解 <span class="math inline">\(\alpha\)</span> 与偏置项 <span class="math inline">\(b\)</span></h2>
+<p>到目前为止，KKT 条件已经说明最优解满足 <span class="math display">\[
+w=\sum_{n=1}^N\alpha_n t_n\phi(x_n),
+\]</span> 并且 <span class="math display">\[
+\sum_{n=1}^N\alpha_n t_n=0.
+\]</span> 这说明<strong>我们不需要显式求出 <span class="math inline">\(w\)</span>，但仍然需要知道各个 <span class="math inline">\(\alpha_n\)</span></strong>。训练 SVM 的核心，正是求解关于 <span class="math inline">\(\alpha\)</span> 的对偶优化问题。</p>
+<p>将 stationarity 条件代回拉格朗日函数，可以消去 <span class="math inline">\(w\)</span> 和 <span class="math inline">\(b\)</span>，得到 hard-margin SVM 的对偶问题： <span class="math display">\[
+\max_{\alpha}
+\sum_{n=1}^N \alpha_n
+-
+\frac12
+\sum_{n=1}^N\sum_{m=1}^N
+\alpha_n\alpha_m t_n t_m k(x_n,x_m)
+\]</span> subject to <span class="math display">\[
+\alpha_n\ge 0,\qquad n=1,\dots,N,
+\]</span> and <span class="math display">\[
+\sum_{n=1}^N\alpha_n t_n=0.
+\]</span></p>
+<p>若令 <span class="math display">\[
+H_{nm}=t_n t_m k(x_n,x_m),
+\]</span> 则该问题也可以写成更紧凑的二次规划形式： <span class="math display">\[
+\min_{\alpha}
+\frac12\alpha^\top H\alpha-\mathbf 1^\top\alpha
+\]</span> subject to <span class="math display">\[
+\alpha\ge 0,\qquad t^\top\alpha=0.
+\]</span> 因此，训练 hard-margin SVM 本质上就是先计算核矩阵 <span class="math inline">\(K_{nm}=k(x_n,x_m)\)</span>，再求解这个<strong>带有线性等式约束和非负约束的 quadratic programming problem</strong>。由于合法 kernel 对应的 Gram matrix 是半正定的，<span class="math inline">\(H\)</span> 也是半正定的，所以这是一个<strong>凸二次规划问题</strong>。</p>
+<p>实际算法并不是用一个简单闭式公式直接写出所有 <span class="math inline">\(\alpha_n\)</span>，而是通过数值优化求解上述二次规划。常见方法包括一般二次规划求解器、active set methods、interior point methods，以及专门用于 SVM 的 sequential minimal optimization。训练完成后，满足 <span class="math inline">\(\alpha_n&gt;0\)</span> 的样本就是 support vectors。</p>
+<p>得到 <span class="math inline">\(\alpha_n\)</span> 后，还需要确定偏置项 <span class="math inline">\(b\)</span>。对于任意 support vector <span class="math inline">\(x_s\)</span>，由于 <span class="math inline">\(\alpha_s&gt;0\)</span>，互补松弛条件给出 <span class="math display">\[
+t_s y(x_s)=1.
+\]</span> 又因为 <span class="math inline">\(t_s\in\{-1,+1\}\)</span>，所以上式等价于 <span class="math display">\[
+y(x_s)=t_s.
+\]</span> 将核形式的判别函数代入，可以得到 <span class="math display">\[
+b
+=
+t_s-\sum_{n=1}^N\alpha_n t_n k(x_n,x_s).
+\]</span> 由于非 support vectors 的 <span class="math inline">\(\alpha_n=0\)</span>，这个求和实际只需要包含 support vectors。</p>
+<p>在实际数值计算中，单个 support vector 得到的 <span class="math inline">\(b\)</span> 可能受浮点误差影响，因此通常会对所有 support vectors 求平均。设 support vector 集合为 <span class="math display">\[
+\mathcal S=\{n\mid \alpha_n&gt;0\},
+\]</span> 则可取 <span class="math display">\[
+b
+=
+\frac{1}{|\mathcal S|}
+\sum_{s\in\mathcal S}
+\left(
+t_s-\sum_{n\in\mathcal S}\alpha_n t_n k(x_n,x_s)
+\right).
+\]</span></p>
+<div class="callout callout-style-default callout-important callout-titled" title="训练得到的是什么">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">重要</span>训练得到的是什么
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>在核 SVM 中，训练的直接结果不是显式的 <span class="math inline">\(w\)</span>，而是 <span class="math inline">\(\alpha_n\)</span>、support vectors 以及偏置项 <span class="math inline">\(b\)</span>。其中 <span class="math inline">\(\alpha_n\)</span> 通过求解对偶二次规划得到，<span class="math inline">\(b\)</span> 再由 support vectors 的边界条件恢复。</p>
+</div>
+</div>
+</section>
+<section id="从-kkt-到核展开与-svm-预测" class="level2">
+<h2 class="anchored" data-anchor-id="从-kkt-到核展开与-svm-预测">从 KKT 到核展开与 SVM 预测</h2>
+<p>由 stationarity 可知，最优法向量可以写成训练样本特征向量的线性组合。因此，分类函数可以转化为核形式： <span class="math display">\[
+y(x)
+=
+\sum_{n=1}^N
+\alpha_n t_n k(x_n,x)+b.
+\]</span> 由于非 support vectors 的 <span class="math inline">\(\alpha_n=0\)</span>，实际用于预测的判别函数只需要保留 support vectors： <span class="math display">\[
+y(x)
+=
+\sum_{n\in\mathcal S}
+\alpha_n t_n k(x_n,x)+b.
+\]</span> 最终类别由 <span class="math display">\[
+\operatorname{sign}(y(x))
+\]</span> 决定。</p>
+<p>这一表达式体现了 SVM 作为 sparse kernel machine 的核心特征：<strong>训练阶段约束来自全部训练样本，但预测阶段只需要计算新样本与 support vectors 之间的核函数</strong>。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="判别函数不是概率">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>判别函数不是概率
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><span class="math inline">\(y(x)\)</span> 是 signed decision function。它的符号决定分类结果，绝对值可以粗略反映样本离决策边界的远近，但它不是经过校准的类别概率。</p>
+</div>
+</div>
+<div id="fig-svm-classification" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-svm-classification-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/image-1-20260501114428570.webp" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-svm-classification-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;2 SVM分类界线示意图
+</figcaption>
+</figure>
+</div>
+</section>
+<section id="本节小结" class="level2">
+<h2 class="anchored" data-anchor-id="本节小结">本节小结</h2>
+<p>线性可分情形下的最大间隔分类器可以按以下逻辑理解：</p>
+<ol type="1">
+<li>线性分类器通过 <span class="math inline">\(\operatorname{sign}(w^\top\phi(x)+b)\)</span> 做预测。</li>
+<li>分类正确只要求 <span class="math inline">\(t_n(w^\top\phi(x_n)+b)&gt;0\)</span>，但这不能唯一确定一个好的超平面。</li>
+<li>functional margin 衡量正确一侧的代数余量，但会随 <span class="math inline">\(w,b\)</span> 的缩放改变。</li>
+<li>geometric margin 将 functional margin 除以 <span class="math inline">\(\|w\|\)</span>，对应样本到决策边界的真实几何距离。</li>
+<li>最大间隔目标可以直观写成 <span class="math inline">\(\max_{w,b}\min_n t_n(w^\top\phi(x_n)+b)/\|w\|\)</span>。</li>
+<li>canonical representation 规定最近样本的 functional margin 为 1，从而把最大几何间隔问题转化为最小化 <span class="math inline">\(\frac12\|w\|^2\)</span> 的凸优化问题。</li>
+<li>Lagrange multiplier 将约束对最优解的影响编码进拉格朗日函数，KKT 条件刻画约束最优解必须满足的结构。</li>
+<li>对 hard-margin SVM 而言，stationarity 给出 <span class="math inline">\(w=\sum_n\alpha_n t_n\phi(x_n)\)</span>，使模型自然进入对偶表示。</li>
+<li>Complementary slackness 给出 support vectors 的判定条件：只有落在 margin boundary 上的样本可能拥有非零 <span class="math inline">\(\alpha_n\)</span>。</li>
+<li><span class="math inline">\(\alpha_n\)</span> 通过求解 hard-margin SVM 的对偶二次规划问题得到，偏置项 <span class="math inline">\(b\)</span> 再由 support vectors 的边界条件恢复。</li>
+<li>训练完成后，可以用 <span class="math inline">\(\sum_{n\in\mathcal S}\alpha_n t_n k(x_n,x)+b\)</span> 对新样本进行预测。</li>
+<li>因为非 support vectors 的 <span class="math inline">\(\alpha_n=0\)</span>，最终分类器只依赖少数 support vectors，这就是 SVM 作为 sparse kernel machine 的稀疏性来源。</li>
+</ol>
+</section>
+</section>
+<section id="soft-margin-svm" class="level1">
+<h1>Soft-Margin SVM</h1>
+<section id="从硬约束到无限惩罚损失" class="level2">
+<h2 class="anchored" data-anchor-id="从硬约束到无限惩罚损失">从硬约束到无限惩罚损失</h2>
+<p>在 hard-margin SVM 中，我们要求所有训练样本都满足 <span class="math display">\[
+t_n y(x_n)\ge 1,\qquad n=1,\dots,N.
+\]</span> 这个条件意味着每个样本不仅要被正确分类，还必须位于 margin boundary 上或 margin 外侧。因此，hard-margin SVM 可以写成如下约束优化问题： <span class="math display">\[
+\min_{w,b}\frac12\|w\|^2
+\]</span> subject to <span class="math display">\[
+t_n y(x_n)\ge 1,\qquad n=1,\dots,N.
+\]</span> 只有满足全部 margin 约束的 <span class="math inline">\((w,b)\)</span> 才属于可行集合；任何违反约束的 <span class="math inline">\((w,b)\)</span> 都不能作为候选解。</p>
+<p>在书（公式7.19）中，Bishop 把这个约束优化问题改写成一种损失函数视角。定义 <span class="math display">\[
+E_\infty(z)=
+\begin{cases}
+0, &amp; z\ge 0,\\
+\infty, &amp; z&lt;0.
+\end{cases}
+\]</span> 并令 <span class="math display">\[
+z=t_n y(x_n)-1.
+\]</span> 于是当 <span class="math display">\[
+t_n y(x_n)\ge 1
+\]</span> 时，有 <span class="math inline">\(z\ge 0\)</span>，该样本损失为 0；当 <span class="math display">\[
+t_n y(x_n)&lt;1
+\]</span> 时，有 <span class="math inline">\(z&lt;0\)</span>，该样本损失为 <span class="math inline">\(\infty\)</span>。</p>
+<p>因此， <span class="math display">\[
+\sum_{n=1}^N E_\infty(t_n y(x_n)-1)
+\]</span> 可以看作一个可行性检查项。若所有样本都满足 hard-margin 约束，这一项等于 0；只要存在任意一个样本违反约束，这一项就变成 <span class="math inline">\(\infty\)</span>。</p>
+<p>由此，hard-margin SVM 可以等价地写成 <span id="eq-hard-margin-loss-function"><span class="math display">\[
+\sum_{n=1}^{N}E_\infty(t_ny(x_n)-1)+\lambda\|w\|^2.
+\tag{1}\]</span></span></p>
+<p>这个表达式的含义是：先通过 <span class="math inline">\(E_\infty\)</span> 排除所有违反 margin 约束的解，再在剩余可行解中最小化 <span class="math inline">\(\lambda\|w\|^2\)</span>。只要 <span class="math inline">\(\lambda&gt;0\)</span>，最小化 <span class="math inline">\(\lambda\|w\|^2\)</span> 与最小化 <span class="math inline">\(\frac12\|w\|^2\)</span> 在最优解位置上是等价的；系数差异只改变目标函数数值的尺度，不改变最大间隔超平面。</p>
+<div class="callout callout-style-default callout-important callout-titled" title="公式 7.19 的作用">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">重要</span>公式 7.19 的作用
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><a href="#eq-hard-margin-loss-function" class="quarto-xref">式&nbsp;1</a> 不是引入一个新模型，而是把 hard-margin SVM 从“带硬约束的优化问题”改写成“损失函数 + 正则化”的形式。硬约束被编码为无限惩罚损失：满足 margin 时损失为 0，违反 margin 时损失为 <span class="math inline">\(\infty\)</span>。</p>
+</div>
+</div>
+</section>
+<section id="slack-variables-与-soft-margin-svm" class="level2">
+<h2 class="anchored" data-anchor-id="slack-variables-与-soft-margin-svm">Slack variables 与 soft-margin SVM</h2>
+<p>hard-margin SVM 要求所有训练样本都满足 <span class="math display">\[
+t_n y(x_n)\ge 1.
+\]</span> 这一要求在真实数据中往往过于严格。类别分布可能本身发生重叠，训练集中也可能存在噪声点或异常点。此时，<strong>如果仍然强制所有样本都位于 margin 外侧，优化问题可能无解；即使可解，也可能因为少数异常点而得到非常不稳定的决策边界</strong>。</p>
+<p>因此，解决以上问题的核心思想是引入 <strong>slack variables（松弛变量）</strong>： <span class="math display">\[
+\xi_n\ge 0.
+\]</span> 原来的 margin 约束被放松为 <span class="math display">\[
+t_n y(x_n)\ge 1-\xi_n.
+\]</span> 这里 <span class="math inline">\(\xi_n\)</span> 表示第 <span class="math inline">\(n\)</span> 个样本对 margin 约束的违反程度。根据 <span class="math inline">\(\xi_n\)</span> 的大小，可以区分三种情况：</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>条件</th>
+<th>样本位置</th>
+<th>分类情况</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\xi_n=0\)</span></td>
+<td>在 margin 外侧或正好在 margin boundary 上</td>
+<td>正确分类</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(0&lt;\xi_n\le 1\)</span></td>
+<td>进入 margin 内部，但仍在决策边界正确一侧</td>
+<td>正确分类，但 margin 不足</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\xi_n&gt;1\)</span></td>
+<td>越过决策边界</td>
+<td>错误分类</td>
+</tr>
+</tbody>
+</table>
+<div id="fig-slack-variable" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-slack-variable-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/image-1-20260501151317888.webp" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slack-variable-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;3 带有松弛变量的最大间隔分类示意图
+</figcaption>
+</figure>
+</div>
+<p>之所以 <span class="math inline">\(\xi_n&gt;1\)</span> 对应可能错分，是因为当 <span class="math inline">\(\xi_n=1\)</span> 时，约束右侧变成 0： <span class="math display">\[
+t_n y(x_n)\ge 0.
+\]</span> 这允许样本刚好落在决策边界上。若 <span class="math inline">\(\xi_n&gt;1\)</span>，右侧小于 0，样本便可能满足 <span class="math inline">\(t_n y(x_n)&lt;0\)</span>，即被分到错误一侧。</p>
+<p>引入 slack variables 后，优化问题变成（这个松弛变量尽可能要小） <span class="math display">\[
+\min_{w,b,\xi}
+\frac12\|w\|^2+C\sum_{n=1}^N\xi_n
+\]</span> subject to <span class="math display">\[
+t_n y(x_n)\ge 1-\xi_n,
+\]</span> and <span class="math display">\[
+\xi_n\ge 0.
+\]</span> 其中 <span class="math inline">\(C&gt;0\)</span> 控制 margin 宽度和 margin violation 之间的权衡。<strong><span class="math inline">\(C\)</span> 越大，违反 margin 的代价越高，模型越接近 hard-margin SVM；<span class="math inline">\(C\)</span> 越小，模型越愿意接受部分违反 margin 的样本，以换取更大的间隔和更平滑的边界</strong>。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="$C$ 的作用">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span><span class="math inline">\(C\)</span> 的作用
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><span class="math inline">\(C\)</span> 是 soft-margin SVM 的正则化参数。它不是 kernel 参数，而是控制“训练样本违反 margin 的代价”。在实践中，<span class="math inline">\(C\)</span> 通常需要通过验证集或交叉验证选择。</p>
+</div>
+</div>
+</section>
+<section id="hinge-loss-视角" class="level2">
+<h2 class="anchored" data-anchor-id="hinge-loss-视角">Hinge loss 视角</h2>
+<p>对于固定的 <span class="math inline">\(w,b\)</span>，最优的 slack variable 可以写成 <span class="math display">\[
+\xi_n=\max(0,1-t_n y(x_n)).
+\]</span> 将其代回 soft-margin SVM 的目标函数，可以得到 <span id="eq-hinge-loss"><span class="math display">\[
+\min_{w,b}
+\frac12\|w\|^2+
+C\sum_{n=1}^N
+\max(0,1-t_n y(x_n)).
+\tag{2}\]</span></span></p>
+<p>其中 <span class="math display">\[
+\max(0,1-t_n y(x_n))
+\]</span> 就是 <strong>hinge loss</strong>。</p>
+<p>hinge loss 的行为可以直接从 margin 值 <span class="math inline">\(t_n y(x_n)\)</span> 看出：</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>条件</th>
+<th>hinge loss</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(t_n y(x_n)\ge 1\)</span></td>
+<td>0</td>
+<td>样本满足 margin 要求</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(0&lt;t_n y(x_n)&lt;1\)</span></td>
+<td><span class="math inline">\(1-t_n y(x_n)\)</span></td>
+<td>样本分类正确，但 margin 不足</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(t_n y(x_n)&lt;0\)</span></td>
+<td>大于 1</td>
+<td>样本被错分</td>
+</tr>
+</tbody>
+</table>
+<p>因此，soft-margin SVM 可以看 <a href="#eq-hard-margin-loss-function" class="quarto-xref">式&nbsp;1</a> 的自然放松：<strong>hard-margin 使用 <span class="math inline">\(E_\infty\)</span> 对 margin violation 施加无限惩罚</strong>，而 <strong>soft-margin 使用 hinge loss 对违反程度施加有限线性惩罚</strong>。</p>
+</section>
+<section id="soft-margin-svm-的对偶形式" class="level2">
+<h2 class="anchored" data-anchor-id="soft-margin-svm-的对偶形式">Soft-margin SVM 的对偶形式</h2>
+<p>为了得到 soft-margin SVM 的对偶形式，需要像 hard-margin 情形一样引入拉格朗日乘子。这里有两组不等式约束： <span class="math display">\[
+t_n y(x_n)-1+\xi_n\ge 0
+\]</span> 以及 <span class="math display">\[
+\xi_n\ge 0.
+\]</span> 因此分别引入乘子 <span class="math display">\[
+\alpha_n\ge 0,\qquad \mu_n\ge 0.
+\]</span> 对应的拉格朗日函数为 <span class="math display">\[
+L(w,b,\xi,\alpha,\mu)
+=
+\frac12\|w\|^2
++C\sum_{n=1}^N\xi_n
+-\sum_{n=1}^N\alpha_n\{t_n y(x_n)-1+\xi_n\}
+-\sum_{n=1}^N\mu_n\xi_n.
+\]</span> 其中 <span class="math inline">\(\alpha_n\)</span> 对应放松后的 margin 约束，<span class="math inline">\(\mu_n\)</span> 对应 slack variable 的非负约束。</p>
+<p>对应的 KKT 条件为 <span class="math display">\[
+\alpha_n\ge 0,
+\]</span> <span class="math display">\[
+t_n y(x_n)-1+\xi_n\ge 0,
+\]</span> <span class="math display">\[
+\alpha_n\{t_n y(x_n)-1+\xi_n\}=0,
+\]</span> <span class="math display">\[
+\mu_n\ge 0,
+\]</span> <span class="math display">\[
+\xi_n\ge 0,
+\]</span> <span class="math display">\[
+\mu_n\xi_n=0.
+\]</span></p>
+<p>接下来对 <span class="math inline">\(w,b,\xi_n\)</span> 分别求 stationarity 条件。对 <span class="math inline">\(w\)</span> 求导得到 <span class="math display">\[
+w=\sum_{n=1}^N\alpha_n t_n\phi(x_n).
+\]</span> 对 <span class="math inline">\(b\)</span> 求导得到 <span class="math display">\[
+\sum_{n=1}^N\alpha_n t_n=0.
+\]</span> 对 <span class="math inline">\(\xi_n\)</span> 求导得到 <span class="math display">\[
+C-\alpha_n-\mu_n=0,
+\]</span> 也就是 <span class="math display">\[
+\alpha_n=C-\mu_n.
+\]</span> 由于 <span class="math inline">\(\mu_n\ge 0\)</span>，可得 <span class="math inline">\(\alpha_n\le C\)</span>；再结合 <span class="math inline">\(\alpha_n\ge 0\)</span>，得到 box constraint： <span class="math display">\[
+0\le \alpha_n\le C.
+\]</span></p>
+<p>将 <span class="math inline">\(w,b,\xi\)</span> 消去后，soft-margin SVM 的对偶目标函数与 hard-margin 情形相同： <span class="math display">\[
+\max_\alpha
+\sum_{n=1}^N\alpha_n -
+\frac12
+\sum_{n=1}^N\sum_{m=1}^N
+\alpha_n\alpha_m t_n t_m k(x_n,x_m)
+\]</span> subject to <span class="math display">\[
+0\le \alpha_n\le C,
+\]</span> and <span class="math display">\[
+\sum_{n=1}^N\alpha_n t_n=0.
+\]</span> 与 hard-margin SVM 相比，关键变化是原来的 <span class="math display">\[
+\alpha_n\ge 0
+\]</span> 变成了 <span class="math display">\[
+0\le \alpha_n\le C.
+\]</span> 这个上界来自 slack variables 的线性惩罚项。它意味着每个训练样本对最终解的影响受到 <span class="math inline">\(C\)</span> 的限制。</p>
+<p>soft-margin SVM 中，不同 <span class="math inline">\(\alpha_n\)</span> 的取值对应不同类型的训练样本：</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th><span class="math inline">\(\alpha_n\)</span></th>
+<th>样本状态</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\alpha_n=0\)</span></td>
+<td>位于 margin 外侧，不影响最终模型</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(0&lt;\alpha_n&lt;C\)</span></td>
+<td>正好位于 margin boundary 上</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\alpha_n=C\)</span></td>
+<td>位于 margin 内部或被错分</td>
+</tr>
+</tbody>
+</table>
+<p>更严格地说，若 <span class="math inline">\(\alpha_n=0\)</span>，该样本不出现在最终预测函数中；若 <span class="math inline">\(\alpha_n&gt;0\)</span>，由互补松弛条件可知 <span class="math display">\[
+t_n y(x_n)=1-\xi_n.
+\]</span> 这些点构成 support vectors。若进一步有 <span class="math inline">\(0&lt;\alpha_n&lt;C\)</span>，则由 <span class="math display">\[
+\alpha_n=C-\mu_n
+\]</span> 可知 <span class="math inline">\(\mu_n&gt;0\)</span>，再由 <span class="math inline">\(\mu_n\xi_n=0\)</span> 得到 <span class="math inline">\(\xi_n=0\)</span>，因此这些点正好位于 margin boundary 上。若 <span class="math inline">\(\alpha_n=C\)</span>，则 <span class="math inline">\(\mu_n=0\)</span>，此时 <span class="math inline">\(\xi_n\)</span> 可以大于 0，所以这些点可能位于 margin 内部，也可能被错分。</p>
+<p>soft-margin 情形下求偏置项 <span class="math inline">\(b\)</span> 时，需要比 hard-margin 更小心。因为 <span class="math inline">\(\alpha_n=C\)</span> 的 support vectors 可能有 <span class="math inline">\(\xi_n&gt;0\)</span>，不一定满足 <span class="math inline">\(t_n y(x_n)=1\)</span>。<strong>因此应使用满足</strong> <strong><span class="math display">\[
+0&lt;\alpha_n&lt;C
+\]</span></strong> <strong>的点。设这类点的索引集合为 <span class="math inline">\(\mathcal M\)</span>，所有 support vectors 的索引集合为 <span class="math inline">\(\mathcal S\)</span>。</strong> 对任意 <span class="math inline">\(n\in\mathcal M\)</span>，有 <span class="math inline">\(\xi_n=0\)</span>，因此 <span class="math display">\[
+t_n y(x_n)=1.
+\]</span> 代入核展开式得到 <span class="math display">\[
+t_n\left(
+\sum_{m\in\mathcal S}\alpha_m t_m k(x_n,x_m)+b
+\right)=1.
+\]</span> 数值上通常对所有 <span class="math inline">\(\mathcal M\)</span> 中的点求平均： <span class="math display">\[
+b=
+\frac{1}{|\mathcal M|}
+\sum_{n\in\mathcal M}
+\left(
+t_n-\sum_{m\in\mathcal S}\alpha_m t_m k(x_n,x_m)
+\right).
+\]</span></p>
+<div class="callout callout-style-default callout-warning callout-titled" title="soft-margin 中求 $b$ 的细节">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">警告</span>soft-margin 中求 <span class="math inline">\(b\)</span> 的细节
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>hard-margin 中所有 support vectors 都满足 <span class="math inline">\(t_ny(x_n)=1\)</span>；soft-margin 中只有 <span class="math inline">\(0&lt;\alpha_n&lt;C\)</span> 的 support vectors 保证满足这一等式。因此，估计 <span class="math inline">\(b\)</span> 时应使用 margin support vectors，而不是所有 <span class="math inline">\(\alpha_n&gt;0\)</span> 的样本。</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="不同的 support vectors 提供不同的权重">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>不同的 support vectors 提供不同的权重
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><span class="math inline">\(\alpha_n\)</span>可以看成是 support vector 在预测时提供的权重。可以看到，在margin内部的support vector 提供更大的权重。</p>
+</div>
+</div>
+</section>
+<section id="nu-svm" class="level2">
+<h2 class="anchored" data-anchor-id="nu-svm"><span class="math inline">\(\nu\)</span>-SVM</h2>
+<p>PRML 还介绍了 <span class="math inline">\(\nu\)</span>-SVM，这是 Schölkopf 等人提出的等价形式。它用参数 <span class="math inline">\(\nu\)</span> 取代 <span class="math inline">\(C\)</span>，对偶问题为最大化 <span class="math display">\[
+\tilde L(\alpha)=-\frac12
+\sum_{n=1}^N\sum_{m=1}^N
+\alpha_n\alpha_m t_n t_m k(x_n,x_m)
+\]</span> subject to <span class="math display">\[
+0\le \alpha_n\le \frac1N,
+\]</span> <span class="math display">\[
+\sum_{n=1}^N\alpha_n t_n=0,
+\]</span> and <span class="math display">\[
+\sum_{n=1}^N\alpha_n\ge \nu.
+\]</span> <span class="math inline">\(\nu\)</span> 的优点是解释更直接：<strong>它既是 margin errors 比例的上界，也是 support vectors 比例的下界</strong>。这里 margin errors 指 <span class="math inline">\(\xi_n&gt;0\)</span> 的点，也就是位于 margin boundary 错误一侧的样本；它们可能仍然分类正确但 margin 不足，也可能已经被错分。</p>
+</section>
+<section id="与-logistic-regression-的关系" class="level2">
+<h2 class="anchored" data-anchor-id="与-logistic-regression-的关系">与 logistic regression 的关系</h2>
+<p>我们现在把 soft-margin SVM 放回更一般的“损失函数 + 正则化”框架中，并与logistic regression的交叉熵损失进行比较。这样看时，<strong>SVM 不只是一个带约束的最大间隔分类器，也可以被理解为在最小化一种特殊的分类损失</strong>。</p>
+<p>对公式 <a href="#eq-hinge-loss" class="quarto-xref">式&nbsp;2</a> 进行简单变换（除以<span class="math inline">\(C\)</span>），可以得到如下正则化经验风险形式： <span class="math display">\[
+\sum_{n=1}^{N}E_{\mathrm{SV}}(y_nt_n)+\lambda\|w\|^2,
+\]</span> 其中 <span class="math display">\[
+\lambda=(2C)^{-1},
+\]</span> 而 <span class="math display">\[
+E_{\mathrm{SV}}(y_nt_n)=[1-y_nt_n]_+.
+\]</span> 这里 <span class="math inline">\([z]_+\)</span> 表示 positive part，也就是 <span class="math display">\[
+[z]_+=\max(0,z).
+\]</span> 所以 SVM 可以看作是使用 hinge loss的“logistics regression”： <span class="math display">\[
+E_{\mathrm{SV}}(z)=\max(0,1-z),
+\qquad z=y_nt_n.
+\]</span></p>
+<div class="callout callout-style-default callout-important callout-titled" title="hinge loss 的核心形状">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">重要</span>hinge loss 的核心形状
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>当 <span class="math inline">\(y_nt_n\ge 1\)</span> 时，hinge loss 为 0，样本不会继续贡献损失；当 <span class="math inline">\(y_nt_n&lt;1\)</span> 时，损失随 margin violation 线性增加。这个“超过 margin 后完全变平”的区域，是 SVM 得到 sparse solution 的关键原因之一。</p>
+</div>
+</div>
+<p>从分类误差角度看，真正想最小化的是 misclassification error： <span class="math display">\[
+\mathbb I(y_nt_n&lt;0).
+\]</span> 但这个 0-1 损失不连续、不可导，直接优化很困难。hinge loss 可以看成它的一个连续凸替代：它不仅惩罚错分样本，也惩罚虽然分对但离 decision boundary 太近的样本。</p>
+<p>为了和 logistic regression 对齐，Bishop 将 logistic regression 的标签也改写成 <span class="math display">\[
+t\in\{-1,+1\}.
+\]</span> 若模型输出仍记为 <span class="math display">\[
+y(x)=w^\top\phi(x)+b,
+\]</span> 则 <span class="math display">\[
+p(t=1\mid y)=\sigma(y),
+\]</span> 并且利用 sigmoid 的对称性可得 <span class="math display">\[
+p(t=-1\mid y)=\sigma(-y).
+\]</span> 因此两种标签可以合并写成 <span class="math display">\[
+p(t\mid y)=\sigma(yt).
+\]</span> 对似然取负对数，并加上二次正则项，就得到 logistic regression 的正则化目标： <span class="math display">\[
+\sum_{n=1}^{N}E_{\mathrm{LR}}(y_nt_n)+\lambda\|w\|^2,
+\]</span> 其中 <span class="math display">\[
+E_{\mathrm{LR}}(yt)=\ln(1+\exp(-yt)).
+\]</span></p>
+<p>hinge loss 与 logistic loss 都可以看成 0-1 分类误差的连续近似。二者的关键差别在于：</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>损失函数</th>
+<th>形式</th>
+<th>对大 margin 正确样本的处理</th>
+<th>结果倾向</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Hinge loss</td>
+<td><span class="math inline">\(\max(0,1-yt)\)</span></td>
+<td>当 <span class="math inline">\(yt\ge 1\)</span> 后损失为 0</td>
+<td>只让边界附近样本继续影响解，更容易稀疏</td>
+</tr>
+<tr class="even">
+<td>Logistic loss</td>
+<td><span class="math inline">\(\ln(1+\exp(-yt))\)</span></td>
+<td>始终为正，只是随 <span class="math inline">\(yt\)</span> 增大而趋近 0</td>
+<td>所有样本原则上都会继续贡献梯度</td>
+</tr>
+</tbody>
+</table>
+<div id="fig-loss-functions" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-loss-functions-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/image-2.webp" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-loss-functions-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;4 各种损失函数的对比
+</figcaption>
+</figure>
+</div>
+<p>上图展示对比了所有的损失函数。平方误差也可以用于分类，但它有一个明显问题：<strong>对于已经正确分类且离边界很远的样本，平方误差反而会继续增大权重。这样模型可能把大量精力花在“已经分得很对”的点上，而不是错分点或边界附近的点上</strong>。如果目标是降低分类错误率，那么更合理的分类损失应该随 <span class="math inline">\(yt\)</span> 增大而单调下降。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="这一小节的要点">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>这一小节的要点
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>soft-margin SVM 可以写成 hinge loss 加二次正则项；logistic regression 可以写成 logistic loss 加二次正则项。二者都在用连续损失近似 0-1 分类误差，但 hinge loss 在 <span class="math inline">\(yt\ge 1\)</span> 后变为 0，这使远离边界的样本不再影响目标函数，也解释了 SVM 的稀疏性。logistic loss 则更自然地服务于概率建模。平方误差虽然连续，但会过度关注大 margin 的正确样本，因此并不适合作为分类误差的直接替代。</p>
+</div>
+</div>
+</section>
+</section>
+<section id="多分类-svm" class="level1">
+<h1>多分类 SVM</h1>
+<p>SVM 本质上是一个 two-class classifier。它直接学习的是二分类决策函数 <span class="math display">\[
+y(x)=w^\top\phi(x)+b,
+\]</span> 然后通过符号判断类别。现实问题却经常有 <span class="math display">\[
+K&gt;2
+\]</span> 个类别，因此有一个问题是：<strong>如何用多个二分类 SVM 组合出一个多分类分类器？</strong></p>
+<section id="one-versus-the-rest" class="level2">
+<h2 class="anchored" data-anchor-id="one-versus-the-rest">One-versus-the-rest</h2>
+<p>最常见的做法之一是 <strong>one-versus-the-rest</strong>。这个方法简单、工程上常用，但有几个重要限制。</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>问题</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>决策可能不一致</td>
+<td>多个二分类器可能同时认为样本属于自己的 positive class</td>
+</tr>
+<tr class="even">
+<td>分数尺度不可比</td>
+<td>不同 <span class="math inline">\(y_k(x)\)</span> 来自不同训练任务，直接比较大小并没有严格保证</td>
+</tr>
+<tr class="odd">
+<td>训练集不平衡</td>
+<td>每个分类器通常有少数 positive examples 和大量 negative examples</td>
+</tr>
+<tr class="even">
+<td>破坏类别对称性</td>
+<td>原本对称的 <span class="math inline">\(K\)</span> 类问题，被拆成了 <span class="math inline">\(K\)</span> 个不对称的二分类问题</td>
+</tr>
+</tbody>
+</table>
+<p>例如，如果有 10 个类别且每类样本数相同，那么 one-versus-the-rest 中每个二分类器的训练集大约是 10% positive examples 和 90% negative examples。这种类别比例会让每个子问题都变得不平衡。为了缓解one-versus-the-rest 中正负类别不对称的问题，Bishop 还提到 Lee et al.&nbsp;的一个变体：把正类 target 设为 <span class="math inline">\(+1\)</span>，把负类 target 设为 <span class="math display">\[
+-\frac{1}{K-1}.
+\]</span> 这样做可以部分解决以上问题。</p>
+</section>
+<section id="joint-multi-class-svm" class="level2">
+<h2 class="anchored" data-anchor-id="joint-multi-class-svm">Joint Multi-Class SVM</h2>
+<p>另一条路线是直接为 <span class="math inline">\(K\)</span> 个分类器定义一个统一目标函数，而不是把多分类问题拆成互相独立的二分类问题。Weston and Watkins 提出的形式，就是同时训练所有 <span class="math inline">\(K\)</span> 个 SVM，并让正确类别相对于其他类别都保持 margin。</p>
+<p>这种方法概念上更统一，但训练代价更高。若 one-versus-the-rest 相当于求解 <span class="math inline">\(K\)</span> 个规模为 <span class="math inline">\(N\)</span> 的优化问题，整体代价可粗略记为 <span class="math display">\[
+O(KN^2).
+\]</span> 而同时训练时，需要求解一个规模约为 <span class="math display">\[
+(K-1)N
+\]</span> 的单一优化问题，代价可达到 <span class="math display">\[
+O(K^2N^2).
+\]</span> 所以它减少了启发式拼接的味道，却牺牲了训练效率。</p>
+</section>
+<section id="one-versus-one" class="level2">
+<h2 class="anchored" data-anchor-id="one-versus-one">One-versus-one</h2>
+<p>另一种常用方法是 <strong>one-versus-one</strong>。它为每一对类别训练一个二分类 SVM，因此一共需要 <span class="math display">\[
+\frac{K(K-1)}{2}
+\]</span> 个分类器。预测时，每个 pairwise classifier 投一票，最后选择票数最多的类别。</p>
+<p>这种方法的优点是每个子问题只区分两个类别，任务更局部；缺点是分类器数量随 <span class="math inline">\(K\)</span> 二次增长。类别很多时，训练时间和预测时的计算量都会明显增加。同时，简单投票仍然可能出现 ambiguity，例如多个类别票数相同，或者局部两两决策无法组成一个全局一致的分类结果。</p>
+</section>
+<section id="dagsvm" class="level2">
+<h2 class="anchored" data-anchor-id="dagsvm">DAGSVM</h2>
+<p>为了降低 one-versus-one 在预测阶段的计算量，Platt et al.&nbsp;提出了 <strong>DAGSVM</strong>。它仍然拥有 <span class="math display">\[
+\frac{K(K-1)}{2}
+\]</span> 个 pairwise classifiers，但把这些分类器组织成一个 directed acyclic graph。</p>
+<p>对一个新样本预测时，不需要评估全部 pairwise classifiers，而是沿着图中的某条路径逐步排除类别。对于 <span class="math inline">\(K\)</span> 个类别，只需要评估 <span class="math display">\[
+K-1
+\]</span> 个二分类器。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="DAGSVM 的定位">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>DAGSVM 的定位
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>DAGSVM 没有减少需要训练的 pairwise classifiers 数量，它减少的是 test-time evaluation 的数量。它把“所有两两投票”改成了“沿着有向无环图逐步淘汰”。</p>
+</div>
+</div>
+</section>
+<section id="error-correcting-output-codes" class="level2">
+<h2 class="anchored" data-anchor-id="error-correcting-output-codes">Error-correcting output codes</h2>
+<p>还有一种更一般的思路是 <strong>error-correcting output codes</strong>。它不只把类别两两拆分，也不只做 one-versus-the-rest，而是用多个二分类器对类别集合进行更一般的划分。</p>
+<p>可以把每个类别看成一个 codeword：这个 codeword 由多个二分类器的理想输出组成。预测新样本时，先得到一串二分类输出，再通过 decoding scheme 找到最接近的类别 codeword。</p>
+<p>这种方法的好处是具有一定纠错能力。即使某几个二分类器输出错误，只要整体编码仍然更接近正确类别，最终预测仍可能正确。因此它可以缓解 individual classifiers 的错误和 ambiguity。</p>
+</section>
+<section id="实践上的取舍" class="level2">
+<h2 class="anchored" data-anchor-id="实践上的取舍">实践上的取舍</h2>
+<p>Bishop 对多分类 SVM 的态度相当谨慎：<strong>SVM 如何自然地扩展到多分类，本身仍然不是一个完全干净的问题</strong>。不同方案各有代价：</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 23%">
+<col style="width: 30%">
+<col style="width: 23%">
+<col style="width: 23%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>方法</th>
+<th style="text-align: right;">训练数量或规模</th>
+<th>主要优点</th>
+<th>主要问题</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>One-versus-the-rest</td>
+<td style="text-align: right;"><span class="math inline">\(K\)</span> 个分类器</td>
+<td>简单，实践中常用</td>
+<td>分数尺度不可比，训练集不平衡</td>
+</tr>
+<tr class="even">
+<td>Joint multiclass SVM</td>
+<td style="text-align: right;">一个较大的联合问题</td>
+<td>目标更统一</td>
+<td>训练代价高</td>
+</tr>
+<tr class="odd">
+<td>One-versus-one</td>
+<td style="text-align: right;"><span class="math inline">\(K(K-1)/2\)</span> 个分类器</td>
+<td>每个子问题更局部</td>
+<td>训练和预测开销随 <span class="math inline">\(K\)</span> 二次增长</td>
+</tr>
+<tr class="even">
+<td>DAGSVM</td>
+<td style="text-align: right;">训练 <span class="math inline">\(K(K-1)/2\)</span> 个，预测评估 <span class="math inline">\(K-1\)</span> 个</td>
+<td>降低预测计算量</td>
+<td>路径依赖，仍需训练大量分类器</td>
+</tr>
+<tr class="odd">
+<td>Output codes</td>
+<td style="text-align: right;">多个编码分类器</td>
+<td>有纠错能力</td>
+<td>需要设计编码和解码规则</td>
+</tr>
+</tbody>
+</table>
+<p>尽管 one-versus-the-rest 有明显的 ad-hoc 成分和实践限制，它仍然是应用中最广泛使用的方案之一。原因并不神秘：它简单、容易实现，也容易接到已有的二分类 SVM 训练器上。</p>
+</section>
+</section>
+<section id="one-class-svm" class="level1">
+<h1>One-class SVM</h1>
+<p>它处理的不是多分类问题，而是一种无监督学习问题，和 density estimation 有关。one-class SVM 并不直接估计完整概率密度 <span class="math display">\[
+p(x).
+\]</span> 它的目标更弱一些：<strong>找到一个平滑边界，围住数据分布中的高密度区域</strong>。这个边界可以理解为某个 density quantile：预先给定一个介于 0 和 1 之间的概率值，希望从数据分布中抽出的点有相应比例落在边界内部。</p>
+<p>Bishop 提到两类思路：</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>方法</th>
+<th>几何直觉</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Schölkopf et al.</td>
+<td>在特征空间中找一个超平面，把除固定比例 <span class="math inline">\(\nu\)</span> 外的数据与原点分开，同时最大化离原点的 margin</td>
+</tr>
+<tr class="even">
+<td>Tax and Duin</td>
+<td>在特征空间中找一个尽可能小的球，允许有比例 <span class="math inline">\(\nu\)</span> 的点落在球外</td>
+</tr>
+</tbody>
+</table>
+<p>对于只依赖差值的 kernel，例如满足 <span class="math display">\[
+k(x,x')=g(x-x')
+\]</span> 的平移不变核，这两种 one-class SVM 算法是等价的。</p>
+</section>
+<section id="svm-回归" class="level1">
+<h1>SVM 回归</h1>
+<p>本节内容旨在将 SVM 从分类问题扩展到 regression problem，同时保留 sparse solution 的性质。分类 SVM 的稀疏性来自 hinge loss 的平坦区域：样本只要位于 margin 外侧，就不再贡献损失。回归版 SVM 也采用类似思想：<strong>只要预测值和目标值的误差落在一个允许范围内，就把误差视为 0</strong>。</p>
+<p>参考 <a href="#eq-hinge-loss" class="quarto-xref">式&nbsp;2</a> ，普通线性回归常用平方误差加二次正则项： <span class="math display">\[
+\frac12\sum_{n=1}^{N}(y_n-t_n)^2+\frac{\lambda}{2}\|w\|^2.
+\]</span> 平方误差的问题是，每个样本都会持续影响模型，即使预测已经足够接近目标值。为了得到稀疏解，support vector regression 用 <span class="math inline">\(\epsilon\)</span>-insensitive error 替代平方误差。</p>
+<section id="epsilon-insensitive-loss" class="level2">
+<h2 class="anchored" data-anchor-id="epsilon-insensitive-loss"><span class="math inline">\(\epsilon\)</span>-insensitive loss</h2>
+<p><span class="math inline">\(\epsilon\)</span>-insensitive loss 定义为 <span id="eq-insensitive-loss"><span class="math display">\[
+E_\epsilon(y(x)-t)=
+\begin{cases}
+0, &amp; |y(x)-t|&lt;\epsilon,\\
+|y(x)-t|-\epsilon, &amp; \text{otherwise}.
+\end{cases}
+\tag{3}\]</span></span> 它的含义是：如果预测误差在 <span class="math display">\[
+[-\epsilon,\epsilon]
+\]</span> 范围内，就不惩罚；只有误差超过这个范围，才对超出的部分施加线性惩罚。</p>
+<div id="fig-epsilon-insensitivity-error" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-epsilon-insensitivity-error-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/image-3-20260504105120867.webp" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-epsilon-insensitivity-error-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;5 <span class="math inline">\(\epsilon\)</span>-不敏感损失函数
+</figcaption>
+</figure>
+</div>
+<p>因此，SVM regression 的目标函数可以写成 <span class="math display">\[
+C\sum_{n=1}^{N}E_\epsilon(y(x_n)-t_n)+\frac12\|w\|^2.
+\]</span> 这里 <span class="math inline">\(C\)</span> 仍然是 inverse regularization parameter，控制误差惩罚和模型平滑度之间的权衡。<span class="math inline">\(C\)</span> 越大，模型越不愿意让样本落在 <span class="math inline">\(\epsilon\)</span>-tube 外；<span class="math inline">\(C\)</span> 越小，模型越愿意接受更大的训练误差，以换取更平滑的函数。</p>
+<div id="fig-epsilon-tube" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-epsilon-tube-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/2026-05-04_10-51-45-20260504105207443.webp" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-epsilon-tube-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6 <span class="math inline">\(\epsilon\)</span>-tube 示意图
+</figcaption>
+</figure>
+</div>
+<div class="callout callout-style-default callout-important callout-titled" title="$\epsilon$-tube 的直觉">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">重要</span><span class="math inline">\(\epsilon\)</span>-tube 的直觉
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>SVM 回归不是让曲线尽可能穿过每个数据点，而是围绕预测函数 <span class="math inline">\(y(x)\)</span> 建立一个宽度为 <span class="math inline">\(2\epsilon\)</span> 的 tube。落在 tube 内的点被认为“已经足够好”，不会继续推动模型；落在 tube 边界上或 tube 外的点，才可能成为 support vectors。</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="稳健预测">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">提示</span>稳健预测
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>现在我们有个问题，我们希望预测时有更强的稳健性，并且让其对随机误差不那么敏感。可以借用 <a href="#eq-insensitive-loss" class="quarto-xref">式&nbsp;3</a> 的思想，修改 loss function 实现。</p>
+</div>
+</div>
+</section>
+<section id="slack-variables" class="level2">
+<h2 class="anchored" data-anchor-id="slack-variables">Slack variables</h2>
+<p>为了把 <span class="math inline">\(\epsilon\)</span>-insensitive loss 写成约束优化形式，每个样本需要两个 slack variables： <span class="math display">\[
+\xi_n\ge 0,\qquad \hat{\xi}_n\ge 0.
+\]</span> 其中 <span class="math inline">\(\xi_n\)</span> 对应目标值高于 tube 上边界的情形： <span class="math display">\[
+t_n&gt;y(x_n)+\epsilon,
+\]</span> 而 <span class="math inline">\(\hat{\xi}_n\)</span> 对应目标值低于 tube 下边界的情形： <span class="math display">\[
+t_n&lt;y(x_n)-\epsilon.
+\]</span></p>
+<p>若令 <span class="math inline">\(y_n=y(x_n)\)</span>，样本位于 <span class="math inline">\(\epsilon\)</span>-tube 内的条件是 <span class="math display">\[
+y_n-\epsilon\le t_n\le y_n+\epsilon.
+\]</span> 引入 slack variables 后，允许样本越出 tube，但越出的距离要进入目标函数： <span class="math display">\[
+t_n\le y(x_n)+\epsilon+\xi_n,
+\]</span> <span class="math display">\[
+t_n\ge y(x_n)-\epsilon-\hat{\xi}_n.
+\]</span> 于是 support vector regression 的 primal problem 为</p>
+<p><span class="math display">\[
+\min_{w,b,\xi,\hat{\xi}}
+C\sum_{n=1}^{N}(\xi_n+\hat{\xi}_n)
++\frac12\|w\|^2.
+\]</span></p>
+<p>subject to <span class="math display">\[
+t_n\le y(x_n)+\epsilon+\xi_n,
+\]</span> <span class="math display">\[
+t_n\ge y(x_n)-\epsilon-\hat{\xi}_n,
+\]</span> and <span class="math display">\[
+\xi_n\ge 0,\qquad \hat{\xi}_n\ge 0.
+\]</span></p>
+<p>这个形式和 soft-margin SVM 非常平行：<span class="math inline">\(\frac12\|w\|^2\)</span> 希望函数平滑，<span class="math inline">\(C\sum_n(\xi_n+\hat{\xi}_n)\)</span> 惩罚落在 tube 外的点。区别在于，分类问题只有“margin 不够或错分”这一种违反方式；回归问题有上下两个方向的误差，所以需要两组 slack variables。</p>
+</section>
+<section id="对偶形式" class="level2">
+<h2 class="anchored" data-anchor-id="对偶形式">对偶形式</h2>
+<p>和分类 SVM 一样，SVM 回归也可以通过 Lagrange multipliers 转成对偶问题。对两组 tube 约束引入 <span class="math display">\[
+a_n\ge 0,\qquad \hat a_n\ge 0,
+\]</span> 对 slack variables 的非负约束引入 <span class="math display">\[
+\mu_n\ge 0,\qquad \hat\mu_n\ge 0.
+\]</span></p>
+<p>对应的拉格朗日函数为 <span class="math display">\[
+\begin{aligned}
+L
+=&amp;
+\frac12\|w\|^2
++C\sum_{n=1}^N(\xi_n+\hat{\xi}_n)
+-\sum_{n=1}^N(\mu_n\xi_n+\hat\mu_n\hat{\xi}_n)\\
+&amp;-\sum_{n=1}^N a_n\{\epsilon+\xi_n+y(x_n)-t_n\}\\
+&amp;-\sum_{n=1}^N \hat a_n\{\epsilon+\hat{\xi}_n-y(x_n)+t_n\}.
+\end{aligned}
+\]</span></p>
+<p>这里第一组大括号对应 <span class="math display">\[
+\epsilon+\xi_n+y(x_n)-t_n\ge 0,
+\]</span> 也就是目标值超过 tube 上边界时的约束；第二组大括号对应 <span class="math display">\[
+\epsilon+\hat{\xi}_n-y(x_n)+t_n\ge 0,
+\]</span> 也就是目标值低于 tube 下边界时的约束。</p>
+<p>对 <span class="math inline">\(w,b,\xi_n,\hat{\xi}_n\)</span> 分别求 stationarity，可得 <span class="math display">\[
+w=\sum_{n=1}^{N}(a_n-\hat a_n)\phi(x_n),
+\]</span> <span class="math display">\[
+\sum_{n=1}^{N}(a_n-\hat a_n)=0,
+\]</span> <span class="math display">\[
+C-a_n-\mu_n=0,
+\]</span> <span class="math display">\[
+C-\hat a_n-\hat\mu_n=0.
+\]</span></p>
+<p>由于 <span class="math inline">\(\mu_n,\hat\mu_n\ge 0\)</span>，最后两条条件给出 box constraints： <span class="math display">\[
+0\le a_n\le C,\qquad 0\le \hat a_n\le C.
+\]</span></p>
+<p>消去 primal variables 后，对偶问题是最大化 <span class="math display">\[
+\begin{aligned}
+\tilde L(a,\hat a)
+=&amp;
+-\frac12
+\sum_{n=1}^{N}\sum_{m=1}^{N}
+(a_n-\hat a_n)(a_m-\hat a_m)k(x_n,x_m)\\
+&amp;-\epsilon\sum_{n=1}^{N}(a_n+\hat a_n)
++\sum_{n=1}^{N}(a_n-\hat a_n)t_n,
+\end{aligned}
+\]</span> subject to <span class="math display">\[
+0\le a_n\le C,\qquad 0\le \hat a_n\le C,
+\]</span> and <span class="math display">\[
+\sum_{n=1}^{N}(a_n-\hat a_n)=0.
+\]</span></p>
+<p>训练完成后，对新输入的预测为 <span class="math display">\[
+y(x)=\sum_{n=1}^{N}(a_n-\hat a_n)k(x,x_n)+b.
+\]</span> 这和分类 SVM 一样，只依赖核函数；区别在于分类中的系数是 <span class="math inline">\(\alpha_n t_n\)</span>，而回归中的系数是 <span class="math display">\[
+a_n-\hat a_n.
+\]</span></p>
+</section>
+<section id="kkt-条件与-support-vectors" class="level2">
+<h2 class="anchored" data-anchor-id="kkt-条件与-support-vectors">KKT 条件与 support vectors</h2>
+<p>SVM 回归中的 KKT 互补松弛条件包括 <span class="math display">\[
+a_n\{\epsilon+\xi_n+y(x_n)-t_n\}=0,
+\]</span> <span class="math display">\[
+\hat a_n\{\epsilon+\hat{\xi}_n-y(x_n)+t_n\}=0,
+\]</span> <span class="math display">\[
+(C-a_n)\xi_n=0,
+\]</span> <span class="math display">\[
+(C-\hat a_n)\hat{\xi}_n=0.
+\]</span></p>
+<p>这些条件可以读出 support vectors 的来源：</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>样本位置</th>
+<th>系数状态</th>
+<th>是否影响预测</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>在 <span class="math inline">\(\epsilon\)</span>-tube 内部</td>
+<td><span class="math inline">\(a_n=\hat a_n=0\)</span></td>
+<td>不影响</td>
+</tr>
+<tr class="even">
+<td>在 tube 上边界或上方</td>
+<td>可能有 <span class="math inline">\(a_n\ne 0\)</span></td>
+<td>影响</td>
+</tr>
+<tr class="odd">
+<td>在 tube 下边界或下方</td>
+<td>可能有 <span class="math inline">\(\hat a_n\ne 0\)</span></td>
+<td>影响</td>
+</tr>
+</tbody>
+</table>
+<p>更具体地说，若样本严格落在 <span class="math inline">\(\epsilon\)</span>-tube 内，则两组 tube 约束都有松弛余量，因此互补松弛迫使 <span class="math display">\[
+a_n=\hat a_n=0.
+\]</span> 这些点不会出现在最终核展开中。若 <span class="math inline">\(a_n&gt;0\)</span>，则第一条 tube 约束必须取等号，说明样本位于上边界或上方；若 <span class="math inline">\(\hat a_n&gt;0\)</span>，则第二条 tube 约束必须取等号，说明样本位于下边界或下方。</p>
+<p>由于 <span class="math inline">\(\epsilon&gt;0\)</span>，同一个样本不可能同时位于 tube 的上边界和下边界，所以对于每个 <span class="math inline">\(x_n\)</span>，<span class="math inline">\(a_n\)</span> 和 <span class="math inline">\(\hat a_n\)</span> 至少有一个为 0，也可能两个都为 0。</p>
+<p>这就解释了 SVM regression 的稀疏性：<strong>tube 内的样本全部被忽略，只有落在 tube 边界上或 tube 外的样本会出现在最终核展开中</strong>。这些点就是 regression setting 下的 support vectors。</p>
+</section>
+<section id="偏置项-b" class="level2">
+<h2 class="anchored" data-anchor-id="偏置项-b">偏置项 <span class="math inline">\(b\)</span></h2>
+<p>偏置项 <span class="math inline">\(b\)</span> 可以由 tube 边界上的 support vectors 恢复。若某个样本满足 <span class="math display">\[
+0&lt;a_n&lt;C,
+\]</span> 则由 <span class="math inline">\((C-a_n)\xi_n=0\)</span> 可知 <span class="math inline">\(\xi_n=0\)</span>。再由 <span class="math display">\[
+a_n\{\epsilon+\xi_n+y(x_n)-t_n\}=0
+\]</span> 可得 <span class="math display">\[
+\epsilon+y(x_n)-t_n=0.
+\]</span> 代入核展开式，得到 <span class="math display">\[
+b
+=t_n-\epsilon-\sum_{m=1}^{N}(a_m-\hat a_m)k(x_n,x_m).
+\]</span></p>
+<p>类似地，若某个样本满足 <span class="math display">\[
+0&lt;\hat a_n&lt;C,
+\]</span> 则 <span class="math inline">\(\hat{\xi}_n=0\)</span>，并且 <span class="math display">\[
+\epsilon-y(x_n)+t_n=0,
+\]</span> 从而 <span class="math display">\[
+b
+=t_n+\epsilon-\sum_{m=1}^{N}(a_m-\hat a_m)k(x_n,x_m).
+\]</span></p>
+<p>实践中可以对所有满足 <span class="math inline">\(0&lt;a_n&lt;C\)</span> 或 <span class="math inline">\(0&lt;\hat a_n&lt;C\)</span> 的样本给出的 <span class="math inline">\(b\)</span> 取平均，以降低数值误差。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="哪些点适合用来求 $b$">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>哪些点适合用来求 <span class="math inline">\(b\)</span>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>用于恢复 <span class="math inline">\(b\)</span> 的最好是落在 tube 边界上的 support vectors，也就是 <span class="math inline">\(0&lt;a_n&lt;C\)</span> 或 <span class="math inline">\(0&lt;\hat a_n&lt;C\)</span> 的点。若 <span class="math inline">\(a_n=C\)</span> 或 <span class="math inline">\(\hat a_n=C\)</span>，样本可能已经落在 tube 外部，对应的 slack variable 不一定为 0，因此不适合直接使用边界等式。</p>
+</div>
+</div>
+</section>
+<section id="nu-svr" class="level2">
+<h2 class="anchored" data-anchor-id="nu-svr"><span class="math inline">\(\nu\)</span>-SVR</h2>
+<p>和分类 SVM 类似，SVM 回归也有一个 <span class="math inline">\(\nu\)</span>-formulation。它不直接固定 <span class="math inline">\(\epsilon\)</span>，而是引入参数 <span class="math inline">\(\nu\)</span> 来控制 tube 宽度与 support vectors 数量之间的关系。对应的对偶问题可以写成最大化 <span class="math display">\[
+\begin{aligned}
+\tilde L(a,\hat a)
+=&amp;
+-\frac12
+\sum_{n=1}^{N}\sum_{m=1}^{N}
+(a_n-\hat a_n)(a_m-\hat a_m)k(x_n,x_m)\\
+&amp;+\sum_{n=1}^{N}(a_n-\hat a_n)t_n,
+\end{aligned}
+\]</span> subject to <span class="math display">\[
+0\le a_n\le \frac{C}{N},
+\]</span> <span class="math display">\[
+0\le \hat a_n\le \frac{C}{N},
+\]</span> <span class="math display">\[
+\sum_{n=1}^{N}(a_n-\hat a_n)=0,
+\]</span> and <span class="math display">\[
+\sum_{n=1}^{N}(a_n+\hat a_n)\le \nu C.
+\]</span></p>
+<p>这个形式的好处是 <strong><span class="math inline">\(\nu\)</span> 的解释更直观</strong>。它会约束落在 <span class="math inline">\(\epsilon\)</span>-tube 外的数据比例，并同时给出 support vectors 比例的下界。更精确地说，在适当条件下，tube 外的数据点至多约为 <span class="math inline">\(\nu N\)</span> 个，而 support vectors 至少约为 <span class="math inline">\(\nu N\)</span> 个。也就是说，<span class="math inline">\(\nu\)</span> 直接控制“允许多少点真的违反 tube”以及“至少有多少点参与决定函数”。</p>
+<div id="fig-nu-svm-reg" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-nu-svm-reg-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/nu-svm-reg-20260513-110745.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-nu-svm-reg-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;7 <span class="math inline">\(\nu\)</span>-SVM回归示意图
+</figcaption>
+</figure>
+</div>
+<p>上图例子展示了用 <span class="math inline">\(\nu\)</span>-SVR 处理一维 sinusoidal regression。红色曲线是预测函数，阴影区域对应 <span class="math inline">\(\epsilon\)</span>-insensitive tube；落在 tube 内部的样本不会影响最终模型，落在边界上或外部的样本成为 support vectors。图中也能看到，SVR 学到的不是穿过所有点的插值曲线，而是在误差容忍带内寻找尽可能平滑、稀疏的函数。</p>
+<div class="callout callout-style-default callout-important callout-titled" title="SVM 回归的核心">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">重要</span>SVM 回归的核心
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>SVR 的关键不是把分类标签换成连续目标值那么简单，而是把最大间隔思想改写成一个“误差容忍带”：tube 内的误差被视为无关紧要，tube 外的误差才被线性惩罚。正是这个平坦区域使得大量样本的 <span class="math inline">\(a_n=\hat a_n=0\)</span>，从而得到 sparse kernel expansion。</p>
+</div>
+</div>
+</section>
+<section id="本节小结-1" class="level2">
+<h2 class="anchored" data-anchor-id="本节小结-1">本节小结</h2>
+<p>SVM 回归可以按以下逻辑理解：</p>
+<ol type="1">
+<li>使用 <span class="math inline">\(\epsilon\)</span>-insensitive loss 代替平方误差，使 tube 内误差不产生损失。</li>
+<li>每个样本需要两组 slack variables，分别处理目标值高于上边界和低于下边界的情况。</li>
+<li>Primal problem 在函数平滑性 <span class="math inline">\(\frac12\|w\|^2\)</span> 和 tube violation <span class="math inline">\(\sum_n(\xi_n+\hat{\xi}_n)\)</span> 之间权衡。</li>
+<li>对偶形式中的预测函数为 <span class="math inline">\(\sum_n(a_n-\hat a_n)k(x,x_n)+b\)</span>。</li>
+<li>Tube 内部样本满足 <span class="math inline">\(a_n=\hat a_n=0\)</span>，不会参与预测。</li>
+<li>只有 tube 边界上或 tube 外的点成为 regression support vectors。</li>
+<li>偏置项 <span class="math inline">\(b\)</span> 应由满足 <span class="math inline">\(0&lt;a_n&lt;C\)</span> 或 <span class="math inline">\(0&lt;\hat a_n&lt;C\)</span> 的边界 support vectors 恢复。</li>
+<li><span class="math inline">\(\nu\)</span>-SVR 用 <span class="math inline">\(\nu\)</span> 取代直接指定 <span class="math inline">\(\epsilon\)</span>，让参数更直接地控制 tube 外样本比例和 support vectors 比例。</li>
+</ol>
+</section>
+</section>
+<section id="计算理论分析" class="level1">
+<h1>计算理论分析</h1>
+<p>SVM 的发展不仅来自优化和几何直觉，也深受 <strong>computational learning theory</strong> 的影响。这个方向关心的问题不是某个训练集上能不能拟合好，而是：<strong>给定一个模型空间和有限训练样本，学习到的函数在未见数据上需要多少样本才能有好的泛化表现？</strong></p>
+<p>PRML 在这里主要把 SVM 放到 <strong>PAC learning</strong> 的框架中理解。PAC 是 probably approximately correct 的缩写，意思是我们不要求模型永远正确，而是要求它以足够高的概率达到足够小的误差。设训练集 <span class="math display">\[
+\mathcal D=\{(x_n,t_n)\}_{n=1}^N
+\]</span> 由联合分布 <span class="math inline">\(p(x,t)\)</span> 独立抽样得到。学习算法基于 <span class="math inline">\(\mathcal D\)</span> 从函数空间 <span class="math inline">\(\mathcal F\)</span> 中选出一个函数，记为 <span class="math display">\[
+f(x;\mathcal D).
+\]</span> 如果希望它具有好的泛化能力，就希望在真实数据分布下的期望错误率足够小： <span class="math display">\[
+\mathbb E_{x,t}\left[I(f(x;\mathcal D)\ne t)\right]&lt;\epsilon.
+\]</span> 其中 <span class="math inline">\(I(\cdot)\)</span> 是 indicator function，<span class="math inline">\(\epsilon\)</span> 是预先给定的误差阈值。</p>
+<p>这里需要注意，<strong>左边的误差本身仍然是随机变量，因为它依赖随机抽到的训练集 <span class="math inline">\(\mathcal D\)</span></strong>。PAC 框架要求更强一点：上面的不等式要以至少 <span class="math display">\[
+1-\delta
+\]</span> 的概率成立:</p>
+<p><span class="math display">\[
+P(
+\mathbb E_{x,t}\left[I(f(x;\mathcal D)\ne t)\right]&lt;\epsilon
+) \geq 1-\delta,
+\]</span></p>
+<p>也就是说，<strong>若反复从同一个分布中抽取训练集并训练模型，那么大多数情况下，训练出来的函数都应该达到误差小于 <span class="math inline">\(\epsilon\)</span> 的要求</strong>。</p>
+<p>在这个框架中，一个核心量是 <strong>Vapnik-Chervonenkis dimension</strong>，简称 <strong>VC dimension</strong>。它衡量函数空间 <span class="math inline">\(\mathcal F\)</span> 的复杂度，并进一步给出样本量 <span class="math inline">\(N\)</span> 的下界：模型空间越复杂，要保证同样的泛化误差和置信度，通常就需要更多训练样本。SVM 的最大间隔思想之所以重要，也可以从这里理解：它并不只是追求训练集分类正确，而是在控制有效复杂度，从而改善泛化界。</p>
+<p>不过，PAC 或 VC dimension 给出的界通常是 <strong>worst-case bounds</strong>。它们要对任意数据分布 <span class="math inline">\(p(x,t)\)</span>、任意目标函数选择、任意训练集抽样情况都成立，因此往往非常保守。在真实机器学习任务中，数据分布通常有特殊结构，不会覆盖所有理论上可能的最坏情形。结果就是：PAC bounds 经常会严重高估达到某个泛化误差所需的训练样本量，所以它们更多提供理论理解，而不是直接指导实际样本量设计。</p>
+<p>后续也有人提出 <strong>PAC-Bayesian framework</strong> 来改进这些界。它考虑函数空间 <span class="math inline">\(\mathcal F\)</span> 上的分布，与贝叶斯思想有相似之处。PAC-Bayesian bounds 通常比经典 PAC bounds 更紧，但仍然带有明显的保守性。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="这一节的要点">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>这一节的要点
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Computational learning theory 试图回答的是泛化保证问题：学习算法需要多少样本，才能以高概率得到低错误率的函数。PAC 框架用 <span class="math inline">\(\epsilon\)</span> 控制可接受误差，用 <span class="math inline">\(\delta\)</span> 控制失败概率，用 VC dimension 衡量模型空间复杂度。它为 SVM 的最大间隔思想提供了理论背景，但由于这些界通常是 worst-case 的，所以实际应用中往往偏保守。</p>
+</div>
+</div>
+</section>
+<section id="svm-的注意事项" class="level1">
+<h1>SVM 的注意事项</h1>
+<p><strong>虽然训练好的 SVM 在预测时只依赖 support vectors，但训练阶段要确定 <span class="math inline">\(\alpha\)</span> 和 <span class="math inline">\(b\)</span>，仍然需要利用整个训练集</strong>。对偶问题是凸二次规划：目标函数是二次函数，约束区域由线性约束定义，因此任何局部最优也是全局最优。直接求解完整 quadratic programming problem 往往代价很高，因为需要处理 <span class="math inline">\(N\times N\)</span> 的核矩阵。</p>
+<p>PRML 提到几类常见训练策略：</p>
+<ul>
+<li>chunking 通过逐步丢弃 <span class="math inline">\(\alpha_n=0\)</span> 的样本来缩小问题；</li>
+<li>decomposition methods 每次求解固定大小的子问题；</li>
+<li>SMO 则将这种思想推到极端，每次只优化两个拉格朗日乘子，使子问题可以解析求解，从而避免通用数值 QP。</li>
+</ul>
+<p>最后，还有两个容易误解的点需要提醒一下。</p>
+<ul>
+<li>kernel trick 并不意味着完全摆脱维度灾难；即便多项式 kernel 将二维输入隐式映射到更高维特征空间，映射后的点仍受原始低维输入的结构约束，并不会任意填满整个高维空间。</li>
+<li>SVM 是 decision machine，不直接给出 posterior probability。若需要概率输出，可以在训练好的 SVM 输出 <span class="math inline">\(y(x)\)</span> 上再拟合 sigmoid： <span class="math display">\[
+  p(t=1\mid x)=\sigma(Ay(x)+B).
+  \]</span> 这称为 <strong>Platt scaling</strong>。用于拟合 sigmoid 的数据最好独立于训练 SVM 的数据，否则容易过拟合；而且 SVM 的 <span class="math inline">\(y(x)\)</span> 本身并不是专门为了表示 log-odds 而训练的，所以这种概率近似可能并不理想。</li>
+</ul>
+</section>
+<section id="rvm回归" class="level1">
+<h1>RVM回归</h1>
+<p>Relevance Vector Machine 可以看作是对 SVM 稀疏核展开的贝叶斯化改写。它最终也会得到形如 <span class="math display">\[
+y(x)=\sum_{n=1}^N w_n k(x,x_n)+b
+\]</span> 的预测函数，因此在形式上很像 SVM 的核展开。但二者的来源完全不同：<strong>SVM 的稀疏性来自 margin 约束和 KKT 条件；RVM 的稀疏性来自对每个权重单独设置精度参数，并通过 evidence maximization 自动判断哪些基函数应该被保留</strong>。</p>
+<p>更一般地，先考虑一个固定基函数线性模型： <span class="math display">\[
+y(x)=\sum_{i=1}^M w_i\phi_i(x)=w^\top\phi(x).
+\]</span> 在 RVM 中，这些基函数通常可以选成以训练样本为中心的 kernel basis functions，这时参数个数大约是 <span class="math inline">\(N+1\)</span>，其中额外的一项对应偏置项 <span class="math inline">\(b\)</span>。不过 Bishop 特别强调，RVM 的贝叶斯稀疏机制并不要求 kernel 必须正定，也不要求基函数一定和训练样本一一绑定。只要模型可以写成固定基函数的线性组合，这套 ARD 机制就可以使用。</p>
+<section id="回归模型与-ard-先验" class="level2">
+<h2 class="anchored" data-anchor-id="回归模型与-ard-先验">回归模型与 ARD 先验</h2>
+<p>回归 RVM 假设目标值由模型输出加高斯噪声产生： <span class="math display">\[
+p(t_n\mid x_n,w,\beta)=
+\mathcal N(t_n\mid w^\top\phi(x_n),\beta^{-1}),
+\]</span> 其中 <span class="math inline">\(\beta=\sigma^{-2}\)</span> 是 noise precision。给定全部训练输入 <span class="math inline">\(X\)</span> 和目标向量 <span class="math display">\[
+t=(t_1,\dots,t_N)^\top,
+\]</span> 似然函数为 <span class="math display">\[
+p(t\mid X,w,\beta)=
+\prod_{n=1}^N p(t_n\mid x_n,w,\beta).
+\]</span></p>
+<p>RVM 的关键在先验。普通贝叶斯线性回归常对所有权重共享一个正则化强度，而 RVM 为每个权重 <span class="math inline">\(w_i\)</span> 分配一个单独的 precision hyperparameter <span class="math inline">\(\alpha_i\)</span>： <span class="math display">\[
+p(w\mid\alpha)=
+\prod_{i=1}^M \mathcal N(w_i\mid 0,\alpha_i^{-1}).
+\]</span> 这就是 automatic relevance determination, 简称 ARD。若某个 <span class="math inline">\(\alpha_i\)</span> 被学习到非常大，则 <span class="math inline">\(w_i\)</span> 的先验方差 <span class="math inline">\(\alpha_i^{-1}\)</span> 会趋近于 0，后验也会被压到 0 附近。对应的基函数 <span class="math inline">\(\phi_i(x)\)</span> 便被模型自动剪掉。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="RVM 的稀疏性来自哪里">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>RVM 的稀疏性来自哪里
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>RVM 不是通过 hinge loss 的平坦区域来让样本系数为 0，而是通过 evidence maximization 把许多 <span class="math inline">\(\alpha_i\)</span> 推向无穷大。<span class="math inline">\(\alpha_i\to\infty\)</span> 意味着 <span class="math inline">\(w_i\)</span> 的可用方差趋近于 0，因此这个权重无法对预测产生作用。若 <span class="math inline">\(\phi_i(x)\)</span> 是以某个训练样本为中心的 kernel basis function，那么这个训练样本就不会成为 relevance vector。</p>
+</div>
+</div>
+</section>
+<section id="后验分布与-evidence-maximization" class="level2">
+<h2 class="anchored" data-anchor-id="后验分布与-evidence-maximization">后验分布与 evidence maximization</h2>
+<p>令 <span class="math inline">\(\Phi\)</span> 为设计矩阵，其元素为 <span class="math display">\[
+\Phi_{ni}=\phi_i(x_n),
+\]</span> 并令 <span class="math display">\[
+A=\operatorname{diag}(\alpha_i).
+\]</span> 由于似然和先验都是高斯分布，权重后验仍然是高斯分布： <span class="math display">\[
+p(w\mid t,X,\alpha,\beta)=\mathcal N(w\mid m,\Sigma),
+\]</span> 其中 <span class="math display">\[
+m=\beta\Sigma\Phi^\top t,
+\]</span> <span class="math display">\[
+\Sigma=(A+\beta\Phi^\top\Phi)^{-1}.
+\]</span> 这里的 <span class="math inline">\(m\)</span> 是所有权重的后验均值，<span class="math inline">\(\Sigma\)</span> 则描述权重的不确定性。后续预测时，RVM 不是只给出点估计，而是会保留这个后验不确定性。</p>
+<p>接下来需要学习 <span class="math inline">\(\alpha\)</span> 和 <span class="math inline">\(\beta\)</span>。RVM 采用 type-II maximum likelihood (更常用的名称是<strong>经验贝叶斯</strong>)，也就是最大化把 <span class="math inline">\(w\)</span> 积分掉之后的 marginal likelihood: <span class="math display">\[
+p(t\mid X,\alpha,\beta)
+=
+\int p(t\mid X,w,\beta)p(w\mid\alpha)\,dw.
+\]</span> 这个积分仍然是高斯形式，可以写成 <span class="math display">\[
+p(t\mid X,\alpha,\beta)=\mathcal N(t\mid 0,C),
+\]</span> 其中 <span class="math display">\[
+C=\beta^{-1}I+\Phi A^{-1}\Phi^\top.
+\]</span> 直观上，<span class="math inline">\(C\)</span> 同时包含观测噪声和由基函数权重不确定性诱导出来的目标值协方差。</p>
+<p>对 evidence 求驻点可以得到一组重估公式： <span class="math display">\[
+\alpha_i^{\mathrm{new}}=\frac{\gamma_i}{m_i^2},
+\]</span> <span class="math display">\[
+(\beta^{\mathrm{new}})^{-1}
+=
+\frac{\lVert t-\Phi m\rVert^2}
+{N-\sum_i\gamma_i},
+\]</span> 其中 <span class="math display">\[
+\gamma_i=1-\alpha_i\Sigma_{ii}.
+\]</span> <span class="math inline">\(\gamma_i\)</span> 可以理解为第 <span class="math inline">\(i\)</span> 个权重被数据真正确定的程度:</p>
+<ul>
+<li>如果 <span class="math inline">\(\gamma_i\)</span> 很小，说明数据几乎没有给这个权重提供有效自由度；</li>
+<li>如果 <span class="math inline">\(\gamma_i\)</span> 接近 1，则说明这个权重更像是由数据决定，而不是完全由先验压住。</li>
+</ul>
+<p>训练流程因此可以概括为：</p>
+<ol type="1">
+<li>初始化 <span class="math inline">\(\alpha\)</span> 和 <span class="math inline">\(\beta\)</span>。</li>
+<li>用当前超参数计算后验均值 <span class="math inline">\(m\)</span> 和协方差 <span class="math inline">\(\Sigma\)</span>。</li>
+<li>用重估公式更新 <span class="math inline">\(\alpha\)</span> 和 <span class="math inline">\(\beta\)</span>。</li>
+<li>重复计算后验与更新超参数，直到 evidence 或参数变化收敛。</li>
+</ol>
+<p>这个过程会自然把大量 <span class="math inline">\(\alpha_i\)</span> 推大，使相应基函数退出模型。<strong>若采用以训练样本为中心的 kernel basis functions，最后保留下来的样本就是 relevance vectors</strong>。</p>
+</section>
+<section id="预测分布" class="level2">
+<h2 class="anchored" data-anchor-id="预测分布">预测分布</h2>
+<p>当超参数收敛到 <span class="math inline">\(\alpha^\star,\beta^\star\)</span> 后，对于新输入 <span class="math inline">\(x\)</span>，预测分布为 <span class="math display">\[
+p(t\mid x,X,t,\alpha^\star,\beta^\star)
+=
+\mathcal N(t\mid m^\top\phi(x),\sigma^2(x)),
+\]</span> 其中预测方差为 <span class="math display">\[
+\sigma^2(x)
+=
+(\beta^\star)^{-1}+\phi(x)^\top\Sigma\phi(x).
+\]</span> 第一项来自观测噪声，第二项来自权重后验不确定性。因此，RVM 和 SVM 的一个重要区别是：<strong>RVM 直接给出 predictive distribution，而不是只给出一个未校准的 decision value 或回归函数值</strong>。</p>
+<p>不过这也带来一个需要小心的地方。若使用局部化基函数，例如以训练点为中心的高斯核，在远离训练数据的区域里 <span class="math inline">\(\phi(x)\)</span> 可能接近 0，于是第二项 <span class="math inline">\(\phi(x)^\top\Sigma\phi(x)\)</span> 也会很小。这样模型可能在外推区域显得过度自信。Gaussian process regression 通常不会以同样方式出现这个问题，但它在预测时往往需要更高计算成本。</p>
+</section>
+<section id="稀疏性的质量" class="level2">
+<h2 class="anchored" data-anchor-id="稀疏性的质量">稀疏性的质量</h2>
+<p>上面的重估公式说明了 RVM 会变稀疏，但还没有直接回答：<strong>某个基函数什么时候应该留下，什么时候应该删掉？</strong> Bishop 接着把 marginal likelihood 中与某个 <span class="math inline">\(\alpha_i\)</span> 有关的部分单独分离出来。</p>
+<p>记 <span class="math inline">\(\varphi_i\)</span> 为设计矩阵 <span class="math inline">\(\Phi\)</span> 的第 <span class="math inline">\(i\)</span> 列，也就是第 <span class="math inline">\(i\)</span> 个基函数在所有训练样本上的取值向量。将协方差矩阵写成 <span class="math display">\[
+C=C_{-i}+\alpha_i^{-1}\varphi_i\varphi_i^\top,
+\]</span> 其中 <span class="math inline">\(C_{-i}\)</span> 表示移除第 <span class="math inline">\(i\)</span> 个基函数贡献后的协方差。定义 <span class="math display">\[
+s_i=\varphi_i^\top C_{-i}^{-1}\varphi_i,
+\]</span> <span class="math display">\[
+q_i=\varphi_i^\top C_{-i}^{-1}t.
+\]</span> Bishop 把 <span class="math inline">\(s_i\)</span> 称为 sparsity，把 <span class="math inline">\(q_i\)</span> 称为 quality。粗略地说，<span class="math inline">\(s_i\)</span> 衡量这个基函数和当前模型中已有基函数的重叠程度；<span class="math inline">\(q_i\)</span> 衡量它与当前仍未解释的数据方向的对齐程度。</p>
+<p>在固定其他超参数时，<span class="math inline">\(\alpha_i\)</span> 对 log marginal likelihood 的贡献可以写成 <span class="math display">\[
+\lambda(\alpha_i)
+=
+\frac12
+\left[
+\ln\alpha_i-\ln(\alpha_i+s_i)
++\frac{q_i^2}{\alpha_i+s_i}
+\right].
+\]</span> 对 <span class="math inline">\(\alpha_i\)</span> 求最优解后得到一个非常清楚的选择规则： <span class="math display">\[
+\alpha_i=
+\frac{s_i^2}{q_i^2-s_i}
+\quad\text{if }q_i^2&gt;s_i,
+\]</span> 否则 <span class="math display">\[
+\alpha_i\to\infty.
+\]</span></p>
+<p>这条规则揭示了 RVM 稀疏性的核心：<strong>只有当某个基函数对残差方向的解释能力足够强，超过它带来的冗余和复杂度代价时，它才会被保留。若 <span class="math inline">\(q_i^2\le s_i\)</span>，最优选择就是把 <span class="math inline">\(\alpha_i\)</span> 推向无穷大，也就是删除这个基函数。</strong></p>
+<div class="callout callout-style-default callout-important callout-titled" title="quality 与 sparsity 的取舍">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">重要</span>quality 与 sparsity 的取舍
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>RVM 中的一个基函数并不是因为靠近决策边界或落在 tube 外才重要。它重要，是因为它的取值向量能有效解释当前模型尚未解释的数据方向。如果它主要与已有基函数重复，或者和目标向量对齐很差，evidence maximization 会倾向于把它剪掉。</p>
+</div>
+</div>
+<p>这个分析还导出了更快的 sequential sparse Bayesian learning algorithm。算法不必每次同时优化所有 <span class="math inline">\(\alpha_i\)</span>，而是依次考察候选基函数：若 <span class="math inline">\(q_i^2&gt;s_i\)</span> 且它尚未进入模型，就加入；若已经进入模型，就更新其 <span class="math inline">\(\alpha_i\)</span>；若 <span class="math inline">\(q_i^2\le s_i\)</span> 且它在模型中，就移除。由于每一步只维护 active basis functions，实际矩阵运算规模通常远小于完整训练集大小。</p>
+</section>
+<section id="与-svm-回归的对比" class="level2">
+<h2 class="anchored" data-anchor-id="与-svm-回归的对比">与 SVM 回归的对比</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>维度</th>
+<th>SVM 回归</th>
+<th>RVM 回归</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>模型输出</td>
+<td>点预测函数</td>
+<td>predictive distribution</td>
+</tr>
+<tr class="even">
+<td>稀疏机制</td>
+<td><span class="math inline">\(\epsilon\)</span>-insensitive loss 与 KKT 条件</td>
+<td>ARD prior 与 evidence maximization</td>
+</tr>
+<tr class="odd">
+<td>保留下来的点</td>
+<td>support vectors</td>
+<td>relevance vectors</td>
+</tr>
+<tr class="even">
+<td>核函数要求</td>
+<td>通常要求正定核以保证凸优化结构</td>
+<td>基函数不必一定来自正定核</td>
+</tr>
+<tr class="odd">
+<td>训练目标</td>
+<td>凸二次规划</td>
+<td>非凸 evidence optimization</td>
+</tr>
+<tr class="even">
+<td>复杂度参数</td>
+<td><span class="math inline">\(C,\epsilon\)</span> 或 <span class="math inline">\(\nu\)</span> 常需交叉验证</td>
+<td><span class="math inline">\(\alpha,\beta\)</span> 可在一次训练中估计</td>
+</tr>
+<tr class="odd">
+<td>预测阶段</td>
+<td>依赖 support vectors</td>
+<td>通常依赖更少的 relevance vectors</td>
+</tr>
+</tbody>
+</table>
+<p>RVM 的优势是模型往往比对应的 SVM 更稀疏，测试阶段计算更快，并且天然提供概率预测。代价是训练问题不再是凸优化，可能存在局部最优；同时若从 <span class="math inline">\(M\)</span> 个候选基函数开始，后验协方差计算涉及 <span class="math inline">\(M\times M\)</span> 矩阵，朴素实现的代价较高。实践中，快速顺序算法的作用正是在保留 ARD 稀疏机制的同时降低这一训练成本。</p>
+</section>
+</section>
+<section id="rvm分类" class="level1">
+<h1>RVM分类</h1>
+<p>RVM 也可以扩展到分类问题。思路是把第 4 章中的概率线性分类器和第 7 章这里的 ARD prior 结合起来：分类器仍然通过基函数线性组合产生一个 score，但输出不再直接作为回归目标，而是经过 sigmoid 或 softmax 转换为类别概率。</p>
+<section id="二分类模型" class="level2">
+<h2 class="anchored" data-anchor-id="二分类模型">二分类模型</h2>
+<p>先考虑二分类，目标变量取值为 <span class="math display">\[
+t\in\{0,1\}.
+\]</span> 模型定义为 <span class="math display">\[
+y(x,w)=\sigma(w^\top\phi(x)),
+\]</span> 其中 <span class="math inline">\(\sigma(\cdot)\)</span> 是 logistic sigmoid。于是每个样本的条件分布是 Bernoulli 分布： <span class="math display">\[
+p(t_n\mid x_n,w)=
+y_n^{t_n}(1-y_n)^{1-t_n},
+\]</span> 其中 <span class="math display">\[
+y_n=\sigma(w^\top\phi(x_n)).
+\]</span> 权重先验仍然采用和回归 RVM 相同的 ARD 形式： <span class="math display">\[
+p(w\mid\alpha)=
+\prod_{i=1}^M \mathcal N(w_i\mid 0,\alpha_i^{-1}).
+\]</span></p>
+<p>这个模型与贝叶斯 logistic regression 非常接近。区别在于，RVM 不使用一个共享的权重精度，而是继续为每个权重分配单独的 <span class="math inline">\(\alpha_i\)</span>，让 evidence optimization 决定哪些基函数应该保留。</p>
+</section>
+<section id="为什么需要-laplace-approximation" class="level2">
+<h2 class="anchored" data-anchor-id="为什么需要-laplace-approximation">为什么需要 Laplace approximation</h2>
+<p>回归 RVM 中，似然和先验都是高斯，因此可以解析地把 <span class="math inline">\(w\)</span> 积分掉。但分类 RVM 的 Bernoulli-logistic likelihood 不是高斯形式，所以 <span class="math display">\[
+p(t\mid\alpha)=
+\int p(t\mid w)p(w\mid\alpha)\,dw
+\]</span> 不能再像回归情形那样精确计算。Bishop 因此采用 Laplace approximation：先找到后验分布的 mode，再用该点附近的二阶泰勒展开构造一个高斯近似。</p>
+<p>固定 <span class="math inline">\(\alpha\)</span> 后，log posterior 可写成 <span class="math display">\[
+\ln p(w\mid t,\alpha)
+=
+\sum_{n=1}^N
+\left[
+t_n\ln y_n+(1-t_n)\ln(1-y_n)
+\right]
+-\frac12 w^\top A w
++\text{const}.
+\]</span> 它的梯度和 Hessian 为 <span class="math display">\[
+\nabla\ln p(w\mid t,\alpha)
+=
+\Phi^\top(t-y)-Aw,
+\]</span> <span class="math display">\[
+\nabla\nabla\ln p(w\mid t,\alpha)
+=
+-(\Phi^\top B\Phi+A),
+\]</span> 其中 <span class="math inline">\(B\)</span> 是对角矩阵， <span class="math display">\[
+B_{nn}=y_n(1-y_n).
+\]</span> 利用这些量，可以用 IRLS 找到后验 mode <span class="math inline">\(w^\star\)</span>。在 mode 处，Laplace 近似的均值和协方差为 <span class="math display">\[
+w^\star=A^{-1}\Phi^\top(t-y),
+\]</span> <span class="math display">\[
+\Sigma=(\Phi^\top B\Phi+A)^{-1}.
+\]</span></p>
+<p>接着用 Laplace approximation 近似 marginal likelihood: <span class="math display">\[
+p(t\mid\alpha)
+\simeq
+p(t\mid w^\star)p(w^\star\mid\alpha)
+(2\pi)^{M/2}|\Sigma|^{1/2}.
+\]</span> 对这个近似 evidence 关于 <span class="math inline">\(\alpha_i\)</span> 求驻点，可以得到和回归 RVM 形式相同的重估公式： <span class="math display">\[
+\alpha_i^{\mathrm{new}}
+=
+\frac{\gamma_i}{(w_i^\star)^2},
+\]</span> 其中 <span class="math display">\[
+\gamma_i=1-\alpha_i\Sigma_{ii}.
+\]</span></p>
+<p>这说明 RVM 分类和 RVM 回归的稀疏机制是同一个：当某个权重在后验 mode 中没有足够证据支撑，或者它的不确定性结构显示该方向并没有被数据有效确定，对应的 <span class="math inline">\(\alpha_i\)</span> 就会被推大，基函数被剪掉。</p>
+</section>
+<section id="分类中的-relevance-vectors" class="level2">
+<h2 class="anchored" data-anchor-id="分类中的-relevance-vectors">分类中的 relevance vectors</h2>
+<p>SVM 分类中的 support vectors 通常位于 margin boundary 附近，因为这些点直接决定最大间隔超平面。RVM 分类的 relevance vectors 则不一定靠近决策边界。它们是由 ARD 和 evidence optimization 选出来的基函数中心，标准是能否有效解释整个目标向量，而不是是否位于几何 margin 上。</p>
+<p>这也是 RVM 和 SVM 在图形上经常呈现出不同稀疏模式的原因：SVM 的稀疏性是边界几何驱动的；RVM 的稀疏性是概率证据驱动的。一个靠近边界的数据点如果对应的基函数方向和当前目标/残差结构对齐很差，仍然可能被 RVM 删除。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="分类 RVM 的输出">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>分类 RVM 的输出
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>RVM 分类直接输出 <span class="math display">\[
+p(t=1\mid x)=\sigma(w^\top\phi(x))
+\]</span> 这样的 posterior probability 近似，而不是像 SVM 那样先得到 decision value 再额外做概率校准。这是 RVM 在需要不确定性或概率输出的应用中很有吸引力的原因。</p>
+</div>
+</div>
+</section>
+<section id="多分类扩展" class="level2">
+<h2 class="anchored" data-anchor-id="多分类扩展">多分类扩展</h2>
+<p>对于 <span class="math inline">\(K&gt;2\)</span> 的多分类问题，可以为每个类别建立一个线性 score： <span class="math display">\[
+a_k=w_k^\top\phi(x),
+\]</span> 再通过 softmax 得到类别概率： <span class="math display">\[
+y_k(x)=
+\frac{\exp(a_k)}
+{\sum_j\exp(a_j)}.
+\]</span> 若目标采用 1-of-<span class="math inline">\(K\)</span> 编码，log likelihood 可以写成 <span class="math display">\[
+\ln p(T\mid w_1,\dots,w_K)
+=
+\sum_{n=1}^N\sum_{k=1}^K
+t_{nk}\ln y_{nk}.
+\]</span> 这一形式比 SVM 常见的 one-versus-one 或 one-versus-the-rest 更自然，因为它从一开始就是一个统一的概率多分类模型，而不是把多分类拆成许多二分类器再投票或比较分数。</p>
+<p>不过，多分类 RVM 的训练代价也更高。Laplace approximation 需要处理所有类别权重的联合 Hessian。如果每个类别有 <span class="math inline">\(M\)</span> 个 active basis functions，那么 Hessian 的规模是 <span class="math inline">\(MK\times MK\)</span>，相比二分类情形会引入显著额外计算开销，粗略地说会带来关于类别数 <span class="math inline">\(K\)</span> 的立方级增长。</p>
+</section>
+<section id="本节小结-2" class="level2">
+<h2 class="anchored" data-anchor-id="本节小结-2">本节小结</h2>
+<p>RVM 分类可以按以下逻辑理解：</p>
+<ol type="1">
+<li>用 sigmoid 或 softmax 把基函数线性组合转成类别概率。</li>
+<li>对权重继续使用 ARD prior，让每个基函数拥有自己的 precision hyperparameter。</li>
+<li>因为 logistic/softmax likelihood 不是高斯，不能精确积分掉 <span class="math inline">\(w\)</span>，所以使用 Laplace approximation。</li>
+<li>用 IRLS 找到后验 mode <span class="math inline">\(w^\star\)</span>，并用 negative Hessian 的逆近似后验协方差。</li>
+<li>对近似 evidence 重估 <span class="math inline">\(\alpha_i\)</span>，得到和回归 RVM 同型的稀疏更新。</li>
+<li>Relevance vectors 不一定贴近分类边界，因为它们由概率 evidence 选择，而不是由 margin geometry 选择。</li>
+<li>RVM 的优势是稀疏且直接输出类别概率；主要代价是训练目标非凸、训练时间通常长于 SVM，尤其在多分类情形下更明显。</li>
+</ol>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script>
+(function () {
+  function makeProofsCollapsible() {
+    const proofs = document.querySelectorAll("div.proof");
+
+    proofs.forEach(function (proof) {
+      if (proof.dataset.collapsibleReady === "true") return;
+
+      const details = document.createElement("details");
+
+      details.className = proof.className;
+      details.classList.add("proof-collapsible");
+      details.dataset.collapsibleReady = "true";
+
+      if (proof.id) {
+        details.id = proof.id;
+      }
+
+      details.open = proof.classList.contains("open");
+
+      const summary = document.createElement("summary");
+      const title = proof.querySelector(".proof-title");
+
+      if (title) {
+        summary.innerHTML = title.innerHTML;
+        title.remove();
+      } else {
+        summary.innerHTML = "<strong>Proof</strong>";
+      }
+
+      details.appendChild(summary);
+
+      while (proof.firstChild) {
+        details.appendChild(proof.firstChild);
+      }
+
+      proof.replaceWith(details);
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", makeProofsCollapsible);
+  } else {
+    makeProofsCollapsible();
+  }
+})();
+</script>
+<script>
+(function () {
+  function fixTheoremTitleSpacing() {
+    const titleSelectors = [
+      ".theorem-title",
+      ".lemma-title",
+      ".corollary-title",
+      ".proposition-title",
+      ".conjecture-title",
+      ".definition-title",
+      ".example-title",
+      ".exercise-title",
+      ".solution-title",
+      ".remark-title",
+      ".algorithm-title",
+      ".proof-title"
+    ].join(",");
+
+    document.querySelectorAll(titleSelectors).forEach(function (title) {
+      const p = title.parentElement;
+
+      if (!p || p.tagName.toLowerCase() !== "p") return;
+
+      /*
+        Quarto/Pandoc often inserts a text node like:
+        <p><span class="theorem-title">...</span>&nbsp;</p>
+
+        Remove whitespace-only text nodes, including non-breaking spaces.
+      */
+      Array.from(p.childNodes).forEach(function (node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          const cleaned = node.textContent.replace(/\u00a0/g, " ").trim();
+          if (cleaned === "") {
+            node.remove();
+          }
+        }
+      });
+
+      p.classList.add("math-env-title-p");
+
+      /*
+        If the paragraph only contains the title span after cleanup,
+        mark it as title-only.
+      */
+      const meaningfulChildren = Array.from(p.childNodes).filter(function (node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          return node.textContent.replace(/\u00a0/g, " ").trim() !== "";
+        }
+        return true;
+      });
+
+      if (meaningfulChildren.length === 1 && meaningfulChildren[0] === title) {
+        p.classList.add("math-env-title-only");
+      }
+
+      /*
+        If the title-only paragraph is followed by a list,
+        compress the gap between title and list.
+      */
+      const next = p.nextElementSibling;
+      if (
+        p.classList.contains("math-env-title-only") &&
+        next &&
+        (next.tagName.toLowerCase() === "ol" || next.tagName.toLowerCase() === "ul")
+      ) {
+        p.classList.add("math-env-title-before-list");
+      }
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", fixTheoremTitleSpacing);
+  } else {
+    fixTheoremTitleSpacing();
+  }
+})();
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "已复制");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "已复制");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/luyiyun\.github\.io\/Notes\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

@@ -1,0 +1,2005 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="荣志炜">
+
+<title>矩 – Rong’s Notes</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-7dba656801d47940102fc4ffc3dc1a54.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../../styles.css">
+</head>
+
+<body class="nav-sidebar docked nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">Rong’s Notes</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="搜索"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="展开或折叠导航栏" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="../../../index.html" aria-current="page"> 
+<span class="menu-text">首页</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../src/learn/index.html"> 
+<span class="menu-text">专题学习</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../about.html"> 
+<span class="menu-text">关于</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/index.html">高等概率论</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/18-moments.html">矩</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">首页</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../../src/learn/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">专题学习</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../../src/learn/advanced-probability/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">高等概率论</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/01-introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">介绍</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/02-sigma-field.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sigma 域</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/03-measure.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">测度</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/04-outer-measure.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">外测度</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/05-measure-extension.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">测度扩张</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/06-distribution-function.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">分布函数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/07-measurable-functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">可测函数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/08-integration.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">积分</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/09-lp-spaces.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lp 空间</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/10-signed-measures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">符号测度</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/11-radon-nikodym-derivative.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R-N 导数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/12-lebesgue-decomposition.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lebesgue 分解</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/13-finite-product-spaces.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">有限乘积空间</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/14-infinite-product-spaces.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">无限乘积空间</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/15-independence-and-conditional-expectation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">独立和条件期望</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/16-markov-chains-and-martingales.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">马尔可夫链与鞅</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/17-statistical-distributions-and-density-functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">统计分布与密度函数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/18-moments.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">矩</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/19-convergence-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">收敛理论</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../../src/learn/prml/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">PRML</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/prml/06-kernel-methods.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">核方法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/prml/07-sparse-kernel-machines.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">稀疏核机器</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../about.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">关于</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#矩的定义" id="toc-矩的定义" class="nav-link active" data-scroll-target="#矩的定义">矩的定义</a></li>
+  <li><a href="#常见分布的均值和方差" id="toc-常见分布的均值和方差" class="nav-link" data-scroll-target="#常见分布的均值和方差">常见分布的均值和方差</a>
+  <ul class="collapse">
+  <li><a href="#柯西分布" id="toc-柯西分布" class="nav-link" data-scroll-target="#柯西分布">柯西分布</a></li>
+  <li><a href="#卡方分布" id="toc-卡方分布" class="nav-link" data-scroll-target="#卡方分布">卡方分布</a></li>
+  <li><a href="#f-分布" id="toc-f-分布" class="nav-link" data-scroll-target="#f-分布">F 分布</a></li>
+  <li><a href="#t-分布" id="toc-t-分布" class="nav-link" data-scroll-target="#t-分布">t 分布</a></li>
+  </ul></li>
+  <li><a href="#矩不等式" id="toc-矩不等式" class="nav-link" data-scroll-target="#矩不等式">矩不等式</a>
+  <ul class="collapse">
+  <li><a href="#协方差不等式" id="toc-协方差不等式" class="nav-link" data-scroll-target="#协方差不等式">协方差不等式</a></li>
+  <li><a href="#集中不等式" id="toc-集中不等式" class="nav-link" data-scroll-target="#集中不等式">集中不等式</a>
+  <ul class="collapse">
+  <li><a href="#markov-不等式" id="toc-markov-不等式" class="nav-link" data-scroll-target="#markov-不等式">Markov 不等式</a></li>
+  <li><a href="#chebyshev-不等式" id="toc-chebyshev-不等式" class="nav-link" data-scroll-target="#chebyshev-不等式">Chebyshev 不等式</a></li>
+  <li><a href="#hoeffding-不等式" id="toc-hoeffding-不等式" class="nav-link" data-scroll-target="#hoeffding-不等式">Hoeffding 不等式</a></li>
+  <li><a href="#hajek-renyi-不等式" id="toc-hajek-renyi-不等式" class="nav-link" data-scroll-target="#hajek-renyi-不等式">Hajek-Renyi 不等式</a></li>
+  <li><a href="#kolmogorov-不等式" id="toc-kolmogorov-不等式" class="nav-link" data-scroll-target="#kolmogorov-不等式">Kolmogorov 不等式</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#矩母函数和特征函数" id="toc-矩母函数和特征函数" class="nav-link" data-scroll-target="#矩母函数和特征函数">矩母函数和特征函数</a>
+  <ul class="collapse">
+  <li><a href="#定义" id="toc-定义" class="nav-link" data-scroll-target="#定义">定义</a></li>
+  <li><a href="#性质" id="toc-性质" class="nav-link" data-scroll-target="#性质">性质</a></li>
+  </ul></li>
+  <li><a href="#常见分布的矩母函数和特征函数" id="toc-常见分布的矩母函数和特征函数" class="nav-link" data-scroll-target="#常见分布的矩母函数和特征函数">常见分布的矩母函数和特征函数</a>
+  <ul class="collapse">
+  <li><a href="#正态分布" id="toc-正态分布" class="nav-link" data-scroll-target="#正态分布">正态分布</a></li>
+  <li><a href="#柯西分布-1" id="toc-柯西分布-1" class="nav-link" data-scroll-target="#柯西分布-1">柯西分布</a></li>
+  <li><a href="#卡方分布-1" id="toc-卡方分布-1" class="nav-link" data-scroll-target="#卡方分布-1">卡方分布</a></li>
+  <li><a href="#f-分布-1" id="toc-f-分布-1" class="nav-link" data-scroll-target="#f-分布-1">F 分布</a></li>
+  <li><a href="#t-分布-1" id="toc-t-分布-1" class="nav-link" data-scroll-target="#t-分布-1">t 分布</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/index.html">高等概率论</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/18-moments.html">矩</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">矩</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">作者</div>
+    <div class="quarto-title-meta-contents">
+             <p>荣志炜 </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">发布于</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">2024年6月13日</p>
+    </div>
+  </div>
+  
+    <div>
+    <div class="quarto-title-meta-heading">修改于</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date-modified">2026年5月13日</p>
+    </div>
+  </div>
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>在本节中，我们讨论随机变量的另外两种“特征”：矩和特征函数（矩母函数）。</p>
+<section id="矩的定义" class="level1">
+<h1>矩的定义</h1>
+<div id="def-18-moments-1" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 1 (矩)</strong></span> 随机变量 <span class="math inline">\(X\)</span>, 若 <span class="math inline">\(\lvert \mathbb{E}X^{k} \rvert&lt;\infty,k\in\mathbb{N}^{+}\)</span>, 则称 <span class="math inline">\(\mathbb{E}X^{k}\)</span> 是 <span class="math inline">\(X\)</span> 或 <span class="math inline">\(P_{X}\)</span> 的 <span class="math inline">\(k\)</span> 阶矩. <strong>Definition: 绝对矩</strong> 随机变量 <span class="math inline">\(X\)</span>, 若 <span class="math inline">\(\mathbb{E}\lvert X \rvert^{a}&lt;\infty,a\in\mathbb{R}\)</span>, 则称 <span class="math inline">\(\mathbb{E}\lvert X \rvert^{a}\)</span> 是 <span class="math inline">\(X\)</span> 或 <span class="math inline">\(P_{X}\)</span> 的 <span class="math inline">\(a\)</span> 阶绝对矩. <strong>Definition: 中心矩</strong> 随机变量 <span class="math inline">\(X\)</span>, 若 <span class="math inline">\(\lvert \mathbb{E}X \rvert&lt;\infty\)</span> 并且 <span class="math inline">\(\mathbb{E}(X-\mathbb{E}X)^{k},k\in\mathbb{N}^{+}\)</span>, 则称 <span class="math inline">\(\mathbb{E}(X-\mathbb{E}X)^{k}\)</span> 是 <span class="math inline">\(X\)</span> 或 <span class="math inline">\(P_{X}\)</span> 的 <span class="math inline">\(k\)</span> 阶中心矩. 二阶中心距就是方差, 记作 <span class="math inline">\(Var(X)\)</span>.</p>
+</div>
+<p>在进行下一步的讨论之前, 我们先证明一个引理</p>
+<div id="lem-18-moments-2" class="theorem lemma">
+<p><span class="theorem-title"><strong>引理 1 (低阶矩的存在性)</strong></span> 如果 <span class="math inline">\(\mathbb{E}\lvert X \rvert^{a}&lt;\infty, a\in\mathbb{R}^{+}\)</span>, 则 <span class="math display">\[
+\forall t\in(0,a),\ \mathbb{E}\lvert X \rvert ^{t}&lt;\infty.
+\]</span> 特别地, 对任意 <span class="math inline">\(k\in\mathbb{N}^{+}\)</span> 且 <span class="math inline">\(k&lt;a\)</span>, 有 <span class="math display">\[
+\lvert \mathbb{E}X^{k} \rvert &lt;\infty.
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span><span class="math display">\[
+\lvert X \rvert ^{t}
+=\lvert X \rvert ^{t}\mathbf{1}_{\{\lvert X \rvert \leq 1\}}
++\lvert X \rvert ^{t}\mathbf{1}_{\{\lvert X \rvert &gt; 1\}}
+\leq \mathbf{1}_{\{\lvert X \rvert \leq 1\}}
++\lvert X \rvert ^{a}\mathbf{1}_{\{\lvert X \rvert &gt; 1\}}
+\leq 1+\lvert X \rvert ^{a}.
+\]</span> 因此 <span class="math display">\[
+\mathbb{E}\lvert X \rvert ^{t}\leq 1+\mathbb{E}\lvert X \rvert ^{a}&lt;\infty.
+\]</span> 再令 <span class="math inline">\(t=k\)</span>, 就得到当 <span class="math inline">\(k\in\mathbb{N}^{+}\)</span> 且 <span class="math inline">\(k&lt;a\)</span> 时, <span class="math inline">\(\mathbb{E}\lvert X \rvert ^{k}&lt;\infty\)</span>. 由 <span class="math display">\[
+\lvert \mathbb{E}X^{k} \rvert \leq \mathbb{E}\lvert X \rvert ^{k}&lt;\infty,
+\]</span> 可知 <span class="math inline">\(k\)</span> 阶矩存在.</p>
+</div>
+<p>以上引理告诉我们: - 如果某个高阶绝对矩存在, 则任意更低阶的绝对矩一定存在; - 特别地, 若更低的阶数还是正整数, 则对应的通常矩也一定存在; - 对中心矩, 只要将上面的 <span class="math inline">\(X\)</span> 换成 <span class="math inline">\(X-\mathbb{E}X\)</span>, 就能得到完全类似的结论.</p>
+<p>在各种矩中, 最重要的是两个: - 一阶矩, 即期望, 也称为<strong>均值 (mean)</strong>, 其标记了随机变量分布的中心位置; - 二阶中心距, 即<strong>方差 (variance)</strong>, 其标记了随机变量分布离散性质. 其平方根被称作<strong>标准差 (standard deviation)</strong>, 也是非常重要的数字特征.</p>
+<p>我们可以进一步将以上两者推广到随机向量上.</p>
+<div id="def-18-moments-3" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 2 (随机向量的均值和方差)</strong></span> 对于随机向量 <span class="math inline">\(X=(X_{1},\dots,X_{n})\)</span>, 我们定义其<strong>均值</strong>就是他的 <strong>?@def-vector-integrate</strong> <span class="math display">\[
+\mathbb{E}X=(\mathbb{E}X_{1},\dots,\mathbb{E}X_{n}).
+\]</span> 方差的定义被扩展为<strong>方差 - 协方差矩阵</strong>: <span class="math display">\[
+Var(X)=\mathbb{E}[(X-\mathbb{E}X)(X-\mathbb{E}X)]^{T}.
+\]</span> 这是一个 <span class="math inline">\(n\times n\)</span> 的对称矩阵, 对角线上是 <span class="math inline">\(Var(X_{i})\)</span>. 其第 <span class="math inline">\((i,j),i\neq j\)</span> 上的元素 <span class="math inline">\(\mathbb{E}[(X_{i}-\mathbb{E}X_{i})(X_{j}-\mathbb{E}X_{j})]\)</span> 被称为 <span class="math inline">\(X_{i}\)</span> 与 <span class="math inline">\(X_{j}\)</span> 的协方差, 记作 <span class="math inline">\(Cov(X_{i},X_{j})\)</span>. <strong>Proposition: 线性变换下的均值与方差</strong> 令 <span class="math inline">\(c\in\mathbb{R}^{k\times n}\)</span>, <span class="math inline">\(X=(X_{1},\dots,X_{n})\)</span> 是一个随机向量, <span class="math inline">\(Y=cX\)</span> 是一个 <span class="math inline">\(k\)</span> 维随机向量, 则有 <span class="math display">\[
+\mathbb{E}Y=c\mathbb{E}X,\quad
+Var(Y)=cVar(X)c^{T}.
+\]</span> 当 <span class="math inline">\(c\in\mathbb{R}^{n}\)</span> 时, <span class="math inline">\(Var(Y)\)</span> 是一个普通的方差标量且总是 <span class="math inline">\(\geq 0\)</span>, 因此得到 <span class="math inline">\(Var(X)\)</span> 是半正定的.</p>
+</div>
+</section>
+<section id="常见分布的均值和方差" class="level1">
+<h1>常见分布的均值和方差</h1>
+<p>接下来, 我们根据 <a href="../../../src/learn/advanced-probability/17-statistical-distributions-and-density-functions.html">17_统计分布与密度函数</a> 中的定义, 计算几个常见统计分布的均值和方差.</p>
+<div id="lem-18-moments-4" class="theorem lemma">
+<p><span class="theorem-title"><strong>引理 2 (卡方分布的负次矩公式)</strong></span> 若 <span class="math inline">\(Y\sim \chi^{2}_{n}\)</span>, 则对任意 <span class="math inline">\(s&lt;n/2\)</span>, 有 <span class="math display">\[
+\mathbb{E}(Y^{-s})=\frac{\Gamma\left( \frac{n}{2}-s \right)}{2^{s}\Gamma\left( \frac{n}{2} \right)}.
+\]</span> 当 <span class="math inline">\(s\geq n/2\)</span> 时, 上式积分在 <span class="math inline">\(0\)</span> 点附近发散, 因而 <span class="math inline">\(\mathbb{E}(Y^{-s})=\infty\)</span>.</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>由 <a href="../../../src/learn/advanced-probability/17-statistical-distributions-and-density-functions.html#17-statistical-distributions-and-density-functions-卡方分布">17_统计分布与密度函数</a> 中的密度函数可知 <span class="math display">\[
+\mathbb{E}(Y^{-s})
+=\frac{1}{\Gamma\left( \frac{n}{2} \right)2^{n/2}}
+\int_{0}^{\infty}y^{\frac{n}{2}-s-1}e^{-y/2}\,dy.
+\]</span> 令 <span class="math inline">\(u=y/2\)</span>, 则 <span class="math display">\[
+\mathbb{E}(Y^{-s})
+=\frac{1}{\Gamma\left( \frac{n}{2} \right)2^{s}}
+\int_{0}^{\infty}u^{\frac{n}{2}-s-1}e^{-u}\,du
+=\frac{\Gamma\left( \frac{n}{2}-s \right)}{2^{s}\Gamma\left( \frac{n}{2} \right)},
+\]</span> 这要求 <span class="math inline">\(\frac{n}{2}-s&gt;0\)</span>. 当 <span class="math inline">\(s\geq n/2\)</span> 时, 被积函数在 <span class="math inline">\(0\)</span> 点附近的阶数不大于 <span class="math inline">\(y^{-1}\)</span>, 因此积分发散.</p>
+</div>
+<section id="柯西分布" class="level2">
+<h2 class="anchored" data-anchor-id="柯西分布">柯西分布</h2>
+<div id="prp-18-moments-5" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 1 (柯西分布的均值与方差)</strong></span> 若 <span class="math inline">\(X\sim C(\mu,\sigma)\)</span>, 则 <span class="math inline">\(\mathbb{E}X\)</span> 和 <span class="math inline">\(Var(X)\)</span> 都不存在.</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>先考虑标准柯西分布 <span class="math inline">\(Y\sim C(0,1)\)</span>, 其密度函数为 <span class="math display">\[
+f_{Y}(y)=\frac{1}{\pi(1+y^{2})}.
+\]</span> 于是 <span class="math display">\[
+\int_{0}^{\infty}y f_{Y}(y)\,dy
+=\frac{1}{\pi}\int_{0}^{\infty}\frac{y}{1+y^{2}}\,dy
+=\infty.
+\]</span> 由于密度函数关于 <span class="math inline">\(0\)</span> 对称, 负半轴上的一阶矩也同样发散, 因而 <span class="math inline">\(\mathbb{E}Y\)</span> 不存在.</p>
+<p>若进一步有 <span class="math inline">\(\mathbb{E}X\)</span> 存在, 由于 <span class="math inline">\(X=\sigma Y+\mu\)</span>, 就会推出 <span class="math display">\[
+\mathbb{E}Y=\frac{\mathbb{E}X-\mu}{\sigma}
+\]</span> 存在, 这与上面的结论矛盾, 因而 <span class="math inline">\(\mathbb{E}X\)</span> 不存在.</p>
+<p>同理, 若 <span class="math inline">\(Var(X)\)</span> 存在, 则 <span class="math display">\[
+Var(Y)=\frac{Var(X)}{\sigma^{2}}
+\]</span> 也存在, 这又推出 <span class="math inline">\(\mathbb{E}Y\)</span> 存在, 仍然矛盾. 因而 <span class="math inline">\(Var(X)\)</span> 也不存在.</p>
+</div>
+</section>
+<section id="卡方分布" class="level2">
+<h2 class="anchored" data-anchor-id="卡方分布">卡方分布</h2>
+<div id="prp-18-moments-6" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 2 (卡方分布的均值与方差)</strong></span> 若 <span class="math inline">\(Y\sim \chi^{2}_{n}\)</span>, 则 <span class="math display">\[
+\mathbb{E}Y=n,\quad Var(Y)=2n.
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>由卡方分布的密度函数, <span class="math display">\[
+\mathbb{E}Y
+=\frac{1}{\Gamma\left( \frac{n}{2} \right)2^{n/2}}
+\int_{0}^{\infty}y^{n/2}e^{-y/2}\,dy.
+\]</span> 令 <span class="math inline">\(u=y/2\)</span>, 则 <span class="math display">\[
+\mathbb{E}Y
+=\frac{2\Gamma\left( \frac{n}{2}+1 \right)}{\Gamma\left( \frac{n}{2} \right)}
+=n.
+\]</span> 同理, <span class="math display">\[
+\mathbb{E}(Y^{2})
+=\frac{1}{\Gamma\left( \frac{n}{2} \right)2^{n/2}}
+\int_{0}^{\infty}y^{n/2+1}e^{-y/2}\,dy
+=\frac{4\Gamma\left( \frac{n}{2}+2 \right)}{\Gamma\left( \frac{n}{2} \right)}
+=n(n+2).
+\]</span> 因此 <span class="math display">\[
+Var(Y)=\mathbb{E}(Y^{2})-(\mathbb{E}Y)^{2}=n(n+2)-n^{2}=2n.
+\]</span></p>
+</div>
+</section>
+<section id="f-分布" class="level2">
+<h2 class="anchored" data-anchor-id="f-分布">F 分布</h2>
+<div id="prp-18-moments-7" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 3 (F 分布的均值与方差)</strong></span> 若 <span class="math inline">\(Y\sim F_{n,m}\)</span>, 则 <span class="math display">\[
+\mathbb{E}Y=
+\begin{cases}
+\dfrac{m}{m-2}, &amp; m&gt;2, \\
+\infty, &amp; m\leq 2,
+\end{cases}
+\]</span> 且 <span class="math display">\[
+Var(Y)=
+\begin{cases}
+\dfrac{2m^{2}(n+m-2)}{n(m-2)^{2}(m-4)}, &amp; m&gt;4, \\
+\text{不存在}, &amp; m\leq 4.
+\end{cases}
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>根据 <a href="../../../src/learn/advanced-probability/17-statistical-distributions-and-density-functions.html#17-statistical-distributions-and-density-functions-f-分布">17_统计分布与密度函数</a> 的定义, 可设 <span class="math display">\[
+Y=\frac{U/n}{V/m}=\frac{mU}{nV},
+\quad U\sim \chi^{2}_{n},\ V\sim \chi^{2}_{m},
+\]</span> 且 <span class="math inline">\(U,V\)</span> 相互独立.</p>
+<p>由于 <span class="math inline">\(Y\geq 0\)</span>, 可用 Tonelli 定理交换积分次序. 当 <span class="math inline">\(m&gt;2\)</span> 时, <span class="math display">\[
+\mathbb{E}Y
+=\frac{m}{n}\mathbb{E}(UV^{-1})
+=\frac{m}{n}\mathbb{E}U\cdot \mathbb{E}(V^{-1})
+=\frac{m}{n}\cdot n\cdot \frac{1}{m-2}
+=\frac{m}{m-2}.
+\]</span> 当 <span class="math inline">\(m\leq 2\)</span> 时, 由上面的引理知 <span class="math inline">\(\mathbb{E}(V^{-1})=\infty\)</span>, 因而 <span class="math inline">\(\mathbb{E}Y=\infty\)</span>.</p>
+<p>当 <span class="math inline">\(m&gt;4\)</span> 时, <span class="math display">\[
+\mathbb{E}(Y^{2})
+=\frac{m^{2}}{n^{2}}\mathbb{E}(U^{2}V^{-2})
+=\frac{m^{2}}{n^{2}}\mathbb{E}(U^{2})\mathbb{E}(V^{-2}).
+\]</span> 又由上一小节, <span class="math display">\[
+\mathbb{E}(U^{2})=n(n+2),\quad
+\mathbb{E}(V^{-2})=\frac{1}{(m-2)(m-4)},
+\]</span> 因此 <span class="math display">\[
+\mathbb{E}(Y^{2})
+=\frac{m^{2}(n+2)}{n(m-2)(m-4)}.
+\]</span> 所以 <span class="math display">\[
+\begin{align}
+Var(Y)
+&amp;=\mathbb{E}(Y^{2})-(\mathbb{E}Y)^{2} \\
+&amp;=\frac{m^{2}(n+2)}{n(m-2)(m-4)}-\frac{m^{2}}{(m-2)^{2}} \\
+&amp;=\frac{2m^{2}(n+m-2)}{n(m-2)^{2}(m-4)}.
+\end{align}
+\]</span> 若 <span class="math inline">\(m\leq 4\)</span>, 则 <span class="math inline">\(\mathbb{E}(V^{-2})=\infty\)</span>, 从而 <span class="math inline">\(\mathbb{E}(Y^{2})=\infty\)</span>, 因此方差不存在.</p>
+</div>
+</section>
+<section id="t-分布" class="level2">
+<h2 class="anchored" data-anchor-id="t-分布">t 分布</h2>
+<div id="prp-18-moments-8" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 4 (t 分布的均值与方差)</strong></span> 若 <span class="math inline">\(Y\sim t_{n}\)</span>, 则 <span class="math display">\[
+\mathbb{E}Y=
+\begin{cases}
+0, &amp; n&gt;1, \\
+\text{不存在}, &amp; n=1,
+\end{cases}
+\]</span> 且 <span class="math display">\[
+Var(Y)=
+\begin{cases}
+\dfrac{n}{n-2}, &amp; n&gt;2, \\
+\text{不存在}, &amp; n\leq 2.
+\end{cases}
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>根据 <a href="../../../src/learn/advanced-probability/17-statistical-distributions-and-density-functions.html#17-statistical-distributions-and-density-functions-t-分布">17_统计分布与密度函数</a> 的定义, 可设 <span class="math display">\[
+Y=\frac{Z}{\sqrt{V/n}},
+\quad Z\sim N(0,1),\ V\sim \chi^{2}_{n},
+\]</span> 且 <span class="math inline">\(Z,V\)</span> 相互独立.</p>
+<p>由于 <span class="math inline">\(Z\)</span> 关于 <span class="math inline">\(0\)</span> 对称, 而 <span class="math inline">\(\sqrt{V/n}&gt;0\)</span> a.s., 所以 <span class="math inline">\(Y\)</span> 也关于 <span class="math inline">\(0\)</span> 对称. 因此只要 <span class="math inline">\(\mathbb{E}|Y|&lt;\infty\)</span>, 就有 <span class="math inline">\(\mathbb{E}Y=0\)</span>.</p>
+<p>由独立性, <span class="math display">\[
+\mathbb{E}|Y|
+=\sqrt{ n }\mathbb{E}|Z|\mathbb{E}(V^{-1/2}).
+\]</span> 因为正态分布的绝对一阶矩有限, 所以 <span class="math inline">\(\mathbb{E}|Y|&lt;\infty\)</span> 当且仅当 <span class="math inline">\(\mathbb{E}(V^{-1/2})&lt;\infty\)</span>. 根据上面的引理, 这等价于 <span class="math inline">\(n&gt;1\)</span>. 因而 <span class="math display">\[
+\mathbb{E}Y=
+\begin{cases}
+0, &amp; n&gt;1, \\
+\text{不存在}, &amp; n=1.
+\end{cases}
+\]</span></p>
+<p>进一步, 当 <span class="math inline">\(n&gt;2\)</span> 时, <span class="math display">\[
+\mathbb{E}(Y^{2})
+=n\mathbb{E}(Z^{2})\mathbb{E}(V^{-1})
+=n\cdot 1\cdot \frac{1}{n-2}
+=\frac{n}{n-2}.
+\]</span> 此时由于 <span class="math inline">\(\mathbb{E}Y=0\)</span>, 所以 <span class="math display">\[
+Var(Y)=\mathbb{E}(Y^{2})=\frac{n}{n-2}.
+\]</span> 若 <span class="math inline">\(n\leq 2\)</span>, 则由引理知 <span class="math inline">\(\mathbb{E}(V^{-1})=\infty\)</span>, 因而 <span class="math inline">\(\mathbb{E}(Y^{2})=\infty\)</span>, 所以方差不存在.</p>
+</div>
+</section>
+</section>
+<section id="矩不等式" class="level1">
+<h1>矩不等式</h1>
+<p>关于矩的不等式可以说是最重要的内容之一, 特别是在后面的统计理论证明中用处非常大. 这部分的不等式大体上可以分为两个部分.</p>
+<section id="协方差不等式" class="level2">
+<h2 class="anchored" data-anchor-id="协方差不等式">协方差不等式</h2>
+<p>第一部分是一系列的<strong>积分不等式</strong>, 其直接承袭自 <a href="../../../src/learn/advanced-probability/09-lp-spaces.html">9_Lp空间</a>, 这里我将只提供引用.</p>
+<ul>
+<li><strong>?@thm-holder-inequality</strong></li>
+<li><strong>?@thm-cauchy-schwarz-inequality</strong></li>
+<li><strong>?@thm-liapounov-inequality</strong></li>
+<li><strong>?@thm-minkowski-inequality</strong></li>
+<li><strong>?@thm-essen-bahr-inequality</strong></li>
+<li><strong>?@thm-jensen-inequality</strong> (可能更适合放在这里)</li>
+</ul>
+<p>利用 <strong>?@thm-cauchy-schwarz-inequality</strong>, 我们还可以得到下面的一些常用形式.</p>
+<div id="thm-covariance-inequality" class="theorem">
+<p><span class="theorem-title"><strong>定理 1 (协方差不等式)</strong></span> 对于随机变量 <span class="math inline">\(X,Y\)</span>, 并且 <span class="math inline">\(\mathbb{E}X^{2},\mathbb{E}Y^{2}&lt;\infty\)</span>, 则有 <span class="math display">\[
+Cov(X,Y)^{2}\leq Var(X)Var(Y).
+\]</span> 等号成立当且仅当 <span class="math inline">\(aX+bY+c=0\)</span> a.s., 其中 <span class="math inline">\(a,b,c\in\mathbb{R},a,b\)</span> 不全为 0.</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>构造 <span class="math inline">\(Z=(X,Y)\)</span>, 因为 <span class="math inline">\(Var(Z)\)</span> 是半正定的, 所以 <span class="math display">\[
+\det Var(Z) = Var(X)Var(Y) - Cov(X, Y)^{2} \geq 0.
+\]</span> 另一个证明的方法是直接使用 <strong>?@thm-cauchy-schwarz-inequality</strong>. 并且根据它, 等号成立当且仅当存在 <span class="math inline">\(\alpha,\beta\geq 0\)</span> 且两者不全为 0, 成立 <span class="math display">\[
+\alpha \lvert X-\mathbb{E}X \rvert =\beta \lvert Y-\mathbb{E}Y \rvert,
+\]</span> 进一步得到 <span class="math display">\[
+aX+bY+c=0\ a.s.,
+\]</span> 其中 <span class="math inline">\(a,b\)</span> 不全为 0.</p>
+</div>
+<p>协方差不等式的可以用于构建一个重要的统计概念 – 相关系数</p>
+<div id="def-correlation-coefficient" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 3 (相关系数)</strong></span> 对于随机变量 <span class="math inline">\(X,Y\)</span>, 并且 <span class="math inline">\(\mathbb{E}X^{2},\mathbb{E}Y^{2}&lt;\infty\)</span>, 我们称 <span class="math display">\[
+\rho_{xy}=\frac{Cov(X,Y)}{\sqrt{ Var(X)Var(Y) }}
+\]</span> 为 <span class="math inline">\(X,Y\)</span> 的<strong>相关系数</strong>. 根据 <a href="#thm-covariance-inequality" class="quarto-xref">定理&nbsp;1</a>, <span class="math inline">\(\rho_{xy}\in[-1,1]\)</span>. - 当 <span class="math inline">\(\phi_{xy}=\pm1\)</span> 时, 当且仅当 <span class="math inline">\(aX+bY+c=0\)</span> a.s., 也称两个随机变量<strong>完全相关</strong>. - 当 <span class="math inline">\(\phi_{xy}=0\)</span> 时, 称两个随机变量<strong>不相关</strong>.</p>
+<p>容易证明, 两两独立的随机变量不相关; 正态随机变量不相关<strong>当且仅当</strong>独立.</p>
+</div>
+<p>利用 <strong>?@thm-jensen-inequality</strong>, 我们还可以得到关于 KL 散度的相关推论.</p>
+<div id="prp-kl-divergence" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 5 (KL 散度的非负性)</strong></span> 假设存在测度空间 <span class="math inline">\((\Omega,\mathcal{F},\mu)\)</span>, 其中 <span class="math inline">\(\mu\)</span> 是 <span class="math inline">\(\sigma\)</span> 有限的. 令 <span class="math inline">\(f,g\)</span> 是其中的两个正可积函数, 并且有 <span class="math inline">\(\int f \, d\mu\geq\int g \, d\mu&gt;0\)</span>, 则有 <span class="math display">\[
+\int f\log\left( \frac{f}{g} \right) \, d\mu\geq 0.
+\]</span> 等号成立当且仅当 <span class="math inline">\(f=g\)</span> a.e..</p>
+<p>对于两个随机向量 <span class="math inline">\(X,Y\)</span> ,存在有限的期望, 并且对于某个 <span class="math inline">\(\sigma\)</span> 有限测度 <span class="math inline">\(\mu\)</span> 其存在密度函数 <span class="math inline">\(f_{X},f_{Y}\)</span>, 定义 <span class="math display">\[
+KL(X\| Y)=\mathbb{E}_{X}\left[ \log \frac{f_{X}}{f_{Y}} \right],
+\]</span> 根据上述结论, 可知 <span class="math display">\[
+KL(X\|Y)\geq 0,
+\]</span> 并且等号成立当且仅当 <span class="math inline">\(f_{X}=f_{Y}\)</span> a.e..</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>令 <span class="math inline">\(\int f \, d\mu=C\)</span>, 并定义一个新的概率测度 <span class="math inline">\(P\)</span> 为 <span class="math display">\[
+P(A)=\int_{A}\frac{f}{C}  \, d\mu,\quad
+\forall A \in \mathcal{F}.
+\]</span> 因为 <span class="math inline">\(\mu\)</span> 是 <span class="math inline">\(\sigma\)</span> 有限的, 所以我们知道 <span class="math display">\[
+\frac{dP}{d\mu}=\frac{f}{C}\ a.e..
+\]</span></p>
+<p>现在我们有 <span class="math display">\[
+\begin{align}
+\int f\log\left( \frac{f}{g} \right) \, d\mu
+&amp;=\int f (-\log)\left( \frac{g}{f} \right)\, d\mu \\
+&amp;=C\int (-\log)\left( \frac{g}{f} \right) \, dP \\
+&amp;\geq C(-\log) \int \left( \frac{g}{f} \right) \, dP \\
+&amp;=C(-\log) \int \left( \frac{g}{f} \right)\frac{f}{C} \, d\mu \\
+&amp;=C\log\left( \frac{\int f \, d\mu }{\int g \, d\mu } \right) \\
+&amp;\geq 0.
+\end{align}
+\]</span> 我们反着进行讨论: 倒数三行的可积性保证了倒数第四行的可积性, 根据 <strong>?@thm-jensen-inequality</strong> 保证了倒数第五行的积分存在性和不等式成立, 再根据 <strong>?@prp-rn</strong> (1) 保证了第一行积分存在和等号成立 (这一条需要使用到 <span class="math inline">\(\mu\)</span> 的 <span class="math inline">\(\sigma\)</span> 有限性).</p>
+<p>等号成立意味着第 3,6 行的等号成立. 因为 <span class="math inline">\(-\log(t)\)</span> 是一个 strict convex, 所以第 3 行等号成立蕴含 <span class="math display">\[
+-\log\left( \frac{g}{f} \right)=-\mathbb{E}\log \frac{g}{f}\ a.e.,
+\]</span> 这是一个常数, 所以这意味着 <span class="math display">\[
+g=af\ a.e.,
+\]</span> 其中 <span class="math inline">\(a&gt; 0\)</span> 是一个常数. 第 6 行等号成立则可以得到 <span class="math inline">\(a=1\)</span>.</p>
+<p>当 <span class="math inline">\(f=g\)</span> a.e.时, 很容易得到等号成立.</p>
+</div>
+</section>
+<section id="集中不等式" class="level2">
+<h2 class="anchored" data-anchor-id="集中不等式">集中不等式</h2>
+<p>第二类不等式, 是被称为<strong>集中不等式</strong>的内容, 其描述了一个随机变量是否集中在某个取值附近. 这样的不等式其实很多, 我们这里仅介绍一些常用到的, 更多的内容可以参见 <a href="https://en.wikipedia.org/wiki/Concentration_inequality">wiki</a>. 这里我们会按照所需条件的强弱排序进行介绍 (从弱到强), 一般而言, 需要的条件越强, 所给出的结果越紧.</p>
+<section id="markov-不等式" class="level3">
+<h3 class="anchored" data-anchor-id="markov-不等式">Markov 不等式</h3>
+<div id="thm-markov-inequality" class="theorem">
+<p><span class="theorem-title"><strong>定理 2 (Markov 不等式)</strong></span> 假设存在随机变量 <span class="math inline">\(X\)</span> 满足 <span class="math inline">\(X\geq 0\)</span> a.e., 则 <span class="math inline">\(\forall a&gt;0\)</span> <span class="math display">\[
+P(X\geq a)\leq \frac{\mathbb{E}(X)}{a}.
+\]</span> 若存在一个严格递增的非负函数 <span class="math inline">\(f\)</span>, 此时不需要 <span class="math inline">\(X\geq 0\)</span> 的条件, 则有 <span class="math display">\[
+P(X\geq a)=P(f(X)\geq f(a))\leq \frac{\mathbb{E}f(X)}{f(a)}.
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span><span class="math display">\[
+\begin{align}
+aP(X\geq a)&amp;=\int _{X\geq a}a \, dP \leq \int _{X\geq a}X \, dP
+\leq \int X \, dP=\mathbb{E}X.
+\end{align}
+\]</span></p>
+</div>
+</section>
+<section id="chebyshev-不等式" class="level3">
+<h3 class="anchored" data-anchor-id="chebyshev-不等式">Chebyshev 不等式</h3>
+<div id="thm-chebyshev-general" class="theorem">
+<p><span class="theorem-title"><strong>定理 3 (广义 Chebyshev 不等式)</strong></span> 假设存在随机变量 <span class="math inline">\(X\)</span>, 存在一个函数 <span class="math inline">\(f\)</span> 满足如下 3 个条件: - <span class="math inline">\(f(t)=f(-t)\)</span>, - <span class="math inline">\(f(t)\geq 0\)</span>, - <span class="math inline">\(f\)</span> 在 <span class="math inline">\([0,\infty)\)</span> 上是非降的. 则对 <span class="math inline">\(\forall t&gt;0\)</span>, 有 <span class="math display">\[
+f(t)P(\lvert X \rvert \geq t)\leq \int _{\lvert X \rvert \geq t}f(X) \, dP
+\leq \mathbb{E}f(X).
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>因为 <span class="math inline">\(f(t)\geq 0\)</span>, 所以 <span class="math inline">\(\mathbb{E}f(X)\)</span> 一定积分存在. <span class="math display">\[
+\begin{align}
+\int _{\lvert X \rvert \geq t}f(X) \, dP\geq
+\int _{\lvert X \rvert \geq t}f(t) \, dP
+=f(t)P(\lvert X \rvert &gt;t)
+\end{align}
+\]</span> 第二个不等号非常简单.</p>
+</div>
+<p>我们最常见到的可能是它的特殊版本.</p>
+<div id="thm-chebyshev-special" class="theorem">
+<p><span class="theorem-title"><strong>定理 4 (Chebyshev 不等式)</strong></span> 假设 <span class="math inline">\(\mathbb{E}X&lt;\infty,Var(X)&lt;\infty\)</span>, 则对 <span class="math inline">\(\forall t&gt;0\)</span> 有 <span class="math display">\[
+P(\lvert X-\mathbb{E}X \rvert \geq t)\leq \frac{Var(X)}{t^{2}}.
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>取 <span class="math inline">\(f(t)=t^{2}\)</span>, 随机变量为 <span class="math inline">\(X-\mathbb{E}X\)</span>, 然后应用上面的一般形式即可.</p>
+</div>
+<p>我们将 <a href="#thm-chebyshev-general" class="quarto-xref">定理&nbsp;3</a> 中的 <span class="math inline">\(f(t)=t\)</span>, 则直接就得到了 <a href="#thm-markov-inequality" class="quarto-xref">定理&nbsp;2</a>.</p>
+<p>其实, 我们还可以令 <span class="math inline">\(f(t)=\lvert t \rvert^{2}p,p&gt;0\)</span>, 这样就可以利用不同阶的中心矩来限制 <span class="math inline">\(P(\lvert X-\mathbb{E}X \rvert\geq t)\)</span> (尾部概率) 的大小.</p>
+</section>
+<section id="hoeffding-不等式" class="level3">
+<h3 class="anchored" data-anchor-id="hoeffding-不等式">Hoeffding 不等式</h3>
+<p>这个不等式是关于多个独立随机变量的内容, 其与机器学习 (比如 Random Forest) 的结果非常相关.</p>
+<div id="thm-hoeffding-inequality" class="theorem">
+<p><span class="theorem-title"><strong>定理 5 (Hoeffding 不等式)</strong></span> 假设存在独立的随机变量 <span class="math inline">\(X_{1},\dots,X_{n}\)</span>, 对于其中的每一个满足条件 <span class="math inline">\(a_{i}\leq X_{i}\leq b_{i}\)</span> a.e., 定义 <span class="math display">\[
+c_{i}=b_{i}-a_{i},\quad C=\max\{ c_{1},\dots,c_{n} \}.
+\]</span> 令 <span class="math inline">\(S_{n}=\sum\limits_{i=1}^{n}X_{i},E_{n}=\mathbb{E}[S_{n}]\)</span>, 则有如下结论: <span class="math display">\[
+P(S_{n}-E_{n}&gt;t)\leq \exp\left( -\frac{2t^{2}}{\sum\limits_{i=1}^{n}c_{i}^{2}} \right),
+\]</span> <span class="math display">\[
+P(E_{n}-S_{n}&gt;t)\leq \exp\left( -\frac{2t^{2}}{\sum\limits_{i=1}^{n}c_{i}^{2}} \right),
+\]</span> $$</p>
+<p>P(S_{n}-E_{n} &gt;t)( - ) ( - ). $$</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>我们首先需要证明 <a href="https://en.wikipedia.org/wiki/Hoeffding%27s_lemma">Hoeffding lemma</a>, 也就是对于满足 <span class="math inline">\(a\leq X\leq b\)</span> 的随机变量, 有 <span class="math display">\[
+\mathbb{E}[\exp(\lambda(X-\mathbb{E}X))]\leq
+\exp\left( \frac{\lambda^{2}(b-a)^{2}}{8} \right),\quad
+\lambda \in\mathbb{R}.
+\]</span> 因为我们总是可以将 <span class="math inline">\(X\)</span> 替换为 <span class="math inline">\(X-\mathbb{E}X\)</span>, 所以不失一般性, 我们假设 <span class="math inline">\(\mathbb{E}X=0,a\leq 0\leq b\)</span>. 因为 <span class="math inline">\(e^{\lambda x}\)</span> 是一个 convex function, 令 <span class="math display">\[
+t=\frac{b-x}{b-a},\quad
+1-t=\frac{x-a}{b-a},
+\]</span> 所以有 <span class="math display">\[
+e^{\lambda x}=e^{\lambda(ta+(1-t)b)}
+\leq te^{\lambda a}+(1-t)e^{\lambda b}.
+\]</span> 两边取期望得到 <span class="math display">\[
+\mathbb{E}[e^{\lambda X}]
+\leq \frac{b}{b-a}e^{\lambda a}-\frac{a}{b-a}e^{\lambda b}.
+\]</span> 令 <span class="math display">\[
+p=-\frac{a}{b-a},\quad h=\lambda(b-a),
+\]</span> 则 <span class="math display">\[
+\frac{b}{b-a}=1-p,\quad
+\lambda a=-ph,\quad
+\lambda b=(1-p)h.
+\]</span> 因此 <span class="math display">\[
+\mathbb{E}[e^{\lambda X}]
+\leq (1-p)e^{-ph}+pe^{(1-p)h}
+=e^{L(h)},
+\]</span> 其中 <span class="math display">\[
+L(h)=-ph+\log(1-p+pe^{h}).
+\]</span> 容易验证 <span class="math display">\[
+L(0)=L'(0)=0,
+\]</span> 并且 <span class="math display">\[
+L''(h)=\frac{p(1-p)e^{h}}{(1-p+pe^{h})^{2}}.
+\]</span> 由 <span class="math inline">\((u+v)^{2}\geq 4uv\)</span> 可知 <span class="math display">\[
+(1-p+pe^{h})^{2}\geq 4p(1-p)e^{h},
+\]</span> 从而 <span class="math display">\[
+L''(h)\leq \frac{1}{4},\quad \forall h\in\mathbb{R}.
+\]</span> 因此由 Taylor 展开可知, 对某个 <span class="math inline">\(\theta\in(0,1)\)</span>, <span class="math display">\[
+L(h)=L(0)+hL'(0)+\frac{1}{2}h^{2}L''(\theta h)
+\leq \frac{h^{2}}{8}.
+\]</span> 于是 <span class="math display">\[
+\mathbb{E}[e^{\lambda X}]
+\leq e^{L(h)}
+\leq \exp\left( \frac{h^{2}}{8} \right)
+=\exp\left( \frac{\lambda^{2}(b-a)^{2}}{8} \right).
+\]</span> Lemma 得到证明.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Taylor 定理（拉格朗日余项）">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>Taylor 定理（拉格朗日余项）
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>若函数 <span class="math inline">\(f\)</span> 在 <span class="math inline">\(x_{0}\)</span> 的某个邻域内具有直到 <span class="math inline">\(n+1\)</span> 阶导数, 则对该邻域内任意 <span class="math inline">\(x\)</span>, 存在某个 <span class="math inline">\(\xi\)</span> 介于 <span class="math inline">\(x_{0}\)</span> 和 <span class="math inline">\(x\)</span> 之间, 使得 <span class="math display">\[
+f(x)=\sum_{k=0}^{n}\frac{f^{(k)}(x_{0})}{k!}(x-x_{0})^{k}
++\frac{f^{(n+1)}(\xi)}{(n+1)!}(x-x_{0})^{n+1}.
+\]</span> 在这里我们取的是 <span class="math inline">\(n=1,\ x_{0}=0,\ x=h\)</span>, 因而存在某个 <span class="math inline">\(\theta\in(0,1)\)</span> 使得 <span class="math display">\[
+L(h)=L(0)+hL'(0)+\frac{1}{2}h^{2}L''(\theta h).
+\]</span> 再结合 <span class="math inline">\(L(0)=L'(0)=0\)</span> 和 <span class="math inline">\(L''(\theta h)\leq \frac14\)</span>, 就得到 <span class="math display">\[
+L(h)\leq \frac{h^{2}}{8}.
+\]</span></p>
+</div>
+</div>
+<p>然后, 我们来证明 Hoeffding 不等式. 我们先来证明它的一半, <span class="math display">\[
+\begin{align}
+P(S_{n}-E_{n} &gt;t)&amp;\leq
+\exp(-st)\mathbb{E}[\exp(s(S_{n}-E_{n}))] \\
+&amp;=\exp(-st)\mathbb{E}\left[ \prod\limits_{i=1}^{n}\exp(s(X_{i}-\mathbb{E}X_{i})) \right] \\
+&amp;=\exp(-st)\prod\limits_{i=1}^{n}\mathbb{E}[\exp(s(X_{i}-\mathbb{E}X_{i}))] \\
+&amp;\leq \exp(-st)\prod\limits_{i=1}^{n}\exp\left( \frac{s^{2}(b_{i}-a_{i})^{2}}{8} \right) \\
+&amp;=\exp \left( -st+\frac{1}{8}s^{2}\sum\limits_{i=1}^{n} (b_{i}-a_{i})^{2}\right).
+\end{align}
+\]</span> 其中第一行使用了 <span class="math inline">\(f(t)=\exp(-st),s&gt;0\)</span> 的 <a href="#thm-markov-inequality" class="quarto-xref">定理&nbsp;2</a>, 第三行使用到了独立性, 第四行使用到了 Lemma. 可以看到这个 <span class="math inline">\(s&gt;0\)</span> 是任取的, 所以我们就取到使指数部分最小的那个 s, 也就是 <span class="math display">\[
+s=\frac{4t}{\sum\limits_{i=1}^{n}(b_{i}-a_{i})^{2}},
+\]</span> 代入后最终得到了单侧的不等式 <span class="math display">\[
+P(S_{n}-E_{n}&gt;t)\leq \exp\left( -\frac{2t^{2}}{\sum\limits_{i=1}^{n}(b_{i}-a_{i})^{2}} \right).
+\]</span> 对于双侧的不等式, 我们有 <span class="math display">\[
+\begin{align}
+P(\lvert S_{n}-E_{n} \rvert &gt;t)&amp;=
+P(S_{n}-E_{n}&gt;t)+P(S_{n}-E_{n}&lt; -t) \\
+&amp;=P(S_{n}-E_{n}&gt;t)+P((-S_{n})-(-E_{n})&gt; t),
+\end{align}
+\]</span> 这时候我们令 <span class="math inline">\(Y_{i}=-X_{i}\)</span>, 再把它用一次上面的结论, 同样可以得到 <span class="math display">\[
+P((-S_{n})-(-E_{n})&gt; t)=
+P\left( \sum\limits_{i=1}^{n}Y_{i}-\sum\limits_{i=1}^{n}\mathbb{E}Y_{i} \right) \leq
+\exp\left( -\frac{2t^{2}}{\sum\limits_{i=1}^{n}(b_{i}-a_{i})^{2}} \right),
+\]</span> 就得到了双侧的不等式.</p>
+</div>
+<p>Hoeffding 不等式在机器学习中的核心价值, 在于它给出了<strong>经验平均值偏离真实平均值</strong>的一个指数级上界. 当损失函数、分类正确率、奖励信号等随机变量都被自然地限制在某个有界区间内时, 该不等式就可以直接控制 <span class="math display">\[
+\frac{1}{n}\sum_{i=1}^{n}X_{i}-\mathbb{E}X_{i}
+\]</span> 出现大偏差的概率. 这正是泛化误差分析、PAC 学习、在线学习与多臂老虎机算法中最常见的基础工具之一: 它说明了只要样本足够多, 经验风险就会以非常快的速度集中到真实风险附近. 从这个角度看, Hoeffding 不等式实际上回答了机器学习里一个最基本的问题: <strong>我们根据有限样本得到的结论, 到底有多可靠?</strong></p>
+</section>
+<section id="hajek-renyi-不等式" class="level3">
+<h3 class="anchored" data-anchor-id="hajek-renyi-不等式">Hajek-Renyi 不等式</h3>
+<div id="thm-hajek-renyi-inequality" class="theorem">
+<p><span class="theorem-title"><strong>定理 6 (Hajek-Renyi 不等式)</strong></span> 假设 <span class="math inline">\(Y_{1},\dots,Y_{n}\)</span> 是独立的随机变量, 并且存在有限的方差, 则下列不等式成立 <span class="math display">\[
+P\left( \max_{1\leq l\leq n}c_{l}\left\lvert  \sum\limits_{i=1}^{l}(Y_{i}-\mathbb{E}Y_{i})  \right\rvert &gt;t \right)
+\leq \frac{1}{t^{2}}\sum\limits_{i=1}^{n}c_{i}^{2}Var(Y_{i}),\quad
+\forall t&gt;0,
+\]</span> 其中 <span class="math inline">\(c_{i}\)</span> 是任意满足 <span class="math inline">\(c_{1}\geq c_{2}\geq\dots\geq c_{n}\)</span> 的正常数.</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>我们令 <span class="math inline">\(T_{k}=\sum\limits_{i=1}^{k}[Y_{i}-\mathbb{E}Y_{i}]\)</span>, 然后令 <span class="math display">\[
+\begin{align}
+&amp;A_{k}=\{ c_{k}\lvert T_{k} \rvert &gt;t \}, \quad \\
+&amp;B_{1} = A_{1},\ B_{k}=\bigcup_{j=1}^{k-1}A_{j},\quad \\
+&amp;C_{k}=A_{k} / B_{k-1},\quad
+k=1,\dots,n
+\end{align}
+\]</span> 利用这些定义,我们可以得到 <span class="math display">\[
+\begin{align}
+\sum\limits_{k=1}^{n}\mathbb{E}[c_{k}^{2}T_{k}^{2}I_{C_{k}}]
+&amp;\geq \sum\limits_{k=1}^{n}\mathbb{E}[t^{2}I_{C_{k}}] \\
+&amp;=t^{2}\sum\limits_{k=1}^{n}P(C_{k}) \\
+&amp;=t^{2}P\left( \bigcup_{k=1}^{n}A_{k} \right) \\
+&amp;=t^{2}P\left\{ \max_{1\leq k\leq n}c_{k}\lvert T_{k} \rvert &gt;t \right\}.
+\end{align}
+\]</span> 现在我们只需要证明 <span class="math display">\[
+\sum\limits_{k=1}^{n}\mathbb{E}[c_{k}^{2}T_{k}^{2}I_{C_{k}}]\leq \sum\limits_{k=1}^{n}c_{k}^{2}Var(Y_{i})
+\]</span> 即可. 现在我们令 <span class="math inline">\(D_{0}=\Omega, D_{k}=B_{k}^{c},k=1,\dots,n\)</span>, 则有 <span class="math display">\[
+B_{k-1}\subset B_{k}\implies D_{k-1}\supset D_{k}
+\implies D_{k-1}-D_{k}=B_{k} -B_{k-1}=A_{k} / B_{k-1}=C_{k},
+\]</span> 因此有 <span class="math inline">\(I_{C_{k}}=I_{D_{k-1}}-I_{D_{k}}\)</span>. 据此, 我们有下面的推导 <span class="math display">\[
+\begin{align}
+\sum\limits_{k=1}^{n}\mathbb{E}[c_{k}^{2}T_{k}^{2}I_{C_{k}}]
+&amp;=\sum\limits_{k=1}^{n}c_{k}^{2}\mathbb{E}[T_{k}^{2}I_{C_{k}}] \\
+&amp;=\sum\limits_{k=1}^{n}c_{k}^{2}\mathbb{E}[T_{k}^{2}(I_{D_{k-1}}-I_{D_{k}})] \\
+&amp;\leq c_{1}^{2}\mathbb{E}[T_{1}^{2}]+
+\sum\limits_{k=2}^{n}c_{k}^{2}
+\mathbb{E}[T_{k}^{2}-T_{k-1}^{2}]I_{D_{k-1}}-
+c_{n}^{2}\mathbb{E}[T_{n}^{2}I_{D_{n}}] \\
+&amp;\leq c_{1}^{2}\mathbb{E}[T_{1}^{2}]+
+\sum\limits_{k=2}^{n}c_{k}^{2}
+\mathbb{E}[T_{k}^{2}-T_{k-1}^{2}]I_{D_{k-1}} \\
+&amp;\leq c_{1}^{2}\mathbb{E}[T_{1}^{2}]+
+\sum\limits_{k=2}^{n}c_{k}^{2}
+\left\{
+\mathbb{E}[(Y_{k}-\mathbb{E}Y_{k})^{2}I_{D_{k-1}}]
++\mathbb{E}[(Y_{k}-\mathbb{E}Y_{k})T_{k-1}I_{D_{k-1}}]
+\right\} \\
+&amp;= c_{1}^{2}\mathbb{E}[T_{1}^{2}]+
+\sum\limits_{k=2}^{n}c_{k}^{2}
+\left\{
+\mathbb{E}[(Y_{k}-\mathbb{E}Y_{k})^{2}I_{D_{k-1}}]
+\right\} \\
+&amp;\leq \sum\limits_{k=1}^{n}c_{k}^{2}Var(Y_{k}).
+\end{align}
+\]</span> 其中第 3 行使用到了 <span class="math inline">\(c_{k}\geq c_{k-1}\)</span> 的条件, 第 4 行是因为 <span class="math inline">\(c_{n}^{2}\mathbb{E}[T_{n}^{2}I_{D_{n}}]\geq 0\)</span>, 第 5 行是因为 <span class="math display">\[
+\begin{align}
+T_{k}^{2}-T_{k-1}^{2}
+&amp;=(T_{k}-T_{k-1})(T_{k}+T_{k-1}) \\
+&amp;=(Y_{k}-\mathbb{E}Y_{k})(Y_{k}-\mathbb{E}Y_{k})T_{k-1},
+\end{align}
+\]</span> 第 6 行是因为 <span class="math inline">\(Y_{k}\)</span> 与 <span class="math inline">\(T_{k-1}\)</span> 独立所以有 <span class="math display">\[
+\mathbb{E}[(Y_{k}-\mathbb{E}Y_{k})T_{k-1}I_{D_{k-1}}]
+=\mathbb{E}[Y_{k}-\mathbb{E}Y_{k}]\mathbb{E}[T_{k-1}I_{D_{k-1}}]=0.
+\]</span> 这样, 我们就完成了证明.</p>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Summary: Hajek-Renyi 与 Hoeffding 的对比">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>Summary: Hajek-Renyi 与 Hoeffding 的对比
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>角度</th>
+<th>Hajek-Renyi 不等式</th>
+<th>Hoeffding 不等式</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>控制对象</td>
+<td><span class="math inline">\(\max_{1\leq l\leq n} c_l \left\lvert \sum_{i=1}^l (Y_i-\mathbb{E}Y_i) \right\rvert\)</span>，也就是整个前缀和过程的最大偏差</td>
+<td>固定样本和或样本均值的偏差，如 <span class="math inline">\(\left\lvert \sum_{i=1}^n (X_i-\mathbb{E}X_i)\right\rvert\)</span></td>
+</tr>
+<tr class="even">
+<td>假设条件</td>
+<td>独立, 且存在有限方差</td>
+<td>独立, 且每个随机变量几乎处处有界</td>
+</tr>
+<tr class="odd">
+<td>尾部上界</td>
+<td>二阶矩型, 本质上是 <span class="math inline">\(t^{-2}\)</span> 级别</td>
+<td>指数型, 本质上是 <span class="math inline">\(\exp(-ct^2)\)</span> 级别</td>
+</tr>
+<tr class="even">
+<td>结论强弱</td>
+<td>条件更弱, 但数值上界通常更松</td>
+<td>条件更强, 但集中速度更快、界更锋利</td>
+</tr>
+<tr class="odd">
+<td>适合的问题</td>
+<td>控制所有前缀和同时不太大, 常用于强大数定律、路径分析、序列收敛</td>
+<td>控制经验均值与真实均值的偏差, 常用于泛化误差、PAC 学习、在线学习、多臂老虎机</td>
+</tr>
+<tr class="even">
+<td>二者关系</td>
+<td>更像是“最大偏差”的方差工具</td>
+<td>更像是“固定时刻偏差”的指数集中工具</td>
+</tr>
+</tbody>
+</table>
+<p>一个直观的理解是: 若我们关心“到第 <span class="math inline">\(n\)</span> 步为止有没有哪一步偏得特别厉害”, Hajek-Renyi 更自然; 若我们关心“最终经验平均值离真实均值有多远”, Hoeffding 往往更有力. 当随机变量有界时, 两者都可用, 但 Hoeffding 通常给出更紧的结果.</p>
+</div>
+</div>
+</section>
+<section id="kolmogorov-不等式" class="level3">
+<h3 class="anchored" data-anchor-id="kolmogorov-不等式">Kolmogorov 不等式</h3>
+<div id="thm-kolmogorov-inequality" class="theorem">
+<p><span class="theorem-title"><strong>定理 7 (Kolmogorov 不等式)</strong></span> 当 Hajek-Renyi 不等式中 <span class="math inline">\(c_{i}=1,\forall i=1,\dots,n\)</span> 时, 有 <span class="math display">\[
+P\left( \max_{1\leq l\leq n}\left\lvert  \sum\limits_{i=1}^{l}(Y_{i}-\mathbb{E}Y_{i})  \right\rvert &gt;t \right)
+\leq \frac{1}{t^{2}}\sum\limits_{i=1}^{n}Var(Y_{i}),\quad
+\forall t&gt;0,
+\]</span></p>
+</div>
+</section>
+</section>
+</section>
+<section id="矩母函数和特征函数" class="level1">
+<h1>矩母函数和特征函数</h1>
+<p>我们已经了解了矩的相关内容, 但是我们发现实际上我们无法通过矩, 特别是单个矩来确定两个分布是否存在不同, 所以这里我们引入基于矩的全新的函数, 它们类似傅里叶变换, 提供了理解概率分布的全新视角.</p>
+<section id="定义" class="level2">
+<h2 class="anchored" data-anchor-id="定义">定义</h2>
+<div id="def-mgf" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 4 (矩母函数)</strong></span> 设 <span class="math inline">\(X\)</span> 是一个 <span class="math inline">\(k\)</span> 维随机向量, 则我们定义 <span class="math inline">\(X\)</span> 或 <span class="math inline">\(P_{X}\)</span> 的<strong>矩母函数 (m.g.f.)</strong> 为 <span class="math display">\[
+\psi_{X}(t)=\mathbb{E}e^{t^{T}X},\quad t\in\mathbb{R}^{k}.
+\]</span></p>
+</div>
+<div id="def-characteristic-function" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 5 (特征函数)</strong></span> 设 <span class="math inline">\(X\)</span> 是一个 <span class="math inline">\(k\)</span> 维随机向量, 则我们定义 <span class="math inline">\(X\)</span> 或 <span class="math inline">\(P_{X}\)</span> 的<strong>特征函数 (ch.f.)</strong> 为 <span class="math display">\[
+\phi_{X}(t)=\mathbb{E}e^{it^{T}X}
+=\mathbb{E}\cos t^{T}X+i\mathbb{E}\sin t^{T}X
+,\quad t\in\mathbb{R}^{k}.
+\]</span> 注意, ch.&nbsp;f.是一个复值函数.</p>
+</div>
+<div id="def-cumulant-generating-function" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 6 (cumulant generating function)</strong></span> 如果 <span class="math inline">\(0&lt;\psi_{X}(t)&lt;\infty\)</span>，则可以构造 <span class="math display">\[
+\kappa_{X}(t)=\log \psi_{X}(t),
+\]</span> 其被称为 <span class="math inline">\(X\)</span> 或 <span class="math inline">\(P_{X}\)</span> 的 cumulant generating function。</p>
+</div>
+</section>
+<section id="性质" class="level2">
+<h2 class="anchored" data-anchor-id="性质">性质</h2>
+<p>根据以上的定义, 我们可以得到关于矩母函数和特征函数的诸多性质:</p>
+<div id="prp-mgf-cf-properties" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 6 (矩母函数与特征函数的基本性质)</strong></span> 对于随机向量 <span class="math inline">\(X=(X_{1},\dots,X_{k})\)</span>, (1) <span class="math inline">\(\psi_{X}(0)=\phi_{X}(0)=1\)</span>. (2) ch.&nbsp;f 都是 well defined, bounded, uniformly continue. (3) m.g.f.都是非负的, 并且可能存在除了 0 点之外全都是 <span class="math inline">\(\infty\)</span> 的情况. (4) 若 <span class="math inline">\(Y=A^{T}X+c\)</span>, 则有 <span class="math display">\[
+\psi_{Y}(u)=e^{c^{T}u}\psi_{X}(Au),\quad
+\phi_{Y}(u)=e^{ic^{T}u}\phi_{X}(Au).
+\]</span> (5) 若 m.g.f.在 <span class="math inline">\(0\)</span> 点的某个邻域上有限, 则 <span class="math inline">\(X\)</span> 拥有有限的任意阶矩和绝对矩, 并且有如下的等式: <span class="math display">\[
+\mathbb{E}(X_{1}^{r_{1}}\dots X_{k}^{r_{k}})
+=\frac{\partial^{r_{1}+\dots+r_{k}}\psi_{X}(t)}{\partial t_{1}^{r_{1}}\dots \partial t_{k}^{r_{k}}}(0).
+\]</span> 特别的, 有 <span class="math display">\[
+\frac{\partial \psi_{X}(t)}{\partial t}(0)=\mathbb{E}X,\quad
+\frac{\partial^{2}\psi_{X}(t)}{\partial t\partial t^{T}}(0)
+=\mathbb{E}[XX^{T}].
+\]</span> 更加普遍的说, 我们有下面的等式: $$ <em>{X}(t)= </em>{r_{1},,r_{k}}^{}</p>
+<p>[X_{1}^{r_{1}}X_{k}^{r_{k}}]</p>
+<p><span class="math display">\[
+(6) 若 $X$ 的矩有限, 也可以通过对 ch. f.求导得到. 即若存在 $r_{1},\dots,r_{k}\in\mathbb{N}^{+}$,
+\]</span> X_{1}^{r_{1}}X_{k}^{r_{k}} &lt;, <span class="math display">\[
+则有
+\]</span> i<sup>{r_{1}++r_{k}}(X_{1}</sup>{r_{1}}X_{k}<sup>{r_{k}}e</sup>{it^{T}X}) =, <span class="math display">\[
+令 $t=0$, 得到
+\]</span> i<sup>{r_{1}++r_{k}}(X_{1}</sup>{r_{1}}X_{k}^{r_{k}}) =, <span class="math display">\[
+特别的, 有
+\]</span> (0)=iX, (0)= -[XX^{T}]. <span class="math display">\[
+(7) 假设 $X$ 的 ch. f.$\phi_{X}(t)$ 的某个偶数阶导数在 $t=0$ 的值
+\]</span> (0) &lt;, $$ 则 <span class="math inline">\(\mathbb{E}X^{p}&lt;\infty\)</span>. 也就是说 (6) 和 (7) 是一对逆命题的关系. (8) 若 <span class="math inline">\(X,Y\)</span> 是独立的, 则 <span class="math inline">\(\phi_{X+Y}(t)=\phi_{X}(t)\phi_{Y}(t),\quad \psi_{X+Y}(t)=\psi_{X}(t)\psi_{Y}(t)\)</span>.</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span></p>
+<ol type="1">
+<li>略.</li>
+<li>通过 <span class="math inline">\(\cos\)</span> 和 <span class="math inline">\(\sin\)</span> 的有界性可以直接推导出 well defined 和 bounded. 又因为两者的 uniformly continue 特性可以推导出 ch.&nbsp;f.的 uniformly continue.</li>
+<li>柯西分布就是一个例子.</li>
+<li>略.</li>
+<li>这里, 我们直接使用 <a href="https://en.wikipedia.org/wiki/Taylor_series#Taylor_series_in_several_variables">高维函数的 Taylor 展开</a>, 注意其中的自变量是 <span class="math inline">\(t=(t_{1},\dots,t_{k})\)</span> 而不是 <span class="math inline">\(X\)</span> <span class="math display">\[
+\begin{align}
+\psi_{X}(t)&amp;=\mathbb{E}e^{t^{T}X} \\
+&amp;=\mathbb{E}\left\{  
+\sum\limits_{r_{1},\dots,r_{k}\in \mathbb{N}}^{}
+\frac{t_{1}^{r_{1}}\dots t_{k}^{r_{k}}}{r_{1}!\dots r_{k}!}
+\frac{
+\partial^{r_{1}+\dots+r_{k}}(e^{t^{T}X})}{\partial t_{1}^{r_{1}}\dots \partial t_{k}^{r_{k}}}
+\right\} \\
+&amp;=
+\sum\limits_{r_{1},\dots,r_{k}\in \mathbb{N}}^{}
+\frac{t_{1}^{r_{1}}\dots t_{k}^{r_{k}}}{r_{1}!\dots r_{k}!}
+\mathbb{E}[X_{1}^{r_{1}}\dots X_{k}^{r_{k}}e^{t^{T}X}]
+\\
+\end{align}
+\]</span></li>
+</ol>
+<p>然后求对应的导数的时候, 我们就得到了想要的结果. 注意, m.g.f. 在小邻域中有界, 才能够进行 Taylor 展开. (6) 直接对 <span class="math inline">\(e^{it^{T}X}\)</span> 求导, 得到 <span class="math display">\[
+g(t)=\frac{\partial^re^{it^{T}X}}{\partial t_1^{r_1}\cdots\partial t_k^{r_k}}=i^{r}X_1^{r_1}\cdots X_k^{r_k}e^{it^{T}X},
+\]</span> 其中 <span class="math inline">\(r=r_{1}+\dots+r_{k}\)</span>. 因为 <span class="math display">\[
+\lvert g(t) \rvert \leq \lvert X_1^{r_1}\cdots X_k^{r_k} \rvert,
+\]</span> 而右侧可积, 直接利用 <a href="../../../src/learn/advanced-probability/08-integration.html#08-integration-积分和微分的交换性">积分和微分的交换性</a>, 得到 <span class="math display">\[
+\frac{\partial^r\phi_X(t)}{\partial t_1^{r_1}\cdots\partial t_k^{r_k}}
+=i^{r}\mathbb{E}\left(X_1^{r_1}\cdots X_k^{r_k}e^{it^{T}X}\right)
+\]</span> 和 <span class="math display">\[
+\frac{\partial^r\phi_X(t)}{\partial t_1^{r_1}\cdots\partial t_k^{r_k}}(0)
+=i^{r}\mathbb{E}\left(X_1^{r_1}\cdots X_k^{r_k}\right).
+\]</span> (7) 我们先证明 <span class="math inline">\(p=2\)</span> 的情况. <span class="math display">\[
+\begin{align}
+\frac{\partial^{p} \phi_{X}(t)}{\partial t^{p}}(0)
+&amp;=\lim_{ h \to 0 } \frac{\phi_{X}(h)-2\phi_{X}(0)+\phi_{X}(-h)}{h^{2}} \\
+&amp;=\lim_{ h \to 0 } \mathbb{E}_{X}\left[\frac{e^{ihx}-2+e^{-ihx}}{h^{2}}\right] \\
+&amp;=-2\lim_{ h \to 0 } \mathbb{E}_{X}\left[ \frac{1-\cos hx}{h^{2}} \right]
+\end{align}
+\]</span> 导数的存在性保证了最后一行极限的存在性, 而应用 <a href="../../../src/learn/advanced-probability/08-integration.html#08-integration-fatou-引理">Fatou 引理</a> 得到 <span class="math display">\[
+\begin{align}
+2\lim_{ h \to 0 } \mathbb{E}_{X}\left[ \frac{1-\cos hx}{h^{2}} \right]
+&amp;\geq 2\mathbb{E}_{X}\left[ \lim_{ h \to 0 } \frac{1-\cos hx}{h^{2}} \right] \\
+&amp;=\mathbb{E}_{X}x^{2}=\mathbb{E}X^{2}.
+\end{align}
+\]</span> 这意味着二阶矩的有限性. 现在, 我们来证明其他偶数阶矩的有限性, 使用的方法是数学归纳法.</p>
+<p>假设命题的断言对于某个偶数 <span class="math inline">\(k\)</span> 成立 ,并且现在对于 <span class="math inline">\(k+2\)</span> 阶导数在 0 的值有限. <span class="math inline">\(k+2\)</span> 阶导数有限意味着 <span class="math inline">\(k\)</span> 阶导数存在并且在 <span class="math inline">\(0\)</span> 附近连续. 结合命题断言成立, 我们知道 <span class="math inline">\(k\)</span> 阶矩存在且有限, 利用 (6) 的结论, 得到 <span class="math display">\[
+(-1)^{\frac{k}{2}}\mathbb{E}X^{k}=\frac{\partial^{k}\phi_{X}(t)}{\partial t^{k}}(0).
+\]</span></p>
+<p>然后, 我们可以构造一个新的测度 <span class="math display">\[
+G(A)=\frac{\mathbb{E}[I_{A}X^{k}]}{\mathbb{E}X^{k}},
+\]</span> 并得到 <span class="math inline">\(G_{X}\)</span> 分布对应的 ch.&nbsp;f.为 <span class="math display">\[
+\begin{align}
+\phi_{G_{X}}(t)&amp;=\int e^{itx} \, dG_{X}=\int e^{itX} \, dG \\
+&amp;=\frac{1}{\mathbb{E}X^{k}}\int e^{itx}x^{k} \, dP_{X} \\
+&amp;=\frac{(-1)^{\frac{k}{2}}}{\mathbb{E}X^{k}}\frac{\partial^{k}\phi_{X}(t)}{\partial t^{k}}.
+\end{align}
+\]</span> 第二行运用了 <strong>?@prp-rn</strong> (1), 第三行则运用了 <a href="../../../src/learn/advanced-probability/08-integration.html#08-integration-积分和微分的交换性">积分和微分的交换性</a>. 对上式求二阶导, 得到 <span class="math display">\[
+\frac{\partial^{2}\phi_{G_{X}}(t)}{\partial t^{2}}(0)=
+\frac{(-1)^{\frac{k}{2}}}{\mathbb{E}X^{k}}\frac{\partial^{k+2}\phi_{X}(t)}{\partial t^{k+2}}(0),
+\]</span> 根据归纳假设, 上述导数存在, 根据我们之前证明的内容, 这意味着分布 <span class="math inline">\(G_{X}\)</span> 的二阶矩有限, 即 <span class="math display">\[
+\mathbb{E}_{G_{X}}x^{2}=\frac{1}{\mathbb{E}X^{k}}\int x^{2}x^{k} \, dP_{X}
+=\frac{1}{\mathbb{E}X^{k}}\mathbb{E}X^{k+2}.
+\]</span> 因此, 只要 <span class="math inline">\(\mathbb{E}X^{k}\neq 0\)</span>, 我们就证明了我们想要证明的结论.</p>
+<p>而当 <span class="math inline">\(\mathbb{E}X^{k}=0\)</span> 时, 由 <strong>?@thm-order</strong> (3) 可知 <span class="math display">\[
+X=0\ a.e.,\quad
+\phi_{X}(t)=1.
+\]</span> 这显然也是符合定理的.</p>
+</div>
+<p>接下来, 我们将介绍这两个函数最重要的性质, 就是其与分布的一一对应.首先，我们先证明一个公式：</p>
+<div id="lem-cf-inversion-formula" class="theorem lemma">
+<p><span class="theorem-title"><strong>引理 3 (特征函数反演公式)</strong></span> 设 <span class="math inline">\(X\)</span> 是一个 <span class="math inline">\(k\)</span> 维随机向量, 则对任意矩形区间 <span class="math inline">\((a,b]=\prod_{j=1}^{k}(a_{j},b_{j}]\)</span>, 有 <span class="math display">\[
+P_{X}((a,b])=\lim_{ c \to \infty } \int _{-c}^{c}\dots \int _{-c}^{c}
+\frac{\phi_{X}(t_{1},\dots,t_{k})}{(2\pi)^{k}}
+\prod\limits_{j=1}^{k}\frac{e^{-it_{j}a_{j}}-e^{-it_{j}b_{j}}}{it_{j}}
+dt_{1}\dots dt_{k}.
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>首先, 我们需要定义一个特殊的积分函数: <span class="math display">\[
+S(c)=\int _{0}^{c}\frac{\sin x}{x} \, dx , c &gt; 0.
+\]</span> 在 <a href="../../../src/learn/advanced-probability/08-integration.html#counterexample-inte">反常积分反例</a> 中我们证明了 <span class="math inline">\(\lim_{ c \to \infty }S(c)=\frac{\pi}{2}\)</span>. 我们进一步有 <span class="math display">\[
+\begin{align}
+\int _{0}^{c}\frac{\sin tx}{x} \, dx
+&amp;=sgn(t)\int _{0}^{c}\frac{\sin \lvert t \rvert x}{\lvert t \rvert x} \, d(\lvert t \rvert x)  \\
+&amp;=sgn(t)S(\lvert t \rvert c).
+\end{align}
+\]</span> 其中 <span class="math display">\[
+sgn(t)=\left\{\begin{matrix}
++1,\quad &amp;t &gt; 0 \\
+0, \quad &amp;t=0  \\
+-1, \quad &amp;t &lt; 0.
+\end{matrix}\right.
+\]</span></p>
+<p>因此, 我们有 <span class="math display">\[
+\begin{align}
+\int _{-c}^{c}\frac{e^{iat}-e^{ibt}}{it} \, dt&amp;=
+\int _{-c}^{c}\frac{\cos at-\cos bt}{it}+\frac{\sin at-\sin bt}{t}dt \\
+&amp;=\int _{-c}^{c}\frac{\sin at-\sin bt}{t}dt \\
+&amp;=2[sgn(a)S(\lvert a \rvert c)-sgn(b)S(\lvert b \rvert c)].
+\end{align}
+\]</span> 由于 <span class="math inline">\(\frac{\cos t}{t}\)</span> 是奇函数, 所以关于它的积分是 0; <span class="math inline">\(\frac{\sin t}{t}\)</span> 是偶函数, 其在 <span class="math inline">\([-c,c]\)</span> 上的积分是 <span class="math inline">\([0,c]\)</span> 上的两倍.</p>
+<p>现在, 我们来整理 inverse formula 的内容 <span class="math display">\[
+\begin{align}
+I_{c}=&amp;\int _{-c}^{c}\dots \int _{-c}^{c}
+\frac{\phi_{X}(t_{1},\dots,t_{k})}{(2\pi)^{k}}
+\prod\limits_{j=1}^{k}\frac{e^{-it_{j}a_{j}}-e^{-it_{j}b_{j}}}{it_{j}}
+dt_{1}\dots dt_{k} \\
+=&amp;\frac{1}{(2\pi)^{k}}\int _{-c}^{c}\dots \int _{-c}^{c}
+\int _{\mathbb{R}^{k}} e^{itx} dP_{X}
+\prod\limits_{j=1}^{k}\frac{e^{-it_{j}a_{j}}-e^{-it_{j}b_{j}}}{it_{j}}
+dt_{1}\dots dt_{k} \\
+=&amp;\frac{1}{(2\pi)^{k}}\int _{\mathbb{R}^{k}}
+\int _{-c}^{c}\dots \int _{-c}^{c}
+\prod\limits_{j=1}^{k}
+\frac{e^{it_{j}(x_{j}-a_{j})}-e^{it_{j}(x_{j}-b_{j})}}{it_{j}}
+dt_{1}\dots dt_{k}dP_{X} \\
+=&amp;\frac{1}{(2\pi)^{k}}\int _{\mathbb{R}^{k}} dP_{X}
+\prod\limits_{j=1}^{k}
+\int _{-c}^{c}
+\frac{e^{it_{j}(x_{j}-a_{j})}-e^{it_{j}(x_{j}-b_{j})}}{it_{j}}dt_{j} \\
+=&amp;\frac{1}{\pi^{k}}\int _{\mathbb{R}^{k}}
+\left[ \prod\limits_{j=1}^{k}
+(sgn(x_{j}-a_{j})S(\lvert x_{j}-a_{j} \rvert c)
+-sgn(x_{j}-b_{j})S(\lvert x_{j}-b_{j} \rvert c))
+\right]dP_{X}.
+\end{align}
+\]</span> 其中由于 <span class="math inline">\(e^{itx}\)</span> 的有界性, 应用 <strong>?@thm-fubini-plus</strong> 来推导出第 3,4 行. 然后同样因为有界性, 可以应用 <strong>?@cor-fct</strong> 将极限和积分换序, 得到 <span class="math display">\[
+\begin{align}
+\lim_{ c \to \infty } I_{c}
+&amp;=\frac{1}{\pi^{k}}\int _{\mathbb{R}^{k}}
+\left[ \prod\limits_{j=1}^{k}
+\lim_{ c \to \infty } (sgn(x_{j}-a_{j})S(\lvert x_{j}-a_{j} \rvert c)
+-sgn(x_{j}-b_{j})S(\lvert x_{j}-b_{j} \rvert c))
+\right]dP_{X}.
+\end{align}
+\]</span> 注意到 <span class="math display">\[
+\begin{align}
+\lim_{ c \to \infty } (sgn(x_{j}-a_{j})S(\lvert x_{j}-a_{j} \rvert c)
+-sgn(x_{j}-b_{j})S(\lvert x_{j}-b_{j} \rvert c))
+=\left\{\begin{matrix}
+0, &amp; x_{j}&lt;a_{j},  \\
+\frac{\pi}{2}, &amp; x_{j}=a_{j}, \\
+\pi, &amp;a_{j}&lt; x_{j} &lt; b_{j}, \\
+\frac{\pi}{2}, &amp; x_{j}=b_{j}, \\
+0, &amp; x_{j} &gt; b_{j},
+\end{matrix}\right.
+\end{align}
+\]</span> 所以有 <span class="math display">\[
+\lim_{ c \to \infty } I_{c}=\frac{1}{\pi^{k}}\pi^{k}P(a_{1}&lt;X_{1}&lt;b_{1},\dots,a_{k}&lt;X_{k}&lt;b_{k})=P(a&lt;X&lt;b).
+\]</span></p>
+</div>
+<div id="thm-cf-mgf-determine-distribution" class="theorem">
+<p><span class="theorem-title"><strong>定理 8 (特征函数、矩母函数与分布的唯一确定性)</strong></span> <span class="math inline">\(X,Y\)</span> 是两个位于同一概率空间上的 <span class="math inline">\(k\)</span> 维的随机向量, 则有 (1) <span class="math inline">\(\phi_{X}(t)=\phi_{Y}(t)\iff P_{X}=P_{Y}\)</span>. (2) 当 <span class="math inline">\(\psi_{X},\psi_{Y}\)</span> 在 <span class="math inline">\(0\)</span> 的邻域上有限时, <span class="math inline">\(\psi_{X}(t)=\psi_{Y}(t)\iff P_{X}=P_{Y}\)</span>.</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>由右侧推导至左侧是显而易见的, 这是由定义所保证的. 现在我们主要讨论从左侧到右侧的推导过程.</p>
+<ol type="1">
+<li><p>根据 <a href="#lem-cf-inversion-formula" class="quarto-xref">引理&nbsp;3</a>, <span class="math inline">\(\phi_{X}=\phi_{Y}\)</span> 蕴含 <span class="math inline">\(P_{X},P_{Y}\)</span> 在所有矩形区间 <span class="math inline">\((a,b]\)</span> 上取值相同. 再根据 <strong>?@cor-measure-extension-2</strong> 中的唯一性, 保证了分布一定是相等的.</p></li>
+<li><p>我们首先证明 <span class="math inline">\(k=1\)</span> 的情况. 根据不等式 <span class="math display">\[
+e^{\lvert s \rvert x}&lt;e^{sx}+e^{-sx},
+\]</span> 在加上 <span class="math inline">\(\psi_{X}\)</span> 在邻域中有界, 可以得到 <span class="math inline">\(\psi_{\lvert X \rvert}\)</span> 也在邻域中有界, 我们假设这个邻域是 <span class="math inline">\((-c,c)\)</span>. 根据 <a href="#prp-mgf-cf-properties" class="quarto-xref">命题&nbsp;6</a> (5), <span class="math inline">\(\lvert X \rvert\)</span> 的所有阶矩均存在且有界. 然后利用下面的不等式 (可以利用复函数的 Taylor 展开来证明) <span class="math display">\[
+\left\lvert  e^{itx}\left[  e^{iax}-\sum\limits_{j=0}^{n}\frac{(iax)^{j}}{j!}  \right]   \right\rvert \leq \frac{\lvert ax \rvert ^{n+1}}{(n+1)!},
+\]</span> 可以得到 (利用了 <span class="math inline">\(\lvert \mathbb{E}X \rvert\leq \mathbb{E}\lvert X \rvert\)</span>) <span class="math display">\[
+\begin{align}
+\left\lvert  \phi_{X}(t+a)-\sum\limits_{j=0}^{n}\frac{a^{j}}{j!}\mathbb{E}[(iX)^{j}e^{itX}]   \right\rvert
+\leq \mathbb{E} \left\lvert  e^{itx}\left[  e^{iax}-\sum\limits_{j=0}^{n}\frac{(iax)^{j}}{j!}  \right]   \right\rvert
+\leq
+\frac{\lvert a \rvert ^{n+1}\mathbb{E}\lvert X \rvert ^{n+1}}{(n+1)!},
+\end{align}
+\]</span> 结合 <a href="#prp-mgf-cf-properties" class="quarto-xref">命题&nbsp;6</a> (6) 中的公式, 得到 <span class="math display">\[
+\left\lvert  \phi_{X}(t+a)-\sum\limits_{j=0}^{n}\frac{a^{j}}{j!}\mathbb{E}[(iX)^{j}e^{itX}]   \right\rvert
+=\left\lvert  \phi_{X}(t+a)-\sum\limits_{j=0}^{n}\frac{a^{j}}{j!}\frac{\partial^{j}\phi_{X}(t)}{\partial t^{j}}   \right\rvert
+\leq \frac{\lvert a \rvert ^{n+1}\mathbb{E}\lvert X \rvert ^{n+1}}{(n+1)!},
+\]</span></p></li>
+</ol>
+<p><span id="eq-cf-taylor-remainder-bound"></span></p>
+<p>式 <a href="#eq-cf-taylor-remainder-bound">eq-cf-taylor-remainder-bound</a> 表明右侧的值当 <span class="math inline">\(a\in(-c,c)\)</span> 时随 <span class="math inline">\(n\)</span> 的增大会 <span class="math inline">\(\to0\)</span>, 因此, 最终我们有下面的展开表达: <span class="math display">\[
+\phi_{X}(t+a)=\sum\limits_{j=0}^{\infty}\frac{a^{j}}{j!}
+\frac{\partial^{j}\phi_{X}(t)}{\partial t^{j}}, \quad \lvert a \rvert &lt; c.
+\]</span></p>
+<p><span id="eq-cf-local-power-series"></span></p>
+<p>显然, 我们也可以将相同的推导过程应用到 <span class="math inline">\(Y\)</span> 上, 得到类似的表达式.</p>
+<p><span class="math inline">\(\psi_{X}=\psi_{Y}&lt;\infty\)</span> 在 <span class="math inline">\(0\)</span> 的邻域中, 蕴含 <span class="math inline">\(X,Y\)</span> 拥有相同的矩 (所有阶), 根据 <a href="#prp-mgf-cf-properties" class="quarto-xref">命题&nbsp;6</a> (6), 这蕴含 <span class="math inline">\(\phi_{X}^{(j)}(0)=\phi_{Y}^{(j)}(0),j=1,2,\dots\)</span>, 加上式 <a href="#eq-cf-local-power-series">eq-cf-local-power-series</a>, 得到 <span class="math display">\[
+\phi_{X}(a)=\phi_{Y}(a),\quad a \in (-c, c),
+\]</span> 自然有 <span class="math display">\[
+\phi_{X}^{(j)}(a) = \phi_{Y}^{(j)}(a),\quad a \in (-c, c).
+\]</span></p>
+<p><span class="math inline">\(\forall \epsilon&gt;0,\epsilon&lt;c\)</span>, 自然有 <span class="math inline">\(c-\epsilon,-c+\epsilon \in(-c, c)\)</span>, 因此有 <span class="math display">\[
+\phi_{X}(c+a-\epsilon)=\sum\limits_{j=0}^{\infty}\frac{a^{j}}{j!}\phi_{X}^{(j)}(c-\epsilon)
+=\sum\limits_{j=0}^{\infty}\frac{a^{j}}{j!}\phi_{Y}^{(j)}(c-\epsilon)
+=\phi_{Y}(c+a-\epsilon),\quad a\in(-c, c)
+\]</span> 和 <span class="math display">\[
+\phi_{X}(-c+a+\epsilon)=\sum\limits_{j=0}^{\infty}\frac{a^{j}}{j!}\phi_{X}^{(j)}(-c+\epsilon)
+=\sum\limits_{j=0}^{\infty}\frac{a^{j}}{j!}\phi_{Y}^{(j)}(-c+\epsilon)
+=\phi_{Y}(-c+a+\epsilon), \quad a\in(-c, c)
+\]</span> 因为 <span class="math inline">\(\epsilon\)</span> 的任意小性质, 得到了 <span class="math display">\[
+\phi_{X}(a)=\phi_{Y}(a),\quad a \in (-2c, 2c).
+\]</span> 重复以上步骤, 最终我们得到 <span class="math display">\[
+\phi_{X}(a)=\phi_{Y}(a),\quad a \in \mathbb{R},
+\]</span> 利用 (1) 的结论, 我们得到了 <span class="math inline">\(P_{X}=P_{Y}\)</span>.</p>
+<p>若 <span class="math inline">\(k\geq 2\)</span>. 我们使用反证法, 假设 <span class="math inline">\(P_{X}\neq P_{Y}\)</span>, 根据 (1) 的结论, <span class="math display">\[
+\phi_{X}(a)\neq \phi_{Y}(a),\quad \exists a\in\mathbb{R},
+\]</span> 这等价于 <span class="math display">\[
+\phi_{a^{T}X}(1)\neq \phi_{a^{T}Y}(1),
+\]</span> 这意味着 <span class="math inline">\(P_{a^{T}X}\neq P_{a^{T}Y}\)</span>.</p>
+<p>但是 <span class="math display">\[
+\psi_{X}(t)=\psi_{Y}(t)&lt;\infty, t\in \text{neighborhood of 0}
+\implies
+\psi_{a^{T}X}(t)=\psi_{a^{T}Y}(t)&lt;\infty, t\in \text{neighborhood of 0}
+\]</span> 再根据 <span class="math inline">\(k=1\)</span> 的证明结果可知 <span class="math display">\[
+P_{a^{T}X}=P_{a^{T}Y},
+\]</span> 产生矛盾, 因此有 <span class="math display">\[
+P_{X}=P_{Y}.
+\]</span></p>
+</div>
+</section>
+</section>
+<section id="常见分布的矩母函数和特征函数" class="level1">
+<h1>常见分布的矩母函数和特征函数</h1>
+<p>我们在计算的时候, 除了直接去根据定义进行计算外, 还可以去利用 <a href="#prp-mgf-cf-properties" class="quarto-xref">命题&nbsp;6</a> (4) 和 (8) 来根据已知的矩母函数和特征函数进行计算.</p>
+<p>有时候, 我们可以很简单的计算得到矩母函数或特征函数, 但是计算其分布函数或密度函数很难. 则我们可以利用 <a href="#thm-cf-mgf-determine-distribution" class="quarto-xref">定理&nbsp;8</a>, 根据矩母函数或特征函数来确定随机变量服从的分布, 或者说确定两个随机变量分布是一样的.</p>
+<section id="正态分布" class="level2">
+<h2 class="anchored" data-anchor-id="正态分布">正态分布</h2>
+<div id="prp-normal-mgf-cf" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 7 (正态分布的矩母函数与特征函数)</strong></span> 若 <span class="math inline">\(X\)</span> 是一个 <span class="math inline">\(k\)</span> 维随机向量, 且 <span class="math inline">\(X\sim N(\mu,\Sigma)\)</span>, 则有 $$ _{X}(t)=e<sup>{t</sup>{T}+t^{T}t},</p>
+<p>_{X}(t)=e<sup>{it</sup>{T}-t^{T}t}.</p>
+<p><span class="math display">\[
+特别的, 当 $X$ 是一个一维随机变量, 且 $X\sim N(\mu,\sigma^{2})$ 时, 有
+\]</span> <em>{X}(t)=e^{t+<sup>{2}t</sup>{2}}, </em>{X}(t)=e^{i t-<sup>{2}t</sup>{2}}. $$</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>我们首先证明对于一维标准正态分布时的情况, 即 <span class="math inline">\(X\sim N(0,1)\)</span>, 则有 <span class="math display">\[
+\begin{align}
+\psi_{X}(t)&amp;=\mathbb{E}e^{tX} \\
+&amp;=\int e^{tx}\frac{1}{\sqrt{ 2\pi }} e^{-\frac{x^{2}}{2}} dx \\
+&amp;=\frac{1}{\sqrt{ 2\pi }}\int \exp\left[ -\frac{1}{2}
+(x^{2}-2tx)\right] \, dx  \\
+&amp;=e^{\frac{t^{2}}{2}}\frac{1}{\sqrt{ 2\pi }}\int \exp\left[ -\frac{1}{2}
+(x-t)^{2}\right] dx \\
+&amp;=e^{\frac{t^{2}}{2}}.
+\end{align}
+\]</span> 利用相似的手法, 可以得到 <span class="math display">\[
+\begin{align}
+\phi_{X}(t)&amp;=\mathbb{E}e^{itX} \\
+&amp;=\int e^{itx}\frac{1}{\sqrt{ 2\pi }} e^{-\frac{x^{2}}{2}} dx \\
+&amp;=e^{-\frac{t^{2}}{2}}.
+\end{align}
+\]</span> 利用 <a href="#prp-mgf-cf-properties" class="quarto-xref">命题&nbsp;6</a> (4), 我们可以得到一般标准正态分布的结果, 即 <span class="math inline">\(Y\sim N(\mu,\sigma^{2})\)</span>, 则有 <span class="math inline">\(Y=\sigma X+\mu\)</span>, 因此有 <span class="math display">\[
+\begin{align}
+&amp;\psi_{Y}(t)=\psi_{X}(\sigma t)e^{\mu t}=e^{\mu t+\frac{1}{2}\sigma^{2}t^{2}}, \\
+&amp;\phi_{Y}(t)=\phi_{X}(\sigma t)e^{i \mu t}=e^{i \mu t-\frac{1}{2}\sigma^{2}t^{2}}.
+\end{align}
+\]</span></p>
+<p>对于高维的情况, 即 <span class="math inline">\(X\)</span> 是一个 <span class="math inline">\(k\)</span> 维随机向量, 并且有 <span class="math inline">\(X\sim N(0,I_{k})\)</span>, 使用类似的方式可以得到 <span class="math display">\[
+\psi_{X}(t)=e^{\frac{1}{2}t^{T}t},\quad
+\phi_{X}(t)=e^{-\frac{1}{2}t^{T}t}.
+\]</span> 当 <span class="math inline">\(X\sim N(\mu, \Sigma)\)</span> 时, 有 <span class="math display">\[
+\psi_{X}(t)=e^{t^{T}\mu+\frac{1}{2}t^{T}\Sigma t},\quad
+\phi_{X}(t)=e^{it^{T}\mu-\frac{1}{2}t^{T}\Sigma t}.
+\]</span></p>
+</div>
+</section>
+<section id="柯西分布-1" class="level2">
+<h2 class="anchored" data-anchor-id="柯西分布-1">柯西分布</h2>
+<div id="prp-cauchy-mgf-cf" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 8 (柯西分布的矩母函数与特征函数)</strong></span> 若 <span class="math inline">\(X\sim C(\mu,\sigma)\)</span>, 则 <span class="math display">\[
+\psi_{X}(0)=1,\quad \psi_{X}(t)=\infty,\ t\neq 0,
+\]</span> 且 <span class="math display">\[
+\phi_{X}(t)=e^{i\mu t-\sigma\lvert t \rvert}.
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>我们首先来计算 m.g.f., 当 <span class="math inline">\(X\sim C(0,1)\)</span> 时, <span class="math display">\[
+\begin{align}
+\psi_{X}(t)&amp;=\mathbb{E}e^{tX} \\
+&amp;=\int e^{tx}\frac{1}{\pi(1+x^{2})} \, dx
+\end{align}
+\]</span> 注意到, 当 <span class="math inline">\(t&gt;0\)</span> 时, <span class="math inline">\(\lim_{ x \to +\infty }\frac{e^{tx}}{1+x^{2}}\to \infty\)</span>, 因此, <span class="math inline">\(\forall\epsilon&gt;0,\exists a&gt;0, \forall x&gt;a\implies \frac{e^{tx}}{1+x^{2}}&gt;\epsilon\)</span>, 这意味着 <span class="math display">\[
+\int _{0}^{\infty}\frac{e^{tx}}{(1+x^{2})} \, dx =+\infty,
+\]</span> 也容易得到 <span class="math display">\[
+0&lt; \int _{-\infty}^{0}\frac{e^{tx}}{(1+x^{2})} \, dx &lt; \infty ,
+\]</span> 所以有 <span class="math display">\[
+\psi_{X}(t) = \infty,\quad t&gt;0.
+\]</span> 当 <span class="math inline">\(t&lt;0\)</span> 时, 容易得到 <span class="math inline">\(\lim_{ x \to -\infty }\frac{e^{tx}}{(1+x^{2})}\to +\infty\)</span>, 所以利用相同的思路得到 <span class="math display">\[
+\psi_{X}(t) = \infty,\quad t &lt; 0.
+\]</span> 也就是说 <span class="math inline">\(X\)</span> 的 p.m.f 在 0 之外的点上全是 <span class="math inline">\(\infty\)</span>. 据此容易证明, 当 <span class="math inline">\(X\sim C(\mu,\sigma)\)</span> 时, 结论是一样的.</p>
+<p>至于 ch.&nbsp;f., 我们需要计算以下这个积分: <span class="math display">\[
+\int e^{itx}\frac{1}{\pi(1+x^{2})} \, dx,
+\]</span> 这个积分需要使用复变函数论中的留数法进行计算, 详见 留数法 (<code>留数法</code>).</p>
+</div>
+</section>
+<section id="卡方分布-1" class="level2">
+<h2 class="anchored" data-anchor-id="卡方分布-1">卡方分布</h2>
+<div id="prp-chi-square-mgf-cf" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 9 (卡方分布的矩母函数与特征函数)</strong></span> 若 <span class="math inline">\(X\sim \chi_{n}^{2}\)</span>, 则 <span class="math display">\[
+\psi_{X}(t)=\frac{1}{(1-2t)^{n/2}},\quad t&lt;\frac{1}{2},
+\]</span> 以及 <span class="math display">\[
+\phi_{X}(t)=\frac{1}{(1-2it)^{n/2}},\quad t\in\mathbb{R}.
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>根据 <a href="../../../src/learn/advanced-probability/17-statistical-distributions-and-density-functions.html#17-statistical-distributions-and-density-functions-卡方分布">17_统计分布与密度函数</a> 中的定义, 可设 <span class="math display">\[
+X=Z_{1}^{2}+\cdots+Z_{n}^{2},
+\quad Z_{1},\dots,Z_{n}\overset{\text{i.i.d.}}{\sim}N(0,1).
+\]</span> 先考虑 <span class="math inline">\(Y=Z_{1}^{2}\)</span>. 当 <span class="math inline">\(t&lt;1/2\)</span> 时, <span class="math display">\[
+\begin{align}
+\psi_{Y}(t)
+&amp;=\mathbb{E}e^{tZ_{1}^{2}} \\
+&amp;=\frac{1}{\sqrt{ 2\pi }}
+\int_{\mathbb{R}} \exp\left( tx^{2}-\frac{x^{2}}{2} \right)\,dx \\
+&amp;=\frac{1}{\sqrt{ 2\pi }}
+\int_{\mathbb{R}} \exp\left( -\frac{1-2t}{2}x^{2} \right)\,dx \\
+&amp;=\frac{1}{\sqrt{ 1-2t }}.
+\end{align}
+\]</span> 因此由独立性和 <a href="#prp-mgf-cf-properties" class="quarto-xref">命题&nbsp;6</a> (8), 得到 <span class="math display">\[
+\psi_{X}(t)=\prod_{j=1}^{n}\psi_{Y}(t)
+=\frac{1}{(1-2t)^{n/2}},\quad t&lt;\frac{1}{2}.
+\]</span></p>
+<p>将上式中的 <span class="math inline">\(t\)</span> 替换为 <span class="math inline">\(it\)</span>, 就得到 <span class="math display">\[
+\phi_{Y}(t)=\psi_{Y}(it)=\frac{1}{\sqrt{ 1-2it }},
+\]</span> 从而 <span class="math display">\[
+\phi_{X}(t)=\prod_{j=1}^{n}\phi_{Y}(t)
+=\frac{1}{(1-2it)^{n/2}}.
+\]</span></p>
+</div>
+</section>
+<section id="f-分布-1" class="level2">
+<h2 class="anchored" data-anchor-id="f-分布-1">F 分布</h2>
+<div id="prp-f-mgf-cf" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 10 (F 分布的矩母函数与特征函数)</strong></span> 若 <span class="math inline">\(X\sim F_{n,m}\)</span>, 则其矩母函数在通常意义下不存在. 更具体地, <span class="math display">\[
+\psi_{X}(0)=1,\quad \psi_{X}(t)=\infty,\ t&gt;0,
+\]</span> 而当 <span class="math inline">\(t&lt;0\)</span> 时, <span class="math display">\[
+\psi_{X}(t)=
+\frac{\Gamma\left( \frac{n+m}{2} \right)}{\Gamma\left( \frac{m}{2} \right)}
+U\left( \frac{n}{2},1-\frac{m}{2},-\frac{m}{n}t \right).
+\]</span> 其特征函数为 <span class="math display">\[
+\phi_{X}(t)=
+\frac{\Gamma\left( \frac{n+m}{2} \right)}{\Gamma\left( \frac{m}{2} \right)}
+U\left( \frac{n}{2},1-\frac{m}{2},-\frac{im}{n}t \right),\quad t\in\mathbb{R},
+\]</span> 其中 <span class="math inline">\(U(a,b,z)\)</span> 是 Tricomi 合流超几何函数.</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>根据 <a href="../../../src/learn/advanced-probability/17-statistical-distributions-and-density-functions.html#17-statistical-distributions-and-density-functions-f-分布">17_统计分布与密度函数</a> 中的密度函数, 记 <span class="math display">\[
+\alpha=\frac{n}{2},\quad \beta=\frac{m}{2},
+\quad c=\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}
+\left( \frac{n}{m} \right)^{\alpha},
+\]</span> 则 <span class="math display">\[
+f_{X}(x)=cx^{\alpha-1}\left( 1+\frac{n}{m}x \right)^{-(\alpha+\beta)}I_{(0,\infty)}(x).
+\]</span> 由于 <span class="math inline">\(f_{X}(x)\sim Cx^{-\beta-1}\)</span> 当 <span class="math inline">\(x\to\infty\)</span>, 所以当 <span class="math inline">\(t&gt;0\)</span> 时 <span class="math display">\[
+e^{tx}f_{X}(x)\to\infty,
+\]</span> 从而 <span class="math inline">\(\psi_{X}(t)=\infty\)</span>.</p>
+<p>当 <span class="math inline">\(t&lt;0\)</span> 时, 令 <span class="math inline">\(s=-t&gt;0\)</span>, 并作变量替换 <span class="math inline">\(y=\frac{n}{m}x\)</span>, 得到 <span class="math display">\[
+\begin{align}
+\psi_{X}(t)
+&amp;=\mathbb{E}e^{-sX} \\
+&amp;=\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}
+\int_{0}^{\infty}e^{-\frac{m}{n}sy}y^{\alpha-1}(1+y)^{-(\alpha+\beta)}\,dy.
+\end{align}
+\]</span> 再利用 Tricomi 函数的积分表示 <span class="math display">\[
+U(a,b,z)=\frac{1}{\Gamma(a)}
+\int_{0}^{\infty}e^{-zy}y^{a-1}(1+y)^{b-a-1}\,dy,
+\quad \Re z&gt;0,
+\]</span> 就得到 <span class="math display">\[
+\psi_{X}(t)=
+\frac{\Gamma(\alpha+\beta)}{\Gamma(\beta)}
+U\left( \alpha,1-\beta,\frac{m}{n}s \right),
+\]</span> 也就是 <span class="math display">\[
+\psi_{X}(t)=
+\frac{\Gamma\left( \frac{n+m}{2} \right)}{\Gamma\left( \frac{m}{2} \right)}
+U\left( \frac{n}{2},1-\frac{m}{2},-\frac{m}{n}t \right),\quad t&lt;0.
+\]</span></p>
+<p>将上面的实参数延拓到纯虚参数, 就得到特征函数公式 <span class="math display">\[
+\phi_{X}(t)=
+\frac{\Gamma\left( \frac{n+m}{2} \right)}{\Gamma\left( \frac{m}{2} \right)}
+U\left( \frac{n}{2},1-\frac{m}{2},-\frac{im}{n}t \right).
+\]</span></p>
+</div>
+</section>
+<section id="t-分布-1" class="level2">
+<h2 class="anchored" data-anchor-id="t-分布-1">t 分布</h2>
+<div id="prp-t-mgf-cf" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 11 (t 分布的矩母函数与特征函数)</strong></span> 若 <span class="math inline">\(X\sim t_{n}\)</span>, 则其矩母函数在通常意义下不存在. 更具体地, <span class="math display">\[
+\psi_{X}(0)=1,\quad \psi_{X}(t)=\infty,\ t\neq 0.
+\]</span> 其特征函数为 <span class="math display">\[
+\phi_{X}(t)=
+\frac{(\sqrt{ n }\lvert t \rvert )^{n/2}}
+{2^{n/2-1}\Gamma\left( \frac{n}{2} \right)}
+K_{n/2}(\sqrt{ n }\lvert t \rvert),\quad t\in\mathbb{R},
+\]</span> 其中 <span class="math inline">\(K_{\nu}\)</span> 是第二类修正 Bessel 函数.</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>由 <a href="../../../src/learn/advanced-probability/17-statistical-distributions-and-density-functions.html#17-statistical-distributions-and-density-functions-t-分布">17_统计分布与密度函数</a> 中的密度函数可知, 当 <span class="math inline">\(\lvert x \rvert\to\infty\)</span> 时, <span class="math display">\[
+f_{X}(x)\sim C\lvert x \rvert^{-(n+1)}.
+\]</span> 因此当 <span class="math inline">\(t&gt;0\)</span> 时, <span class="math inline">\(e^{tx}f_{X}(x)\)</span> 在 <span class="math inline">\(+\infty\)</span> 处不可积; 当 <span class="math inline">\(t&lt;0\)</span> 时, <span class="math inline">\(e^{tx}f_{X}(x)\)</span> 在 <span class="math inline">\(-\infty\)</span> 处不可积. 所以 <span class="math display">\[
+\psi_{X}(t)=\infty,\quad t\neq 0.
+\]</span></p>
+<p>接下来求特征函数. 根据 <a href="../../../src/learn/advanced-probability/17-statistical-distributions-and-density-functions.html#17-statistical-distributions-and-density-functions-t-分布">17_统计分布与密度函数</a> 的定义, 可设 <span class="math display">\[
+X=\frac{Z}{\sqrt{ V/n }},
+\quad Z\sim N(0,1),\ V\sim \chi_{n}^{2},
+\]</span> 且 <span class="math inline">\(Z,V\)</span> 相互独立. 因此 <span class="math display">\[
+\phi_{X}(t)
+=\mathbb{E}\left[ \mathbb{E}\left( e^{itZ/\sqrt{ V/n }}\mid V \right) \right]
+=\mathbb{E}\left[ e^{-\frac{nt^{2}}{2V}} \right].
+\]</span> 再代入 <span class="math inline">\(V\sim \chi_{n}^{2}\)</span> 的密度函数, 得到 <span class="math display">\[
+\phi_{X}(t)
+=\frac{1}{2^{n/2}\Gamma(n/2)}
+\int_{0}^{\infty}
+v^{\frac{n}{2}-1}
+\exp\left( -\frac{v}{2}-\frac{nt^{2}}{2v} \right)\,dv.
+\]</span> 利用积分公式 <span class="math display">\[
+\int_{0}^{\infty}x^{\nu-1}e^{-\beta x-\gamma/x}\,dx
+=2\left( \frac{\gamma}{\beta} \right)^{\nu/2}
+K_{\nu}(2\sqrt{ \beta\gamma }),
+\quad \beta,\gamma&gt;0,
+\]</span> 取 <span class="math display">\[
+\nu=\frac{n}{2},\quad \beta=\frac{1}{2},\quad \gamma=\frac{nt^{2}}{2},
+\]</span> 便得到 <span class="math display">\[
+\phi_{X}(t)=
+\frac{(\sqrt{ n }\lvert t \rvert )^{n/2}}
+{2^{n/2-1}\Gamma\left( \frac{n}{2} \right)}
+K_{n/2}(\sqrt{ n }\lvert t \rvert).
+\]</span></p>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script>
+(function () {
+  function makeProofsCollapsible() {
+    const proofs = document.querySelectorAll("div.proof");
+
+    proofs.forEach(function (proof) {
+      if (proof.dataset.collapsibleReady === "true") return;
+
+      const details = document.createElement("details");
+
+      details.className = proof.className;
+      details.classList.add("proof-collapsible");
+      details.dataset.collapsibleReady = "true";
+
+      if (proof.id) {
+        details.id = proof.id;
+      }
+
+      details.open = proof.classList.contains("open");
+
+      const summary = document.createElement("summary");
+      const title = proof.querySelector(".proof-title");
+
+      if (title) {
+        summary.innerHTML = title.innerHTML;
+        title.remove();
+      } else {
+        summary.innerHTML = "<strong>Proof</strong>";
+      }
+
+      details.appendChild(summary);
+
+      while (proof.firstChild) {
+        details.appendChild(proof.firstChild);
+      }
+
+      proof.replaceWith(details);
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", makeProofsCollapsible);
+  } else {
+    makeProofsCollapsible();
+  }
+})();
+</script>
+<script>
+(function () {
+  function fixTheoremTitleSpacing() {
+    const titleSelectors = [
+      ".theorem-title",
+      ".lemma-title",
+      ".corollary-title",
+      ".proposition-title",
+      ".conjecture-title",
+      ".definition-title",
+      ".example-title",
+      ".exercise-title",
+      ".solution-title",
+      ".remark-title",
+      ".algorithm-title",
+      ".proof-title"
+    ].join(",");
+
+    document.querySelectorAll(titleSelectors).forEach(function (title) {
+      const p = title.parentElement;
+
+      if (!p || p.tagName.toLowerCase() !== "p") return;
+
+      /*
+        Quarto/Pandoc often inserts a text node like:
+        <p><span class="theorem-title">...</span>&nbsp;</p>
+
+        Remove whitespace-only text nodes, including non-breaking spaces.
+      */
+      Array.from(p.childNodes).forEach(function (node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          const cleaned = node.textContent.replace(/\u00a0/g, " ").trim();
+          if (cleaned === "") {
+            node.remove();
+          }
+        }
+      });
+
+      p.classList.add("math-env-title-p");
+
+      /*
+        If the paragraph only contains the title span after cleanup,
+        mark it as title-only.
+      */
+      const meaningfulChildren = Array.from(p.childNodes).filter(function (node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          return node.textContent.replace(/\u00a0/g, " ").trim() !== "";
+        }
+        return true;
+      });
+
+      if (meaningfulChildren.length === 1 && meaningfulChildren[0] === title) {
+        p.classList.add("math-env-title-only");
+      }
+
+      /*
+        If the title-only paragraph is followed by a list,
+        compress the gap between title and list.
+      */
+      const next = p.nextElementSibling;
+      if (
+        p.classList.contains("math-env-title-only") &&
+        next &&
+        (next.tagName.toLowerCase() === "ol" || next.tagName.toLowerCase() === "ul")
+      ) {
+        p.classList.add("math-env-title-before-list");
+      }
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", fixTheoremTitleSpacing);
+  } else {
+    fixTheoremTitleSpacing();
+  }
+})();
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "已复制");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "已复制");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/luyiyun\.github\.io\/Notes\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

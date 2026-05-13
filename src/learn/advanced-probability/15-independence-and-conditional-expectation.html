@@ -1,0 +1,2347 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="荣志炜">
+
+<title>独立和条件期望 – Rong’s Notes</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-7dba656801d47940102fc4ffc3dc1a54.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../../styles.css">
+</head>
+
+<body class="nav-sidebar docked nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">Rong’s Notes</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="搜索"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="展开或折叠导航栏" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="../../../index.html" aria-current="page"> 
+<span class="menu-text">首页</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../src/learn/index.html"> 
+<span class="menu-text">专题学习</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../about.html"> 
+<span class="menu-text">关于</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/index.html">高等概率论</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/15-independence-and-conditional-expectation.html">独立和条件期望</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">首页</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../../src/learn/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">专题学习</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../../src/learn/advanced-probability/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">高等概率论</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/01-introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">介绍</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/02-sigma-field.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sigma 域</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/03-measure.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">测度</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/04-outer-measure.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">外测度</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/05-measure-extension.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">测度扩张</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/06-distribution-function.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">分布函数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/07-measurable-functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">可测函数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/08-integration.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">积分</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/09-lp-spaces.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lp 空间</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/10-signed-measures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">符号测度</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/11-radon-nikodym-derivative.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R-N 导数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/12-lebesgue-decomposition.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lebesgue 分解</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/13-finite-product-spaces.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">有限乘积空间</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/14-infinite-product-spaces.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">无限乘积空间</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/15-independence-and-conditional-expectation.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">独立和条件期望</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/16-markov-chains-and-martingales.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">马尔可夫链与鞅</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/17-statistical-distributions-and-density-functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">统计分布与密度函数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/18-moments.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">矩</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/19-convergence-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">收敛理论</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../../src/learn/prml/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">PRML</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/prml/06-kernel-methods.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">核方法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/prml/07-sparse-kernel-machines.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">稀疏核机器</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../about.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">关于</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#初等概率论中的定义" id="toc-初等概率论中的定义" class="nav-link active" data-scroll-target="#初等概率论中的定义">初等概率论中的定义</a>
+  <ul class="collapse">
+  <li><a href="#定义逻辑链条" id="toc-定义逻辑链条" class="nav-link" data-scroll-target="#定义逻辑链条">定义逻辑链条</a></li>
+  <li><a href="#逻辑漏洞" id="toc-逻辑漏洞" class="nav-link" data-scroll-target="#逻辑漏洞">逻辑漏洞</a></li>
+  </ul></li>
+  <li><a href="#独立" id="toc-独立" class="nav-link" data-scroll-target="#独立">独立</a>
+  <ul class="collapse">
+  <li><a href="#定义" id="toc-定义" class="nav-link" data-scroll-target="#定义">定义</a></li>
+  <li><a href="#判定条件" id="toc-判定条件" class="nav-link" data-scroll-target="#判定条件">判定条件</a></li>
+  <li><a href="#性质" id="toc-性质" class="nav-link" data-scroll-target="#性质">性质</a></li>
+  </ul></li>
+  <li><a href="#15-independence-and-conditional-expectation-条件期望和条件概率" id="toc-15-independence-and-conditional-expectation-条件期望和条件概率" class="nav-link" data-scroll-target="#15-independence-and-conditional-expectation-条件期望和条件概率">条件期望和条件概率</a>
+  <ul class="collapse">
+  <li><a href="#定义-1" id="toc-定义-1" class="nav-link" data-scroll-target="#定义-1">定义</a></li>
+  <li><a href="#给定值的条件期望" id="toc-给定值的条件期望" class="nav-link" data-scroll-target="#给定值的条件期望">给定值的条件期望</a></li>
+  <li><a href="#与初等概率论的联系" id="toc-与初等概率论的联系" class="nav-link" data-scroll-target="#与初等概率论的联系">与初等概率论的联系</a></li>
+  <li><a href="#性质-1" id="toc-性质-1" class="nav-link" data-scroll-target="#性质-1">性质</a></li>
+  <li><a href="#几何意义" id="toc-几何意义" class="nav-link" data-scroll-target="#几何意义">几何意义</a></li>
+  <li><a href="#和独立的关系" id="toc-和独立的关系" class="nav-link" data-scroll-target="#和独立的关系">和独立的关系</a></li>
+  <li><a href="#条件独立" id="toc-条件独立" class="nav-link" data-scroll-target="#条件独立">条件独立</a></li>
+  </ul></li>
+  <li><a href="#条件分布" id="toc-条件分布" class="nav-link" data-scroll-target="#条件分布">条件分布</a>
+  <ul class="collapse">
+  <li><a href="#15-independence-and-conditional-expectation-零测集堆积问题" id="toc-15-independence-and-conditional-expectation-零测集堆积问题" class="nav-link" data-scroll-target="#15-independence-and-conditional-expectation-零测集堆积问题">零测集堆积问题</a></li>
+  <li><a href="#正则条件概率" id="toc-正则条件概率" class="nav-link" data-scroll-target="#正则条件概率">正则条件概率</a></li>
+  <li><a href="#正则条件分布" id="toc-正则条件分布" class="nav-link" data-scroll-target="#正则条件分布">正则条件分布</a></li>
+  <li><a href="#15-independence-and-conditional-expectation-给定值的正则条件分布" id="toc-15-independence-and-conditional-expectation-给定值的正则条件分布" class="nav-link" data-scroll-target="#15-independence-and-conditional-expectation-给定值的正则条件分布">给定值的正则条件分布</a></li>
+  <li><a href="#两阶段实验定理" id="toc-两阶段实验定理" class="nav-link" data-scroll-target="#两阶段实验定理">两阶段实验定理</a></li>
+  <li><a href="#15-independence-and-conditional-expectation-条件概率密度" id="toc-15-independence-and-conditional-expectation-条件概率密度" class="nav-link" data-scroll-target="#15-independence-and-conditional-expectation-条件概率密度">条件概率密度</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/index.html">高等概率论</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/15-independence-and-conditional-expectation.html">独立和条件期望</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">独立和条件期望</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">作者</div>
+    <div class="quarto-title-meta-contents">
+             <p>荣志炜 </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">发布于</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">2024年6月14日</p>
+    </div>
+  </div>
+  
+    <div>
+    <div class="quarto-title-meta-heading">修改于</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date-modified">2026年5月13日</p>
+    </div>
+  </div>
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>从本章开始，我们将不再面向<strong>普通的测度空间</strong>，而是针对<strong>概率测度空间</strong>来进行讨论。这是因为，本章中出现的很多内容，只有在概率测度空间中才会出现和成立。<strong>概率测度最重要的一个特点是有限</strong>，这带来了很多在普通测度空间中不会出现的性质。</p>
+<p>其中，最重要的两个概念便是<strong>独立</strong>和<strong>条件概率</strong>，并且两者之间还存在这些密切的联系。今天，我们将从测度论的角度对两者及其相关的概念重新进行严谨的定义，这使得我们得以以现代数学的视角来审视概率和统计中的诸多概念。<strong>也正是因为引入了条件期望、独立等概念之后，概率论从而与测度论产生分别</strong>。</p>
+<section id="初等概率论中的定义" class="level1">
+<h1>初等概率论中的定义</h1>
+<p>在深入测度论概率之前，回顾初等概率论的构建方式至关重要。初等概率论通常依赖于直观的<strong>几何概型</strong>或<strong>离散模型</strong>，虽然在解决实际计算问题时行之有效，但在面对<strong>连续性</strong>、<strong>无限维空间</strong>以及<strong>零概率事件</strong>时，其逻辑链条显得脆弱且不自洽。</p>
+<section id="定义逻辑链条" class="level2">
+<h2 class="anchored" data-anchor-id="定义逻辑链条">定义逻辑链条</h2>
+<p>初等概率论的定义体系呈现出一种“由具体到抽象，由离散/绝对连续到混合”的<strong>分治策略</strong>。其核心逻辑构建过程如下：</p>
+<p><strong>第一阶段：基石构建（事件与概率）</strong> 逻辑起点是样本空间 <span class="math inline">\(\Omega\)</span>。对于离散情况，定义概率为样本点权重的求和；对于几何概型，定义为长度、面积或体积的比值。在此基础上，建立了公理化体系的雏形（非负性、归一性、有限或可列可加性）。</p>
+<p><strong>第二阶段：核心链接（条件概率）</strong> 这是初等概率论中最关键的转折点。根据直觉，定义了事件 <span class="math inline">\(B\)</span> 发生条件下 <span class="math inline">\(A\)</span> 发生的概率。这成为了后续定义独立性和条件分布的基础。公式定义为：若 <span class="math inline">\(P(B) &gt; 0\)</span>，则 <span class="math inline">\(P(A|B) = \frac{P(AB)}{P(B)}\)</span>。</p>
+<p><strong>第三阶段：独立性（Independence）</strong> 利用条件概率的直观意义（<span class="math inline">\(B\)</span> 的发生不影响 <span class="math inline">\(A\)</span>），或者直接通过乘积法则定义独立性。定义为：若 <span class="math inline">\(P(AB) = P(A)P(B)\)</span>，则称事件独立。</p>
+<p><strong>第四阶段：随机变量及其分布</strong> 将随机变量 <span class="math inline">\(X\)</span> 定义为从 <span class="math inline">\(\Omega\)</span> 到 <span class="math inline">\(\mathbb{R}\)</span> 的映射。但在处理分布时，初等概率论<strong>被迫</strong>分裂为两个平行的世界： - 第一是<strong>离散型</strong>，使用分布列（PMF）描述。 - 第二是<strong>连续型</strong>，使用概率密度函数（PDF）描述，通过黎曼积分计算概率。</p>
+<p><strong>第五阶段：条件分布与条件期望</strong> - 关于条件分布：对于离散型，利用条件概率公式直接计算；对于连续型，类比离散型，通过联合密度与边缘密度的比值 <span class="math inline">\(f_{Y|X}(y|x) = \frac{f(x,y)}{f_X(x)}\)</span> 来定义。 - 关于条件期望：将其定义为一个数值计算过程。即在求得条件分布后，对该分布进行加权求和（或积分）。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Abstract: 逻辑链总结">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>Abstract: 逻辑链总结
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>事件与概率 <span class="math inline">\(\xrightarrow{P(B)&gt;0}\)</span> <strong>条件概率</strong> <span class="math inline">\(\xrightarrow{定义}\)</span> <strong>独立性</strong> <span class="math inline">\(\downarrow\)</span> 随机变量（离散/连续分裂） <span class="math inline">\(\xrightarrow{类比推广}\)</span> <strong>条件分布</strong>（密度比值） <span class="math inline">\(\xrightarrow{积分/求和}\)</span> <strong>条件期望</strong></p>
+</div>
+</div>
+</section>
+<section id="逻辑漏洞" class="level2">
+<h2 class="anchored" data-anchor-id="逻辑漏洞">逻辑漏洞</h2>
+<p>上述逻辑链在处理复杂的数学对象时存在本质的缺陷。</p>
+<p><strong>第一：连续型随机变量会面临分母为 0 的问题。</strong></p>
+<p>在初等定义 <span class="math inline">\(P(A|B) = \frac{P(AB)}{P(B)}\)</span> 中，必须要求 <span class="math inline">\(P(B) &gt; 0\)</span>。然而，在处理连续型随机变量时，这一限制导致了严重的逻辑断裂。对于连续型随机变量 <span class="math inline">\(X\)</span>，其在任意单点 <span class="math inline">\(x\)</span> 处取值的概率均为 0，即 <span class="math inline">\(P(X=x) = 0\)</span>。按照初等定义，条件概率 <span class="math inline">\(P(A | X=x)\)</span> 将变成无意义的 <span class="math inline">\(\frac{0}{0}\)</span>。</p>
+<p>虽然初等教材通过引入密度函数 <span class="math inline">\(f_{Y|X}(y|x) = \frac{f(x,y)}{f_X(x)}\)</span> “修补”了这个问题，但这实际上引入了一个未经严格证明的假设：<strong>我们默认了可以通过极限过程 <span class="math inline">\(\lim_{\epsilon \to 0} P(A | x &lt; X &lt; x+\epsilon)\)</span> 来逼近单点情况。</strong> 这就引出了著名的 <strong>Borel-Kolmogorov 悖论</strong>：如果我们在球面上选择不同的坐标系（例如经纬度 vs 极坐标）去逼近同一个“大圆”（零测集），我们会得到完全不同的条件概率分布。这说明，<strong>在没有测度论关于 <span class="math inline">\(\sigma\)</span>- 代数（信息流）的严格约束下，简单地对“零概率事件”进行条件化是多义且不适定的</strong>。</p>
+<p><strong>第二：初等概率论缺乏统一的积分工具。</strong></p>
+<p>求期望时，离散型用求和 <span class="math inline">\(\sum\)</span>，连续型用黎曼积分 <span class="math inline">\(\int\)</span>。这导致在处理<strong>混合型分布</strong>（例如一个随机变量有 0.5 的概率是 0，有 0.5 的概率服从 <span class="math inline">\(U[0,1]\)</span>）时，公式变得极其繁琐且不统一。更严重的是，它无法处理奇异分布（Singular Distribution），例如基于康托尔集（Cantor Set）构造的分布，这类分布既没有密度函数，也不是离散的，初等概率论对此束手无策。</p>
+<p><strong>第三：条件期望的错误认识。</strong></p>
+<p>在初等概率论中，条件期望 <span class="math inline">\(E[Y|X=x]\)</span> 被视为一个<strong>实数</strong>（依赖于参数 <span class="math inline">\(x\)</span>）。逻辑链条是：先算出 <span class="math inline">\(f(y|x)\)</span> 这个函数，再积分得到一个数。这种视角掩盖了条件期望的本质——<strong>随机变量</strong>。在测度论中，条件期望 <span class="math inline">\(E[Y|\mathcal{G}]\)</span> 是全空间上的一个函数（随机变量），它是 <span class="math inline">\(Y\)</span> 在子 <span class="math inline">\(\sigma\)</span>- 代数 <span class="math inline">\(\mathcal{G}\)</span> 上的<strong>正交投影</strong>。初等概率论的视角导致学生很难理解“<strong>条件期望本身也是随机的</strong>”以及“<strong>平滑性质（Smoothing properties）</strong>”等高级性质。</p>
+<p><strong>第四，独立性的局限性。</strong></p>
+<p>初等概率论通常只处理<strong>有限个</strong>事件或随机变量的独立性。当涉及到<strong>无限序列</strong>的独立性（例如强大的数定律、0-1 律）时，初等定义难以通过简单的乘积法则来严格描述“尾事件”或 <span class="math inline">\(\sigma\)</span>- 代数的独立性。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="核心痛点">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>核心痛点
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>初等概率论最大的软肋在于：<strong>它试图用“静态的数值”去描述“动态的随机关系”，并且在处理 <span class="math inline">\(P(B)=0\)</span> 的情况时缺乏严谨的极限基础。</strong> 测度论引入 Radon-Nikodym 导数正是为了解决 <span class="math inline">\(0/0\)</span> 的定义问题，并将离散与连续统一在 Lebesgue 积分的框架下。 <strong>Info: 最佳实践</strong> 在学习过程中，不要抛弃初等概率论的直觉，因为它是测度论中“正则条件概率”在平滑流形上的特例。 <strong>建议的学习心法：</strong> 将初等概率中的 <span class="math inline">\(P(A|X=x)\)</span> 视为测度论中条件期望 <span class="math inline">\(E[\mathbf{1}_A | \sigma(X)]\)</span> 这个随机变量 <span class="math inline">\(Z(\omega)\)</span> 在 <span class="math inline">\(X(\omega)=x\)</span> 时的取值 <span class="math inline">\(g(x)\)</span>。始终记住，测度论不是推翻了初等概率，而是为那个“除以零”的非法操作提供了合法化的上下文（通过微分和测度的概念）。</p>
+</div>
+</div>
+</section>
+</section>
+<section id="独立" class="level1">
+<h1>独立</h1>
+<p>独立是与“条件”相对的概念，也是概率论的中心概念之一。独立的学习是比较容易的，因为相比于条件期望和条件概率，其与初等概率论中的独立概念差别不大，只是通过 <span class="math inline">\(\sigma\)</span>-field 来统一了一下，并推广到无穷序列上。</p>
+<section id="定义" class="level2">
+<h2 class="anchored" data-anchor-id="定义">定义</h2>
+<div id="def-15-independence-and-conditional-expectation-1" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 1 (独立)</strong></span> 设 <span class="math inline">\(\{ A_{t},t\in T \}\)</span> 是概率空间 <span class="math inline">\((X,\mathcal{F},P)\)</span> 上的事件系（可测集合系），若对于任何的正整数 <span class="math inline">\(n\)</span> 和任何 <span class="math inline">\(\{ t_{1},\dots,t_{n} \}\subset T\)</span> 有</p>
+<p><span class="math display">\[
+P\left( \bigcap_{k=1}^{n}A_{t_{k}} \right)=\prod\limits_{k=1}^{n}P(A_{t_{k}}),
+\]</span></p>
+<p>则称 <span class="math inline">\(\{ A_{t},t\in T \}\)</span> 是<strong>相互独立</strong>的。</p>
+<p>设 <span class="math inline">\(\{ \mathcal{E}_{t}\subset \mathcal{F},t\in T \}\)</span> 是由事件系组成的族，若对每个 <span class="math inline">\(t\in T\)</span> 任取一个 <span class="math inline">\(A_{t}\in\mathcal{E}_{t}\)</span>，事件系 <span class="math inline">\(\{ A_{t},t\in T \}\)</span> 是相互独立的，则称 <span class="math inline">\(\{ \mathcal{E}_{t}\subset \mathcal{F},t\in T \}\)</span> 是<strong>相互独立</strong>的。</p>
+<p>设 <span class="math inline">\(\{ f_{t},t\in T \}\)</span> 是随机变量族，若 <span class="math inline">\(\{ \sigma(f_{t}),t\in T \}\)</span> 是相互独立的，则称 <span class="math inline">\(\{ f_{t},t\in T \}\)</span> 是<strong>相互独立</strong>的。</p>
+</div>
+<p>这又是<strong>由有限来定义无限</strong>的一个典型案例。<strong>当 <span class="math inline">\(T\)</span> 是有限集时，其独立的定义与初等概率论中一致</strong>。其实, 这个定义是非常符合我们对于独立的认知的。我们可以举几个例子来说明一下。</p>
+<p>比如, 如果存在一个 (非平凡的) 随机变量 <span class="math inline">\(X\)</span>, 另一个随机变量 <span class="math inline">\(Y=f(X)\)</span> 是通过 <span class="math inline">\(X\)</span> 来生成的, 则根据我们的直觉, 两者一定不独立. 我们可以通过定义来验证：若存在某个 <span class="math inline">\(B\in\sigma(Y)\)</span>, 并且 <span class="math inline">\(0&lt;P(B)&lt;1\)</span>, 同时我们可以知道 <span class="math inline">\(B\in\sigma(X)\)</span>, 则有</p>
+<p><span class="math display">\[
+P(B\cap B)=P(B)\neq P(B)\cdot P(B).
+\]</span></p>
+<p>我们可以再延伸一下, 如果还存在一个随机变量 <span class="math inline">\(Z\)</span>, 有 <span class="math inline">\(Y=f(X,Z)\)</span>, 则我们知道 <span class="math inline">\(\sigma(Y)=\sigma(\sigma(X)\cup\sigma(Z))\supset\sigma(X)\)</span>. 则对于某个 <span class="math inline">\(B\in\sigma(X)\)</span>, 并且 <span class="math inline">\(0&lt;P(B)&lt;1\)</span>, 我们有</p>
+<p><span class="math display">\[
+P(B\cap B)=P(B)\neq P(B)\cdot P(B).
+\]</span></p>
+<p>也就是说, 这两种情况都不是独立的. 我们将其总结为一个推论, 以后遇到这样的情况就可以直接进行判断了.</p>
+<div id="prp-15-independence-and-conditional-expectation-2" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 1 (直接函数关系不独立)</strong></span> 如果存在某个随机向量 <span class="math inline">\(X\)</span>, 其<strong>满足 <span class="math inline">\(\exists B\in\sigma(X),0&lt;P(B)&lt;1\)</span></strong>, 若存在一个可测函数 <span class="math inline">\(f\)</span> 和另外的随机向量 <span class="math inline">\(Z\)</span>, 使得</p>
+<p><span class="math display">\[
+Y=f(X,Z),
+\]</span></p>
+<p>则 <span class="math inline">\(X\)</span> 和 <span class="math inline">\(Y\)</span> 一定不独立.</p>
+</div>
+</section>
+<section id="判定条件" class="level2">
+<h2 class="anchored" data-anchor-id="判定条件">判定条件</h2>
+<p>我们可以看到，独立的定义涉及到集合系。特别当集合系是非常复杂时（比如是一个 <span class="math inline">\(\sigma\)</span> -field）通常是非常难以处理的。但是，通过下面的定理，我们可以稍微让独立的验证简单一些。</p>
+<div id="thm-independent-pi-class" class="theorem">
+<p><span class="theorem-title"><strong>定理 1 (<span class="math inline">\(\pi\)</span> -class 的独立)</strong></span> <span class="math inline">\(\{ \mathcal{E}_{t},t\in T \}\)</span> 是概率空间 <span class="math inline">\((X,\mathcal{F},P)\)</span> 上相互独立的事件系，假设每个 <span class="math inline">\(\mathcal{E}_{t}\)</span> 都是 <span class="math inline">\(\pi\)</span> -class，则 <span class="math inline">\(\{ \sigma(\mathcal{E}_{t}),t\in T \}\)</span> 是相互独立的。</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>首先，针对 <span class="math inline">\(\{ A_{t_{k}}\in\mathcal{E}_{t_{k}},k=2,\dots,n \}\)</span> 我们去构造一个集合系</p>
+<p><span class="math display">\[
+\mathcal{T}_{1}=\left\{  A\in\mathcal{F}|
+P\left( A\cap\left( \bigcap_{k=2}^{n}A_{t_{k}} \right) \right)
+=P(A)\prod\limits_{k=2}^{n}P(A_{t_{k}})\right\}.
+\]</span></p>
+<p>我们可以证明： (1) <span class="math inline">\(\mathcal{T}_{1}\)</span> 是一个 <span class="math inline">\(\lambda\)</span> -class，这是因为</p>
+<p><span class="math display">\[
+\begin{align}
+P\left( X\cap\left( \bigcap_{k=2}^{n}A_{t_{k}} \right) \right)
+=P\left( \bigcap_{k=2}^{n}A_{t_{k}} \right)
+=\prod\limits_{k=2}^{n}P(A_{t_{k}})
+=P(X)\prod\limits_{k=2}^{n}P(A_{t_{k}}),
+\end{align}
+\]</span></p>
+<p>所以 <span class="math inline">\(X \in \mathcal{T}_{1}\)</span>。</p>
+<p><span class="math display">\[
+\begin{align}
+P\left( (B\setminus A)\cap\left( \bigcap_{k=2}^{n}A_{t_{k}} \right) \right)
+&amp;=P\left(B \cap \left( \bigcap_{k=2}^{n}A_{t_{k}} \right)\right)
+-P\left(A \cap \left( \bigcap_{k=2}^{n}A_{t_{k}} \right)\right) \\
+&amp;=(P(B)-P(A))\prod\limits_{k=2}^{n}P(A_{t_{k}}) \\
+&amp;=P(A\setminus A)\prod\limits_{k=2}^{n}P(A_{t_{k}}),
+\end{align}
+\]</span></p>
+<p>所以，<span class="math inline">\(B,A\in \mathcal{T}_{1},B\supset A\implies B\setminus A\in \mathcal{T}_{1}\)</span>。</p>
+<p><span class="math display">\[
+\begin{align}
+P\left( \bigcup_{i=1}^{\infty}B_{i}\cap \left( \bigcap_{k=2}^{n}A_{t_{k}} \right) \right)
+&amp;=P\left( \bigcup_{i=1}^{\infty}\left( B_{i}\cap\left( \bigcap_{k=2}^{n}A_{t_{k}} \right) \right) \right) \\
+&amp;=\lim_{ i \to \infty } P\left( B_{i}\cap\left( \bigcap_{k=2}^{n}A_{t_{k}} \right) \right) \\
+&amp;=\lim_{ i \to \infty } P(B_{i})\prod\limits_{k=2}^{n}P(A_{t_{k}}) \\
+&amp;=P\left( \bigcup_{i=1}^{\infty}B_{i} \right)\prod\limits_{k=2}^{n}P(A_{t_{k}}),
+\end{align}
+\]</span></p>
+<p>所以，<span class="math inline">\(B_{i}\in\mathcal{T}_{1},B_{i}\uparrow B\implies B\in\mathcal{T}_{1}\)</span>。</p>
+<p>又因为 <span class="math inline">\(\mathcal{T}_{1}\supset\mathcal{E}_{t_{1}}\)</span>，<span class="math inline">\(\mathcal{E}_{t_{1}}\)</span> 是 <span class="math inline">\(\pi\)</span> -class，根据 <strong>?@thm-sigma-field-generation</strong>，可知 <span class="math inline">\(\mathcal{T}_{1}\supset\sigma(\mathcal{E}_{t_{1}})\)</span>，这意味着 <span class="math inline">\(\forall A_{t_{1}}\in\sigma(\mathcal{E}_{t_{1}})\)</span> 并且 <span class="math inline">\(\forall k=2,\dots,n,A_{t_{k}}\in\mathcal{E}_{t_{k}}\)</span>，满足</p>
+<p><span class="math display">\[
+P\left( \bigcap_{k=1}^{n}A_{t_{k}}\right)=
+\prod\limits_{k=1}^{n}P(A_{t_{k}}).
+\]</span></p>
+<ol start="2" type="1">
+<li>对 <span class="math inline">\(A_{t_{1}}\in\sigma(\mathcal{E}_{t_{1}})\)</span> 和 <span class="math inline">\(\{ A_{t_{k}}\in\mathcal{E}_{t_{k}},k=3,\dots,n \}\)</span>，令</li>
+</ol>
+<p><span class="math display">\[
+\mathcal{T}_{2}=\left\{  A\in\mathcal{F}|P\left( A\cap\left( \bigcap_{k\neq 2}^{} A_{t_{k}}\right) \right)=P(A)\prod\limits_{k\neq 2}^{} P(A_{t_{k}}) \right\},
+\]</span></p>
+<p>利用上一步的方法，可以证明 <span class="math inline">\(\mathcal{T}_{2}\supset\sigma(\mathcal{E}_{t_{2}})\)</span>。</p>
+<p>将以上步骤继续下去，进行 <span class="math inline">\(n\)</span> 步，进而完成我们的证明。</p>
+</div>
+<p>根据以上内容，我们还可以得到下面的一个推论：<strong>相互独立的很多 <span class="math inline">\(\sigma\)</span> 域被分割后，把分割的每一部分生成一个单独的 <span class="math inline">\(\sigma\)</span> 域，这些 <span class="math inline">\(\sigma\)</span> 域之间依然独立。</strong></p>
+<div id="cor-independent-seperate" class="theorem corollary">
+<p><span class="theorem-title"><strong>推论 1 (子 <span class="math inline">\(\sigma\)</span> 域的分割)</strong></span> 若概率空间 <span class="math inline">\((X,\mathcal{F},P)\)</span> 上的子 <span class="math inline">\(\sigma\)</span> 域族 <span class="math inline">\(\{ \mathcal{F}_{t},t\in T \}\)</span> 相互独立，则对于 <span class="math inline">\(T\)</span> 的任何一个分割 <span class="math inline">\(T_{d},d\in D\)</span>，</p>
+<p><span class="math display">\[
+\left\{  \sigma\left( \bigcup_{t\in T_{d}}^{}\mathcal{F}_{t} \right),d\in D  \right\}
+\]</span></p>
+<p>是相互独立的。</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>注意到，对于每个 <span class="math inline">\(d\in D\)</span>，有</p>
+<p><span class="math display">\[
+\mathcal{T}_{d}=\bigcup_{n=1}^{\infty}\left\{  
+\bigcap_{k=1}^{n}A_{k}|A_{k}\in\mathcal{F}_{t_{k}},\forall t_{k}\in T_{d},k=1,\dots,n
+\right\}.
+\]</span></p>
+<p>以上这个集合系中的元素是：从 <span class="math inline">\(T_{d}\)</span> 中任取有限个指标，找到这些指标对应的有限个 <span class="math inline">\(\mathcal{F}_{t}\)</span>，从每一个中取出一个集合 <span class="math inline">\(A_{t}\)</span>，然后将这些集合求交集。</p>
+<p>我们可以证明： (1) <span class="math inline">\(\mathcal{T}_{d}\supset \bigcup_{t\in T_{d}}^{}\mathcal{F}_{t}\)</span>； (2) <span class="math inline">\(\mathcal{T}_{d}\)</span> 是将 <span class="math inline">\(\mathcal{F}_{t}\)</span> 中的元素进行有限次交运算得到，所以一定有 <span class="math inline">\(\mathcal{T}_{d}\subset\sigma\left( \bigcup_{t\in T_{d}}^{}\mathcal{F}_{t} \right)\)</span>; 以上两者意味着</p>
+<p><span class="math display">\[
+\sigma(\mathcal{T}_{d})=\sigma\left( \bigcup_{t\in T_{d}}^{}\mathcal{F}_{t} \right).
+\]</span></p>
+<p>此外，我们还能够证明 <span class="math inline">\(\mathcal{T}_{d}\)</span> 是一个 <span class="math inline">\(\pi\)</span> -class。直接利用 <a href="#thm-independent-pi-class" class="quarto-xref">定理&nbsp;1</a>，得到我们的结论。</p>
+</div>
+<p>根据 <strong>?@thm-independent-seperate</strong>，再结合随机变量独立的定义，我们有以下常用的一个推论：</p>
+<div id="prp-composit-map-indepent" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 2 (Proposition)</strong></span> 假设随机变量集合 <span class="math inline">\(\{ f_{n},n=1,2,\dots \}\)</span> 相互独立，则对任何一个分割 <span class="math inline">\(T_{i}={i_{1},i_{2},\dots},i=1,2,\dots,\)</span>，有</p>
+<p><span class="math display">\[
+\{ g_{i}( f_{i_{1}},f_{i_{2}},\dots ),i=1,2,\dots \}
+\]</span></p>
+<p>相互独立，其中 <span class="math inline">\(g_{i}\)</span> 是多维 Borel 可测函数。</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>首先，根据定义，对于相互独立的事件系 <span class="math inline">\(\{ \mathcal{F}_{t},t\in T \}\)</span>，其子事件系也肯定是独立的。</p>
+<p>因为 <span class="math inline">\(\{ f_{n},n=1,2,\dots \}\)</span> 是独立的，根据 <strong>?@thm-independent-seperate</strong>，其任意分割所组成的随机向量（或序列）也是独立的，因为</p>
+<p><span class="math display">\[
+\sigma((f_{1},f_{2},\dots))=\sigma\left( \bigcup_{i=1}^{\infty}\sigma(f_{i}) \right),
+\]</span></p>
+<p><strong>?@thm-vector-measurable</strong> 的证明过程中有该式。而 <span class="math inline">\(\sigma(g(f_{1},\dots))\)</span> 得到的是 <span class="math inline">\(\sigma((f_{1},\dots))\)</span> 的子集，因此自然也是独立的。</p>
+</div>
+<p>以上推论告诉我们，<strong>对于相互独立的随机变量，将其任意分割成多个组，然后对每个组进行任意的变换得到的新的随机变量，依然是相互独立的。</strong></p>
+<p><a href="#thm-independent-pi-class" class="quarto-xref">定理&nbsp;1</a> 提示我们，对于随机变量的独立性的判定，可以仅通过分布函数 <span class="math inline">\(F\)</span> 进行（这里涉及到 <strong>?@def-n-dist-rv</strong> 和 <strong>?@def-margin-dist</strong> 之间的关系）。也就是下面的一系列等价条件：</p>
+<div id="thm-indepent-distribution" class="theorem">
+<p><span class="theorem-title"><strong>定理 2 (分布函数独立)</strong></span> 概率空间 <span class="math inline">\((X,\mathcal{F},P)\)</span> 上的随机变量族 <span class="math inline">\(\{ f_{t},t\in T \}\)</span>，以 <span class="math inline">\(F_{t},t\in T\)</span> 表示对应的分布函数族，则下列命题<strong>等价</strong>： (1) <span class="math inline">\(\{ f_{t},t\in T \}\)</span> 相互独立；</p>
+<ol start="2" type="1">
+<li><span class="math inline">\(\forall n\in\mathbb{N}^{+}\)</span> 和 <span class="math inline">\(t_{1},\dots,t_{n}\in T\)</span>，<span class="math inline">\(\forall A_{i} \in\mathcal{B},i=1,\dots,n\)</span>，有</li>
+</ol>
+<p><span class="math display">\[
+P(f_{t_{1}},\dots,f_{t_{n}})^{-1}\left( \prod\limits_{k=1}^{n}A_{k} \right)=\prod\limits_{k=1}^{n}Pf^{-1}_{t_{k}}(A_{k}),
+\]</span></p>
+<p>再根据 <strong>?@thm-fubini-plus</strong> 可知，<span class="math inline">\(P(f_{t_{1}}, \dots,f_{t_{n}})^{-1}\)</span> 就是 <span class="math inline">\(\{ Pf_{t_{k}}^{-1},k=1,\dots,n \}\)</span> 的乘积测度；</p>
+<ol start="3" type="1">
+<li>用 <span class="math inline">\(F_{t_{1},\dots,t_{n}}\)</span> 记 <span class="math inline">\(f_{t_{1}},\dots,f_{t_{n}}\)</span> 的联合分布函数，<span class="math inline">\(\forall n\in\mathbb{N}^{+}\)</span> 和 <span class="math inline">\(t_{1},\dots,t_{n}\in T\)</span>，则对 <span class="math inline">\(x_{1},\dots,x_{n}\in\mathbb{R}\)</span> 有</li>
+</ol>
+<p><span class="math display">\[
+F_{t_{1},\dots,t_{n}}(x_{1},\dots,x_{n})=\prod\limits_{k=1}^{n}F_{t_{k}}(x_{k});
+\]</span></p>
+<ol start="4" type="1">
+<li><span class="math inline">\(\forall n\in\mathbb{N}^{+}\)</span> 和 <span class="math inline">\(t_{1},\dots,t_{n}\in T\)</span>，对 <span class="math inline">\((\mathbb{R}^{n},\mathcal{B}^{n})\)</span> 上的可测函数 <span class="math inline">\(g\)</span>，只要下式一端有意义，另一端也有意义并且相等：</li>
+</ol>
+<p><span class="math display">\[
+\mathbb{E}g(f_{t_{1}},\dots,f_{t_{n}})=
+\int _{-\infty}^{\infty}dF_{t_{1}}(x_{1})\cdots
+\int _{-\infty}^{\infty}g(x_{1},\dots,x_{n})dF_{t_{n}}(x_{n}).
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span></p>
+<ol type="1">
+<li>-&gt; (2)：<span class="math inline">\(\forall A_{i} \in\mathcal{B},i=1,\dots,n\)</span>，有</li>
+</ol>
+<p><span class="math display">\[
+P(f_{t_{1}},\dots,f_{t_{n}})^{-1}\left( \prod\limits_{i=1}^{n}A_{i} \right)
+=P\left( \bigcap_{i=1}^{n}f_{t_{i}}^{-1}(A_{i}) \right)
+=\prod\limits_{i=1}^{n}Pf^{-1}_{t_{i}}(A_{i}),
+\]</span></p>
+<p>其中第二个等号来自于 <span class="math inline">\(\{ f_{t} \}\)</span> 的相互独立性。 (2)-&gt;(3)：将上面的 <span class="math inline">\(A_{i}\)</span> 替换为 <span class="math inline">\((-\infty,x_{i}]\)</span> 即可得到 (3)。 (3)-&gt;(2)-&gt;(4)：注意到</p>
+<p><span class="math display">\[
+\mathbb{E}g(f_{t_{1}},\dots f_{t_{n}})=\int _{\mathbb{R}}g(x_{1},\dots,x_{n})d(Pf^{-1}),
+\]</span></p>
+<p>其中假设 <span class="math inline">\(f=(f_{t_{1}},\dots,f_{t_{n}})\)</span>。若我们能够证明</p>
+<p><span class="math display">\[
+\forall A_{i}\in\mathcal{B},\quad
+Pf^{-1}\left( \prod\limits_{i=1}^{n}A_{i} \right)
+=\prod\limits_{i=1}^{n}Pf_{t_{k}}^{-1}(A_{i}),
+\]</span></p>
+<p>也就是说 <span class="math inline">\(Pf^{-1}\)</span> 是 <span class="math inline">\(\{ Pf_{t_{k}}^{-1} \}\)</span> 的乘积测度，则直接使用 <strong>?@thm-fubini-plus</strong> 就可以得到我们的结论。而这实际上是 (2) 的结论，也就是说我们<strong>现在需要证明 (3)-&gt;(2)</strong>。(3) 的条件实际上是在说 <span class="math inline">\(Pf^{-1}\)</span> 和 <span class="math inline">\(\prod\limits_{k=1}^{n}Pf_{t_{k}}^{-1}\)</span> 在 <span class="math inline">\(\pi\)</span> -class <span class="math inline">\(\{ (-\infty, (x_{1},\dots,x_{n})] \}\)</span> 是相同的，容易证明两者在 <a href="../../../src/learn/advanced-probability/13-finite-product-spaces.html#95c889">高维区间</a> 构成的半环 <span class="math inline">\(\mathcal{L}_{\mathbb{R}^{n}}=\{ ((a_{1},\dots,a_{n}), (b_{1},\dots,b_{n})] \}\)</span> 上也相等，直接根据 1.1 测度空间和概率空间 (<code>1.1 测度空间和概率空间#^3c25cf</code>)，可以知道两者在 <span class="math inline">\(\mathcal{B}^{n}=\sigma(\mathcal{L}_{\mathbb{R}^{n}})\)</span> 上也相等。</p>
+<p>(4)-&gt;(1)：<span class="math inline">\(\forall A_{k} \in\mathcal{B},k=1,\dots,n\)</span>，令</p>
+<p><span class="math display">\[
+g=I_{\prod\limits_{k=1}^{n}A_{k}}=\prod\limits_{k=1}^{n}I_{A_{k}},
+\]</span></p>
+<p>则有</p>
+<p><span class="math display">\[
+\begin{align}
+P\left( \bigcap_{k=1}^{n}f_{t_{k}}^{-1}(A_{k}) \right) &amp;=
+P(f_{t_{1}},\dots, f_{t_{n}})^{-1}\left( \prod\limits_{k=1}^{n}A_{k} \right) \\
+&amp;=\mathbb{E}g(f_{t_{1}},\dots,f_{t_{n}}) \\
+&amp;=\int _{-\infty}^{\infty}dF_{t_{1}}(x_{1})\cdots
+\int _{-\infty}^{\infty}g(x_{1},\dots,x_{n})dF_{t_{n}}(x_{n}) \\
+&amp;=\prod\limits_{k=1}^{n}Pf^{-1}_{t_{k}}(A_{k}) \\
+&amp;=\prod\limits_{k=1}^{n}P(f^{-1}_{t_{k}}(A_{k})),
+\end{align}
+\]</span></p>
+<p>这也就是证明了 <span class="math inline">\(\{ f_{t},t\in T \}\)</span> 的独立性。</p>
+</div>
+<p>根据以上内容我们还可以证明独立随机变量的概率密度的关系.</p>
+<div id="prp-indepent-denisty" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 3 (带有密度的独立性条件)</strong></span> 若随机向量 <span class="math inline">\((X_{1},\dots,X_{k})\)</span> 相对于乘积测度 <span class="math inline">\(v_{1}\times \dots \times v_{k}\)</span> 有联合概率密度 <span class="math inline">\(f(x_{1},\dots,x_{k})\)</span>, 并且每个分量的边缘概率密度是分别是 <span class="math inline">\(f_{1},\dots,f_{k}\)</span>, 则 <span class="math inline">\(X_{1},\dots,X_{k}\)</span> 独立<strong>当且仅当</strong></p>
+<p><span class="math display">\[
+f(x_{1},\dots,x_{k})=f_{1}(x_{1})\dots f(x_{k}),\quad
+\forall(x_{1},\dots,x_{k})\in\mathbb{R}^{k}.
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>根据 <a href="#thm-indepent-distribution" class="quarto-xref">定理&nbsp;2</a> (2) ,独立当且仅当 <span class="math inline">\(P(X_{1},\dots,X_{k})^{-1}\)</span> 是 <span class="math inline">\(PX^{-1}_{1},\dots,PX^{-1}_{k}\)</span> 的乘积测度。直接利用 <strong>?@prp-rn</strong> (4) 的推广版本, 可以直接得到上述命题</p>
+<p><span class="math display">\[
+f(x_{1},\dots,x_{k})=f_{1}(x_{1})\dots f(x_{k}).
+\]</span></p>
+<p>利用 <a href="#thm-indepent-distribution" class="quarto-xref">定理&nbsp;2</a> (4) 则可以推出反面, 即当上式成立的时候, 有</p>
+<p><span class="math display">\[
+\begin{align}
+\mathbb{E}g(X_{t_{1}},\dots,X_{t_{n}}) &amp;=
+\int g(x_{t_{1}},\dots,x_{t_{n}})f(x_{t_{1}},\dots,x_{t_{n}}) \, d(v_{t_{n}}\times\dots \times v_{t_{n}})  \\
+&amp;=\int g(x_{t_{1}},\dots,x_{t_{n}})f(x_{t_{1}})\dots f(x_{t_{n}}) \, d(v_{t_{n}}\times\dots \times v_{t_{n}})  \\
+&amp;=\int f(x_{t_{1}})dv_{t_{1}}\dots\int g(x_{t_{1}},\dots,x_{t_{n}})f(x_{t_{n}})dv_{t_{n}} \\
+&amp;=\int dF_{t_{1}}\dots \int g(x_{t_{1}},\dots,x_{t_{n}})dF_{t_{n}},
+\end{align}
+\]</span></p>
+<p>其中第一行是积分的定义，第二行来自于定理的条件，第三行来自 <strong>?@thm-fubini-plus</strong>, 第四行来自于积分的分布函数表示形式。</p>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="独立同分布">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>独立同分布
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>我们在统计中总是提到一个概念：独立同分布，我一直有一个疑问：<strong>同分布后独立还成立吗？</strong> 答案自然是肯定的。这里，我们需要明确一个概念，<strong>同分布</strong>是 <span class="math inline">\(Pf^{-1}=Pg^{-1}\)</span>，而不是 <span class="math inline">\(f=g\)</span>。</p>
+<p>若 <span class="math inline">\(f=g\)</span>，且 <span class="math inline">\(0&lt;P(f^{-1}(A))&lt;1\)</span> 则</p>
+<p><span class="math display">\[
+f^{-1}(A)=g^{-1}(A)\implies P (f^{-1}(A)\cap g^{-1}(A))
+=P(f^{-1}(A)) \neq P(f^{-1}(A))^{2},
+\]</span></p>
+<p>显然，此时<strong>独立</strong>在大部分情况下都是不成立的。</p>
+<p>若是 <span class="math inline">\(Pf^{-1}=Pg^{-1}\)</span>，则独立是有可能成立的。比如，在 Borel 乘积测度空间中 <span class="math inline">\((\mathbb{R}^{n},\mathcal{B}^{n},P^{n})\)</span>，对于其上所有的 <a href="../../../src/learn/advanced-probability/13-finite-product-spaces.html#1f2abf">投影</a> <span class="math inline">\(\pi_{i}\)</span> ，此时，容易证明其满足 <a href="#thm-indepent-distribution" class="quarto-xref">定理&nbsp;2</a> (2) ，因此满足独立的定义。而其分布函数是 <span class="math inline">\(P^{n}\pi_{k}^{-1}=P\)</span> 是一样的。</p>
+<p>从 <a href="#thm-indepent-distribution" class="quarto-xref">定理&nbsp;2</a> (2) 和 (3) 可以知道，独立对分布函数的限制在于<strong>边缘分布函数与联合分布函数之间的乘积关系</strong>；同分布则要求<strong>边缘分布函数之间要相同</strong>。这两个要求是可以共存的。</p>
+</div>
+</div>
+</section>
+<section id="性质" class="level2">
+<h2 class="anchored" data-anchor-id="性质">性质</h2>
+<p>接下来，我们来证明<strong>随机变量独立</strong>所带来的一些性质。</p>
+<div id="lem-independent" class="theorem lemma">
+<p><span class="theorem-title"><strong>引理 1 (Lemma)</strong></span> 设随机变量 <span class="math inline">\(f\)</span> 的积分存在。若 <span class="math inline">\(\sigma(f)\)</span> 与集合系 <span class="math inline">\(\mathcal{E}\subset \mathcal{F}\)</span> 独立（也可以说成 <span class="math inline">\(f\)</span> 与 <span class="math inline">\(\mathcal{E}\)</span> 独立），则对任何 <span class="math inline">\(A\in\mathcal{E}\)</span>，有</p>
+<p><span class="math display">\[
+\mathbb{E}(fI_{A})=\mathbb{E}f\mathbb{E}I_{A}=\mathbb{E}fP(A)
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>使用典型方法。首先假设 <span class="math inline">\(f=\sum\limits_{k=1}^{n}a_{k}I_{A_{k}}\)</span>，则</p>
+<p><span class="math display">\[
+\mathbb{E}\left( I_{A}\sum\limits_{k=1}^{n}a_{k}I_{A_{k}} \right)
+=\sum\limits_{k=1}^{n}a_{k}P(A\cap A_{k})
+=P(A)\sum\limits_{k=1}^{n}a_{k}P(A_{k})
+=P(A)\mathbb{E}f.
+\]</span></p>
+<p>然后假设 <span class="math inline">\(f\geq 0\)</span>，则可以找到简单函数 <span class="math inline">\(f_{n}\uparrow f\)</span>，则有</p>
+<p><span class="math display">\[
+\mathbb{E}(fI_{A})=\mathbb{E}(I_{A}\lim_{ n \to \infty } f_{n})
+=\lim_{ n \to \infty } \mathbb{E}(I_{A}f_{n})
+=I_{A}\lim_{ n \to \infty } \mathbb{E}f_{n}
+=I_{A}\mathbb{E}\lim_{ n \to \infty } f_{n}=I_{A}\mathbb{E}f.
+\]</span></p>
+<p>对于一般的积分存在的 <span class="math inline">\(f=f^{+}-f^{-}\)</span>，则有</p>
+<p><span class="math display">\[
+\mathbb{E}(fI_{A})=\mathbb{E}(f^{+}I_{A})-\mathbb{E}(f^{-}I_{A})
+=I_{A}(\mathbb{E}f^{+}-\mathbb{E}f^{-})=I_{A}\mathbb{E}f.
+\]</span></p>
+</div>
+<p>根据以上的引理，继续使用典型方法，我们可以得到：</p>
+<div id="thm-15-independence-and-conditional-expectation-9" class="theorem">
+<p><span class="theorem-title"><strong>定理 3 (独立随机变量的期望)</strong></span> 若随机变量 <span class="math inline">\(f,g\)</span> 的积分存在，并且两者相互独立，则有</p>
+<p><span class="math display">\[
+\mathbb{E}(fg)=\mathbb{E}f\mathbb{E}g.
+\]</span></p>
+<p>继续利用 <a href="#prp-composit-map-indepent" class="quarto-xref">命题&nbsp;2</a>，我们有</p>
+<p><span class="math display">\[
+\mathbb{E}[h_{1}(f)h_{2}(g)]=\mathbb{E}[h_{1}(f)]\mathbb{E}[h_{2}(g)].
+\]</span></p>
+</div>
+</section>
+</section>
+<section id="15-independence-and-conditional-expectation-条件期望和条件概率" class="level1">
+<h1>条件期望和条件概率</h1>
+<p>条件概率是概率论中最重要的概念之一，在初等概率论中，我们无法严谨地去定义它。现在我们学习了 <a href="../../../src/learn/advanced-probability/11-radon-nikodym-derivative.html">RN导数</a> 后，可以更好的定义了。</p>
+<section id="定义-1" class="level2">
+<h2 class="anchored" data-anchor-id="定义-1">定义</h2>
+<div id="def-condi-expectation" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 2 (条件期望和条件概率)</strong></span> 设 <span class="math inline">\(f\)</span> 是概率空间 <span class="math inline">\((X,\mathcal{F},P)\)</span> 上的<strong>积分存在</strong>的随机变量，称 <span class="math inline">\(\mathbb{E}(f|\mathcal{G})\)</span> 为 <span class="math inline">\(f\)</span> 关于 <span class="math inline">\(\mathcal{F}\)</span> 的子 <span class="math inline">\(\sigma\)</span> 域 <span class="math inline">\(\mathcal{G}\)</span> 的<strong>条件期望</strong>，如果 (1) <span class="math inline">\(\mathbb{E}(f|\mathcal{G})\)</span> 是 <span class="math inline">\((X,\mathcal{G},P)\)</span> 上<strong>积分存在</strong>的可测函数； (2) 对任意 <span class="math inline">\(A\in\mathcal{G}\)</span>，满足</p>
+<p><span class="math display">\[
+\int _{A}\mathbb{E}(f|\mathcal{G})dP=\int _{A}fdP.
+\]</span></p>
+<p><span class="math inline">\(P(A|\mathcal{G}):=\mathbb{E}(I_{A}|\mathcal{G})\)</span> 称为事件 <span class="math inline">\(A\in\mathcal{F}\)</span> 关于子 <span class="math inline">\(\sigma\)</span> 域 <span class="math inline">\(\mathcal{G}\)</span> 的<strong>条件概率</strong>。如果 <span class="math inline">\(g\)</span> 是 <span class="math inline">\((X,\mathcal{G},P)\to(Y,\mathcal{T})\)</span> 的随机元，则称 <span class="math inline">\(\mathbb{E}(f|g):=\mathbb{E}(f|\sigma(g))\)</span> 为随机变量 <span class="math inline">\(f\)</span> 关于 <span class="math inline">\(g\)</span> 的<strong>条件期望</strong>，称 <span class="math inline">\(P(A|g):=P(A|\sigma(g))\)</span> 是事件 <span class="math inline">\(A\)</span> 关于 <span class="math inline">\(g\)</span> 的<strong>条件概率</strong>。</p>
+</div>
+<p>这里我们对以上的定义进行一些讨论： - 条件概率或期望仅针对<strong>积分存在的随机变量</strong>。但是我们需要清楚，积分存在也包括积分是无穷大的情况，所以其实这些随机变量还是非常多的。 - 条件概率或条件期望都是一个<strong>随机变量</strong>，是子 <span class="math inline">\(\sigma\)</span> 空间 <span class="math inline">\((X,\mathcal{G},P)\)</span> 上的随机变量。 - 这个子 <span class="math inline">\(\sigma\)</span> 空间是 <span class="math inline">\(\mathcal{F}\)</span> 的子集，但是这只能得到 <span class="math inline">\(\mathcal{F}\supset\mathcal{G},\mathcal{F}\supset\sigma(f)\)</span>，并不能得到 <span class="math inline">\(\sigma(f)\supset\mathcal{G}\)</span>。比如，对于 <span class="math inline">\(\mathbb{E}(f|g)\)</span>，并不需要要求 <span class="math inline">\(\sigma(g)\subset\sigma(f)\)</span>，只需要 <span class="math inline">\(\sigma(g),\sigma(f)\subset \mathcal{F}\)</span> 即可。 - 我们是先定义了条件期望，然后用条件期望来定义条件概率。 - <strong>?@thm-rn</strong> 保证了条件期望的存在性。 - <strong>?@thm-rn</strong> 只能保证条件期望在 <strong>a.e.（a.s.）下唯一</strong>，所以我们下面进行相关讨论的时候，也是 a.s.的，只是为了方便我们不会每次都加。<strong>这个 a.s.是相对于 <span class="math inline">\(\mathcal{G}\)</span> 上的零测集而言的</strong>。</p>
+</section>
+<section id="给定值的条件期望" class="level2">
+<h2 class="anchored" data-anchor-id="给定值的条件期望">给定值的条件期望</h2>
+<p>注意到，以上我们定义的条件期望 <span class="math inline">\(\mathbb{E}(f|g)\)</span>，是一个在 <span class="math inline">\((X,\sigma(g),P)\)</span> 上的随机变量。然而，<span class="math inline">\(X\)</span> 是一个非常“自由”的集合，其中的元素可能是非常抽象的。我们更加关注的是当 <span class="math inline">\(g=y\)</span> 也就是其取某个值时的条件期望，这相当于变换一下条件中的 <span class="math inline">\(\sigma\)</span> -field。因此，我们有下面的定义：</p>
+<div id="def-condi-expectation-given" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 3 (给定值的条件期望)</strong></span> 假设 <span class="math inline">\(g\)</span> 是一个 <span class="math inline">\((X,\sigma(g))\to(Y,\mathcal{H})\)</span> 的随机元，<span class="math inline">\(\mathbb{E}(f|g)\)</span> 是一个 <span class="math inline">\((X,\sigma(g))\to(\mathbb{R},\mathcal{B})\)</span> (或 <span class="math inline">\((\mathbb{R}^{n},\mathcal{B}^{n})\)</span>) 的随机变量。利用 <strong>?@thm-composite-func</strong>，则存在一个 <span class="math inline">\(h:(Y,\mathcal{H})\to(\mathbb{R},\mathcal{B})\)</span> (或 <span class="math inline">\((\mathbb{R}^{n},\mathcal{B}^{n})\)</span>) 使得</p>
+<p><span class="math display">\[
+\mathbb{E}(f|g)=h\circ g,
+\]</span></p>
+<p>（这等价于</p>
+<p><span class="math display">\[
+\forall A\in\mathcal{H},\quad
+\int _{g^{-1}(A)}f \, dP
+=\int _{g^{-1}(A)}h\circ g \, dP=\int _{A}h \, d(Pg^{-1}),
+\]</span></p>
+<p>所以，也可以使用这个条件来定义） 我们称 <span class="math inline">\(h\)</span> 是<strong>给定值的 <span class="math inline">\(f\)</span> 的条件期望</strong>，对于 <span class="math inline">\(y\in Y\)</span>，记作 <span class="math inline">\(\mathbb{E}(f|g=y)\)</span>。当 <span class="math inline">\(f=I_{A},A\in\mathcal{F}\)</span> 时，称为给定值的条件概率，记作 <span class="math inline">\(P(A|g=y)\)</span>。（见下面）可以证明，<span class="math inline">\(h\)</span> 相对于 <span class="math inline">\(Pg^{-1}\)</span> 是 a.e. 唯一确定的。</p>
+</div>
+<p>一般来说，<span class="math inline">\((Y,\mathcal{H})=(\mathbb{R},\mathcal{B})\)</span> (或 <span class="math inline">\((\mathbb{R}^{n},\mathcal{B}^{n})\)</span>)，此时 <span class="math inline">\(\mathbb{E}(f|g=y)\)</span> 就是一个<strong>定义域在 <span class="math inline">\(\mathbb{R}\)</span> 、值域在 <span class="math inline">\(\mathbb{R}\)</span> 上的实值函数</strong>。使用给定值的条件期望，一个优势在于<strong>可以将积分的空间进行变换，可以换到 Borel 测度空间中</strong>。进而，令 <span class="math inline">\(\mu(A)=\int _{g^{-1}(A)}f \, dP\)</span>。则</p>
+<p><span class="math display">\[
+Pg^{-1}(A)=0\implies
+P(g^{-1}(A))=0\implies
+\mu(A)=0,
+\]</span></p>
+<p>这意味着 <span class="math inline">\(\mu \ll Pg^{-1}\)</span>，进而 <span class="math inline">\(h\)</span> 可以被看做 <span class="math inline">\(\frac{d\mu}{d(Pg^{-1})}\)</span>，由 <strong>?@thm-rn</strong> 可知 <span class="math inline">\(h\)</span> 是 a.e. w.r.t <span class="math inline">\(Pg^{-1}\)</span> 唯一确定的。</p>
+</section>
+<section id="与初等概率论的联系" class="level2">
+<h2 class="anchored" data-anchor-id="与初等概率论的联系">与初等概率论的联系</h2>
+<p>这里我们利用一个例子来讨论一下这里的定义和初等概率论中的条件期望、条件概率之间的关系。</p>
+<div id="exm-15-independence-and-conditional-expectation-12" class="theorem example">
+<p><span class="theorem-title"><strong>例 1 (Example)</strong></span> 设 <span class="math inline">\(B\in\mathcal{F}\)</span> 而 <span class="math inline">\(\mathcal{G}=\{ \emptyset,B,B^{c},X \}\)</span>，求事件 <span class="math inline">\(A\in\mathcal{F}\)</span> 关于 <span class="math inline">\(\mathcal{G}\)</span> 的条件概率 <span class="math inline">\(P(A|\mathcal{G})\)</span>。</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>首先，对于 <span class="math inline">\(\mathcal{G}\)</span> 可测的函数必然有以下的形式：</p>
+<p><span class="math display">\[
+aI_{B}+bI_{B^{c}},\quad
+a,b\in \bar{\mathbb{R}}.
+\]</span></p>
+<p>（否则，该函数必然存在某个非 <span class="math inline">\(B,B^{c}\)</span> 集合，在其上取相同的值。这样必然导致无法对于 <span class="math inline">\(\mathcal{G}\)</span> 可测） 我们假设 <span class="math inline">\(P(A|\mathcal{G})=aI_{B}+bI_{B^{c}}\)</span>，利用条件期望的积分关系，得到</p>
+<p><span class="math display">\[
+\begin{align}
+&amp;\int _{B}(aI_{B}+bI_{B^{c}}) \, dP=\int _{B}I_{A} \, dP
+\implies
+aP(B)=P(A\cap B), \\
+&amp;\int _{B^{c}}(aI_{B}+bI_{B^{c}}) \, dP=\int _{B^{c}}I_{A} \, dP
+\implies
+bP(B^{c})=P(A\cap B^{c}).
+\end{align}
+\]</span></p>
+<p>进而，我们有</p>
+<p><span class="math display">\[
+a=\left\{\begin{matrix}
+P(A\cap B) / P(B),\quad &amp; P(B)&gt;0 \\
+\alpha,&amp;P(B)=0,
+\end{matrix}\right.\qquad
+b = \left\{\begin{matrix}
+P(A\cap B^{c}) / P(B^{c}),\quad &amp; P(B^{c})&gt;0 \\
+\alpha,&amp;P(B^{c})=0,
+\end{matrix}\right.
+\]</span></p>
+<p>其中 <span class="math inline">\(\alpha\)</span> 是 <span class="math inline">\((0,1)\)</span> 中的任意一个数。此时，其对应的那个集合是零测集，所以这样定义让 <span class="math inline">\(P(A|\mathcal{G})\)</span> 是 a.s.确定的。这样，</p>
+<p><span class="math display">\[
+x \in B \implies P(A|\mathcal{G})(x)=a,\quad
+x \not\in B \implies P(A|\mathcal{G})(x)=b.
+\]</span></p>
+<p>基于此，我们可以定义一个随机变量 <span class="math inline">\(g=I_{B}\)</span>，显然 <span class="math inline">\(g^{-1}(\mathcal{B})=\mathcal{G}\)</span>，所以我们有</p>
+<p><span class="math display">\[
+P(A|g)=P(A|\mathcal{G})=aI_{b}+bI_{B^{c}}.
+\]</span></p>
+<p>根据 <a href="#def-condi-expectation-given" class="quarto-xref">定义&nbsp;3</a>，存在 <span class="math inline">\(h(y): \mathbb{R}\to \mathbb{R}\)</span>，令</p>
+<p><span class="math display">\[
+P(A|g)=h \circ g,
+\]</span></p>
+<p>显然，容易知道</p>
+<p><span class="math display">\[
+h(y)=\left\{
+\begin{matrix}
+a,\quad &amp;y=1,\\
+b,\quad &amp;y=0, \\
+0,\quad &amp;\text{otherwise}.
+\end{matrix}
+\right.
+\]</span></p>
+<p>我们将其表示为如下形式：</p>
+<p><span class="math display">\[
+P(A|I_{B}=y)=P(A|g=y)=h(y).
+\]</span></p>
+<p>显然，当 <span class="math inline">\(P(B),P(B^{c})&gt;0\)</span> 时，<span class="math inline">\(P(A|I_{B}=1)\)</span> 其实就是 <span class="math inline">\(P(A事件发生|B事件发生)\)</span>，<span class="math inline">\(P(A|I_{B}=0)\)</span> 其实就是 <span class="math inline">\(P(A事件发生|B事件不发生)\)</span>。</p>
+<p>我们提供的条件期望与初等概率论中的相关内容保持了一致。</p>
+</div>
+</section>
+<section id="性质-1" class="level2">
+<h2 class="anchored" data-anchor-id="性质-1">性质</h2>
+<p>接下来，我们将叙述一些关于条件期望的性质，这些性质在我们后续的研究中非常重要。</p>
+<div id="thm-prop-condi-expectation" class="theorem">
+<p><span class="theorem-title"><strong>定理 4 (条件期望的性质)</strong></span> 设 <span class="math inline">\(f,g\)</span> 是概率空间 <span class="math inline">\((X,\mathcal{F},P)\)</span> 上积分存在的随机变量，<span class="math inline">\(\mathcal{G},\mathcal{G}_{0}\)</span> 是 <span class="math inline">\(\mathcal{F}\)</span> 的子 <span class="math inline">\(\sigma\)</span> 域。 (1) 若 <span class="math inline">\(f\)</span> 关于 <span class="math inline">\(\mathcal{G}\)</span> 可测，则 <span class="math inline">\(\mathbb{E}(f|\mathcal{G})=f\ a.s.\)</span>。特别的，如果 <span class="math inline">\(a\in \bar{\mathbb{R}}\)</span>，则 <span class="math inline">\(\mathbb{E}(a|\mathcal{G})=a\ a.s.\)</span>。 (2) 若 <span class="math inline">\(\mathcal{G}\subset \mathcal{G}_{0}\)</span>，则</p>
+<p><span class="math display">\[
+\mathbb{E}[\mathbb{E}(f|\mathcal{G})|\mathcal{G}_{0}]
+=\mathbb{E}(f|\mathcal{G})=
+\mathbb{E}[\mathbb{E}(f|\mathcal{G}_{0})|\mathcal{G}]\ a.s..
+\]</span></p>
+<ol start="3" type="1">
+<li>对任意的 <span class="math inline">\(a,b\in \mathbb{R}\)</span>，若 <span class="math inline">\(a\mathbb{E}f+b\mathbb{E}g\)</span> 有意义，则</li>
+</ol>
+<p><span class="math display">\[
+\mathbb{E}(af+bg|\mathcal{G})=a\mathbb{E}(f|\mathcal{G})+b\mathbb{E}(g|\mathcal{G})\ a.s..
+\]</span></p>
+<ol start="4" type="1">
+<li>若 <span class="math inline">\(f\leq g\ a.s.\)</span>，则</li>
+</ol>
+<p><span class="math display">\[
+\mathbb{E}(f|\mathcal{G})\leq \mathbb{E}(g|\mathcal{G})\ a.s..
+\]</span></p>
+<p>特别的，<span class="math inline">\(\lvert \mathbb{E}(f|\mathcal{G}) \rvert\leq \mathbb{E}(\lvert f \rvert|\mathcal{G})\ a.s.\)</span>。</p>
+<ol start="5" type="1">
+<li><span class="math inline">\(\mathbb{E}(\mathbb{E}(f|\mathcal{G}))=\mathbb{E}f\)</span>。</li>
+<li><span class="math inline">\(\sigma(g)\subset \mathcal{G}\)</span>，<span class="math inline">\(fg\)</span> 和 <span class="math inline">\(f\)</span> 积分存在，则</li>
+</ol>
+<p>$$ (fg|)=g(f|).</p>
+<p>$$</p>
+<ol start="7" type="1">
+<li>若 <span class="math inline">\(f^{2}\)</span> 积分存在，则 <span class="math inline">\([\mathbb{E}(f|\mathcal{G})]^{2}\leq \mathbb{E}(f^{2}|\mathcal{G})\)</span>。</li>
+</ol>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span></p>
+<ol type="1">
+<li>直接使用 <strong>?@thm-order</strong> (5) 即可。</li>
+<li>因为 <span class="math inline">\(\mathbb{E}(f|\mathcal{G})\)</span> 相对于 <span class="math inline">\(\mathcal{G}\)</span> 可测，自然也相对于 <span class="math inline">\(\mathcal{G}_{0}\)</span> 可测，利用 (1) 可知第一个等号成立。至于第二个等号，利用条件期望的定义，有</li>
+</ol>
+<p><span class="math display">\[
+\forall A\in\mathcal{G}\subset \mathcal{G}_{0},\quad
+\int _{A}\mathbb{E}[\mathbb{E}(f|\mathcal{G}_{0})|\mathcal{G}] \, dP
+=\int _{A}\mathbb{E}(f|\mathcal{G}_{0}) \, dP
+=\int _{A}f \, dP,
+\]</span></p>
+<p>利用 <strong>?@thm-order</strong> (5) 得到第二个等号。 (3) 因为 <span class="math inline">\(a\mathbb{E}f+b\mathbb{E}g\)</span> 有意义，所以 <span class="math inline">\(af+bg\)</span> 积分存在，所以 <span class="math inline">\(\mathbb{E}(af+bg|\mathcal{G})\)</span> 有定义。又因为 <span class="math inline">\(a\mathbb{E}(f|\mathcal{G})+b\mathbb{E}(g|\mathcal{G})\)</span> 对于 <span class="math inline">\(\mathcal{G}\)</span> 可测，所以有</p>
+<p><span class="math display">\[
+\begin{align}
+\int _{A}(af+bg) \, dP&amp;=a\int _{A}f \, dP+b\int _{A}g \, dP \\
+&amp;=a\int _{A}\mathbb{E}(f|\mathcal{G}) \, dP+b\int _{A}\mathbb{E}(g|\mathcal{G}) \, dP \\
+&amp;=\int _{A}[a\mathbb{E}(f|\mathcal{G})+b\mathbb{E}(g|\mathcal{G})] \, dP.
+\end{align}
+\]</span></p>
+<p>则根据 <strong>?@thm-order</strong> (5) 得到最后的结果。 (4) 直接利用 <strong>?@thm-order</strong> (4) 和条件期望的定义可以得到。又因为 <span class="math inline">\(\lvert f \rvert\geq f,-f\)</span>，所以有</p>
+<p><span class="math display">\[
+\mathbb{E}(\lvert f \rvert |\mathcal{G})\geq \mathbb{E}(f|\mathcal{G}),
+\quad
+\mathbb{E}(\lvert f \rvert |\mathcal{G})\geq \mathbb{E}(-f|\mathcal{G})
+=-\mathbb{E}(f|\mathcal{G}),
+\]</span></p>
+<p>进而得到</p>
+<p><span class="math display">\[
+\mathbb{E}(\lvert f \rvert |\mathcal{G})\geq
+\lvert \mathbb{E}(f|\mathcal{G})
+\rvert .
+\]</span></p>
+<p>这里使用到了 (3) 。</p>
+<ol start="5" type="1">
+<li>直接利用定义，因为 <span class="math inline">\(X \in \mathcal{G}\)</span>，</li>
+</ol>
+<p><span class="math display">\[
+\int _{X}\mathbb{E}(f|\mathcal{G}) \, dP
+=\int _{X}f \, dP=\mathbb{E}f.
+\]</span></p>
+<ol start="6" type="1">
+<li>我们使用典型方法，先假设 <span class="math inline">\(f\geq 0\)</span>，再 假设 <span class="math inline">\(g=I_{B},B\in\mathcal{G}\)</span>，则对 <span class="math inline">\(\forall A\in\mathcal{G}\)</span> 有</li>
+</ol>
+<p><span class="math display">\[
+\int _{A}\mathbb{E}(fg|\mathcal{G}) \, dP
+=\int _{A}fI_{B} \, dP
+=\int _{A\cap B}f \, dP
+=\int _{A\cap B}\mathbb{E}(f|\mathcal{G}) \, dP
+=\int _{A}I_{B}\mathbb{E}(f|\mathcal{G}) \, dP,
+\]</span></p>
+<p>因此意味着 <span class="math inline">\(\mathbb{E}(fg|\mathcal{G})=g\mathbb{E}(f|\mathcal{G})\ a.s.\)</span>。当 <span class="math inline">\(g=\sum\limits_{i=1}^{n}a_{i}I_{B_{i}}\)</span>，其中 <span class="math inline">\(B_{i}\in\mathcal{G}\)</span>，则</p>
+<p><span class="math display">\[
+\begin{align}
+\int_{A}\mathbb{E}(fg|\mathcal{G}) \, dP
+&amp;=\int_{A}f\sum\limits_{i=1}^{n}a_{i}I_{B_{i}} \, dP \\
+&amp;=\sum\limits_{i=1}^{n}a_{i}\int _{A}fI_{B_{i}} \, dP \\
+&amp;=\sum\limits_{i=1}^{n}a_{i}\int _{A}I_{B_{i}}\mathbb{E}(f|\mathcal{G}) \, dP \\
+&amp;=\int_{A}g\mathbb{E}(f|\mathcal{G}) \, dP.
+\end{align}
+\]</span></p>
+<p>其中第三行用到了和上一步一样的思路。当 <span class="math inline">\(g\geq 0\)</span>，则可以找到简单函数列 <span class="math inline">\(g_{n}\uparrow g\)</span>，</p>
+<p><span class="math display">\[
+\begin{align}
+\int _{A}\mathbb{E}(fg|\mathcal{G}) \, dP &amp;= \int _{A}f(\lim_{ n \to \infty } g_{n}) \, dP \\
+&amp;=\lim_{ n \to \infty } \int _{A}fg_{n} \, dP \\
+&amp;=\lim_{ n \to \infty } \int _{A}\mathbb{E}(f|\mathcal{G})g_{n} \, dP \\
+&amp;=\int _{A}\mathbb{E}(f|\mathcal{G})(\lim_{ n \to \infty } g_{n}) \, dP \\
+&amp;=\int _{A}g\mathbb{E}(f|\mathcal{G}) \, dP.
+\end{align}
+\]</span></p>
+<p>这里第 2 行和 4 行使用了两次 <strong>?@thm-mct</strong>。随后，再通过 <span class="math inline">\(g=g^{+}-g^{-}\)</span> 可以证明 <span class="math inline">\(g\)</span> 的一般情况。</p>
+<p>现在我们再来证明 <span class="math inline">\(f\)</span> 是一般随机变量的情况。我们有</p>
+<p><span class="math display">\[
+(fg)^{+}=f^{+}g^{+}+f^{-}g^{-},\quad
+(fg)^{-}=f^{+}g^{-}+f^{-}g^{+},
+\]</span></p>
+<p><span class="math inline">\(fg\)</span> 积分存在意味着</p>
+<p><span class="math display">\[
+\mathbb{E}(f^{+}g)-\mathbb{E}(f^{-}g)=
+\mathbb{E}(f^{+}g^{+}+f^{-}g^{-})-\mathbb{E}(f^{+}g^{-}+f^{-}g^{+})
+\]</span></p>
+<p>有意义，再利用 (3) 和刚才 <span class="math inline">\(f\geq 0\)</span> 的结论，可以证明我们最终的结论。</p>
+<ol start="7" type="1">
+<li>令 <span class="math inline">\(g=f-\mathbb{E}(f|\mathcal{G})\)</span>，则 <span class="math inline">\(g^{2}=f^{2}-2f\mathbb{E}(f|\mathcal{G})+\mathbb{E}^{2}(f|\mathcal{G})\geq 0\)</span>，因此其积分存在，自然存在条件期望，有</li>
+</ol>
+<p><span class="math display">\[
+\begin{align}
+\mathbb{E}(g^{2}|\mathcal{G})
+&amp;=\mathbb{E}(f^{2}|\mathcal{G})-2\mathbb{E}(f\mathbb{E}(f|\mathcal{G})|\mathcal{G})+\mathbb{E}(\mathbb{E}^{2}(f|\mathcal{G})) \\
+&amp;=\mathbb{E}(f^{2}|\mathcal{G})-2\mathbb{E}^{2}(f|\mathcal{G})+
+\mathbb{E}(\mathbb{E}^{2}(f|\mathcal{G})) \\
+&amp;=\mathbb{E}(f^{2}|\mathcal{G})-2\mathbb{E}^{2}(f|\mathcal{G})+
+\mathbb{E}^{2}(f|\mathcal{G}) \\
+&amp;=\mathbb{E}(f^{2}|\mathcal{G})-\mathbb{E}^{2}(f|\mathcal{G})\geq 0,
+\end{align}
+\]</span></p>
+<p>其中第二行来自于 (6)，第三行来自于 (1)。从这里，我们可以能够看出等号成立当且仅当 <span class="math inline">\(g=0\ a.s.\)</span> 。</p>
+</div>
+<div id="thm-conditional-mct-fatou-dct" class="theorem">
+<p><span class="theorem-title"><strong>定理 5 (条件期望的极限运算性质)</strong></span> 设 <span class="math inline">\(\{ f_{n} \}\)</span> 和 <span class="math inline">\(f\)</span> 是概率空间 <span class="math inline">\((X,\mathcal{F},P)\)</span> 上积分存在的随机变量，<span class="math inline">\(\mathcal{G}\)</span> 是 <span class="math inline">\(\mathcal{F}\)</span> 的子 <span class="math inline">\(\sigma\)</span> 域。 (1) (MCT) 若 <span class="math inline">\(0\leq f_{n}\uparrow f\)</span> a.s.，则有</p>
+<p><span class="math display">\[
+0\leq \mathbb{E}(f_{n}|\mathcal{G})\uparrow \mathbb{E}(f|\mathcal{G})\ a.s.;
+\]</span></p>
+<ol start="2" type="1">
+<li>(Fatou) 若 <span class="math inline">\(f_{n}\geq 0\)</span> a.s.，则</li>
+</ol>
+<p>$$ (<em>{n}f</em>{n}|) <em>{n}(f</em>{n}|);</p>
+<p>$$</p>
+<ol start="3" type="1">
+<li>(DCT) 若 <span class="math inline">\(\lvert f_{n} \rvert\leq g\in L_{1}\)</span> 对每个 <span class="math inline">\(n\)</span> 成立并且 <span class="math inline">\(\lim_{ n \to \infty }f_{n}=f\)</span> a.s.，则</li>
+</ol>
+<p>$$</p>
+<p><em>{ n } (f</em>{n}|) =(f|)&nbsp;a.s..</p>
+<p>$$</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span></p>
+<ol type="1">
+<li><span class="math inline">\(\mathbb{E}(f_{n}|\mathcal{G})\)</span> 关于 <span class="math inline">\(\mathcal{G}\)</span> 可测，则 <span class="math inline">\(\lim_{ n \to \infty }\mathbb{E}(f_{n}|\mathcal{G})\)</span> 也关于 <span class="math inline">\(\mathcal{G}\)</span> 可测，于是有</li>
+</ol>
+<p><span class="math display">\[
+\begin{align}
+\int _{A}\lim_{ n \to \infty } \mathbb{E}(f_{n}|\mathcal{G}) \, dP
+=\lim_{ n \to \infty } \int _{A}\mathbb{E}(f_{n}|\mathcal{G}) \, dP
+=\lim_{ n \to \infty } \int _{A}f_{n} \, dP=\int _{A}f \, dP.
+\end{align}
+\]</span></p>
+<p>其中第一个等号和最后一个等号应用了 MCT，第二个等号是通过条件期望的定义。然后再根据条件期望的定义知道</p>
+<p><span class="math display">\[
+\lim_{ n \to \infty } \mathbb{E}(f_{n}|\mathcal{G})=\mathbb{E}(f|\mathcal{G}).
+\]</span></p>
+<ol start="2" type="1">
+<li>和 (3) 的证明类似。</li>
+</ol>
+</div>
+<p>通过以上内容，我们也能自然而然得到条件概率的性质</p>
+<div id="prp-prop-conditional-proba" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 4 (条件概率的性质)</strong></span> &nbsp;</p>
+<ol type="1">
+<li>对任何 <span class="math inline">\(A,B\in\mathcal{F}\)</span> 并且 <span class="math inline">\(A\subset B\)</span>，有</li>
+</ol>
+<p><span class="math display">\[
+0=P(\emptyset|\mathcal{G})\leq P(A|\mathcal{G})
+\leq P(B|\mathcal{G})\leq P(X|\mathcal{G})=1\ a.s.;
+\]</span></p>
+<ol start="2" type="1">
+<li>对于 <span class="math inline">\((X,\mathcal{F})\)</span> 上的任一可列可测分割 <span class="math inline">\(\{ A_{n} \}\)</span>，有</li>
+</ol>
+<p><span class="math display">\[
+P\left( \bigcup_{n=1}^{\infty}A_{n}|\mathcal{G} \right)
+=\sum\limits_{n=1}^{\infty}P(A_{n}|\mathcal{G})\ a.s..
+\]</span></p>
+</div>
+<p>注意到：</p>
+<p>第一，尽管如果忽略 a.s.则以上内容表明条件概率和测度的定义已经完全一样了，但是我们依然需要记得<strong>条件概率实际上是一个随机变量</strong>。 第二，以上内容（2）其实非常类似一个测度的可列可加性，这其实提示我们概率测度与条件概率之间一定存在某些联系，这也是 <a href="#15-independence-and-conditional-expectation-正则条件分布函数">正则条件分布函数</a> 所要介绍的内容。</p>
+</section>
+<section id="几何意义" class="level2">
+<h2 class="anchored" data-anchor-id="几何意义">几何意义</h2>
+<p>我们接下来将介绍一个应用。</p>
+<div id="exm-exam-prediction" class="theorem example">
+<p><span class="theorem-title"><strong>例 2 (预测问题)</strong></span> 假设 <span class="math inline">\(X\)</span> 是 <span class="math inline">\((\Omega,\mathcal{F},P)\)</span> 上的一个随机变量，并且有 <span class="math inline">\(\mathbb{E}X^{2}&lt;\infty\)</span>。<span class="math inline">\(Y\)</span> 是 <span class="math inline">\((\Omega,\mathcal{F},P)\to(\Gamma,\mathcal{G})\)</span> 上的随机元。我们现在希望通过 <span class="math inline">\(Y\)</span> 来预测 <span class="math inline">\(X\)</span>，即寻找一个合适的可测函数 <span class="math inline">\(g\)</span>，其满足 <span class="math inline">\(\mathbb{E}[g(Y)]^{2}&lt;\infty\)</span>，并使得均方误差最小：</p>
+<p><span class="math display">\[
+\mathbb{E}[X-g(Y)]^{2}.
+\]</span></p>
+<p>我们将证明：最优的 <span class="math inline">\(g(Y)\)</span> 就是 <span class="math inline">\(\mathbb{E}(X|Y)\)</span>，<span class="math inline">\(g\)</span> 就是给定值的条件期望 <span class="math inline">\(\mathbb{E}(X|Y=y)\)</span>。</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>由 <a href="#thm-prop-condi-expectation" class="quarto-xref">定理&nbsp;4</a> (7) 可知，</p>
+<p><span class="math display">\[
+\mathbb{E}(\mathbb{E}^{2}[X|Y])\leq \mathbb{E}(\mathbb{E}[X^{2}|Y])
+=\mathbb{E}(X^{2})&lt;\infty,
+\]</span></p>
+<p>所以 <span class="math inline">\(\mathbb{E}(X|Y=y)\)</span> 满足我们的要求（<span class="math inline">\(\mathbb{E}[g(Y)]^{2}&lt;\infty\)</span>）。然后，对于每一个满足条件的 <span class="math inline">\(g\)</span>，有</p>
+<p><span class="math display">\[
+\begin{align}
+\mathbb{E}[X-g(Y)]^{2}
+&amp;=\mathbb{E}[X-\mathbb{E}(X|Y)+\mathbb{E}(X|Y)-g(Y)]^{2} \\
+&amp;=\mathbb{E}[X-\mathbb{E}(X|Y)]^{2}+\mathbb{E}[\mathbb{E}(X|Y)-g(Y)]^{2}
++2\mathbb{E}\{ [X-\mathbb{E}(X|Y)][\mathbb{E}(X|Y)-g(Y)] \} \\
+&amp;=\mathbb{E}[X-\mathbb{E}(X|Y)]^{2}+\mathbb{E}[\mathbb{E}(X|Y)-g(Y)]^{2}
++2\mathbb{E}\{ [X-\mathbb{E}(X|Y)] \}[\mathbb{E}(X|Y)-g(Y)] \\
+&amp;=\mathbb{E}[X-\mathbb{E}(X|Y)]^{2}+\mathbb{E}[\mathbb{E}(X|Y)-g(Y)]^{2} \\
+&amp;\geq \mathbb{E}[X-\mathbb{E}(X|Y)]^{2}.
+\end{align}
+\]</span></p>
+<p>其中，最关键的步骤是第三行，这是应用了 <a href="#thm-prop-condi-expectation" class="quarto-xref">定理&nbsp;4</a> (6)。</p>
+</div>
+<p><strong>以上内容提示我们，条件期望 <span class="math inline">\(\mathbb{E}(X|Y)\)</span> 可以看做是 Banach 空间 <span class="math inline">\((\Omega,\mathcal{F},P)\)</span> 上的元素 <span class="math inline">\(X\)</span> 在 <span class="math inline">\((\Omega,\sigma(Y),P)\)</span> 上的投影，这就是条件期望的几何意义。</strong></p>
+</section>
+<section id="和独立的关系" class="level2">
+<h2 class="anchored" data-anchor-id="和独立的关系">和独立的关系</h2>
+<p>条件期望和独立之间存在非常有意思的联系。笼统一点说，<strong>两者是相互对立的关系</strong>。</p>
+<div id="thm-relationship-independent-condition" class="theorem">
+<p><span class="theorem-title"><strong>定理 6 (条件期望和独立之间的关系)</strong></span> 设 <span class="math inline">\(f,g\)</span> 是概率空间 <span class="math inline">\((X,\mathcal{F},P)\)</span> 上积分存在的随机变量，<span class="math inline">\(\mathcal{G},\mathcal{G}_{0}\)</span> 是 <span class="math inline">\(\mathcal{F}\)</span> 的子 <span class="math inline">\(\sigma\)</span> 域。若 <span class="math inline">\(f\)</span> 与 <span class="math inline">\(\mathcal{G}\)</span> 独立，则</p>
+<p><span class="math display">\[
+\mathbb{E}(f|\mathcal{G})=\mathbb{E}f\ a.s..
+\]</span></p>
+<p>特别的，<span class="math inline">\(\mathbb{E}(f|\{ \emptyset,X \})=\mathbb{E}f\ a.s.\)</span>。若 <span class="math inline">\(f,g\)</span> 之间相互独立，则 <span class="math inline">\(\mathbb{E}(f|g)=\mathbb{E}f\)</span>。对于 Borel 测度空间上的可测函数 <span class="math inline">\(h\)</span>，因为 <span class="math inline">\(h(f)\)</span> 依然与 <span class="math inline">\(\mathcal{G}\)</span> 独立，因此自然有下面的结论：</p>
+<p><span class="math display">\[
+\mathbb{E}[h(f)|\mathcal{G}]=\mathbb{E}[h(f)],\ a.s..
+\]</span></p>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="注意">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>注意
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>如果 <span class="math inline">\(\mathcal{G}\)</span> 中包含 <span class="math inline">\(f\)</span> 所有的信息，也就是 <span class="math inline">\(\sigma(f)\subset \mathcal{G}\)</span> (<span class="math inline">\(f\)</span> 关于 <span class="math inline">\(\mathcal{G}\)</span> 可测)，则有 <span class="math inline">\(\mathbb{E}(f|\mathcal{G})=f\ a.s.\)</span>（<a href="#thm-prop-condi-expectation" class="quarto-xref">定理&nbsp;4</a> (1)）。 如果 <span class="math inline">\(\mathcal{G}\)</span> 中不包含 <span class="math inline">\(f\)</span> 的任何信息，也就是 <span class="math inline">\(f\)</span> 与 <span class="math inline">\(\mathcal{G}\)</span> 独立，则有 <span class="math inline">\(\mathbb{E}(f|\mathcal{G})=\mathbb{E}f\ a.s.\)</span>(<a href="#thm-relationship-independent-condition" class="quarto-xref">定理&nbsp;6</a>)。 <strong>Note: 投影类比</strong> 结合 <a href="#exam-prediction">案例</a> 我们可以有这样的理解： <strong><span class="math inline">\(f\)</span> 看做一个向量，做关于 <span class="math inline">\(\mathcal{G}\)</span> 的条件期望意味着 <span class="math inline">\(f\)</span> 向 <span class="math inline">\(\mathcal{G}\)</span> 所对应的向量空间中做投影</strong>。如果 <span class="math inline">\(\sigma(f)\subset \mathcal{G}\)</span>，意味着 <span class="math inline">\(f\)</span> 就在这个向量空间中，做投影就是它本身。如果 <span class="math inline">\(f\)</span> 与 <span class="math inline">\(\mathcal{G}\)</span> 独立，意味着 <span class="math inline">\(f\)</span> 与 <span class="math inline">\(\mathcal{G}\)</span> 空间正交，投影之后只能得到一个“退化的点”，在这里对应于 <span class="math inline">\(\mathbb{E}f\)</span>。</p>
+</div>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span><span class="math inline">\(\forall A\in\mathcal{G}\)</span>，有</p>
+<p><span class="math display">\[
+\int _{A}\mathbb{E}(f|\mathcal{G}) \, dP
+=\int _{A}f \, dP
+=\int fI_{A} \, dP
+=\mathbb{E}f\mathbb{E}I_{A}
+=\int _{A}\mathbb{E}f \, dP
+\]</span></p>
+<p>其中关键的第三个等号成立源于 <a href="#lem-independent" class="quarto-xref">引理&nbsp;1</a>。 根据条件期望的定义，结论得到证明。</p>
+</div>
+<div id="thm-relationship-independent-conditional-given-value" class="theorem">
+<p><span class="theorem-title"><strong>定理 7 (给定值的期望与独立之间的关系)</strong></span> 设 <span class="math inline">\(f,g\)</span> 是概率空间 <span class="math inline">\((X,\mathcal{F},P)\)</span> 上积分存在的随机变量，<span class="math inline">\(h\)</span> 是 <span class="math inline">\((\mathbb{R}^{n_{1}+n_{2}},\mathcal{B}^{n_{1}+n_{2}})\)</span> 上的可测函数。若 <span class="math inline">\(f,g\)</span> 是独立的，并且 <span class="math inline">\(h(f,g)\)</span> 积分存在，则</p>
+<p><span class="math display">\[
+\mathbb{E}[h(f,g)|g=y]=\mathbb{E}[h(f,y)]\ a.s.\ Pg^{-1}.
+\]</span></p>
+<p>特别的，当 <span class="math inline">\(h(f,g)=h(f)\)</span> (也就是 <span class="math inline">\(h\)</span> 与 <span class="math inline">\(g\)</span> 无关时)，有</p>
+<p><span class="math display">\[
+\mathbb{E}[h(f)|g=y]=\mathbb{E}[h(f)]\ a.s. \ Pg^{-1}.
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>我们令 <span class="math inline">\(e(y)=\mathbb{E}[h(f,y)]\)</span>，根据给定值的条件期望的定义，我们只需要证明</p>
+<p><span class="math display">\[
+e(g)=\mathbb{E}[h(f,g)|g],
+\]</span></p>
+<p>即可。也就是说，我们需要证明，<span class="math inline">\(\forall A\in\sigma(g)\)</span>，有</p>
+<p><span class="math display">\[
+\int _{A}e(g) \, dP=\int _{A}h(f,g) \, dP.
+\]</span></p>
+<p>假设，存在 <span class="math inline">\(B\in\mathcal{B}^{n_{2}},A=g^{-1}(B)\)</span>，则有</p>
+<p><span class="math display">\[
+\begin{align}
+\int _{A}e(g) \, dP &amp;=\int _{B}e(y) \, Pg^{-1}(dy) \\
+&amp;=\int _{B}\mathbb{E}[h(f,y)] \, Pg^{-1}(dy) =\int _{B}\int _{X}h(f(x),y) \, P(dx)  \, Pg^{-1}(dy) \\
+&amp;=\int _{X}\int _{B}h(f(x),y) \, Pg^{-1}(dy)  \, P(dx)  \\
+&amp;=\int _{\mathbb{R}}\int _{\mathbb{R}}I_{B}(y)h(z,y) \, Pg^{-1}(dy)  \, Pf^{-1}(dz) \\
+&amp;=\mathbb{E}[I_{B}(g)h(f,g)]=\int _{A}h(f,g) \, dP.
+\end{align}
+\]</span></p>
+<p>其中，第 1,4 行来自于 <strong>?@thm-inte-by-subs</strong>，第 2 行是因为 <span class="math inline">\(e(y)\)</span> 的定义，第 3 行来自 Fubini 定理，第 5 行是因为独立和 <a href="#thm-indepent-distribution" class="quarto-xref">定理&nbsp;2</a> (4) 。命题得证。</p>
+</div>
+<p><a href="#thm-relationship-independent-condition" class="quarto-xref">定理&nbsp;6</a> 和 <a href="#thm-relationship-independent-conditional-given-value" class="quarto-xref">定理&nbsp;7</a> 证明了一个我们在初等概率论中的就已经经常使用的结论（有时候甚至是当做独立的定义使用）<strong>：随机变量 <span class="math inline">\(X,Y\)</span> 独立，则 <span class="math inline">\(\mathbb{E}[X|Y]=\mathbb{E}X\)</span></strong>。</p>
+</section>
+<section id="条件独立" class="level2">
+<h2 class="anchored" data-anchor-id="条件独立">条件独立</h2>
+<p>基于以上的结论，当条件上有多个随机变量时（比如 <span class="math inline">\(\mathbb{E}[X|Y_{1},Y_{2}]\)</span>），那么独立性会更加多变（任意两个随机变量之间独立），此时会有怎样的性质呢？其实这就是我们在初等概率论中所讨论的条件独立性。</p>
+<div id="def-conditional-independence" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 4 (条件独立性)</strong></span> 设 <span class="math inline">\(X\)</span> 和 <span class="math inline">\(Y\)</span> 是随机变量（或随机向量），<span class="math inline">\(Z\)</span> 是另一个随机变量（或随机向量）。我们称 <strong><span class="math inline">\(X\)</span> 和 <span class="math inline">\(Y\)</span> 在给定 <span class="math inline">\(Z\)</span> 的条件下是独立的</strong>（记作 <span class="math inline">\(X \perp \!\!\! \perp Y \mid Z\)</span>），当且仅当对于任意（合适的）有界可测函数 <span class="math inline">\(h\)</span>，以下条件成立（几乎处处成立）：</p>
+<p><span class="math display">\[
+\mathbb{E}[h(X) \mid Y, Z] = \mathbb{E}[h(X) \mid Z]
+\]</span></p>
+</div>
+<p>根据我们之前学习的知识，我们首先证明下面的一个定理，其介绍了一个条件独立的<strong>充分条件</strong>：</p>
+<div id="thm-condi-independent-sufficient" class="theorem">
+<p><span class="theorem-title"><strong>定理 8 (条件独立的充分条件)</strong></span> <span class="math inline">\(X\)</span> 是积分存在的随机变量，<span class="math inline">\(Y_{i},i=1,2\)</span> 是另外两个随机向量，并且满足 <span class="math inline">\((X,Y_{1})\)</span> 与 <span class="math inline">\(Y_{2}\)</span> 之间是独立的，则有</p>
+<p><span class="math display">\[
+\mathbb{E}[X|Y_{1},Y_{2}]=\mathbb{E}[X|Y_{1}]\ a.s.
+\]</span></p>
+<p>同理，若存在 Borel 测度空间上的可测函数 <span class="math inline">\(h\)</span>，则有</p>
+<p><span class="math display">\[
+\mathbb{E}[h(X)|Y_{1},Y_{2}]=\mathbb{E}[h(X)|Y_{1}]\ a.s.
+\]</span></p>
+<p>也就是说 <span class="math inline">\(X \perp \!\!\! \perp Y_{2} \mid Y_{1}\)</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>因为 <span class="math inline">\(\sigma(Y_{1})\subset\sigma(Y_{1},Y_{2})\)</span>，所以 <span class="math inline">\(\mathbb{E}[X|Y_{1}]\)</span> 在 <span class="math inline">\((\Omega,\sigma(Y_{1},Y_{2}))\)</span> 上也是可测的。想要证明上述公式，也就是在证明</p>
+<p><span class="math display">\[
+\begin{align}
+&amp;\int _{A}X \, dP=\int _{A}\mathbb{E}(X|Y_{1}) \, dP,\quad
+\forall A\in\sigma(Y_{1},Y_{2}),
+\end{align}
+\]</span></p>
+<p>也就是</p>
+<p><span class="math display">\[
+\begin{align}
+&amp;\int _{(Y_{1},Y_{2})^{-1}(B)}X \, dP
+=\int _{(Y_{1},Y_{2})^{-1}(B)}\mathbb{E}(X|Y_{1}) \, dP,\quad
+\forall B\in \mathcal{B}^{k_{1}+k_{2}}.
+\end{align}
+\]</span></p>
+<p>当 <span class="math inline">\(B=B_{1}\times B_{2}\)</span> 时，我们有</p>
+<p><span class="math display">\[
+\begin{align}
+\int _{(Y_{1},Y_{2})^{-1}(B)}\mathbb{E}(X|Y_{1}) \, dP
+&amp;=\int _{(Y_{1}^{-1}B_{1}\cap Y_{2}^{-1}B_{2})}\mathbb{E}(X|Y_{1}) \, dP\\
+&amp;=\int I_{Y_{1}^{-1}B_{1}}I_{Y_{2}^{-1}B_{2}}\mathbb{E}(X|Y_{1}) \, dP \\
+&amp;=\int I_{Y_{1}^{-1}B_{1}}\mathbb{E}(X|Y_{1}) \, dP \int I_{Y_{2}^{-1}B_{2}} \, dP \\
+&amp;=\int I_{Y_{1}^{-1}B_{1}}X \, dP \int I_{Y_{2}^{-1}B_{2}} \, dP \\
+&amp;=\int I_{Y_{1}^{-1}B_{1}}I_{Y_{2}^{-1}B_{2}}X \, dP,
+\end{align}
+\]</span></p>
+<p>也就是说，此时我们要证明的等式成立。上面，第 3,5 行来自于 <a href="#thm-indepent-distribution" class="quarto-xref">定理&nbsp;2</a> (4)。</p>
+<p>注意，以上我们只证明了在 <span class="math inline">\(B_{1}\times B_{2}\)</span> 这种集合上，我们的等式成立。为了将其推广到整个 Borel set，我们只需要证明</p>
+<p><span class="math display">\[
+\mathcal{H}=\left\{ B\in\mathcal{B}^{k_{1}+k_{2}}|
+\int _{(Y_{1},Y_{2})^{-1}(B)}X \, dP
+=\int _{(Y_{1},Y_{2})^{-1}(B)}\mathbb{E}(X|Y_{1}) \, dP
+\right\}
+\]</span></p>
+<p>是一个 <span class="math inline">\(\sigma\)</span> -field 即可。通过 <strong>?@cor-measurable-seperate</strong>，容易证明其满足可列不交并的封闭性，利用 <strong>?@thm-linear</strong> 可以证明补的封闭性，这就证明了 <span class="math inline">\(\sigma\)</span>-field 了。</p>
+<p>至于对于 <span class="math inline">\(h(X)\)</span> 的问题，通过 <a href="#prp-composit-map-indepent" class="quarto-xref">命题&nbsp;2</a>，可以证明 <span class="math inline">\((h(X),Y_{1})\)</span> 与 <span class="math inline">\(Y_{2}\)</span> 是独立，则利用上面已经证明的结果，便可以证明第二个结论。</p>
+</div>
+</section>
+</section>
+<section id="条件分布" class="level1">
+<h1>条件分布</h1>
+<p>根据 <strong>?@thm-prop-conditional-proba</strong>，我们发现条件概率与概率非常相似。同时，我们考虑到初等概率论中对于条件概率的理解，也是将其视为一个概率来进行处理的。那我们是否能够将其视为初等概率论中的条件概率呢？比如，我们固定一个样本点后（因为条件期望是随机变量）就与初等概率论中一般无二？<strong>答案是否定的</strong>，下面的例子详细介绍了这一点。</p>
+<section id="15-independence-and-conditional-expectation-零测集堆积问题" class="level2">
+<h2 class="anchored" data-anchor-id="15-independence-and-conditional-expectation-零测集堆积问题">零测集堆积问题</h2>
+<p>考虑最简单的概率空间： * <strong>样本空间</strong>：<span class="math inline">\(\Omega = [0, 1]\)</span> * <strong><span class="math inline">\(\sigma\)</span>- 代数</strong>：<span class="math inline">\(\mathcal{F}\)</span> 为 Borel <span class="math inline">\(\sigma\)</span>- 代数 * <strong>概率测度</strong>：<span class="math inline">\(P\)</span> 为勒贝格测度（即 <span class="math inline">\([0,1]\)</span> 上的均匀分布）。 * <strong>条件信息</strong>：假设我们需要基于“毫无信息”（即平凡 <span class="math inline">\(\sigma\)</span>- 代数 <span class="math inline">\(\mathcal{G} = \{\emptyset, \Omega\}\)</span>）来计算条件概率。</p>
+<p>既然毫无信息，条件概率应该等于无条件概率（可直接根据平凡 <span class="math inline">\(\sigma\)</span>-field 与其他 <span class="math inline">\(\sigma\)</span>-field 的独立性以及 <a href="#thm-relationship-independent-condition" class="quarto-xref">定理&nbsp;6</a> 得到）：</p>
+<p><span class="math display">\[
+P(A|\mathcal{G})(\omega) = P(A)\quad a.s.
+\]</span></p>
+<p>这对所有 <span class="math inline">\(\omega\)</span> 都成立。这很完美，对吧？<strong>但是</strong>，请记住条件概率的定义是基于<strong>条件期望</strong>的，而条件期望在定义上允许在零测集上任意修改值。由于 <span class="math inline">\(P(A|\mathcal{G})\)</span> 允许在一个零测集上取任意值，我们可以利用这一点来破坏可加性。</p>
+<p>第一，定义事件 <span class="math inline">\(A = [0, 0.5]\)</span>。它的真实概率是 <span class="math inline">\(0.5\)</span>。我们定义 <span class="math inline">\(P(A|\mathcal{G})\)</span> 的一个版本 <span class="math inline">\(f_A(\omega)\)</span>：</p>
+<p><span class="math display">\[
+f_A(\omega) = \begin{cases} 0.5 &amp; \text{如果 } \omega \neq 0 \\ 100 &amp; \text{如果 } \omega = 0 \end{cases}
+\]</span></p>
+<p><em>注意：因为只改了 <span class="math inline">\(\omega=0\)</span> 这一点，该点测度为 0，所以 <span class="math inline">\(f_A\)</span> 依然是 <span class="math inline">\(P(A|\mathcal{G})\)</span> 的一个合法版本。</em></p>
+<p>第二，定义事件 <span class="math inline">\(B = (0.5, 1]\)</span>。它的真实概率是 <span class="math inline">\(0.5\)</span>。我们定义 <span class="math inline">\(P(B|\mathcal{G})\)</span> 的一个版本 <span class="math inline">\(f_B(\omega)\)</span>：</p>
+<p><span class="math display">\[
+f_B(\omega) = 0.5 \quad (\text{对所有 } \omega)
+\]</span></p>
+<p><em>这也是合法的。</em></p>
+<p>第三，定义事件 <span class="math inline">\(C = A \cup B = [0, 1]\)</span>。它的真实概率是 <span class="math inline">\(1\)</span>。我们定义 <span class="math inline">\(P(C|\mathcal{G})\)</span> 的一个版本 <span class="math inline">\(f_C(\omega)\)</span>：</p>
+<p><span class="math display">\[
+f_C(\omega) = 1 \quad (\text{对所有 } \omega)
+\]</span></p>
+<p><em>这也是合法的。</em></p>
+<p>现在，我们固定观察点 <span class="math inline">\(\omega = 0\)</span>。来看看 <span class="math inline">\(Q(\cdot) = P(\cdot|\mathcal{G})(0)\)</span> 是否构成一个概率测度。</p>
+<ul>
+<li><span class="math inline">\(Q(A) = f_A(0) = 100\)</span></li>
+<li><span class="math inline">\(Q(B) = f_B(0) = 0.5\)</span></li>
+<li><span class="math inline">\(Q(A \cup B) = Q(C) = f_C(0) = 1\)</span></li>
+</ul>
+<p>显然：</p>
+<p><span class="math display">\[
+Q(A) + Q(B) = 100.5 \neq 1 = Q(A \cup B)
+\]</span></p>
+<p>对于 <span class="math inline">\(\omega=0\)</span> 这一点，我们随意（但合法）选取的条件概率版本<strong>不满足有限可加性</strong>，更别提构成一个概率测度了。</p>
+<p>本质上，这个问题出在量词的交换上。<strong>一般条件概率的定义保证了</strong></p>
+<p><span class="math display">\[
+\forall A \in \mathcal{F}, \quad \exists N_A \text{ (零测集)}, \quad \forall \omega \notin N_A: \text{性质成立}
+\]</span></p>
+<p>（对每个事件，都有一个例外集，把这些例外集并起来，可能覆盖全空间。）</p>
+<p><strong>我们想要得到的（正则条件概率）：</strong></p>
+<p><span class="math display">\[
+\exists N \text{ (零测集)}, \quad \forall \omega \notin N, \quad \forall A \in \mathcal{F}: \text{性质成立}
+\]</span></p>
+<p>（存在一个统一的例外集，只要避开它，对所有事件都成立。）这两者是完全不同的。</p>
+<p><strong>正则条件概率（RCP）</strong> 的引入，就是为了证明在“好”的空间下，我们总是可以通过精细的选择，找到一个<strong>统一的、完美的版本</strong>，使得上述矛盾不会发生，让我们能放心地把 <span class="math inline">\(\omega\)</span> 固定下来讨论概率。</p>
+</section>
+<section id="正则条件概率" class="level2">
+<h2 class="anchored" data-anchor-id="正则条件概率">正则条件概率</h2>
+<p>这里我们给出<strong>正则条件概率（RCP）</strong> 的定义：</p>
+<div id="def-rcp" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 5 (正则条件概率函数)</strong></span> 对概率空间 <span class="math inline">\((X,\mathcal{F},P)\)</span> 上给定的子 <span class="math inline">\(\sigma\)</span> 域 <span class="math inline">\(\mathcal{G}\)</span>，称满足下面条件的二元函数 <span class="math inline">\(P_{\mathcal{G}}:X\times \mathcal{F}\to \bar{\mathbb{R}}\)</span> 为<strong>正则条件概率</strong>： (1) <span class="math inline">\(\forall x \in X,P_{\mathcal{G}}(x,\cdot)\)</span> 是 <span class="math inline">\((X,\mathcal{F})\)</span> 上的概率测度； (2) <span class="math inline">\(\forall A\in\mathcal{F},P_{\mathcal{G}}(\cdot,A)\)</span> 是 <span class="math inline">\(A\)</span> 关于 <span class="math inline">\(\mathcal{G}\)</span> 上的条件概率，即 <span class="math inline">\(P_{\mathcal{G}}(\cdot,A)\)</span> 关于 <span class="math inline">\(\mathcal{G}\)</span> 可测并且有</p>
+<p>$$</p>
+<p>P(AB)=<em>{B}P</em>{}(,A) , dP, B. $$</p>
+</div>
+<p>关于以上的定义，我们需要注意以下几点：</p>
+<ul>
+<li>在学习了 <strong>?@def-measure-transform-func</strong> 后，我们知道，以上定义的正则条件概率函数其实就是一个从 <span class="math inline">\((X,\mathcal{G})\)</span> 到 <span class="math inline">\((X,\mathcal{F})\)</span> 的<strong>测度转移函数</strong>。因此，它也满足测度转移函数的一些性质，比如：
+<ul>
+<li>对于 <span class="math inline">\((X\times X,\mathcal{G}\times \mathcal{F})\)</span> 上可测的二元函数 <span class="math inline">\(f(x,y)\)</span>， <span class="math inline">\(g_{f}(x)=\int f(x,y) P_{\mathcal{G}}(x,dy)\)</span> 关于 <span class="math inline">\((X,\mathcal{G})\)</span> 可测 (<strong>?@lem-measure-transform-func-integrate</strong>)。</li>
+<li>对于 <span class="math inline">\((X,\mathcal{G})\)</span> 上的任一概率测度 <span class="math inline">\(P_{1}\)</span>，我们可以找到一个 <span class="math inline">\((X\times X,\mathcal{G}\times \mathcal{F})\)</span> 上的概率测度 <span class="math inline">\(P'\)</span>，满足 <span class="math inline">\(P'(A_{1}\times A_{2})=\int _{A_{1}}P_{\mathcal{G}}(x,A_{2}) \, P_{1}(dx)\)</span> (<strong>?@thm-transform-func-generate-measure</strong>)。</li>
+</ul></li>
+<li>正则条件概率的另外一个特点在于 (2)，即 <span class="math inline">\(P(\cdot,A)\)</span> 是 <span class="math inline">\(A\)</span> 关于 <span class="math inline">\(\mathcal{G}\)</span> 上的条件概率。此时，如果我们将 <span class="math inline">\(P_{1}=P\)</span>，则有</li>
+</ul>
+<p><span class="math display">\[
+   P'(A_{1}\times A_{2})=\int _{A_{1}}P_{\mathcal{G}}(x,A_{2})P(dx)=P(A_{1}\cap A_{2}).
+\]</span></p>
+<p>也就是说，通过正则条件概率，我们可以定义乘积空间 <span class="math inline">\((X\times X,\mathcal{G}\times \mathcal{F})\)</span> 上的一个概率，这个概率的特点是<strong>可测矩形的概率等于各个维度子集交的测度</strong>。</p>
+<p><strong>正则条件概率</strong>的引入正是为了解决类似 <a href="#15-independence-and-conditional-expectation-零测集堆积问题">零测集堆积问题</a> 的这些问题。它不再是针对每个 <span class="math inline">\(A\)</span> 单独定义，而是直接定义一个核函数（Kernel） <span class="math inline">\(Q(\omega, A)\)</span>，强制要求：</p>
+<ol type="1">
+<li><strong>对于每个固定的 <span class="math inline">\(\omega\)</span></strong>：<span class="math inline">\(Q(\omega, \cdot)\)</span> 必须是一个真正的概率测度（满足可列可加性）。</li>
+<li><strong>对于每个固定的 <span class="math inline">\(A\)</span></strong>：<span class="math inline">\(Q(\cdot, A)\)</span> 必须是 <span class="math inline">\(P(A|\mathcal{G})\)</span> 的一个版本（即满足 Radon-Nikodym 定义）。</li>
+</ol>
+<p>因为在随机过程、马尔可夫链等领域，我们需要通过积分 <span class="math inline">\(P(A|\mathcal{G})(\omega)\)</span> 来定义路径的分布。如果对于固定的 <span class="math inline">\(\omega\)</span>，它不是一个测度，我们就无法在上面定义积分，整个后续理论（如柯尔莫哥洛夫存在性定理）都会崩塌。所以，<strong>正则条件概率的引入是必要的</strong>。但是，<strong>它是否一定存在呢？</strong> 幸运的是，如果样本空间 <span class="math inline">\(\Omega\)</span> 是足够“好”的空间（例如波兰空间，Polish Space，像 <span class="math inline">\(\mathbb{R}^n\)</span> 这种），正则条件概率<strong>一定存在</strong>。但在一些病态的无穷维空间中，正则条件概率可能<strong>不存在</strong>。这也是为什么高等概率论通常限定在波兰空间上讨论的原因。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="波兰空间 (Polish Space)">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>波兰空间 (Polish Space)
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>波兰空间</strong>（Polish Space）是现代概率论与测度论中最为核心的基础设施。它被定义为一类具备优良拓扑性质的拓扑空间，具体包含两个核心特征： - 它是<strong>可分的（Separable）</strong>，即在空间中存在一个可列的稠密子集。这一性质保证了空间生成的 <span class="math inline">\(\sigma\)</span>- 代数能够有效地捕捉其拓扑结构，使得我们能够利用可列操作来处理复杂的集合。 - 它是<strong>完全可度量化的（Completely Metrizable）</strong>，意味着空间上存在一个与其拓扑兼容的度量 <span class="math inline">\(d\)</span>，使得度量空间 <span class="math inline">\((X, d)\)</span> 是完备的。这确保了序列的极限运算在空间内部是封闭的，不会出现“极限点缺失”的情况。</p>
+<p>在高等概率论的研究中，波兰空间（如 <span class="math inline">\(\mathbb{R}^n\)</span>、可分 Hilbert 空间或连续函数空间 <span class="math inline">\(C[0, 1]\)</span>）具有决定性意义。由于波兰空间在 Borel 意义下与 <span class="math inline">\([0, 1]\)</span> 上的 Borel 子集同构，它从根本上保证了正则条件概率的存在性，消除了由于事件集合不可数而可能导致的测度可加性失效问题，并为测度的弱收敛理论以及柯尔莫哥洛夫存在性定理提供了坚实的数学基础。</p>
+</div>
+</div>
+</section>
+<section id="正则条件分布" class="level2">
+<h2 class="anchored" data-anchor-id="正则条件分布">正则条件分布</h2>
+<p>正则条件概率的存在性是一个非常有意义的问题，但在概率论的学习中我们可能更加关注它的一个特殊情况：<span class="math inline">\(\mathcal{F}=\sigma(f)\)</span>，其中 <span class="math inline">\(f\)</span> 是某个随机变量。此时，它一定存在，我们称其为<strong>正则条件分布</strong>。</p>
+<div id="def-15-independence-and-conditional-expectation-22" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 6 (正则条件分布)</strong></span> <span class="math inline">\(f\)</span> 是概率空间 <span class="math inline">\((X,\mathcal{F},P)\)</span> 上的随机向量，<span class="math inline">\(\mathcal{G}\)</span> 是其上的子 <span class="math inline">\(\sigma\)</span> 域，则称满足下面条件的二元函数 <span class="math inline">\(P_{f}:X\times \mathcal{B}^{n}\to [0,1]\)</span> 为<strong><span class="math inline">\(f\)</span> 关于 <span class="math inline">\(\mathcal{G}\)</span> 的正则条件分布</strong>： (1) <span class="math inline">\(\forall x \in X,P_{f|\mathcal{G}}(x,\cdot)\)</span> 是 <span class="math inline">\((\mathbb{R}^{n},\mathcal{B}^{n})\)</span> 上的概率测度； (2) <span class="math inline">\(\forall B\in\mathcal{B}^{n},P_{f|\mathcal{G}}(\cdot,B)=P[f^{-1}(B)|\mathcal{G}]\)</span> 是 <span class="math inline">\(f^{-1}(B)\)</span> 关于 <span class="math inline">\(\mathcal{G}\)</span> 上的条件概率，即 <span class="math inline">\(P_{f|\mathcal{G}}(\cdot,B)\)</span> 关于 <span class="math inline">\(\mathcal{G}\)</span> 可测并且有</p>
+<p><span class="math display">\[
+P(f^{-1}(B)\cap A)=\int _{A}P_{f|\mathcal{G}}(\cdot,B) \, dP,\quad
+\forall A\in\mathcal{G}.
+\]</span></p>
+<p>根据 <strong>?@prp-measure2dist</strong> 中的内容，可以找到与一一对应的二元函数：<span class="math inline">\(F_{f|\mathcal{G}}:(X \times \mathbb{R}^{n})\to[0,1]\)</span>，称为<strong><span class="math inline">\(f\)</span> 关于 <span class="math inline">\(\mathcal{G}\)</span> 的正则条件分布函数</strong>： (1) <span class="math inline">\(\forall x \in X,F_{f|\mathcal{G}}(x,\cdot)\)</span> 是 <span class="math inline">\((\mathbb{R}^{n},\mathcal{B}^{n})\)</span> 上的分布函数，即 <span class="math inline">\(F_{f|\mathcal{G}}(x,a)=P_{f|\mathcal{G}}(x, (-\infty,a])\)</span>； (2) <span class="math inline">\(\forall a\in\mathbb{R}^{n},F_{f|\mathcal{G}}(\cdot,a)=P_{f|\mathcal{G}}(\cdot,(-\infty,a])\)</span> 是 <span class="math inline">\(\{ f\leq a \}\)</span> 关于 <span class="math inline">\(\mathcal{G}\)</span> 上的条件概率。</p>
+<p>若还存在另外一个随机变量 <span class="math inline">\(g\)</span>，令 <span class="math inline">\(\mathcal{G}=\sigma(g)\)</span>，则记作 <span class="math inline">\(P_{f|g}(x,B)\)</span> 或 <span class="math inline">\(F_{f|g}(x,a)\)</span>。</p>
+</div>
+<p>我们有下面的存在性定理</p>
+<div id="thm-rcp-exist" class="theorem">
+<p><span class="theorem-title"><strong>定理 9 (正则条件分布的存在性)</strong></span> 任何随机变量 <span class="math inline">\(f\)</span> 关于任何子 <span class="math inline">\(\sigma\)</span> 域 <span class="math inline">\(\mathcal{G}\)</span> 的正则条件分布存在。</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>设 <span class="math inline">\(\mathbb{Q}\)</span> 是 <span class="math inline">\(\mathbb{R}\)</span> 中的有理数集，<span class="math inline">\(\forall r\in\mathbb{Q}\)</span>，取一个实值函数</p>
+<p><span class="math display">\[
+G(\cdot,r)=P(f\leq r|\mathcal{G})(\cdot)\ a.s..
+\]</span></p>
+<p>令</p>
+<p><span class="math display">\[
+\begin{align}
+&amp;N_{1}=\bigcup_{r_{1},r_{2}\in\mathbb{Q},r_{1}\leq r_{2}}^{}
+\{ x \in X| G(x,r_{1})&gt;G(x,r_{2}) \}, \\
+&amp;N_{2}=\bigcup_{r\in\mathbb{Q}}^{}\left\{  
+x \in X|\lim_{ n \to \infty } G\left( x,r+\frac{1}{n} \right)\neq
+G(x,r)\right\}, \\
+&amp;N_{3}=\{ x \in X|\lim_{ n \to \infty } G(x,n)\neq 1 \}\cup
+\{ x \in X| \lim_{ n \to \infty } G(x,-n)\neq 0 \}, \\
+&amp;N=N_{1}\cap N_{2}\cap N_{3}.
+\end{align}
+\]</span></p>
+<p>由可测函数的性质和 <strong>?@thm-prop-conditional-proba</strong> 可知 <span class="math inline">\(N_{1}\in\mathcal{G},P(N_{1})=0\)</span>。由 <a href="#thm-conditional-mct-fatou-dct" class="quarto-xref">定理&nbsp;5</a> 可知，<span class="math inline">\(\lim_{ n \to \infty }G\left( x,r+\frac{1}{n} \right)\)</span> 和 <span class="math inline">\(\lim_{ n \to \infty }G(x,n)\)</span> 都是相对于 <span class="math inline">\(\mathcal{G}\)</span> 可测，因此 <span class="math inline">\(N_{2},N_{3}\in\mathcal{G}\)</span>，并且有 <span class="math inline">\(P(N_{2})=P(N_{3})=0\)</span>。最终我们得到 <span class="math inline">\(N\in\mathcal{G},P(N)=0\)</span>。</p>
+<p>然后令 <span class="math inline">\(\forall a\in\mathbb{R}\)</span>，有</p>
+<p><span class="math display">\[
+F_{f|\mathcal{G}}(x,a)=\left\{\begin{matrix}
+&amp;\inf\{ G(x,r)|r\in\mathbb{Q},r&gt;a \},\quad &amp;x \not\in N, \\
+&amp;H(a),\quad &amp;x \in N.
+\end{matrix}\right.
+\]</span></p>
+<p>其中 <span class="math inline">\(H\)</span> 是任何一个分布函数。我们来证明 <span class="math inline">\(F_{f|\mathcal{G}}\)</span> 是我们上面定义的正则条件分布函数。</p>
+<p><strong>第一</strong>，我们需要去证明 <span class="math inline">\(\forall x \in X\implies F_{f|\mathcal{G}}(x,\cdot)\)</span> 是分布函数。我们只需要证明 <span class="math inline">\(x \notin N\)</span> 的情况即可，根据 <span class="math inline">\(N\)</span> 的定义可知</p>
+<p><span class="math display">\[
+\begin{align}
+&amp;\lim_{ a \to -\infty } F_{f|\mathcal{G}}(x,a)
+=\lim_{ a \to -\infty } \inf_{r&gt;a,r\in\mathbb{Q}}G(x,r)=\mathop{\lim\inf}_{ n \to \infty }  G(x,n)=0, \\
+&amp;\lim_{ a \to \infty } F_{f|\mathcal{G}}(x,a)
+=\lim_{ a \to \infty } \inf_{r&gt;a,r\in\mathbb{Q}}G(x,r)=\mathop{\lim\inf}_{ n \to \infty }  G(x,n)=1.
+\end{align}
+\]</span></p>
+<p>也容易证明 <span class="math inline">\(F_{f|\mathcal{G}}(x,a)\)</span> 是非减和右连续的，所以第一得到证明。(多维的情况的证明是类似的。)</p>
+<p><strong>第二</strong>，我们需要证明 <span class="math inline">\(\forall a\in \mathbb{R}^{n}\implies F_{f|\mathcal{G}}(\cdot,a)\)</span> 是 <span class="math inline">\(\{ f&lt;a \}\)</span> 关于 <span class="math inline">\(\mathcal{G}\)</span> 的条件概率。当 <span class="math inline">\(a\in\mathbb{Q}\)</span> 时，直接通过定义得到；当 <span class="math inline">\(a\not\in\mathbb{Q}\)</span>，则通过 <a href="#thm-conditional-mct-fatou-dct" class="quarto-xref">定理&nbsp;5</a> 和定义得到。然后对于每个 <span class="math inline">\(x \in X\)</span>，创建 <span class="math inline">\(F_{f|\mathcal{G}}(x,\cdot)\)</span> 的 L-S 测度，这也就得到正则条件分布。</p>
+</div>
+<div class="callout callout-style-default callout-important callout-titled" title="诱导测度与正则条件分布的存在性机制">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">重要</span>诱导测度与正则条件分布的存在性机制
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>正则条件分布</strong>（RCD）之所以在高等概率论中具备极强的适用性，其核心逻辑<strong>在于随机变量 <span class="math inline">\(f\)</span> 对定义域的“结构化过滤”作用</strong>。通过将抽象样本空间 <span class="math inline">\((\Omega, \mathcal{F})\)</span> 映射至具备优良拓扑性质的波兰空间 <span class="math inline">\((S, \mathcal{B}(S))\)</span>，我们实质上利用了诱导测度 <span class="math inline">\(P \circ f^{-1}\)</span> 将概率讨论的范畴限制在了 Borel 集族之内。由于波兰空间的 Borel <span class="math inline">\(\sigma\)</span>- 代数是<strong>可列生成的</strong>，这使得我们能够避开<strong>不可数并集带来的零测集累积风险</strong>，<strong>仅需在可列个生成元上协调版本，即可利用测度扩张定理在几乎处处意义下构造出满足可列可加性的正则版本</strong>，这也是我们在上述证明中做的事情。</p>
+<p>此外，Borel 同构定理为这一机制提供了深层支撑。由于所有不可数的波兰空间在 Borel 意义下均与 <span class="math inline">\([0, 1]\)</span> 及其 Borel 子集族同构，这一性质允许我们将任何复杂的条件分布问题转化为在实数区间内处理分布函数的问题。利用实数轴上的单调性和连续性性质，我们可以在剔除可列个零测集后，确保对于剩余的每一个采样点 <span class="math inline">\(\omega\)</span>，诱导出的集合函数都严格符合概率测度的公理。这种从抽象到具体、从不可数到可列生成的跨越，正是正则条件分布能够规避 RCP 存在性困境、成为随机分析底层工具的数学本质。</p>
+</div>
+</div>
+<p>根据正则条件分布的定义，我们知道，这个正则条件分布其实是 <strong>?@def-measure-transform-func</strong> 的一种特殊情况 （从 <span class="math inline">\((X,\mathcal{G})\)</span> 到 <span class="math inline">\((\mathbb{R}^{n},\mathcal{B}^{n})\)</span> 上的转移函数）。那么根据 <strong>?@thm-transform-func-generate-measure</strong>，对于任何积分存在的 <span class="math inline">\(h(x,y):X \times\mathbb{R}^{n}\to \mathbb{R}\)</span>，我们有</p>
+<p><span class="math display">\[
+\int _{X\times \mathbb{R}^{n}}h(x,y) \, d\mu=
+\int _{X} dP \int h(x,y) F_{f|\mathcal{G}}(x,dy),
+\]</span></p>
+<p><span id="eq-rcp-integrate"></span></p>
+<p>其中 <span class="math inline">\(\mu\)</span> 是一个 <span class="math inline">\((X\times \mathbb{R}^{n},\mathcal{G}\times \mathcal{B}^{n})\)</span> 上的一个测度，满足</p>
+<p><span class="math display">\[
+\mu(A\times B)=\int _{A}P_{f|\mathcal{G}}(x,B) \, P(dx)
+=P(A\cap f^{-1}(B))
+,\quad
+\forall A\in \mathcal{G},B\in\mathcal{B}^{n}.
+\]</span></p>
+<p>假如 <span class="math inline">\(g(x,y)=I_{A}(x)I_{B}(y),\forall A\in\mathcal{G},\forall B\in\mathcal{B}\)</span>，则根据对公式 <a href="#eq-rcp-integrate">eq-rcp-integrate</a> 的计算得到</p>
+<p><span class="math display">\[
+\begin{align}
+\int _{X\times \mathbb{R}^{n}}I_{A}(x)I_{B}(y) \, d\mu
+&amp;=P(A\cap f^{-1}(B))=\int _{A}I_{\{ f\in B \}} \, dP  \\
+&amp;=\int _{A}(I_{B}\circ f) \, dP \\
+&amp;=\int _{A}dP \int I_{B}(y) \, F_{f|\mathcal{G}}(x,dy).
+\end{align}
+\]</span></p>
+<p>这意味着</p>
+<p><span class="math display">\[
+\mathbb{E}[I_{B}\circ f|\mathcal{G}]=\int I_{B}(y) \, F_{f|\mathcal{G}}(x,dy).
+\]</span></p>
+<p>利用积分和条件期望的线性性质可以将 <span class="math inline">\(I_{B}\)</span> 扩展到简单函数上，进一步依靠 <strong>?@thm-mct</strong> 和 <a href="#thm-conditional-mct-fatou-dct" class="quarto-xref">定理&nbsp;5</a> ，可以进一步扩展至非负可测函数。在保证了积分存在的前提下，我们又可以进一步推广至一般可测函数。这样，我们就利用<strong>典型方法</strong>得到了下面的定理：</p>
+<div id="thm-rcp" class="theorem">
+<p><span class="theorem-title"><strong>定理 10 (正则条件分布定理)</strong></span> 以 <span class="math inline">\(F_{f|\mathcal{G}}\)</span> 记随机变量 <span class="math inline">\(f\)</span> 关于子 <span class="math inline">\(\sigma\)</span> 域 <span class="math inline">\(\mathcal{G}\)</span> 的正则条件分布函数，则对于任何 Boreal 可测函数 <span class="math inline">\(g\)</span>，只要 <span class="math inline">\(\mathbb{E}g(f)\)</span> 有意义，则</p>
+<p><span class="math display">\[
+\mathbb{E}[g(f)|\mathcal{G}](x)=
+\int _{\mathbb{R}^{n}}g(y)F_{f|\mathcal{G}}(x,dy)
+=\int _{\mathbb{R}^{n}}g(y)P_{f|\mathcal{G}}(x,dy)\ a.s.,
+\]</span></p>
+<p>特别的，有</p>
+<p><span class="math display">\[
+\mathbb{E}[f|\mathcal{G}](x)=
+\int _{\mathbb{R}^{n}}yF_{f|\mathcal{G}}(x,dy)
+=\int _{\mathbb{R}^{n}}yP_{f|\mathcal{G}}(x,dy)\ a.s.,
+\]</span></p>
+<p>和</p>
+<p><span class="math display">\[
+\mathbb{E}[g(f)|h](x)=
+\int _{\mathbb{R}^{n}}g(y)F_{f|h}(x,dy)
+=\int _{\mathbb{R}^{n}}g(y)P_{f|h}(x,dy)\ a.s.,
+\]</span></p>
+<p>其中 <span class="math inline">\(h\)</span> 是另外一个随机变量。</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>证明在上面的叙述中已经给出。</p>
+</div>
+<p>观察上面的这些式子我们发现，这里的条件分布 <span class="math inline">\(P_{f|h}(x,B)\)</span> 对应于 <span class="math inline">\(Pf^{-1}(B)\)</span>，因为我们有下面的式子的对比：</p>
+<p><span class="math display">\[
+\begin{align}
+&amp;\mathbb{E}[g(f)]=\int g(y) \ d(Pf^{-1}),\\
+&amp;\mathbb{E}[g(f)|\mathcal{G}](x)=\int g(y) \, P_{f|h}(x, dy).
+\end{align}
+\]</span></p>
+<p><strong>这也是其什么被称为分布的原因</strong>。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Abstract: 正则条件分布定理的理论意义">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>Abstract: 正则条件分布定理的理论意义
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><a href="#thm-rcp" class="quarto-xref">定理&nbsp;10</a> 在高等概率论中具有极其深远的意义，它不仅是计算上的便利工具，更是连接抽象测度论与直观概率推导的逻辑桥梁。该定理实际上是将概率论中条件概率分布推广至测度论后的结果，也就是说，我们在初等概率论中使用的条件概率，实际上是正则条件概率（RCP）和正则条件分布（RCD）。</p>
+<p><strong>第一，该定理从解决了条件期望定义的“版本统一”问题</strong>。根据 Radon-Nikodym 定理，对于每一个特定的可测函数 <span class="math inline">\(g\)</span>，其条件期望 <span class="math inline">\(\mathbb{E}[g(f)|\mathcal{G}]\)</span> 仅在几乎处处意义下唯一。如果我们需要处理不可数个不同的函数 <span class="math inline">\(g\)</span>，原则上需要为每一个函数单独寻找一个版本，这会导致零测集带来的不确定性无法被统一控制。而正则条件分布的引入，使得我们可以通过挑选一个唯一的正则版本 <span class="math inline">\(P_{f|\mathcal{G}}(x, dy)\)</span>，就同时满足所有 Borel 可测函数 <span class="math inline">\(g\)</span> 的条件期望计算要求，实现了“以一持万”的理论效果。</p>
+<p><strong>第二，它实现了从“抽象算子”到“具体积分”的范式转换</strong>。原本条件期望被定义为满足特定积分等式的 <span class="math inline">\(\mathcal{G}\)</span>- 可测随机变量，这种定义虽然在测度论上严谨，但在实际推导中非常抽象。该定理通过等式 <span class="math inline">\(\mathbb{E}[g(f)|\mathcal{G}](x) = \int_{\mathbb{R}^n} g(y) P_{f|\mathcal{G}}(x, dy)\)</span>，<strong>将复杂的条件期望运算还原为初等概率中熟悉的积分形式</strong>。这不仅赋予了条件期望直观的物理意义，即在已知信息 <span class="math inline">\(\mathcal{G}\)</span> 下对状态空间的“局部加权平均”，也允许我们直接应用勒贝格控制收敛定理、换元法等强有力的分析工具进行具体计算。</p>
+<p><strong>第三，该定理为随机过程与统计推断奠定了坚实的底层逻辑</strong>。在马尔可夫过程的研究中，<strong>转移概率核本质上就是一种正则条件分布</strong>。若无此定理保证，多步转移的积分表达（如切普曼 - 柯尔莫哥洛夫方程）将失去数学严密性。同时，在贝叶斯统计中，<strong>它保证了后验分布在观测到特定样本点时的存在性与合法性</strong>，使得我们能够从抽象的联合分布中严谨地提取出在给定观测数据下的参数分布。 <strong>Note: 条件期望的计算方式</strong> 在刚刚学习了 <a href="#15-independence-and-conditional-expectation-条件期望和条件概率">条件期望和条件概率</a> 后, 我们可能会有一个疑惑: 如何计算条件期望? 在本节的学习中, 我们从没有提到过如何计算条件期望。条件期望的定义不是构造性的, 我们无法使用它来实际计算出一个条件期望的实际表达。此外, 当我们回想在初等概率论中的做法的时候, 也会发现其与当前的定义不同. 在初等概率论中, 我们计算条件期望是通过积分进行的, 做法与计算期望没有差别。</p>
+<p>正则条件分布和 <a href="#thm-rcp" class="quarto-xref">定理&nbsp;10</a> 实际上为初等概率论中的积分算法提供了高等概率论中的对应物, 这意味着, 如果我们能够知道了 (正则) 条件分布, 我们可以通过积分来计算出条件期望。当然, 和计算期望时一样, 仅依靠正则条件分布和 <a href="#thm-rcp" class="quarto-xref">定理&nbsp;10</a> 我们还是无法与初等概率论中的计算方法完全匹配, 或者说我们还是无法实际进行任何的计算, 这是因为:</p>
+<ul>
+<li>在初等概率论中我们面对的实际上是 <a href="#15-independence-and-conditional-expectation-给定值的正则条件分布">给定值的正则条件分布</a> .</li>
+<li>我们唯一能够进行计算的积分是 Riemann 积分, 所以我们还需要将此处的积分转换到它 (准确的说是转换到与 Riemann 积分基本等价的 Lebesgue 积分), 这时候我们需要引入 <a href="#15-independence-and-conditional-expectation-条件概率密度">条件概率密度</a>.</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="15-independence-and-conditional-expectation-给定值的正则条件分布" class="level2">
+<h2 class="anchored" data-anchor-id="15-independence-and-conditional-expectation-给定值的正则条件分布">给定值的正则条件分布</h2>
+<p>仿照 <a href="#def-condi-expectation-given" class="quarto-xref">定义&nbsp;3</a>，我们也可以定义给定值的正则条件分布：</p>
+<div id="def-rcd-given-value" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 7 (给定值的正则条件分布)</strong></span> <span class="math inline">\(f\)</span> 是概率空间 <span class="math inline">\((X,\mathcal{F},P)\)</span> 上的随机向量，<span class="math inline">\(g:(X,\mathcal{F},P)\to(Y,\mathcal{T})\)</span> 是一个随机元，则称满足下面条件的二元函数 <span class="math inline">\(P_{f|g}:Y\times \mathcal{B}^{n}\to [0,1]\)</span> 为<strong><span class="math inline">\(f\)</span> 关于随机元 <span class="math inline">\(g\)</span> 的给定值的正则条件分布</strong>： (1) <span class="math inline">\(\forall y \in Y,P_{f|g}(y,\cdot)\)</span> 是 <span class="math inline">\((\mathbb{R}^{n},\mathcal{B}^{n})\)</span> 上的概率测度； (2) <span class="math inline">\(\forall B\in\mathcal{B}^{n},P_{f|g}(y,B)=P[f^{-1}(B)|g=y]\)</span> 是 <span class="math inline">\(f^{-1}(B)\)</span> 关于 <span class="math inline">\(g\)</span> 给定值的条件概率，即 <span class="math inline">\(P_{f|g}(y,B)\)</span> 关于 <span class="math inline">\(\mathcal{T}\)</span> 可测并且有</p>
+<p><span class="math display">\[
+P(f^{-1}(B)\cap g^{-1}(A))=\int _{A}P_{f|g}(y,B) \, dPg^{-1}(dy),\quad
+\forall A\in\mathcal{T}.
+\]</span></p>
+<p>同样，我们也可以定义一个相应的<strong>给定值的正则条件分布函数</strong>。</p>
+</div>
+<p>根据 <a href="#thm-rcp" class="quarto-xref">定理&nbsp;10</a>，我们可以得到下面其给定值的版本（在测度论中，这个定理被称为 <strong>“测度分解定理（Disintegration Theorem）”</strong>）：</p>
+<div id="cor-rcd-given-value" class="theorem corollary">
+<p><span class="theorem-title"><strong>推论 2 (给定值的正则条件分布定理)</strong></span> 任何随机变量 <span class="math inline">\(f\)</span> 关于任何随机元 <span class="math inline">\(g\)</span> 的给定值的正则条件分布 <span class="math inline">\(P_{f|g}\)</span> 存在，并且对于任何 Borel 可测函数 <span class="math inline">\(h\)</span>，只要 <span class="math inline">\(\mathbb{E}h(f)\)</span> 有意义，则</p>
+<p><span class="math display">\[
+\mathbb{E}[h(f)|g=x]=\int _{\mathbb{R}^{n}}h(y)P_{f|g}(x,dy) \ a.s.\ Pg^{-1}.
+\]</span></p>
+<p>我们可以进一步推广, 若存在一个二元 Borel 函数 <span class="math inline">\(h(\cdot,\cdot)\)</span> 满足 <span class="math inline">\(h(f,g)\)</span> 积分存在, 则有</p>
+<p><span class="math display">\[
+\mathbb{E}[h(f,g)|g=x]=\mathbb{E}[h(f,x)|g=x]=
+\int _{\mathbb{R}^{n}}h(y,x)P_{f|g}(x,dy) \ a.s.\ Pg^{-1}.
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>根据 <a href="#thm-rcp-exist" class="quarto-xref">定理&nbsp;9</a>，正则条件分布函数 <span class="math inline">\(P_{f|g^{-1}(\mathcal{B})}\)</span> 一定存在。进而利用 <strong>?@thm-composite-func</strong> 可以找到一个函数 <span class="math inline">\(P'_{f|g}\)</span> 满足</p>
+<p><span class="math display">\[
+\forall B\in\mathcal{B}^{n},\quad
+P'_{f|g}(g(\omega),B)=P_{f|g^{-1}(\mathcal{B})}(\omega,B),
+\]</span></p>
+<p>也就是说，固定 <span class="math inline">\(B\in \mathcal{B}\)</span>，<span class="math inline">\(P'_{f|g}\)</span> 是给定值的条件概率；固定 <span class="math inline">\(y\in Y\)</span>，找到 <span class="math inline">\(g(\omega)=y\)</span>，则 <span class="math inline">\(P'_{f|g}(y,\cdot)=P_{f|g^{-1}(\mathcal{B})}(\omega,\cdot)\)</span> 是一个概率测度。存在性得到证明。进而，再利用 <a href="#thm-rcp" class="quarto-xref">定理&nbsp;10</a>，可以证明剩下的结论。</p>
+<p>至于<strong>推广结果</strong>, 对于每个固定的 <span class="math inline">\(x\)</span>, 利用上面的结论我们可以证明第二个等号成立。要想证明第一个等号成立, 根据 <a href="#def-condi-expectation-given" class="quarto-xref">定义&nbsp;3</a> 我们需要证明 <span class="math inline">\(\forall A\in\mathcal{T}\)</span>,</p>
+<p><span class="math display">\[
+\int _{g^{-1}(A)}h(f,g) \, dP=
+\int _{A}Pg^{-1}(dx)\int _{\mathbb{R}^{n}}h(y,x)P_{f|g}(x,dy) ,
+\]</span></p>
+<p><span id="eq-prove-rcd-given-value-1"></span></p>
+<p>此时，根据 <strong>?@thm-order</strong> (5)，就可以证明第一个等号成立。</p>
+<p>而要证明 <a href="#eq-prove-rcd-given-value-1">eq-prove-rcd-given-value-1</a>，只需要意识到下面的等式成立即可：</p>
+<p><span class="math display">\[
+\begin{align}
+\int _{g^{-1}(A)}h(f,g) \, dP&amp;=
+\int _{\mathbb{R}^{n}\times A}h(y,x) \, (Pf^{-1}\times Pg^{-1})(dy,dx) \\
+&amp;=\int _{A}Pg^{-1}(dx)\int _{\mathbb{R}^{n}}h(y,x)P_{f|g}(x,dy)
+\end{align}
+\]</span></p>
+<p><span id="eq-prove-rcd-given-value-2"></span></p>
+<p>其中第一行来自于变量代还, 并且根据 <a href="#def-rcd-given-value" class="quarto-xref">定义&nbsp;7</a> ,有关系:</p>
+<p><span class="math display">\[
+(Pf^{-1}\times Pg^{-1})(B\times A)
+=P(f^{-1}(B)\cap g^{-1}(A))
+=\int _{A} P_{f|g}(x,B) \, Pg^{-1}(dx),
+\]</span></p>
+<p>进而得到式 <a href="#eq-prove-rcd-given-value-2">eq-prove-rcd-given-value-2</a>-2.</p>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Abstract: “给定值”条件正则条件分布的理论与现实意义">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>Abstract: “给定值”条件正则条件分布的理论与现实意义
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>“给定值”的条件期望及其相关概念（条件概率、正则条件分布）在概率论中承载着从<strong>测度论抽象</strong>到<strong>数理统计具象</strong>转换的核心使命。其存在的意义首先在于彻底解决了<strong>零测集条件的逻辑悖论</strong>。在连续型随机变量的框架下，单点事件 <span class="math inline">\(\{X=x\}\)</span> 的概率通常为零，这使得初等概率论中的条件定义因分母为零而失效。通过引入给定值的正则定义，我们不再依赖单点的比值，而是利用测度分解（Disintegration）的思路，通过全局积分性质严谨地界定了局部平均值，确保了在已知“概率为零的特定观测”时，数学讨论依然合法。</p>
+<p>其次，它实现了<strong>从随机变量到回归函数的范式迁移</strong>。抽象的条件期望 <span class="math inline">\(\mathbb{E}[Y|X]\)</span> 本质上是一个以样本点 <span class="math inline">\(\omega\)</span> 为自变量的随机变量，这在实际观测中是不可触达的；而 <span class="math inline">\(\mathbb{E}[Y|X=x]\)</span> 则演变为一个以状态空间取值 <span class="math inline">\(x\)</span> 为自变量的确定性函数。这种转换将概率推断从模糊的样本空间拉回到可观测、可建模的实数空间，使得我们能够定义并研究“回归曲线”，从而分析响应变量随观测值的连续变化趋势或导数特征。</p>
+<p>此外，该概念为<strong>全概率公式提供了测度论意义下的终极推广</strong>。通过将联合测度“切片化”，给定值的条件分布允许我们将整体分布拆解为局部测度关于边缘分布的加权积分，即 <span class="math inline">\(\mathbb{E}[Y] = \int \mathbb{E}[Y|X=x] P_X(dx)\)</span>（其实就是 <a href="#def-rcd-given-value" class="quarto-xref">定义&nbsp;7</a> 中的公式）。这一结构是贝叶斯统计的底层支柱，它使得我们能够从具体的似然函数（即给定参数时的观测分布）出发，严谨地推导出边缘分布与后验分布。</p>
+<p>最后，它是<strong>动态系统与随机演化描述的必然要求</strong>。在马尔可夫过程或随机分析中，我们需要描述系统处于确定的状态 <span class="math inline">\(x\)</span> 时，下一时刻进入特定区域的概率。如果没有“给定值”的正则化定义，转移核将无法作为确定的函数参与计算，Chapman-Kolmogorov 等核心演化方程也将失去其数学基石。正则条件分布保证了这种从 <span class="math inline">\(\omega\)</span> 到 <span class="math inline">\(x\)</span> 的映射不仅存在，且在几乎所有观测点上都能保持概率测度的公理自洽性。</p>
+</div>
+</div>
+</section>
+<section id="两阶段实验定理" class="level2">
+<h2 class="anchored" data-anchor-id="两阶段实验定理">两阶段实验定理</h2>
+<p>接下来, 我们来讨论一个非常重要的定理, 尽管这个定理实际上是我们之前已经证明的某个定理的特殊化, 因此无需进行证明。但是, 在概率空间中重新对其进行叙述是有意义的, 因为<strong>这更加接近其在现实条件下的应用</strong>。</p>
+<div id="thm-two-phase-trial" class="theorem">
+<p><span class="theorem-title"><strong>定理 11 (两阶段实验定理)</strong></span> 假设 <span class="math inline">\((\Lambda,\mathcal{G},P_{1})\)</span> 是一个概率空间, <span class="math inline">\(P_{2}\)</span> 是一个概率转移函数, 即定义域为 <span class="math inline">\((\Lambda \times \mathcal{B}^{n})\)</span>, 并且满足: (1) 对于每个 <span class="math inline">\(y\in\Lambda\)</span>, <span class="math inline">\(P_{2}(y,\cdot)\)</span> 是一个 <span class="math inline">\((\mathbb{R}^{n},\mathcal{B}^{n})\)</span> 上的概率测度; (2) 对于每个 <span class="math inline">\(B\in\mathcal{B}^{n}\)</span>, <span class="math inline">\(P_{2}(\cdot,B)\)</span> 是一个 Borel 可测函数. 则存在一个唯一的概率测度 <span class="math inline">\(P\)</span> 在 <span class="math inline">\((\Lambda \times \mathbb{R}^{n},\sigma(\mathcal{B}^{n}\times \mathcal{G}))\)</span> 上, 满足 <span class="math inline">\(\forall B\in\mathcal{B},A\in\mathcal{G}\)</span> 有</p>
+<p><span class="math display">\[
+P(A\times B)=\int _{A}P_{2}(y,B) \, P_{1}(dy).
+\]</span></p>
+<p><strong>此外,</strong> 如果 <span class="math inline">\((\Lambda,\mathcal{G})=(\mathbb{R}^{m},\mathcal{B}^{m})\)</span>, 并且有 <span class="math inline">\(X(x,y)=x,Y(x,y)=y\)</span> 是 <span class="math inline">\((\mathbb{R}^{m+n},\mathcal{B}^{m+n})\)</span> 上的两个投影函数. 此时我们令</p>
+<p><span class="math display">\[
+P_{1}=PY^{-1},\quad
+P_{2}(y,\cdot)=P[\cdot|Y=y],
+\]</span></p>
+<p>(这里的 <span class="math inline">\(P_{2}\)</span> 表示 <a href="#def-rcd-given-value" class="quarto-xref">定义&nbsp;7</a>), 则利用上面计算出来的这个概率测度 <span class="math inline">\(P\)</span> 来构造一个 <span class="math inline">\((X,Y)\)</span> 的联合概率分布, 其 c.d.f 计算如下:</p>
+<p><span class="math display">\[
+F(x,y)=\int _{(-\infty,y]}P[(-\infty,x]|z]PY^{-1}(dz),
+\quad
+x \in \mathbb{R}^{n},y \in\mathbb{R}^{m}.
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>其实该定理是 <strong>?@thm-transform-func-generate-measure</strong> 的特殊化。</p>
+</div>
+<p>以上定理实际上描述了这样的一个步骤: - 在 stage 1 ,从 <span class="math inline">\((\mathbb{R}^{m},\mathcal{B}^{m},PY^{-1})\)</span> 中采样一个样本 <span class="math inline">\(y\)</span>; - 在 stage 2, 从 <span class="math inline">\((\mathbb{R}^{n},\mathcal{B}^{n},P[\cdot|Y=y])\)</span> 中采样一个样本 <span class="math inline">\(x\)</span>;</p>
+<p>则 <span class="math inline">\((x,y)\)</span> 服从某个联合概率分布, 其分布函数依赖于 <span class="math inline">\(PY^{-1}\)</span> 和 <span class="math inline">\(P[\cdot|Y=y]\)</span>. 这是一种构造 <strong>dependent</strong> random variables 的有效方法.</p>
+<p>现在, 对于 <span class="math inline">\((\Omega,\mathcal{F},P)\)</span> 上的两个随机变量, 根据 <a href="#cor-rcd-given-value" class="quarto-xref">推论&nbsp;2</a>, 一定存在给定值的正则条件分布 <span class="math inline">\(P_{X|Y}(y,B)\)</span>. 再根据 <a href="#thm-two-phase-trial" class="quarto-xref">定理&nbsp;11</a>, 我们可以得到 <span class="math inline">\((X,Y)\)</span> 的一个唯一的概率测度, 也就对应一个唯一的联合概率分布 <span class="math inline">\(F\)</span>. 之后, 一旦我们提到联合概率分布, 指的就是这个联合概率分布.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Summary: 概率测度构建与分解的完整图景">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>Summary: 概率测度构建与分解的完整图景
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>结合 <a href="../../../src/learn/advanced-probability/13-finite-product-spaces.html">有限乘积空间</a> 与本章的内容，我们有四个定理构成了概率论中关于 <strong>联合分布</strong> 与 <strong>条件分布</strong> 的核心逻辑闭环。 * <strong>合成路径 (Synthesis):</strong> 利用边缘分布和转移核构造联合分布（建模过程）。 * <strong>分解路径 (Analysis):</strong> 从联合分布中反向提取正则条件概率（推断过程）。</p>
+<section id="定理关系逻辑图-dag" class="level3">
+<h3 class="anchored" data-anchor-id="定理关系逻辑图-dag">1. 定理关系逻辑图 (DAG)</h3>
+<pre class="mermaid"><code> graph TD
+    %% 定义节点样式
+    classDef base fill:#f9f,stroke:#333,stroke-width:2px;
+    classDef synth fill:#d4f1f9,stroke:#333,stroke-width:2px;
+    classDef analy fill:#e1f7d5,stroke:#333,stroke-width:2px;
+    classDef object fill:#fff,stroke:#333,stroke-dasharray: 5 5;
+
+    %% 节点定义
+    T1(定理 1: 转移函数生成乘积测度):::base
+    T4(定理 4: 两阶段实验定理):::synth
+    Joint((联合分布 P)):::object
+    T2(定理 2: 正则条件分布定理):::analy
+    T3(定理 3: 给定值的 RCD / 冻结引理):::analy
+
+    %% 逻辑流
+    subgraph "合成：从局部到整体 (Modeling)"
+        T1 --&gt;|"特例化: 测度归一化"| T4
+        T4 --&gt;|构造| Joint
+    end
+
+    subgraph "分解：从整体到局部 (Inference)"
+        Joint --&gt;|"存在性保证 (Radon-Nikodym)"| T2
+        T2 --&gt;|具体化计算| T3
+    end
+
+    %% 闭环连接
+    T3 -.-&gt;|验证/重构| Joint
+
+    %% 边的注释颜色（仅供参考，某些渲染器可能忽略）
+    linkStyle 1 stroke-width:2px,fill:none,stroke:blue;
+    linkStyle 2 stroke-width:2px,fill:none,stroke:green;</code></pre>
+</section>
+<section id="定理详细对比表" class="level3">
+<h3 class="anchored" data-anchor-id="定理详细对比表">2. 定理详细对比表</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">编号</th>
+<th style="text-align: left;">定理</th>
+<th style="text-align: left;">学术通用名称</th>
+<th style="text-align: left;">核心逻辑</th>
+<th style="text-align: left;">关键作用</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>T1</strong></td>
+<td style="text-align: left;"><strong>?@thm-transform-func-generate-measure</strong></td>
+<td style="text-align: left;"><strong>Ionescu-Tulcea 定理</strong> (单步)<br>或 由核构造测度</td>
+<td style="text-align: left;"><strong>测度论基础</strong><br><span class="math inline">\(\sigma\)</span> 有限测度 + 转移核 <span class="math inline">\(\to\)</span> 乘积空间测度</td>
+<td style="text-align: left;"><strong>地基</strong>：保证了“先选 <span class="math inline">\(x_1\)</span> 再选 <span class="math inline">\(x_2\)</span>”这种序贯过程在数学上是合法的。</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>T4</strong></td>
+<td style="text-align: left;"><a href="#thm-two-phase-trial" class="quarto-xref">定理&nbsp;11</a></td>
+<td style="text-align: left;"><strong>联合分布的构造</strong><br>(Bayesian Modeling)</td>
+<td style="text-align: left;"><strong>正向合成</strong><br>边缘分布 <span class="math inline">\(P(Y)\)</span> + 条件概率 <span class="math inline">\(P(X\|Y)\)</span> <span class="math inline">\(\to\)</span> 联合分布 <span class="math inline">\(P(X,Y)\)</span></td>
+<td style="text-align: left;"><strong>建模</strong>：T1 在概率空间的直接应用。贝叶斯统计模型构建的基础。</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>T2</strong></td>
+<td style="text-align: left;"><a href="#thm-rcp" class="quarto-xref">定理&nbsp;10</a></td>
+<td style="text-align: left;"><strong>正则条件概率的存在性</strong><br>(Existence of RCD)</td>
+<td style="text-align: left;"><strong>反向分解</strong><br>给定联合分布 <span class="math inline">\(\to\)</span> 存在一个满足几乎处处成立的概率核</td>
+<td style="text-align: left;"><strong>理论保证</strong>：保证了条件期望 <span class="math inline">\(\mathbb{E}[f\|\mathcal{G}]\)</span> 可以写成关于某个测度的积分形式。</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>T3</strong></td>
+<td style="text-align: left;"><a href="#cor-rcd-given-value" class="quarto-xref">推论&nbsp;2</a></td>
+<td style="text-align: left;"><strong>测度的分解</strong> / <strong>冻结引理</strong><br>(Disintegration / Freezing Lemma)</td>
+<td style="text-align: left;"><strong>计算法则</strong><br>将条件 <span class="math inline">\(\sigma\)</span> 域具体化为数值，把随机变量视为常数</td>
+<td style="text-align: left;"><strong>计算工具</strong>：提供了 <span class="math inline">\(\mathbb{E}[h(X,Y)\|Y=y] = \int h(x,y)P(dx\|y)\)</span> 的计算合法性。</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="核心洞察" class="level3">
+<h3 class="anchored" data-anchor-id="核心洞察">3. 核心洞察</h3>
+<ul>
+<li><strong>T1 &amp; T4 (构造者):</strong> 解决的是 <strong>“Existential”</strong> 问题。当我们设计一个系统（如马尔可夫链、贝叶斯网络）时，我们是按照 T4 的规则在搭积木。</li>
+<li><strong>T2 &amp; T3 (分析者):</strong> 解决的是 <strong>“Operational”</strong> 问题。当我们拿到数据或定义好的联合分布后，想要推断局部性质（如后验分布、条件期望）时，需要 T2 保证存在性，用 T3 进行实际积分计算。</li>
+<li><strong>冻结引理 (T3 的推广):</strong> 最强大的工具在于它允许我们在计算条件期望时，将条件变量 <span class="math inline">\(g\)</span> <strong>” 冻结 “</strong> 为常数 <span class="math inline">\(x\)</span> 代入函数 <span class="math inline">\(h(f,g)\)</span> 中，即 <span class="math inline">\(h(f,x)\)</span>，从而将复杂的随机变量运算转化为确定的参数积分运算。</li>
+</ul>
+</section>
+</div>
+</div>
+</section>
+<section id="15-independence-and-conditional-expectation-条件概率密度" class="level2">
+<h2 class="anchored" data-anchor-id="15-independence-and-conditional-expectation-条件概率密度">条件概率密度</h2>
+<p>对于 (给定值的) 正则条件分布的概率测度分布，相对于某个给定的 <span class="math inline">\(\sigma\)</span> 有限测度绝对连续时，我们可以进行 R-N 导数的求解，进而我们能够定义条件密度函数。</p>
+<div id="def-15-independence-and-conditional-expectation-28" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 8 (正则条件概率密度)</strong></span> 假设 <span class="math inline">\(X,Y\)</span> 是 <span class="math inline">\((\Omega,\mathcal{F},P)\)</span> 上的随机向量，取值于 <span class="math inline">\(\mathbb{R}^n\)</span> 和 <span class="math inline">\(\mathbb{R}^m\)</span>。令 <span class="math inline">\(\mu\)</span> 是 <span class="math inline">\((\mathbb{R}^n, \mathcal{B}^n)\)</span> 上的 <span class="math inline">\(\sigma\)</span>- 有限测度。</p>
+<p>若存在一个非负函数 <span class="math inline">\(p: \mathbb{R}^m \times \mathbb{R}^n \to [0, \infty)\)</span>，满足： 1. <strong>联合可测性</strong>：<span class="math inline">\(p(y, x)\)</span> 是关于 <span class="math inline">\((\mathbb{R}^m \times \mathbb{R}^n, \mathcal{B}^m \otimes \mathcal{B}^n)\)</span> 的可测函数。 2. <strong>密度性质</strong>：对于 <span class="math inline">\(P_Y\)</span>- 几乎所有的 <span class="math inline">\(y \in \mathbb{R}^m\)</span>，以及任意 <span class="math inline">\(B \in \mathcal{B}^n\)</span>，都有：</p>
+<p><span class="math display">\[
+     P_{X|Y}(y, B) = \int_B p(y, x) \, \mu(dx)
+\]</span></p>
+<p>其中 <span class="math inline">\(P_{X|Y}\)</span> 是 <span class="math inline">\(X\)</span> 关于 <span class="math inline">\(Y\)</span> 的<strong>给定值的正则条件分布</strong>。则称 <span class="math inline">\(p(y, x)\)</span> 为 <strong><span class="math inline">\(X\)</span> 关于 <span class="math inline">\(Y\)</span> 的（联合可测）正则条件概率密度</strong>，通常表示为 <span class="math inline">\(f(x|y)\)</span> 或 <span class="math inline">\(p(x|y)\)</span>。</p>
+</div>
+<p>根据我们之前学习的，我们似乎只需要令正则条件分布（这个是一定存在的）相对于 <span class="math inline">\(\mu\)</span> 绝对连续，然后通过该 <strong>?@thm-rn</strong> 就可以得到这个正则条件概率密度。但是实际上这样得到的 RN 导数并不一定是一个合理的正则条件概率密度。因为 RN 定理只能保证在 a.s.意义上成立，因此对于任意一个这样的二元函数，在固定 <span class="math inline">\(y\)</span> 时其对于 <span class="math inline">\(x\)</span> 是可测的，但是固定 <span class="math inline">\(x\)</span> 后对于 <span class="math inline">\(y\)</span> 不一定成立。<strong>但是我们可以证明，存在一个版本，其在固定 <span class="math inline">\(x\)</span> 后对于 <span class="math inline">\(y\)</span> 是可测的，我们这里的正则条件分布密度，指的就是这个版本</strong>。</p>
+<p>为了证明这个定理，我们首先证明下面的一个引理成立。这个引理的场景我们固定在 <a href="#thm-two-phase-trial" class="quarto-xref">定理&nbsp;11</a> 的场景上，因为该场景是一个概率测度和一个概率转移函数（其概率分支定义在 Borel 上），相比于直接使用给定值的正则条件分布（他就是概率分支定义在 Borel 上的一个概率转移函数，但是还需要满足条件概率的要求，即 <a href="#def-rcd-given-value" class="quarto-xref">定义&nbsp;7</a> 中的公式）更一般化。因此，其得到的后续结论。我们可以直接用到正则条件分布上。</p>
+<div id="lem-15-independence-and-conditional-expectation-29" class="theorem lemma">
+<p><span class="theorem-title"><strong>引理 2 (Lemma)</strong></span> <span class="math inline">\(P_{1}\)</span> 和 <span class="math inline">\(P_{2}(y,B)\)</span> 分别是 <a href="#thm-two-phase-trial" class="quarto-xref">定理&nbsp;11</a> 中所描述的概率测度和概率转移函数，<span class="math inline">\(P\)</span> 中它们生成的（唯一的）乘积测度。<span class="math inline">\(\lambda,\mu\)</span> 是两个 <span class="math inline">\(\sigma\)</span> 有限的测度。若 <span class="math inline">\(P_{1}\ll\lambda\)</span>, 则</p>
+<p><span class="math display">\[
+P_{2}(y,\cdot)\ll \mu \ a.s. \ P_{1}
+\iff
+P\ll\lambda \times \mu.
+\]</span></p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>假设有 <span class="math inline">\(A\)</span> 满足 <span class="math inline">\((\lambda \times \mu)(A)=0\)</span>, 则有</p>
+<p><span class="math display">\[
+\begin{align}
+P(A)&amp;=\int I_{A} \, dP \\
+&amp;=\int P_{1}(dy)\int I_{A} P_{2}(y,dx) \\
+&amp;=\int \frac{P_{1}(dy)}{d\lambda} d\lambda
+\int I_{A}\frac{dP_{2}(y,dx)}{d\mu}d\mu \\
+&amp;=\int \frac{P_{1}(dy)}{d\lambda}I_{A}\frac{dP_{2}(y,dx)}{d\mu} \, d(\lambda \times \mu) \\
+&amp;=0,
+\end{align}
+\]</span></p>
+<p>其中第二行是因为 <strong>?@thm-transform-func-generate-measure</strong>, 第三行是因为 <strong>?@prp-rn</strong> (1), 第四行是因为 <strong>?@cor-tonelli</strong>, 最后一行是因为 <strong>?@thm-order</strong> (3)（<span class="math inline">\((\lambda \times \mu)(A)=0\)</span> 蕴含 <span class="math inline">\(I_{A}=0\ a.s.\)</span>）。</p>
+<p>另一个方向，我们假设存在 <span class="math inline">\(B\in\mathcal{B}^{n}\)</span>，使得 <span class="math inline">\(\mu(B)=0\)</span>，则对于 <span class="math inline">\(\forall A\in\Lambda\)</span>，有</p>
+<p><span class="math display">\[
+(\lambda \times \mu)(A\times B)=\lambda(A)\times \mu(B)=0 \implies P(A\times B)=0.
+\]</span></p>
+<p>又根据 <strong>?@thm-transform-func-generate-measure</strong>，可知</p>
+<p><span class="math display">\[
+P(A\times B)=\int _{A}P_{2}(y,B) \, dP_{1}=0,
+\]</span></p>
+<p>由此得到</p>
+<p><span class="math display">\[
+P_{2}(y,B)=0\ a.s.\ P_{1}.
+\]</span></p>
+</div>
+<p>接下来，我们来证明存在性。</p>
+<div id="thm-15-independence-and-conditional-expectation-30" class="theorem">
+<p><span class="theorem-title"><strong>定理 12 (正则条件概率密度存在性)</strong></span> 设 <span class="math inline">\(P_{X|Y}(y, \cdot)\)</span> 是给定值的正则条件分布。假设对于 <span class="math inline">\(P_Y\)</span>- 几乎所有的 <span class="math inline">\(y\)</span>，测度 <span class="math inline">\(P_{X|Y}(y, \cdot)\)</span> 都绝对连续于 <span class="math inline">\(\sigma\)</span>- 有限测度 <span class="math inline">\(\mu\)</span>（即 <span class="math inline">\(P_{X|Y}(y, \cdot) \ll \mu\)</span>），则存在一个 <span class="math inline">\(\mathcal{B}^m \otimes \mathcal{B}^n\)</span> 联合可测的函数 <span class="math inline">\(p(y, x)\)</span> 满足上述定义。</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>令 <span class="math inline">\(P_{2}(y,B)=P_{X|Y}(y,B)\)</span> 时（此时 <span class="math inline">\(P_{1}=P_{Y}\)</span>，定义在 <span class="math inline">\((\mathbb{R}^{m},\mathcal{B}^{m})\)</span> 上），令 <span class="math inline">\(\lambda=P_{1}=P_{Y}\)</span>，根据上述引理，可以直接得到 <span class="math inline">\(P\ll(P_{Y}\times \mu)\)</span>。</p>
+<p>根据乘积空间上的 Radon-Nikodym 定理，存在一个 <strong><span class="math inline">\(\mathcal{B}^m \otimes \mathcal{B}^n\)</span> 可测的</strong> 非负函数 <span class="math inline">\(p(y, x)\)</span>，使得：</p>
+<p><span class="math display">\[
+\frac{d P}{d (P_Y \times \mu)} (y, x) = p(y, x) \quad ((P_{Y}\times \mu)\text{-a.s.})
+\]</span></p>
+<p>这就保证了 <span class="math inline">\(f\)</span> 的联合可测性。</p>
+<p>接下来，我们需要验证 <span class="math inline">\(p(y, x)\)</span> 满足条件密度的定义积分式。对于任意 <span class="math inline">\(A \in \mathcal{B}^m\)</span> 和 <span class="math inline">\(B \in \mathcal{B}^n\)</span>，考虑集合 <span class="math inline">\(C = A \times B\)</span>。一方面，根据 <a href="#thm-two-phase-trial" class="quarto-xref">定理&nbsp;11</a>：</p>
+<p><span class="math display">\[
+P(A\times B) = \int_A P_{X|Y}(y, B) \, P_Y(dy)
+\]</span></p>
+<p>另一方面，利用 RN 导数 <span class="math inline">\(p(y, x)\)</span>：</p>
+<p><span class="math display">\[
+\begin{aligned}
+P(A \times B) &amp;= \int_{A \times B} p(y, x) \, d(P_Y \times \mu) \\
+&amp;= \int_A \left[ \int_B p(y, x) \, \mu(dx) \right] P_Y(dy) \quad (\text{Fubini 定理})
+\end{aligned}
+\]</span></p>
+<p>注意这里能使用 Fubini 定理正是因为 <span class="math inline">\(p(y,x)\)</span> 是联合可测的且非负。比较上述两个关于 <span class="math inline">\(P_Y(dy)\)</span> 的积分式。对于任意 <span class="math inline">\(A \in \mathcal{B}^m\)</span>：</p>
+<p><span class="math display">\[
+\int_A P_{X|Y}(y, B) \, P_Y(dy) = \int_A \left[ \int_B p(y, x) \, \mu(dx) \right] P_Y(dy)
+\]</span></p>
+<p>这说明对于固定的 <span class="math inline">\(B\)</span>，被积函数在 <span class="math inline">\(P_Y\)</span>- 几乎处处相等：</p>
+<p><span class="math display">\[
+P_{X|Y}(y, B) = \int_B p(y, x) \, \mu(dx) \quad P_Y\text{-a.s.}
+\]</span></p>
+<p><strong>证毕。</strong></p>
+</div>
+<div class="callout callout-style-default callout-important callout-titled" title="实际意义">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">重要</span>实际意义
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>在贝叶斯统计或机器学习中，当我们写出似然函数 <span class="math inline">\(L(y; x) = p(x|y)\)</span> 时，我们通常假设这是连续函数或具有特定解析形式（如高斯分布的密度公式）。这些具体的解析形式天然就是联合可测的（Jointly Measurable），甚至是联合连续的（Jointly Continuous），因此不需要担心这个问题。</p>
+</div>
+</div>
+<p>我们现在得到了条件概率密度，并且确定了其存在性。自然地，我们想知道，条件概率密度和联合概率密度之间的关系，其对应于初等概率论中我们最常用到的<strong>贝叶斯公式</strong>。</p>
+<div id="thm-condition-joint-density" class="theorem">
+<p><span class="theorem-title"><strong>定理 13 (条件密度与联合密度)</strong></span> 假设 <span class="math inline">\(X,Y\)</span> 是两个随机向量, 维度分别为 <span class="math inline">\(n,m\)</span>，<span class="math inline">\(P_{X|Y}\)</span> 表示给定值的条件分布，其对应的正则条件概率密度函数为 <span class="math inline">\(p(x|y)\)</span>。根据 <a href="#thm-two-phase-trial" class="quarto-xref">定理&nbsp;11</a>] 可定义一个唯一的联合概率分布 <span class="math inline">\(P\)</span>。假设存在两个分别在 <span class="math inline">\((\mathbb{R}^{n},\mathcal{B}^{n}),(\mathbb{R}^{m},\mathcal{B}^{m})\)</span> 上的 <span class="math inline">\(\sigma\)</span> 有限测度：<span class="math inline">\(\lambda\)</span> 和 <span class="math inline">\(\mu\)</span>。其中 <span class="math inline">\(PY^{-1}\ll \lambda\)</span>，<span class="math inline">\(P\ll(\lambda \times \mu)\)</span>。因此 <span class="math inline">\(Y\)</span> 有 p.d.f <span class="math inline">\(p(y)\)</span> w.r.t <span class="math inline">\(\lambda\)</span>， <span class="math inline">\((X,Y)\)</span> 有 p.d.f <span class="math inline">\(p(x,y)\)</span> w.r.t <span class="math inline">\(\lambda \times \mu\)</span>。 则 <span class="math inline">\(p(x|y)\)</span> 满足下面的关系</p>
+<p><span class="math display">\[
+p(x|y)p(y)=p(x|y)\cdot\frac{PY^{-1}(dy)}{\lambda(dy)}=p(x,y).
+\]</span></p>
+<p>结合 <a href="#cor-rcd-given-value" class="quarto-xref">推论&nbsp;2</a>, 若函数 <span class="math inline">\(g(x,y)\)</span> 积分存在, 则有</p>
+<p>$$ <span class="math display">\[\begin{align}
+\mathbb{E}[g(X,Y)|Y=y]&amp;=\int g(x,y)P_{X|Y}(y,dx) \\
+&amp;=\int g(x,y)p(x|y)\lambda(dx)\ a.s. \\
+&amp;=\frac{\int g(x,y)p(x,y) \lambda(dx) }
+{\int p(x,y)\lambda (dx) }\ a.s.
+\end{align}\]</span></p>
+<p>$$</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span><span class="math inline">\(\forall B_{1}\in\mathcal{B}^{n},B_{2}\in\mathcal{B}^{m}\)</span>, 我们有</p>
+<p><span class="math display">\[
+\begin{align}
+\int _{B_{1}\times B_{2}}p(x,y) \, (\lambda \times \mu)(dxdy)&amp;=
+P_{X,Y}(B_{1}\times B_{2}) \\
+&amp;=\int _{B_{2}}P_{X|Y}(y,B_{1}) \, PY^{-1}(dy) \\
+&amp;=\int _{B_{2}}P_{X|Y}(y,B_{1})\frac{dPY^{-1}}{d\mu}d\mu = \int _{B_{2}}P_{X|Y}(y,B_{1})p(y)\mu(dy)\\
+&amp;=\int _{B_{2}}p(y)\mu(dy)
+\int _{B_{1}}\frac{P_{X|Y}(y,dx)}{\lambda(dx)} \lambda(dx) =
+\int _{B_{2}}p(y)\mu(dy)
+\int _{B_{1}}p(x|y) \lambda(dx)\\
+&amp;=\int _{B_{1}\times B_{2}}p(x|y)p(y)
+(\lambda \times \mu)(dxdy).
+\end{align}
+\]</span></p>
+<p>根据定义，其中 <span class="math inline">\(\frac{P_{X|Y}(y,dx)}{\lambda(dx)}\)</span> 就是条件密度 <span class="math inline">\(p(x|y)\)</span>。我们令</p>
+<p><span class="math display">\[
+\mathcal{H}=\left\{ A\in\mathcal{B}^{n+m}|
+\int _{A}p(x,y)(\lambda \times \mu)(dxdy) =\int _{A}p(x|y) p(y)(\lambda \times \mu)(dxdy)
+\right\},
+\]</span></p>
+<p>容易证明, <span class="math inline">\(\mathcal{H}\)</span> 是一个 <span class="math inline">\(\sigma\)</span> -field. 因此, 有</p>
+<p><span class="math display">\[
+f(x,y)=p(x|y)p(y).
+\]</span></p>
+<p>后面的等式, 前两行是容易得到的. 第三行则是因为 <span class="math inline">\(\forall B\in\mathcal{B}^{m}\)</span>,</p>
+<p><span class="math display">\[
+\begin{align}
+\int _{B}\mathbb{E}[g(X,Y)|Y=y] \, PY^{-1}(dy)
+&amp;=\int _{Y^{-1}(B)}g(X,Y) \, dP \\
+&amp;=\int _{\mathbb{R}^{n}\times B}g(x,y) p(x,y)\, (\lambda \times \mu)(dxdy) \\
+&amp;=\int _{B}\int g(x,y)p(x,y)\lambda(dx)\mu(dy) \\
+&amp;=\int _{B} \frac{\int g(x,y)p(x,y)\lambda(dx)}
+{p(y)} p(y) \mu(dy) \\
+&amp;=\int _{B} \frac{\int g(x,y)p(x,y)\lambda(dx)}
+{\int p(x,y)\lambda(dx) }PY^{-1}(dy),
+\end{align}
+\]</span></p>
+<p>其中, 第一行是因为给定值的条件期望的定义, 第三行是因为 Fubini 定理, 最后一行是因为 <strong>?@prp-comb-margin-density</strong> 的结论。</p>
+</div>
+<p>与初等概率论中一致, 我们可能还会使用 <span class="math inline">\(f_{X}(x),f_{Y}(y),f_{X,Y}(x,y),f_{X|Y}(x,y)\)</span> 来分别表示 <span class="math inline">\(X,Y\)</span> 的边缘密度函数, 联合密度函数以及条件密度函数. 当 <span class="math inline">\(f_{X}(x)\)</span> 或 <span class="math inline">\(f_{Y}(y)\)</span> 不等于 0 时, 根据以上内容,我们有</p>
+<p><span class="math display">\[
+f_{X|Y}(x,y)=\frac{f_{X,Y}(x,y)}{f_{Y}(y)}.
+\]</span></p>
+<p>这其实都是初等概率论中条件概率密度函数的定义. 包括 <a href="#thm-condition-joint-density" class="quarto-xref">定理&nbsp;13</a> 中第二个等式,通过我们上述的介绍可以知道, <strong>基于测度理论的条件期望理论体系完全蕴含初等概率论中的内容</strong>。</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script>
+(function () {
+  function makeProofsCollapsible() {
+    const proofs = document.querySelectorAll("div.proof");
+
+    proofs.forEach(function (proof) {
+      if (proof.dataset.collapsibleReady === "true") return;
+
+      const details = document.createElement("details");
+
+      details.className = proof.className;
+      details.classList.add("proof-collapsible");
+      details.dataset.collapsibleReady = "true";
+
+      if (proof.id) {
+        details.id = proof.id;
+      }
+
+      details.open = proof.classList.contains("open");
+
+      const summary = document.createElement("summary");
+      const title = proof.querySelector(".proof-title");
+
+      if (title) {
+        summary.innerHTML = title.innerHTML;
+        title.remove();
+      } else {
+        summary.innerHTML = "<strong>Proof</strong>";
+      }
+
+      details.appendChild(summary);
+
+      while (proof.firstChild) {
+        details.appendChild(proof.firstChild);
+      }
+
+      proof.replaceWith(details);
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", makeProofsCollapsible);
+  } else {
+    makeProofsCollapsible();
+  }
+})();
+</script>
+<script>
+(function () {
+  function fixTheoremTitleSpacing() {
+    const titleSelectors = [
+      ".theorem-title",
+      ".lemma-title",
+      ".corollary-title",
+      ".proposition-title",
+      ".conjecture-title",
+      ".definition-title",
+      ".example-title",
+      ".exercise-title",
+      ".solution-title",
+      ".remark-title",
+      ".algorithm-title",
+      ".proof-title"
+    ].join(",");
+
+    document.querySelectorAll(titleSelectors).forEach(function (title) {
+      const p = title.parentElement;
+
+      if (!p || p.tagName.toLowerCase() !== "p") return;
+
+      /*
+        Quarto/Pandoc often inserts a text node like:
+        <p><span class="theorem-title">...</span>&nbsp;</p>
+
+        Remove whitespace-only text nodes, including non-breaking spaces.
+      */
+      Array.from(p.childNodes).forEach(function (node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          const cleaned = node.textContent.replace(/\u00a0/g, " ").trim();
+          if (cleaned === "") {
+            node.remove();
+          }
+        }
+      });
+
+      p.classList.add("math-env-title-p");
+
+      /*
+        If the paragraph only contains the title span after cleanup,
+        mark it as title-only.
+      */
+      const meaningfulChildren = Array.from(p.childNodes).filter(function (node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          return node.textContent.replace(/\u00a0/g, " ").trim() !== "";
+        }
+        return true;
+      });
+
+      if (meaningfulChildren.length === 1 && meaningfulChildren[0] === title) {
+        p.classList.add("math-env-title-only");
+      }
+
+      /*
+        If the title-only paragraph is followed by a list,
+        compress the gap between title and list.
+      */
+      const next = p.nextElementSibling;
+      if (
+        p.classList.contains("math-env-title-only") &&
+        next &&
+        (next.tagName.toLowerCase() === "ol" || next.tagName.toLowerCase() === "ul")
+      ) {
+        p.classList.add("math-env-title-before-list");
+      }
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", fixTheoremTitleSpacing);
+  } else {
+    fixTheoremTitleSpacing();
+  }
+})();
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "已复制");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "已复制");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/luyiyun\.github\.io\/Notes\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
