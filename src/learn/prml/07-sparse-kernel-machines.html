@@ -398,13 +398,13 @@ window.Quarto = {
   <li><a href="#回归模型与-ard-先验" id="toc-回归模型与-ard-先验" class="nav-link" data-scroll-target="#回归模型与-ard-先验">回归模型与 ARD 先验</a></li>
   <li><a href="#后验分布与-evidence-maximization" id="toc-后验分布与-evidence-maximization" class="nav-link" data-scroll-target="#后验分布与-evidence-maximization">后验分布与 evidence maximization</a></li>
   <li><a href="#预测分布" id="toc-预测分布" class="nav-link" data-scroll-target="#预测分布">预测分布</a></li>
-  <li><a href="#稀疏性的质量" id="toc-稀疏性的质量" class="nav-link" data-scroll-target="#稀疏性的质量">稀疏性的质量</a></li>
+  <li><a href="#稀疏性分析" id="toc-稀疏性分析" class="nav-link" data-scroll-target="#稀疏性分析">稀疏性分析</a></li>
   <li><a href="#与-svm-回归的对比" id="toc-与-svm-回归的对比" class="nav-link" data-scroll-target="#与-svm-回归的对比">与 SVM 回归的对比</a></li>
   </ul></li>
   <li><a href="#rvm分类" id="toc-rvm分类" class="nav-link" data-scroll-target="#rvm分类">RVM分类</a>
   <ul class="collapse">
   <li><a href="#二分类模型" id="toc-二分类模型" class="nav-link" data-scroll-target="#二分类模型">二分类模型</a></li>
-  <li><a href="#为什么需要-laplace-approximation" id="toc-为什么需要-laplace-approximation" class="nav-link" data-scroll-target="#为什么需要-laplace-approximation">为什么需要 Laplace approximation</a></li>
+  <li><a href="#laplace-approximation" id="toc-laplace-approximation" class="nav-link" data-scroll-target="#laplace-approximation">Laplace approximation</a></li>
   <li><a href="#分类中的-relevance-vectors" id="toc-分类中的-relevance-vectors" class="nav-link" data-scroll-target="#分类中的-relevance-vectors">分类中的 relevance vectors</a></li>
   <li><a href="#多分类扩展" id="toc-多分类扩展" class="nav-link" data-scroll-target="#多分类扩展">多分类扩展</a></li>
   <li><a href="#本节小结-2" id="toc-本节小结-2" class="nav-link" data-scroll-target="#本节小结-2">本节小结</a></li>
@@ -1234,6 +1234,16 @@ t_n-\sum_{m\in\mathcal S}\alpha_m t_m k(x_n,x_m)
 \]</span> and <span class="math display">\[
 \sum_{n=1}^N\alpha_n\ge \nu.
 \]</span> <span class="math inline">\(\nu\)</span> 的优点是解释更直接：<strong>它既是 margin errors 比例的上界，也是 support vectors 比例的下界</strong>。这里 margin errors 指 <span class="math inline">\(\xi_n&gt;0\)</span> 的点，也就是位于 margin boundary 错误一侧的样本；它们可能仍然分类正确但 margin 不足，也可能已经被错分。</p>
+<div id="fig-nu-svm-cls" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-nu-svm-cls-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/nu-svm-cls-20260513-144830.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-nu-svm-cls-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;4 使用<span class="math inline">\(\nu\)</span>-SVM的分类示意图
+</figcaption>
+</figure>
+</div>
 </section>
 <section id="与-logistic-regression-的关系" class="level2">
 <h2 class="anchored" data-anchor-id="与-logistic-regression-的关系">与 logistic regression 的关系</h2>
@@ -1318,7 +1328,7 @@ E_{\mathrm{LR}}(yt)=\ln(1+\exp(-yt)).
 <img src="https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/image-2.webp" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-loss-functions-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-图&nbsp;4 各种损失函数的对比
+图&nbsp;5 各种损失函数的对比
 </figcaption>
 </figure>
 </div>
@@ -1537,7 +1547,7 @@ E_\epsilon(y(x)-t)=
 <img src="https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/image-3-20260504105120867.webp" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-epsilon-insensitivity-error-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-图&nbsp;5 <span class="math inline">\(\epsilon\)</span>-不敏感损失函数
+图&nbsp;6 <span class="math inline">\(\epsilon\)</span>-不敏感损失函数
 </figcaption>
 </figure>
 </div>
@@ -1550,7 +1560,7 @@ C\sum_{n=1}^{N}E_\epsilon(y(x_n)-t_n)+\frac12\|w\|^2.
 <img src="https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/2026-05-04_10-51-45-20260504105207443.webp" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-epsilon-tube-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-图&nbsp;6 <span class="math inline">\(\epsilon\)</span>-tube 示意图
+图&nbsp;7 <span class="math inline">\(\epsilon\)</span>-tube 示意图
 </figcaption>
 </figure>
 </div>
@@ -1773,7 +1783,7 @@ b
 <img src="https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/nu-svm-reg-20260513-110745.png" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-nu-svm-reg-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-图&nbsp;7 <span class="math inline">\(\nu\)</span>-SVM回归示意图
+图&nbsp;8 <span class="math inline">\(\nu\)</span>-SVM回归示意图
 </figcaption>
 </figure>
 </div>
@@ -1940,7 +1950,7 @@ C=\beta^{-1}I+\Phi A^{-1}\Phi^\top.
 <li>用重估公式更新 <span class="math inline">\(\alpha\)</span> 和 <span class="math inline">\(\beta\)</span>。</li>
 <li>重复计算后验与更新超参数，直到 evidence 或参数变化收敛。</li>
 </ol>
-<p>这个过程会自然把大量 <span class="math inline">\(\alpha_i\)</span> 推大，使相应基函数退出模型。<strong>若采用以训练样本为中心的 kernel basis functions，最后保留下来的样本就是 relevance vectors</strong>。</p>
+<p>在这个过程中，我们发现算法会自然地把大量 <span class="math inline">\(\alpha_i\)</span> 推大，使相应基函数退出模型。<strong>若采用以训练样本为中心的 kernel basis functions，最后保留下来的样本就是 relevance vectors</strong>。</p>
 </section>
 <section id="预测分布" class="level2">
 <h2 class="anchored" data-anchor-id="预测分布">预测分布</h2>
@@ -1955,16 +1965,120 @@ p(t\mid x,X,t,\alpha^\star,\beta^\star)
 \]</span> 第一项来自观测噪声，第二项来自权重后验不确定性。因此，RVM 和 SVM 的一个重要区别是：<strong>RVM 直接给出 predictive distribution，而不是只给出一个未校准的 decision value 或回归函数值</strong>。</p>
 <p>不过这也带来一个需要小心的地方。若使用局部化基函数，例如以训练点为中心的高斯核，在远离训练数据的区域里 <span class="math inline">\(\phi(x)\)</span> 可能接近 0，于是第二项 <span class="math inline">\(\phi(x)^\top\Sigma\phi(x)\)</span> 也会很小。这样模型可能在外推区域显得过度自信。Gaussian process regression 通常不会以同样方式出现这个问题，但它在预测时往往需要更高计算成本。</p>
 </section>
-<section id="稀疏性的质量" class="level2">
-<h2 class="anchored" data-anchor-id="稀疏性的质量">稀疏性的质量</h2>
-<p>上面的重估公式说明了 RVM 会变稀疏，但还没有直接回答：<strong>某个基函数什么时候应该留下，什么时候应该删掉？</strong> Bishop 接着把 marginal likelihood 中与某个 <span class="math inline">\(\alpha_i\)</span> 有关的部分单独分离出来。</p>
+<section id="稀疏性分析" class="level2">
+<h2 class="anchored" data-anchor-id="稀疏性分析">稀疏性分析</h2>
+<p>上面的重估公式说明了 RVM 会变稀疏，但还没有直接回答：<strong>某个基函数什么时候应该留下，什么时候应该删掉？</strong> Bishop 在这里做了更细的分析。这个分析有两个作用：</p>
+<ol type="1">
+<li>是解释 ARD 为什么会产生稀疏解；</li>
+<li>是导出比直接交替更新 <span class="math inline">\(\alpha,\beta,m,\Sigma\)</span> 更快的训练算法。</li>
+</ol>
+<p>先看一个最小例子。假设只有两个观测值 <span class="math display">\[
+t=(t_1,t_2)^\top,
+\]</span> 并且模型只有一个基函数 <span class="math inline">\(\phi(x)\)</span>。把这个基函数在两个训练点上的取值写成向量 <span class="math display">\[
+\varphi=(\phi(x_1),\phi(x_2))^\top.
+\]</span> 这时 marginal likelihood 可以看成目标向量 <span class="math inline">\(t\)</span> 上的零均值高斯分布： <span class="math display">\[
+p(t\mid \alpha,\beta)=\mathcal N(t\mid 0,C),
+\]</span> 其中 <span class="math display">\[
+C=\beta^{-1}I+\alpha^{-1}\varphi\varphi^\top.
+\]</span> 第一项 <span class="math inline">\(\beta^{-1}I\)</span> 是各向同性噪声；<strong>第二项 <span class="math inline">\(\alpha^{-1}\varphi\varphi^\top\)</span> 会沿着基函数向量 <span class="math inline">\(\varphi\)</span> 的方向拉长协方差椭圆</strong> (<span class="math inline">\(\varphi\)</span>类似特征向量)。</p>
+<div id="fig-sparsity-analysis-geometry" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-sparsity-analysis-geometry-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/sparsity-analysis-20260513-143015.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-sparsity-analysis-geometry-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;9 稀疏性分析的几何直觉
+</figcaption>
+</figure>
+</div>
+<p>如果 <span class="math inline">\(\varphi\)</span> 和观测目标向量 <span class="math inline">\(t\)</span> 的方向对齐得很好，那么允许有限的 <span class="math inline">\(\alpha\)</span> 可以把概率质量放到更接近观测数据的方向上；但如果 <span class="math inline">\(\varphi\)</span> 与 <span class="math inline">\(t\)</span> 的方向对齐很差，那么有限的 <span class="math inline">\(\alpha\)</span> 反而会把概率质量拉向错误方向，使观测到的 <span class="math inline">\(t\)</span> 的密度变小。此时 evidence 最大化会选择 <span class="math display">\[
+\alpha\to\infty,
+\]</span> 也就是让 <span class="math inline">\(\alpha^{-1}\varphi\varphi^\top\)</span> 消失，直接删除这个基函数。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="几何直觉">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>几何直觉
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>从 target space 看，RVM 不是先问某个数据点离决策边界多近，而是问某个基函数向量 <span class="math inline">\(\varphi_i\)</span> 是否能把目标向量 <span class="math inline">\(t\)</span> 的概率密度解释得更高。若它把协方差拉向一个和数据不对齐的方向，最优 evidence 会宁愿不要它。</p>
+</div>
+</div>
+<p>更一般地，在有 <span class="math inline">\(M\)</span> 个候选基函数时，直接的重估公式 <span class="math display">\[
+\alpha_i^{\mathrm{new}}=\frac{\gamma_i}{m_i^2}
+\]</span> 本身是隐式的。因为右侧的 <span class="math inline">\(m_i\)</span>、<span class="math inline">\(\Sigma_{ii}\)</span> 和 <span class="math inline">\(\gamma_i\)</span> 都依赖当前的 <span class="math inline">\(\alpha_i\)</span>。也就是说，即使把其他 <span class="math inline">\(\alpha_j\)</span> 固定住，单独求一个 <span class="math inline">\(\alpha_i\)</span> 也不是把公式代入一次就结束，而仍然需要迭代。</p>
+<p>Bishop 接下来采用另一种做法：<strong>把 marginal likelihood 中所有依赖 <span class="math inline">\(\alpha_i\)</span> 的部分显式分离出来，然后直接分析它的驻点</strong>。</p>
 <p>记 <span class="math inline">\(\varphi_i\)</span> 为设计矩阵 <span class="math inline">\(\Phi\)</span> 的第 <span class="math inline">\(i\)</span> 列，也就是第 <span class="math inline">\(i\)</span> 个基函数在所有训练样本上的取值向量。将协方差矩阵写成 <span class="math display">\[
 C=C_{-i}+\alpha_i^{-1}\varphi_i\varphi_i^\top,
-\]</span> 其中 <span class="math inline">\(C_{-i}\)</span> 表示移除第 <span class="math inline">\(i\)</span> 个基函数贡献后的协方差。定义 <span class="math display">\[
+\]</span> 其中 <span class="math display">\[
+C_{-i}
+=
+\beta^{-1}I+
+\sum_{j\ne i}\alpha_j^{-1}\varphi_j\varphi_j^\top
+\]</span> 表示移除第 <span class="math inline">\(i\)</span> 个基函数贡献后的协方差。</p>
+<div id="lem-matrix-determinant-lemma" class="theorem lemma">
+<p><span class="theorem-title"><strong>引理 1 (Matrix determinant lemma)</strong></span> 若 <span class="math inline">\(A\)</span> 是可逆方阵，<span class="math inline">\(u,v\)</span> 是列向量，则 <span class="math display">\[
+\det(A+uv^\top)
+=
+\det(A)\left(1+v^\top A^{-1}u\right).
+\]</span> 更一般地，对矩阵 <span class="math inline">\(U,V\)</span> 和可逆矩阵 <span class="math inline">\(A,D\)</span>，有 <span class="math display">\[
+\det(A+UDV)
+=
+\det(D^{-1}+VA^{-1}U)\det(D)\det(A).
+\]</span> 在这里可以取 <span class="math display">\[
+A=C_{-i},\qquad
+u=\alpha_i^{-1}\varphi_i,\qquad
+v=\varphi_i,
+\]</span> 从而把 <span class="math inline">\(|C|\)</span> 写成 <span class="math inline">\(|C_{-i}|\)</span> 乘上一个一维修正项。</p>
+</div>
+<div id="def-woodbury-identity" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 2 (Woodbury identity)</strong></span> 若 <span class="math inline">\(A\)</span> 和 <span class="math inline">\(D\)</span> 可逆，则 <span class="math display">\[
+(A+UDV)^{-1}
+=
+A^{-1}
+-
+A^{-1}U(D^{-1}+VA^{-1}U)^{-1}VA^{-1}.
+\]</span> 它说明：当一个已知矩阵 <span class="math inline">\(A\)</span> 被低秩项 <span class="math inline">\(UDV\)</span> 修正时，可以用 <span class="math inline">\(A^{-1}\)</span> 加上一个低维修正来得到新逆矩阵，而不必从头求逆。在当前 RVM 推导中，取 <span class="math display">\[
+A=C_{-i},\qquad
+U=\varphi_i,\qquad
+D=\alpha_i^{-1},\qquad
+V=\varphi_i^\top,
+\]</span> 就能把 <span class="math inline">\(C^{-1}\)</span> 写成 <span class="math inline">\(C_{-i}^{-1}\)</span> 的 rank-one 修正。</p>
+</div>
+<p>利用 matrix determinant lemma 和 Woodbury identity，可以把 <span class="math inline">\(C\)</span> 的行列式和逆矩阵写成只依赖 <span class="math inline">\(C_{-i}\)</span>、<span class="math inline">\(\varphi_i\)</span>、<span class="math inline">\(\alpha_i\)</span> 的形式： <span class="math display">\[
+|C|
+=
+|C_{-i}|
+\left|
+1+\alpha_i^{-1}\varphi_i^\top C_{-i}^{-1}\varphi_i
+\right|,
+\]</span> <span class="math display">\[
+C^{-1}
+=
+C_{-i}^{-1}
+-
+\frac{
+C_{-i}^{-1}\varphi_i\varphi_i^\top C_{-i}^{-1}
+}{
+\alpha_i+\varphi_i^\top C_{-i}^{-1}\varphi_i
+}.
+\]</span> 这一步的意义是：log marginal likelihood <span class="math display">\[
+L(\alpha)=\ln p(t\mid X,\alpha,\beta)
+\]</span> 可以被拆成两部分： <span class="math display">\[
+L(\alpha)=L(\alpha_{-i})+\lambda(\alpha_i).
+\]</span> 其中 <span class="math inline">\(L(\alpha_{-i})\)</span> 是删除第 <span class="math inline">\(i\)</span> 个基函数后的贡献，和 <span class="math inline">\(\alpha_i\)</span> 无关；<span class="math inline">\(\lambda(\alpha_i)\)</span> 则包含所有关于 <span class="math inline">\(\alpha_i\)</span> 的依赖。</p>
+<p>为简化记号，定义 <span class="math display">\[
 s_i=\varphi_i^\top C_{-i}^{-1}\varphi_i,
 \]</span> <span class="math display">\[
 q_i=\varphi_i^\top C_{-i}^{-1}t.
-\]</span> Bishop 把 <span class="math inline">\(s_i\)</span> 称为 sparsity，把 <span class="math inline">\(q_i\)</span> 称为 quality。粗略地说，<span class="math inline">\(s_i\)</span> 衡量这个基函数和当前模型中已有基函数的重叠程度；<span class="math inline">\(q_i\)</span> 衡量它与当前仍未解释的数据方向的对齐程度。</p>
+\]</span> Bishop 把 <span class="math inline">\(s_i\)</span> 称为 sparsity，把 <span class="math inline">\(q_i\)</span> 称为 quality。这里的名字很有信息量：</p>
+<ul>
+<li><span class="math inline">\(s_i\)</span> 衡量 <span class="math inline">\(\varphi_i\)</span> 和当前模型中已有基函数的重叠程度。若 <span class="math inline">\(s_i\)</span> 相对较大，说明加入这个基函数会带来较多冗余或复杂度代价。</li>
+<li><span class="math inline">\(q_i\)</span> 衡量 <span class="math inline">\(\varphi_i\)</span> 和当前模型尚未解释的目标方向之间的对齐程度。更具体地说，它反映 <span class="math inline">\(\varphi_i\)</span> 与“删掉该基函数后模型预测误差”的关系。</li>
+</ul>
 <p>在固定其他超参数时，<span class="math inline">\(\alpha_i\)</span> 对 log marginal likelihood 的贡献可以写成 <span class="math display">\[
 \lambda(\alpha_i)
 =
@@ -1973,13 +2087,27 @@ q_i=\varphi_i^\top C_{-i}^{-1}t.
 \ln\alpha_i-\ln(\alpha_i+s_i)
 +\frac{q_i^2}{\alpha_i+s_i}
 \right].
-\]</span> 对 <span class="math inline">\(\alpha_i\)</span> 求最优解后得到一个非常清楚的选择规则： <span class="math display">\[
+\]</span> 现在对 <span class="math inline">\(\alpha_i\)</span> 求导： <span class="math display">\[
+\frac{d\lambda(\alpha_i)}{d\alpha_i}
+=
+\frac{1}{2(\alpha_i+s_i)^2}
+\left[
+\frac{s_i^2}{\alpha_i}
+-
+(q_i^2-s_i)
+\right].
+\]</span> 由于 <span class="math inline">\(\alpha_i\ge 0\)</span>，驻点结构只有两种可能。</p>
+<p>如果 <span class="math display">\[
+q_i^2&gt;s_i,
+\]</span> 则存在一个有限的正驻点： <span class="math display">\[
 \alpha_i=
 \frac{s_i^2}{q_i^2-s_i}
-\quad\text{if }q_i^2&gt;s_i,
-\]</span> 否则 <span class="math display">\[
+\]</span> 并且二阶导数分析表明它是 <span class="math inline">\(\lambda(\alpha_i)\)</span> 的唯一最大点。也就是说，这个基函数的 quality 足够高，值得保留，只需要把它的 precision 调到上式给出的有限值。</p>
+<p>如果 <span class="math display">\[
+q_i^2\le s_i,
+\]</span> 则不存在有限的正最大点，最大值出现在边界 <span class="math display">\[
 \alpha_i\to\infty.
-\]</span></p>
+\]</span> 此时 <span class="math inline">\(\alpha_i^{-1}\to 0\)</span>，第 <span class="math inline">\(i\)</span> 个基函数对协方差 <span class="math inline">\(C\)</span> 的贡献消失，对应权重也被压到 0。</p>
 <p>这条规则揭示了 RVM 稀疏性的核心：<strong>只有当某个基函数对残差方向的解释能力足够强，超过它带来的冗余和复杂度代价时，它才会被保留。若 <span class="math inline">\(q_i^2\le s_i\)</span>，最优选择就是把 <span class="math inline">\(\alpha_i\)</span> 推向无穷大，也就是删除这个基函数。</strong></p>
 <div class="callout callout-style-default callout-important callout-titled" title="quality 与 sparsity 的取舍">
 <div class="callout-header d-flex align-content-center">
@@ -1994,7 +2122,49 @@ q_i=\varphi_i^\top C_{-i}^{-1}t.
 <p>RVM 中的一个基函数并不是因为靠近决策边界或落在 tube 外才重要。它重要，是因为它的取值向量能有效解释当前模型尚未解释的数据方向。如果它主要与已有基函数重复，或者和目标向量对齐很差，evidence maximization 会倾向于把它剪掉。</p>
 </div>
 </div>
-<p>这个分析还导出了更快的 sequential sparse Bayesian learning algorithm。算法不必每次同时优化所有 <span class="math inline">\(\alpha_i\)</span>，而是依次考察候选基函数：若 <span class="math inline">\(q_i^2&gt;s_i\)</span> 且它尚未进入模型，就加入；若已经进入模型，就更新其 <span class="math inline">\(\alpha_i\)</span>；若 <span class="math inline">\(q_i^2\le s_i\)</span> 且它在模型中，就移除。由于每一步只维护 active basis functions，实际矩阵运算规模通常远小于完整训练集大小。</p>
+<p>这个分析还导出了更快的 <strong>sequential sparse Bayesian learning algorithm</strong>。算法不必每次同时优化所有 <span class="math inline">\(\alpha_i\)</span>，而是依次考察候选基函数：</p>
+<div id="alg-sequential-sparse-bayes-learning" class="theorem algorithm">
+<p><span class="theorem-title"><strong>Algorithm 1 (sequential sparse Bayesian learning algorithm)</strong></span> &nbsp;</p>
+<ol type="1">
+<li>回归问题中先初始化 <span class="math inline">\(\beta\)</span>。</li>
+<li>先选一个基函数进入模型，其 <span class="math inline">\(\alpha_i\)</span> 用上面的有限解初始化，其余基函数的 <span class="math inline">\(\alpha_j\)</span> 设为 <span class="math inline">\(\infty\)</span>。</li>
+<li>计算当前 active set 下的 <span class="math inline">\(\Sigma\)</span>、<span class="math inline">\(m\)</span>，以及所有候选基函数的 <span class="math inline">\(q_i\)</span> 和 <span class="math inline">\(s_i\)</span>。</li>
+<li>选择一个候选基函数 <span class="math inline">\(\varphi_i\)</span>。</li>
+<li>若 <span class="math inline">\(q_i^2&gt;s_i\)</span> 且 <span class="math inline">\(\alpha_i&lt;\infty\)</span>，说明它已经在模型中，则用 <span class="math display">\[
+\alpha_i=\frac{s_i^2}{q_i^2-s_i}
+\]</span> 更新它的 precision。</li>
+<li>若 <span class="math inline">\(q_i^2&gt;s_i\)</span> 且 <span class="math inline">\(\alpha_i=\infty\)</span>，说明它当前不在模型中，则把它加入模型，并赋予上式给出的有限 <span class="math inline">\(\alpha_i\)</span>。</li>
+<li>若 <span class="math inline">\(q_i^2\le s_i\)</span> 且 <span class="math inline">\(\alpha_i&lt;\infty\)</span>，说明它已经不值得保留，则将 <span class="math inline">\(\alpha_i\)</span> 设为 <span class="math inline">\(\infty\)</span>，从 active set 中移除。</li>
+<li>回归问题中更新 <span class="math inline">\(\beta\)</span>。</li>
+<li>若尚未收敛，就重复以上步骤。</li>
+</ol>
+<p>如果某个基函数已经满足 <span class="math inline">\(q_i^2\le s_i\)</span> 且 <span class="math inline">\(\alpha_i=\infty\)</span>，则它本来就不在模型中，无需操作。</p>
+</div>
+<p>实际实现时，直接为每个候选基函数构造 <span class="math inline">\(C_{-i}^{-1}\)</span> 并不方便。Bishop 因此引入 <span class="math display">\[
+Q_i=\varphi_i^\top C^{-1}t,
+\]</span> <span class="math display">\[
+S_i=\varphi_i^\top C^{-1}\varphi_i.
+\]</span> 它们使用完整的当前 <span class="math inline">\(C\)</span>，而不是删除第 <span class="math inline">\(i\)</span> 个基函数后的 <span class="math inline">\(C_{-i}\)</span>。两组量之间可以互相转换： <span class="math display">\[
+q_i=
+\frac{\alpha_i Q_i}{\alpha_i-S_i},
+\]</span> <span class="math display">\[
+s_i=
+\frac{\alpha_i S_i}{\alpha_i-S_i}.
+\]</span> 当 <span class="math inline">\(\alpha_i=\infty\)</span> 时，上式退化为 <span class="math display">\[
+q_i=Q_i,\qquad s_i=S_i.
+\]</span> 进一步地，<span class="math inline">\(Q_i\)</span> 和 <span class="math inline">\(S_i\)</span> 可以通过当前 active basis functions 的后验协方差来计算： <span class="math display">\[
+Q_i
+=
+\beta\varphi_i^\top t
+-
+\beta^2\varphi_i^\top\Phi\Sigma\Phi^\top t,
+\]</span> <span class="math display">\[
+S_i
+=
+\beta\varphi_i^\top\varphi_i
+-
+\beta^2\varphi_i^\top\Phi\Sigma\Phi^\top\varphi_i.
+\]</span> 这里的 <span class="math inline">\(\Phi\)</span> 和 <span class="math inline">\(\Sigma\)</span> 只包含 active set 中那些 <span class="math inline">\(\alpha_i&lt;\infty\)</span> 的基函数。于是每一步真正需要处理的矩阵规模由 active basis functions 的数量决定，而这个数量通常远小于训练样本总数。</p>
 </section>
 <section id="与-svm-回归的对比" class="level2">
 <h2 class="anchored" data-anchor-id="与-svm-回归的对比">与 SVM 回归的对比</h2>
@@ -2072,8 +2242,8 @@ p(w\mid\alpha)=
 \]</span></p>
 <p>这个模型与贝叶斯 logistic regression 非常接近。区别在于，RVM 不使用一个共享的权重精度，而是继续为每个权重分配单独的 <span class="math inline">\(\alpha_i\)</span>，让 evidence optimization 决定哪些基函数应该保留。</p>
 </section>
-<section id="为什么需要-laplace-approximation" class="level2">
-<h2 class="anchored" data-anchor-id="为什么需要-laplace-approximation">为什么需要 Laplace approximation</h2>
+<section id="laplace-approximation" class="level2">
+<h2 class="anchored" data-anchor-id="laplace-approximation">Laplace approximation</h2>
 <p>回归 RVM 中，似然和先验都是高斯，因此可以解析地把 <span class="math inline">\(w\)</span> 积分掉。但分类 RVM 的 Bernoulli-logistic likelihood 不是高斯形式，所以 <span class="math display">\[
 p(t\mid\alpha)=
 \int p(t\mid w)p(w\mid\alpha)\,dw
@@ -2120,6 +2290,17 @@ p(t\mid w^\star)p(w^\star\mid\alpha)
 <h2 class="anchored" data-anchor-id="分类中的-relevance-vectors">分类中的 relevance vectors</h2>
 <p>SVM 分类中的 support vectors 通常位于 margin boundary 附近，因为这些点直接决定最大间隔超平面。RVM 分类的 relevance vectors 则不一定靠近决策边界。它们是由 ARD 和 evidence optimization 选出来的基函数中心，标准是能否有效解释整个目标向量，而不是是否位于几何 margin 上。</p>
 <p>这也是 RVM 和 SVM 在图形上经常呈现出不同稀疏模式的原因：SVM 的稀疏性是边界几何驱动的；RVM 的稀疏性是概率证据驱动的。一个靠近边界的数据点如果对应的基函数方向和当前目标/残差结构对齐很差，仍然可能被 RVM 删除。</p>
+<p>如下图所示，其中被圈出的就是relevant vector。其相比于SVM (见 <a href="#fig-nu-svm-cls" class="quarto-xref">图&nbsp;4</a>) 有更强的稀疏性。右侧图展示的则是RVM的后验概率估计。</p>
+<div id="fig-rvm-cls" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-rvm-cls-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/RVM-for-cls-20260513-144424.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rvm-cls-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;10 用于分类的RVM分类边界示意图
+</figcaption>
+</figure>
+</div>
 <div class="callout callout-style-default callout-note callout-titled" title="分类 RVM 的输出">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
