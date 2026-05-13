@@ -22,6 +22,7 @@ website:
     style: docked
     search: true
     collapse-level: 3
+    pinned: true
     contents:
       - href: index.qmd
         text: 首页
@@ -43,6 +44,7 @@ format:
     include-after-body:
       - scripts/proof-collapse.html
       - scripts/math-env-fix.html
+    fig-align: center
 
 crossref:
   title-delim: " "
@@ -54,3 +56,6 @@ crossref:
   def-title: "定义"
   exm-title: "例"
   exr-title: "习题"
+
+  fig-title: "图"
+  fig-prefix: "图"

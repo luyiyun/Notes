@@ -388,3 +388,11 @@ details.proof.proof-collapsible:not([open])::before {
   display: none;
 }
 
+
+/* =========================================================
+ * 图片标题居中
+   ========================================================= */
+.quarto-figure .figure-caption,
+figure figcaption {
+  text-align: center;
+}

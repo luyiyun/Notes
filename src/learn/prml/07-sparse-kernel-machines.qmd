@@ -1,0 +1,1751 @@
+---
+title: "稀疏核机器"
+subtitle: "Sparse Kernel Machines"
+description: "PRML 第 7 章关于支持向量机、相关向量机、稀疏核展开、SVM 回归与 RVM 回归/分类"
+draft: false
+aliases:
+  - 稀疏核机器
+  - Sparse Kernel Machines
+  - 支持向量机
+  - 相关向量机
+  - Relevance Vector Machines
+tags:
+  - PRML
+  - 机器学习
+  - 核方法
+  - SVM
+  - RVM
+date: 2026-04-30 11:30
+date-modified: last-modified
+order: 7
+---
+# 引言
+
+第 7 章讨论的核心，是在 [核方法](06-kernel-methods.qmd) 的基础上进一步追问：**既然很多核模型的预测都可以写成训练样本核函数的线性组合，那么是否真的需要让所有训练样本都参与预测？**
+
+第 6 章已经说明，许多模型可以被改写成如下形式：
+$$
+y(x)=\sum_{n=1}^{N} a_n k(x,x_n).
+$$
+这个表达揭示了 kernel trick 的力量：**我们不必显式构造特征映射 $\phi(x)$，只需要通过 $k(x,x_n)$ 计算样本之间的内积或相似性**。然而，这种表示也带来一个直接问题：如果大多数系数 $a_n$ 都不为 0，那么每次预测新样本时都需要与几乎所有训练样本计算核函数。当训练集很大时，这会使预测阶段变得昂贵。
+
+第 7 章的标题是 `Sparse Kernel Machines`，其中的 sparse 指的正是这种结构上的稀疏性：**模型最终只依赖训练样本中的少数关键点**。PRML 主要通过两条路线展示这一思想：
+
+| 方法 | 稀疏性的来源 | 留下来的点 | 核心思想 |
+|---|---|---|---|
+| SVM | 最大间隔优化与 KKT 条件 | support vectors | 决策边界只由边界附近样本决定 |
+| RVM | ARD 先验与 evidence maximization | relevance vectors | 不重要的基函数权重会被贝叶斯机制压到接近 0 |
+
+:::: {.callout-note title="本章的主线"}
+SVM 和 RVM 都会得到稀疏的核展开式，但二者的稀疏性来源完全不同。SVM 是优化视角下的最大间隔分类器，稀疏性来自约束优化中的互补松弛条件；RVM 是贝叶斯视角下的稀疏概率模型，稀疏性来自对权重精度参数的自动相关确定。
+
+因此，第 7 章不是简单介绍两个算法，而是在第 6 章核方法之后进一步回答一个问题：当模型可以通过训练样本来表达时，哪些训练样本真正重要？
+::::
+
+# Hard-Margin SVM
+
+这一节讨论 hard-margin SVM。它是理解整个 SVM 家族的起点，因为软间隔、核 SVM、支持向量回归和多分类扩展，都是在这一基本结构上继续发展出来的。
+
+从模型形式上看，SVM 仍然是一个线性分类器。给定特征映射 $\phi(x)$，二分类标签取值为
+$$
+t_n\in\{-1,+1\},
+$$
+分类函数写成
+$$
+y(x)=w^\top\phi(x)+b,
+$$
+预测规则是
+$$
+\operatorname{sign}(y(x)).
+$$
+这个形式与感知器非常接近。感知器只要求找到一个能把训练数据正确分开的超平面，而 **SVM 进一步要求在所有能分开的超平面中，选择几何间隔最大的那个**。
+
+## 从分类正确到间隔
+
+若样本 $x_n$ 被正确分类，则有
+$$
+t_n y(x_n)>0.
+$$
+这是因为当 $t_n=+1$ 时，我们希望 $y(x_n)>0$；当 $t_n=-1$ 时，我们希望 $y(x_n)<0$。两种情况合并起来，就是标签与模型输出的乘积为正。
+
+由此可以定义 functional margin：
+$$
+\hat{\gamma}_n=t_n(w^\top\phi(x_n)+b).
+$$
+它衡量样本被分到正确一侧的程度。但是 functional margin 不是几何距离，因为它会受到 $w,b$ 整体缩放的影响。对于任意 $c>0$，超平面
+$$
+w^\top\phi(x)+b=0
+$$
+和
+$$
+cw^\top\phi(x)+cb=0
+$$
+表示同一个决策边界，但 functional margin 会被放大为原来的 $c$ 倍。
+
+真正的几何距离需要除以法向量长度：
+$$
+\gamma_n=\frac{t_n(w^\top\phi(x_n)+b)}{\|w\|}.
+$$
+这里的 $w$ 是超平面的法向量。$w^\top\phi(x)+b$ 可以理解为点到超平面的有符号距离再乘以 $\|w\|$，因此除以 $\|w\|$ 后才得到带标签校正后的几何距离。
+
+:::: {.callout-warning title="functional margin 与 geometric margin"}
+functional margin 依赖于参数尺度。同一个分类边界，只要把 $w,b$ 同时乘以正数，functional margin 就会改变。
+
+geometric margin 消除了 $w,b$ 的整体缩放自由度，因此才是 SVM 真正想最大化的几何间隔。不过它仍然依赖特征空间本身的尺度，这也是核函数选择会改变模型几何结构的原因。
+::::
+
+![最大间隔分类示意图](https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/image-1-20260430214516754.webp){#fig-max-interval}
+
+## 最大间隔的原始目标
+
+从几何上看，最大间隔分类器想要解决的问题可以直接写成：
+$$
+\max_{w,b}\min_n
+\frac{t_n(w^\top\phi(x_n)+b)}{\|w\|}.
+$$
+这个表达非常直观。**对于每一个候选超平面，先找到离它最近的训练样本，再选择使这个最近距离最大的超平面**。
+
+:::: {.callout-note title="最大间隔的中央"}
+最大间隔超平面可以理解为两类样本之间最宽分隔带的中心位置。如果超平面向某一侧偏移，那么较近一侧的几何间隔会变小，因此不可能达到最大化最小间隔的目标。
+::::
+
+这也解释了 SVM 与感知器的差别。感知器的目标只是找到任意一个满足
+$$
+t_n(w^\top\phi(x_n)+b)>0
+$$
+的超平面；SVM 的目标则是在所有正确分类的超平面中，选择最保守、最稳定、离训练样本边界最远的那个。
+
+不过，上面的 max-min 目标并不方便直接优化。它同时包含内部的 $\min$、分母中的 $\|w\|$，以及 $w,b$ 的尺度冗余。Bishop 在这里引入 canonical representation，目的就是把这个几何问题改写成更标准的凸优化问题。
+
+## Canonical representation
+
+由于分类边界只取决于
+$$
+\operatorname{sign}(w^\top\phi(x)+b),
+$$
+所以把 $w,b$ 同时乘以任意正数都不会改变分类结果。这意味着，对于同一个几何超平面，我们可以自由选择参数尺度。
+
+SVM 选择的规范化方式是：令离边界最近的训练样本满足
+$$
+\min_n t_n(w^\top\phi(x_n)+b)=1.
+$$
+在这个规范化下，所有训练样本都满足
+$$
+t_n(w^\top\phi(x_n)+b)\ge 1.
+$$
+那些使等号成立的点，正好落在 margin boundary 上；那些严格大于 1 的点，则位于 margin 外侧。
+
+这里的常数 1 不是由数据天然决定的，而是利用参数尺度自由度做出的约定。理论上也可以选择其他正常数，但选择 1 会让后续优化形式最简洁。
+
+:::: {.callout-important title="为什么最近点可以规定为 1"}
+若某个超平面已经能够正确分开训练集，则所有 $t_n(w^\top\phi(x_n)+b)$ 都为正。由于整体缩放不改变分类边界，我们总可以选取一个缩放比例，使最小的 functional margin 恰好等于 1。这一步不是额外假设，而是对同一个分类边界选择一个方便的参数表示。
+::::
+
+## 从最大间隔到二次规划
+
+在 canonical representation 下，最近训练点到决策边界的几何距离为
+$$
+\frac{1}{\|w\|}.
+$$
+两条 margin boundary 分别是
+$$
+w^\top\phi(x)+b=1
+$$
+和
+$$
+w^\top\phi(x)+b=-1.
+$$
+它们之间的距离为
+$$
+\frac{2}{\|w\|}.
+$$
+因此，最大化 margin width
+$$
+\frac{2}{\|w\|}
+$$
+等价于最小化 $\|w\|$，通常进一步写成平方形式：
+$$
+\min_{w,b}\frac12\|w\|^2
+$$
+subject to
+$$
+t_n(w^\top\phi(x_n)+b)\ge 1,\qquad n=1,\dots,N.
+$$
+
+这就是 hard-margin SVM 的 primal problem。它把原本直观但不便求解的 max-min 几何问题，改写成了一个目标函数为二次型、约束为线性不等式的凸优化问题。
+
+:::: {.callout-note title="对这一节的理解方式"}
+SVM 最大化的是 geometric margin，但它并不是直接对 max-min 形式求解。它先利用 $w,b$ 的尺度不变性，把最近点的 functional margin 规范化为 1，然后在这个规范化下最小化 $\frac12\|w\|^2$。所以公式中出现的是 functional margin 约束，目标对应的却是 geometric margin 最大化。
+::::
+
+## 与感知器的联系
+
+SVM 与感知器共享同一种线性分类函数：
+$$
+\operatorname{sign}(w^\top\phi(x)+b).
+$$
+二者的区别不在模型形式，而在选择超平面的原则。
+
+感知器只关心分类是否正确，只要找到一个 separating hyperplane 即可。在线性可分数据上，这样的超平面通常有无穷多个，因此感知器得到的结果会受到初始化、样本顺序和训练过程的影响。
+
+SVM 则在所有 separating hyperplanes 中加入了几何偏好：选择间隔最大的超平面。这个额外原则使 SVM 不只是追求训练集分类正确，还追求正确得有余量。也正是这个余量概念，为后续的软间隔 SVM、hinge loss 和泛化分析打下基础。
+
+## 拉格朗日乘子与 KKT 条件
+
+hard-margin SVM 的 primal problem 已经把最大间隔问题写成了一个标准约束优化问题：
+$$
+\min_{w,b}\frac12\|w\|^2
+$$
+subject to
+$$
+t_n(w^\top\phi(x_n)+b)\ge 1,\qquad n=1,\dots,N.
+$$
+为了讨论它的解的性质，Bishop 接下来引入 Lagrange multiplier 和 KKT conditions,作为约束优化理论中刻画最优解结构的基本工具。
+
+
+:::{#def-general-constrain-problem}
+
+### 一般约束优化问题
+
+$$
+\min_x f(x)
+$$
+subject to
+$$
+g_i(x)\le 0,\qquad i=1,\dots,m,
+$$
+以及可能存在的等式约束
+$$
+h_j(x)=0,\qquad j=1,\dots,r.
+$$
+这里 $f(x)$ 是目标函数，$g_i(x)\le 0$ 是不等式约束，$h_j(x)=0$ 是等式约束。
+
+:::
+
+其对应的拉格朗日函数定义为
+
+$$
+L(x,\alpha,\beta)
+=
+f(x)+\sum_{i=1}^m\alpha_i g_i(x)+\sum_{j=1}^r\beta_j h_j(x),
+$$
+其中 $\alpha_i$ 是不等式约束对应的 Lagrange multipliers，$\beta_j$ 是等式约束对应的 Lagrange multipliers。
+
+对于不等式约束，乘子必须满足
+$$
+\alpha_i\ge 0.
+$$
+这是因为我们采用的是 $g_i(x)\le 0$ 的约束形式。如果某个点违反约束，即 $g_i(x)>0$，非负的 $\alpha_i$ 会让拉格朗日函数变大，从而惩罚违反约束的点；若允许 $\alpha_i<0$，违反约束反而可能降低目标，这就破坏了约束的意义。
+
+:::: {.callout-note title="几何直觉"}
+在无约束优化中，最优点通常满足 $\nabla f(x^\star)=0$。在有约束优化中，最优点可能位于约束边界上，此时 $\nabla f(x^\star)$ 不必为 0，而是会被活跃约束面的法向量所平衡。Lagrange multipliers 描述的正是这种平衡关系。
+::::
+
+Karush-Kuhn-Tucker conditions 是约束优化问题最优解需要满足的一组条件。
+
+:::{#thm-KKT}
+
+### Karush-Kuhn-Tucker conditions
+
+对于问题
+$$
+\min_x f(x)
+$$
+subject to
+$$
+g_i(x)\le 0,\qquad h_j(x)=0,
+$$
+
+假设满足以上条件的最优解为 $x\star$，则在一定的正则条件下，其一定满足以下四个条件：
+
+1. **primal feasibility**，即原变量必须满足原始约束：
+  $$
+  g_i(x^\star)\le 0,\qquad h_j(x^\star)=0.
+  $$
+2. **dual feasibility**，即不等式约束的乘子必须非负：
+  $$
+  \alpha_i^\star\ge 0.
+  $$
+3. **stationarity**，即最优点处拉格朗日函数对原变量的梯度为零：
+  $$
+  \nabla_x L(x^\star,\alpha^\star,\beta^\star)=0.
+  $$
+4. **complementary slackness（互补松弛条件）**，即每个不等式约束满足：
+  $$
+  \alpha_i^\star g_i(x^\star)=0.
+  $$
+
+:::
+
+这个条件说明，对于每一个不等式约束，乘子和约束松弛量不能同时非零。若约束没有贴紧，即 $g_i(x^\star)<0$，则必须有 $\alpha_i^\star=0$；若 $\alpha_i^\star>0$，则必须有 $g_i(x^\star)=0$，说明该约束正好 active。
+
+:::: {.callout-important title="必要性与充分性"}
+在一般非凸问题中，KKT 条件通常只是局部最优解的**一阶必要条件**，还需要一定正则条件才能成立。对于**凸优化问题**，如果目标函数和不等式约束是凸函数、等式约束是仿射函数，并且满足适当的约束资格条件，例如 Slater 条件，那么 KKT 条件**不仅必要，而且充分**。此时满足 KKT 条件的点就是全局最优解。
+::::
+
+## SVM 中的拉格朗日函数
+
+为了把 hard-margin SVM 写成标准形式，将约束改写为
+$$
+g_n(w,b)=1-t_n(w^\top\phi(x_n)+b)\le 0.
+$$
+于是 primal problem 为
+$$
+\min_{w,b}\frac12\|w\|^2
+\quad \text{s.t.}\quad
+g_n(w,b)\le 0.
+$$
+
+对应的拉格朗日函数是
+$$
+L(w,b,\alpha)
+=
+\frac12\|w\|^2
++\sum_{n=1}^N
+\alpha_n
+\left[
+1-t_n(w^\top\phi(x_n)+b)
+\right],
+$$
+其中
+$$
+\alpha_n\ge 0.
+$$
+等价地，也可以写成 Bishop 常用的形式：
+$$
+L(w,b,\alpha)
+=
+\frac12\|w\|^2
+-\sum_{n=1}^N
+\alpha_n
+\{t_n(w^\top\phi(x_n)+b)-1\}.
+$$
+
+## SVM 的 KKT 条件
+
+将一般 KKT 条件应用到 hard-margin SVM，可以得到以下四组条件。
+
+1. Primal feasibility：
+  $$
+  t_n(w^\top\phi(x_n)+b)\ge 1,\qquad n=1,\dots,N.
+  $$
+
+2. Dual feasibility：
+  $$
+  \alpha_n\ge 0,\qquad n=1,\dots,N.
+  $$
+
+3. Stationarity 对 $w$ 求导：
+  $$
+  \frac{\partial L}{\partial w}
+  =
+  w-\sum_{n=1}^N\alpha_n t_n\phi(x_n)=0.
+  $$
+  因此
+  $$
+  w=\sum_{n=1}^N\alpha_n t_n\phi(x_n).
+  $$
+  这个式子非常重要。它说明 **hard-margin SVM 的最优法向量 $w$ 必然落在训练样本特征向量张成的子空间中，因此模型自然进入对偶表示**。  
+  Stationarity 对 $b$ 求导：
+  $$
+  \frac{\partial L}{\partial b}
+  =
+  -\sum_{n=1}^N\alpha_n t_n=0.
+  $$
+  因此
+  $$
+  \sum_{n=1}^N\alpha_n t_n=0.
+  $$
+
+4. Complementary slackness：
+  $$
+  \alpha_n
+  \left[
+  1-t_n(w^\top\phi(x_n)+b)
+  \right]=0.
+  $$
+  也可以写成
+  $$
+  \alpha_n
+  \{t_n(w^\top\phi(x_n)+b)-1\}=0.
+  $$
+
+## KKT 给出全局最优
+
+hard-margin SVM 是一个凸优化问题。目标函数
+
+$$\frac12\|w\|^2$$
+
+是关于 $w$ 的凸函数；约束
+
+$$1-t_n(w^\top\phi(x_n)+b)\le 0$$
+
+是关于 $(w,b)$ 的仿射函数，因此是凸约束。
+
+在线性可分且满足适当正则条件时，强对偶成立，KKT 条件**不仅是必要条件，也是充分条件**。因此，如果某组 $(w,b,\alpha)$ 满足上述 KKT 条件，那么它给出的就是全局最优最大间隔分类器，而不是某个局部最优解。
+
+## Support vectors 的来源
+
+**互补松弛条件**是理解 SVM 稀疏性的关键。令
+$$
+y(x_n)=w^\top\phi(x_n)+b,
+$$
+则有
+$$
+\alpha_n\{t_n y(x_n)-1\}=0.
+$$
+因此，对每个训练样本只能出现两种情况。
+
+如果
+$$
+t_n y(x_n)>1,
+$$
+说明样本位于 margin 外侧，约束没有贴紧。此时必须有
+$$
+\alpha_n=0.
+$$
+**这些点不会出现在最终分类器的核展开式中**。
+
+如果
+$$
+\alpha_n>0,
+$$
+则必须有
+$$
+t_n y(x_n)=1.
+$$
+这些点正好落在 margin boundary 上，它们就是 support vectors。
+
+这说明 SVM 的稀疏性不是额外加入的假设，而是由 KKT 条件自动推出的：**远离决策边界的样本对应 $\alpha_n=0$，不会影响最终预测；只有贴在 margin 上的样本可能拥有非零乘子，并决定最大间隔超平面的位置**。
+
+## 求解 $\alpha$ 与偏置项 $b$
+
+到目前为止，KKT 条件已经说明最优解满足
+$$
+w=\sum_{n=1}^N\alpha_n t_n\phi(x_n),
+$$
+并且
+$$
+\sum_{n=1}^N\alpha_n t_n=0.
+$$
+这说明**我们不需要显式求出 $w$，但仍然需要知道各个 $\alpha_n$**。训练 SVM 的核心，正是求解关于 $\alpha$ 的对偶优化问题。
+
+将 stationarity 条件代回拉格朗日函数，可以消去 $w$ 和 $b$，得到 hard-margin SVM 的对偶问题：
+$$
+\max_{\alpha}
+\sum_{n=1}^N \alpha_n
+-
+\frac12
+\sum_{n=1}^N\sum_{m=1}^N
+\alpha_n\alpha_m t_n t_m k(x_n,x_m)
+$$
+subject to
+$$
+\alpha_n\ge 0,\qquad n=1,\dots,N,
+$$
+and
+$$
+\sum_{n=1}^N\alpha_n t_n=0.
+$$
+
+若令
+$$
+H_{nm}=t_n t_m k(x_n,x_m),
+$$
+则该问题也可以写成更紧凑的二次规划形式：
+$$
+\min_{\alpha}
+\frac12\alpha^\top H\alpha-\mathbf 1^\top\alpha
+$$
+subject to
+$$
+\alpha\ge 0,\qquad t^\top\alpha=0.
+$$
+因此，训练 hard-margin SVM 本质上就是先计算核矩阵 $K_{nm}=k(x_n,x_m)$，再求解这个**带有线性等式约束和非负约束的 quadratic programming problem**。由于合法 kernel 对应的 Gram matrix 是半正定的，$H$ 也是半正定的，所以这是一个**凸二次规划问题**。
+
+实际算法并不是用一个简单闭式公式直接写出所有 $\alpha_n$，而是通过数值优化求解上述二次规划。常见方法包括一般二次规划求解器、active set methods、interior point methods，以及专门用于 SVM 的 sequential minimal optimization。训练完成后，满足 $\alpha_n>0$ 的样本就是 support vectors。
+
+得到 $\alpha_n$ 后，还需要确定偏置项 $b$。对于任意 support vector $x_s$，由于 $\alpha_s>0$，互补松弛条件给出
+$$
+t_s y(x_s)=1.
+$$
+又因为 $t_s\in\{-1,+1\}$，所以上式等价于
+$$
+y(x_s)=t_s.
+$$
+将核形式的判别函数代入，可以得到
+$$
+b
+=
+t_s-\sum_{n=1}^N\alpha_n t_n k(x_n,x_s).
+$$
+由于非 support vectors 的 $\alpha_n=0$，这个求和实际只需要包含 support vectors。
+
+在实际数值计算中，单个 support vector 得到的 $b$ 可能受浮点误差影响，因此通常会对所有 support vectors 求平均。设 support vector 集合为
+$$
+\mathcal S=\{n\mid \alpha_n>0\},
+$$
+则可取
+$$
+b
+=
+\frac{1}{|\mathcal S|}
+\sum_{s\in\mathcal S}
+\left(
+t_s-\sum_{n\in\mathcal S}\alpha_n t_n k(x_n,x_s)
+\right).
+$$
+
+:::: {.callout-important title="训练得到的是什么"}
+在核 SVM 中，训练的直接结果不是显式的 $w$，而是 $\alpha_n$、support vectors 以及偏置项 $b$。其中 $\alpha_n$ 通过求解对偶二次规划得到，$b$ 再由 support vectors 的边界条件恢复。
+::::
+
+## 从 KKT 到核展开与 SVM 预测
+
+由 stationarity 可知，最优法向量可以写成训练样本特征向量的线性组合。因此，分类函数可以转化为核形式：
+$$
+y(x)
+=
+\sum_{n=1}^N
+\alpha_n t_n k(x_n,x)+b.
+$$
+由于非 support vectors 的 $\alpha_n=0$，实际用于预测的判别函数只需要保留 support vectors：
+$$
+y(x)
+=
+\sum_{n\in\mathcal S}
+\alpha_n t_n k(x_n,x)+b.
+$$
+最终类别由
+$$
+\operatorname{sign}(y(x))
+$$
+决定。
+
+这一表达式体现了 SVM 作为 sparse kernel machine 的核心特征：**训练阶段约束来自全部训练样本，但预测阶段只需要计算新样本与 support vectors 之间的核函数**。
+
+:::: {.callout-note title="判别函数不是概率"}
+$y(x)$ 是 signed decision function。它的符号决定分类结果，绝对值可以粗略反映样本离决策边界的远近，但它不是经过校准的类别概率。
+::::
+
+![SVM分类界线示意图](https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/image-1-20260501114428570.webp){#fig-svm-classification}
+
+## 本节小结
+
+线性可分情形下的最大间隔分类器可以按以下逻辑理解：
+
+1. 线性分类器通过 $\operatorname{sign}(w^\top\phi(x)+b)$ 做预测。
+2. 分类正确只要求 $t_n(w^\top\phi(x_n)+b)>0$，但这不能唯一确定一个好的超平面。
+3. functional margin 衡量正确一侧的代数余量，但会随 $w,b$ 的缩放改变。
+4. geometric margin 将 functional margin 除以 $\|w\|$，对应样本到决策边界的真实几何距离。
+5. 最大间隔目标可以直观写成 $\max_{w,b}\min_n t_n(w^\top\phi(x_n)+b)/\|w\|$。
+6. canonical representation 规定最近样本的 functional margin 为 1，从而把最大几何间隔问题转化为最小化 $\frac12\|w\|^2$ 的凸优化问题。
+7. Lagrange multiplier 将约束对最优解的影响编码进拉格朗日函数，KKT 条件刻画约束最优解必须满足的结构。
+8. 对 hard-margin SVM 而言，stationarity 给出 $w=\sum_n\alpha_n t_n\phi(x_n)$，使模型自然进入对偶表示。
+9. Complementary slackness 给出 support vectors 的判定条件：只有落在 margin boundary 上的样本可能拥有非零 $\alpha_n$。
+10. $\alpha_n$ 通过求解 hard-margin SVM 的对偶二次规划问题得到，偏置项 $b$ 再由 support vectors 的边界条件恢复。
+11. 训练完成后，可以用 $\sum_{n\in\mathcal S}\alpha_n t_n k(x_n,x)+b$ 对新样本进行预测。
+12. 因为非 support vectors 的 $\alpha_n=0$，最终分类器只依赖少数 support vectors，这就是 SVM 作为 sparse kernel machine 的稀疏性来源。
+
+# Soft-Margin SVM
+
+## 从硬约束到无限惩罚损失
+
+在 hard-margin SVM 中，我们要求所有训练样本都满足
+$$
+t_n y(x_n)\ge 1,\qquad n=1,\dots,N.
+$$
+这个条件意味着每个样本不仅要被正确分类，还必须位于 margin boundary 上或 margin 外侧。因此，hard-margin SVM 可以写成如下约束优化问题：
+$$
+\min_{w,b}\frac12\|w\|^2
+$$
+subject to
+$$
+t_n y(x_n)\ge 1,\qquad n=1,\dots,N.
+$$
+只有满足全部 margin 约束的 $(w,b)$ 才属于可行集合；任何违反约束的 $(w,b)$ 都不能作为候选解。
+
+在书（公式7.19）中，Bishop 把这个约束优化问题改写成一种损失函数视角。定义
+$$
+E_\infty(z)=
+\begin{cases}
+0, & z\ge 0,\\
+\infty, & z<0.
+\end{cases}
+$$
+并令
+$$
+z=t_n y(x_n)-1.
+$$
+于是当
+$$
+t_n y(x_n)\ge 1
+$$
+时，有 $z\ge 0$，该样本损失为 0；当
+$$
+t_n y(x_n)<1
+$$
+时，有 $z<0$，该样本损失为 $\infty$。
+
+因此，
+$$
+\sum_{n=1}^N E_\infty(t_n y(x_n)-1)
+$$
+可以看作一个可行性检查项。若所有样本都满足 hard-margin 约束，这一项等于 0；只要存在任意一个样本违反约束，这一项就变成 $\infty$。
+
+由此，hard-margin SVM 可以等价地写成
+$$
+\sum_{n=1}^{N}E_\infty(t_ny(x_n)-1)+\lambda\|w\|^2.
+$${#eq-hard-margin-loss-function}
+
+这个表达式的含义是：先通过 $E_\infty$ 排除所有违反 margin 约束的解，再在剩余可行解中最小化 $\lambda\|w\|^2$。只要 $\lambda>0$，最小化 $\lambda\|w\|^2$ 与最小化 $\frac12\|w\|^2$ 在最优解位置上是等价的；系数差异只改变目标函数数值的尺度，不改变最大间隔超平面。
+
+:::: {.callout-important title="公式 7.19 的作用"}
+@eq-hard-margin-loss-function 不是引入一个新模型，而是把 hard-margin SVM 从“带硬约束的优化问题”改写成“损失函数 + 正则化”的形式。硬约束被编码为无限惩罚损失：满足 margin 时损失为 0，违反 margin 时损失为 $\infty$。
+::::
+
+## Slack variables 与 soft-margin SVM
+
+hard-margin SVM 要求所有训练样本都满足
+$$
+t_n y(x_n)\ge 1.
+$$
+这一要求在真实数据中往往过于严格。类别分布可能本身发生重叠，训练集中也可能存在噪声点或异常点。此时，**如果仍然强制所有样本都位于 margin 外侧，优化问题可能无解；即使可解，也可能因为少数异常点而得到非常不稳定的决策边界**。
+
+因此，解决以上问题的核心思想是引入 **slack variables（松弛变量）**：
+$$
+\xi_n\ge 0.
+$$
+原来的 margin 约束被放松为
+$$
+t_n y(x_n)\ge 1-\xi_n.
+$$
+这里 $\xi_n$ 表示第 $n$ 个样本对 margin 约束的违反程度。根据 $\xi_n$ 的大小，可以区分三种情况：
+
+| 条件 | 样本位置 | 分类情况 |
+|---|---|---|
+| $\xi_n=0$ | 在 margin 外侧或正好在 margin boundary 上 | 正确分类 |
+| $0<\xi_n\le 1$ | 进入 margin 内部，但仍在决策边界正确一侧 | 正确分类，但 margin 不足 |
+| $\xi_n>1$ | 越过决策边界 | 错误分类 |
+
+![带有松弛变量的最大间隔分类示意图](https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/image-1-20260501151317888.webp){#fig-slack-variable}
+
+之所以 $\xi_n>1$ 对应可能错分，是因为当 $\xi_n=1$ 时，约束右侧变成 0：
+$$
+t_n y(x_n)\ge 0.
+$$
+这允许样本刚好落在决策边界上。若 $\xi_n>1$，右侧小于 0，样本便可能满足 $t_n y(x_n)<0$，即被分到错误一侧。
+
+引入 slack variables 后，优化问题变成（这个松弛变量尽可能要小）
+$$
+\min_{w,b,\xi}
+\frac12\|w\|^2+C\sum_{n=1}^N\xi_n
+$$
+subject to
+$$
+t_n y(x_n)\ge 1-\xi_n,
+$$
+and
+$$
+\xi_n\ge 0.
+$$
+其中 $C>0$ 控制 margin 宽度和 margin violation 之间的权衡。**$C$ 越大，违反 margin 的代价越高，模型越接近 hard-margin SVM；$C$ 越小，模型越愿意接受部分违反 margin 的样本，以换取更大的间隔和更平滑的边界**。
+
+:::: {.callout-note title="$C$ 的作用"}
+$C$ 是 soft-margin SVM 的正则化参数。它不是 kernel 参数，而是控制“训练样本违反 margin 的代价”。在实践中，$C$ 通常需要通过验证集或交叉验证选择。
+::::
+
+## Hinge loss 视角
+
+对于固定的 $w,b$，最优的 slack variable 可以写成
+$$
+\xi_n=\max(0,1-t_n y(x_n)).
+$$
+将其代回 soft-margin SVM 的目标函数，可以得到
+$$
+\min_{w,b}
+\frac12\|w\|^2+
+C\sum_{n=1}^N
+\max(0,1-t_n y(x_n)).
+$$ {#eq-hinge-loss}
+
+其中
+$$
+\max(0,1-t_n y(x_n))
+$$
+就是 **hinge loss**。
+
+hinge loss 的行为可以直接从 margin 值 $t_n y(x_n)$ 看出：
+
+| 条件 | hinge loss | 含义 |
+|---|---|---|
+| $t_n y(x_n)\ge 1$ | 0 | 样本满足 margin 要求 |
+| $0<t_n y(x_n)<1$ | $1-t_n y(x_n)$ | 样本分类正确，但 margin 不足 |
+| $t_n y(x_n)<0$ | 大于 1 | 样本被错分 |
+
+因此，soft-margin SVM 可以看 @eq-hard-margin-loss-function 的自然放松：**hard-margin 使用 $E_\infty$ 对 margin violation 施加无限惩罚**，而 **soft-margin 使用 hinge loss 对违反程度施加有限线性惩罚**。
+
+## Soft-margin SVM 的对偶形式
+
+为了得到 soft-margin SVM 的对偶形式，需要像 hard-margin 情形一样引入拉格朗日乘子。这里有两组不等式约束：
+$$
+t_n y(x_n)-1+\xi_n\ge 0
+$$
+以及
+$$
+\xi_n\ge 0.
+$$
+因此分别引入乘子
+$$
+\alpha_n\ge 0,\qquad \mu_n\ge 0.
+$$
+对应的拉格朗日函数为
+$$
+L(w,b,\xi,\alpha,\mu)
+=
+\frac12\|w\|^2
++C\sum_{n=1}^N\xi_n
+-\sum_{n=1}^N\alpha_n\{t_n y(x_n)-1+\xi_n\}
+-\sum_{n=1}^N\mu_n\xi_n.
+$$
+其中 $\alpha_n$ 对应放松后的 margin 约束，$\mu_n$ 对应 slack variable 的非负约束。
+
+对应的 KKT 条件为
+$$
+\alpha_n\ge 0,
+$$
+$$
+t_n y(x_n)-1+\xi_n\ge 0,
+$$
+$$
+\alpha_n\{t_n y(x_n)-1+\xi_n\}=0,
+$$
+$$
+\mu_n\ge 0,
+$$
+$$
+\xi_n\ge 0,
+$$
+$$
+\mu_n\xi_n=0.
+$$
+
+接下来对 $w,b,\xi_n$ 分别求 stationarity 条件。对 $w$ 求导得到
+$$
+w=\sum_{n=1}^N\alpha_n t_n\phi(x_n).
+$$
+对 $b$ 求导得到
+$$
+\sum_{n=1}^N\alpha_n t_n=0.
+$$
+对 $\xi_n$ 求导得到
+$$
+C-\alpha_n-\mu_n=0,
+$$
+也就是
+$$
+\alpha_n=C-\mu_n.
+$$
+由于 $\mu_n\ge 0$，可得 $\alpha_n\le C$；再结合 $\alpha_n\ge 0$，得到 box constraint：
+$$
+0\le \alpha_n\le C.
+$$
+
+将 $w,b,\xi$ 消去后，soft-margin SVM 的对偶目标函数与 hard-margin 情形相同：
+$$
+\max_\alpha
+\sum_{n=1}^N\alpha_n - 
+\frac12
+\sum_{n=1}^N\sum_{m=1}^N
+\alpha_n\alpha_m t_n t_m k(x_n,x_m)
+$$
+subject to
+$$
+0\le \alpha_n\le C,
+$$
+and
+$$
+\sum_{n=1}^N\alpha_n t_n=0.
+$$
+与 hard-margin SVM 相比，关键变化是原来的
+$$
+\alpha_n\ge 0
+$$
+变成了
+$$
+0\le \alpha_n\le C.
+$$
+这个上界来自 slack variables 的线性惩罚项。它意味着每个训练样本对最终解的影响受到 $C$ 的限制。
+
+soft-margin SVM 中，不同 $\alpha_n$ 的取值对应不同类型的训练样本：
+
+| $\alpha_n$ | 样本状态 |
+|---|---|
+| $\alpha_n=0$ | 位于 margin 外侧，不影响最终模型 |
+| $0<\alpha_n<C$ | 正好位于 margin boundary 上 |
+| $\alpha_n=C$ | 位于 margin 内部或被错分 |
+
+更严格地说，若 $\alpha_n=0$，该样本不出现在最终预测函数中；若 $\alpha_n>0$，由互补松弛条件可知
+$$
+t_n y(x_n)=1-\xi_n.
+$$
+这些点构成 support vectors。若进一步有 $0<\alpha_n<C$，则由
+$$
+\alpha_n=C-\mu_n
+$$
+可知 $\mu_n>0$，再由 $\mu_n\xi_n=0$ 得到 $\xi_n=0$，因此这些点正好位于 margin boundary 上。若 $\alpha_n=C$，则 $\mu_n=0$，此时 $\xi_n$ 可以大于 0，所以这些点可能位于 margin 内部，也可能被错分。
+
+soft-margin 情形下求偏置项 $b$ 时，需要比 hard-margin 更小心。因为 $\alpha_n=C$ 的 support vectors 可能有 $\xi_n>0$，不一定满足 $t_n y(x_n)=1$。**因此应使用满足**
+**$$
+0<\alpha_n<C
+$$**
+**的点。设这类点的索引集合为 $\mathcal M$，所有 support vectors 的索引集合为 $\mathcal S$。** 对任意 $n\in\mathcal M$，有 $\xi_n=0$，因此
+$$
+t_n y(x_n)=1.
+$$
+代入核展开式得到
+$$
+t_n\left(
+\sum_{m\in\mathcal S}\alpha_m t_m k(x_n,x_m)+b
+\right)=1.
+$$
+数值上通常对所有 $\mathcal M$ 中的点求平均：
+$$
+b=
+\frac{1}{|\mathcal M|}
+\sum_{n\in\mathcal M}
+\left(
+t_n-\sum_{m\in\mathcal S}\alpha_m t_m k(x_n,x_m)
+\right).
+$$
+
+:::: {.callout-warning title="soft-margin 中求 $b$ 的细节"}
+hard-margin 中所有 support vectors 都满足 $t_ny(x_n)=1$；soft-margin 中只有 $0<\alpha_n<C$ 的 support vectors 保证满足这一等式。因此，估计 $b$ 时应使用 margin support vectors，而不是所有 $\alpha_n>0$ 的样本。
+::::
+
+
+:::: {.callout-note title="不同的 support vectors 提供不同的权重"}
+$\alpha_n$可以看成是 support vector 在预测时提供的权重。可以看到，在margin内部的support
+vector 提供更大的权重。
+::::
+
+
+
+## $\nu$-SVM
+
+PRML 还介绍了 $\nu$-SVM，这是 Schölkopf 等人提出的等价形式。它用参数 $\nu$ 取代 $C$，对偶问题为最大化
+$$
+\tilde L(\alpha)=-\frac12
+\sum_{n=1}^N\sum_{m=1}^N
+\alpha_n\alpha_m t_n t_m k(x_n,x_m)
+$$
+subject to
+$$
+0\le \alpha_n\le \frac1N,
+$$
+$$
+\sum_{n=1}^N\alpha_n t_n=0,
+$$
+and
+$$
+\sum_{n=1}^N\alpha_n\ge \nu.
+$$
+$\nu$ 的优点是解释更直接：**它既是 margin errors 比例的上界，也是 support vectors 比例的下界**。这里 margin errors 指 $\xi_n>0$ 的点，也就是位于 margin boundary 错误一侧的样本；它们可能仍然分类正确但 margin 不足，也可能已经被错分。
+
+## 与 logistic regression 的关系
+
+我们现在把 soft-margin SVM 放回更一般的“损失函数 + 正则化”框架中，并与logistic regression的交叉熵损失进行比较。这样看时，**SVM 不只是一个带约束的最大间隔分类器，也可以被理解为在最小化一种特殊的分类损失**。
+
+对公式 @eq-hinge-loss 进行简单变换（除以$C$），可以得到如下正则化经验风险形式：
+$$
+\sum_{n=1}^{N}E_{\mathrm{SV}}(y_nt_n)+\lambda\|w\|^2,
+$$
+其中
+$$
+\lambda=(2C)^{-1},
+$$
+而
+$$
+E_{\mathrm{SV}}(y_nt_n)=[1-y_nt_n]_+.
+$$
+这里 $[z]_+$ 表示 positive part，也就是
+$$
+[z]_+=\max(0,z).
+$$
+所以 SVM 可以看作是使用 hinge loss的“logistics regression”：
+$$
+E_{\mathrm{SV}}(z)=\max(0,1-z),
+\qquad z=y_nt_n.
+$$
+
+:::: {.callout-important title="hinge loss 的核心形状"}
+当 $y_nt_n\ge 1$ 时，hinge loss 为 0，样本不会继续贡献损失；当 $y_nt_n<1$ 时，损失随 margin violation 线性增加。这个“超过 margin 后完全变平”的区域，是 SVM 得到 sparse solution 的关键原因之一。
+::::
+
+
+
+从分类误差角度看，真正想最小化的是 misclassification error：
+$$
+\mathbb I(y_nt_n<0).
+$$
+但这个 0-1 损失不连续、不可导，直接优化很困难。hinge loss 可以看成它的一个连续凸替代：它不仅惩罚错分样本，也惩罚虽然分对但离 decision boundary 太近的样本。
+
+为了和 logistic regression 对齐，Bishop 将 logistic regression 的标签也改写成
+$$
+t\in\{-1,+1\}.
+$$
+若模型输出仍记为
+$$
+y(x)=w^\top\phi(x)+b,
+$$
+则
+$$
+p(t=1\mid y)=\sigma(y),
+$$
+并且利用 sigmoid 的对称性可得
+$$
+p(t=-1\mid y)=\sigma(-y).
+$$
+因此两种标签可以合并写成
+$$
+p(t\mid y)=\sigma(yt).
+$$
+对似然取负对数，并加上二次正则项，就得到 logistic regression 的正则化目标：
+$$
+\sum_{n=1}^{N}E_{\mathrm{LR}}(y_nt_n)+\lambda\|w\|^2,
+$$
+其中
+$$
+E_{\mathrm{LR}}(yt)=\ln(1+\exp(-yt)).
+$$
+
+hinge loss 与 logistic loss 都可以看成 0-1 分类误差的连续近似。二者的关键差别在于：
+
+| 损失函数 | 形式 | 对大 margin 正确样本的处理 | 结果倾向 |
+|---|---|---|---|
+| Hinge loss | $\max(0,1-yt)$ | 当 $yt\ge 1$ 后损失为 0 | 只让边界附近样本继续影响解，更容易稀疏 |
+| Logistic loss | $\ln(1+\exp(-yt))$ | 始终为正，只是随 $yt$ 增大而趋近 0 | 所有样本原则上都会继续贡献梯度 |
+
+![各种损失函数的对比](https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/image-2.webp){#fig-loss-functions}
+
+上图展示对比了所有的损失函数。平方误差也可以用于分类，但它有一个明显问题：**对于已经正确分类且离边界很远的样本，平方误差反而会继续增大权重。这样模型可能把大量精力花在“已经分得很对”的点上，而不是错分点或边界附近的点上**。如果目标是降低分类错误率，那么更合理的分类损失应该随 $yt$ 增大而单调下降。
+
+:::: {.callout-note title="这一小节的要点"}
+soft-margin SVM 可以写成 hinge loss 加二次正则项；logistic regression 可以写成 logistic loss 加二次正则项。二者都在用连续损失近似 0-1 分类误差，但 hinge loss 在 $yt\ge 1$ 后变为 0，这使远离边界的样本不再影响目标函数，也解释了 SVM 的稀疏性。logistic loss 则更自然地服务于概率建模。平方误差虽然连续，但会过度关注大 margin 的正确样本，因此并不适合作为分类误差的直接替代。
+::::
+
+# 多分类 SVM
+
+SVM 本质上是一个 two-class classifier。它直接学习的是二分类决策函数
+$$
+y(x)=w^\top\phi(x)+b,
+$$
+然后通过符号判断类别。现实问题却经常有
+$$
+K>2
+$$
+个类别，因此有一个问题是：**如何用多个二分类 SVM 组合出一个多分类分类器？**
+
+## One-versus-the-rest
+
+最常见的做法之一是 **one-versus-the-rest**。这个方法简单、工程上常用，但有几个重要限制。
+
+| 问题 | 含义 |
+|---|---|
+| 决策可能不一致 | 多个二分类器可能同时认为样本属于自己的 positive class |
+| 分数尺度不可比 | 不同 $y_k(x)$ 来自不同训练任务，直接比较大小并没有严格保证 |
+| 训练集不平衡 | 每个分类器通常有少数 positive examples 和大量 negative examples |
+| 破坏类别对称性 | 原本对称的 $K$ 类问题，被拆成了 $K$ 个不对称的二分类问题 |
+
+例如，如果有 10 个类别且每类样本数相同，那么 one-versus-the-rest 中每个二分类器的训练集大约是 10% positive examples 和 90% negative examples。这种类别比例会让每个子问题都变得不平衡。为了缓解one-versus-the-rest 中正负类别不对称的问题，Bishop 还提到 Lee et al. 的一个变体：把正类 target 设为 $+1$，把负类 target 设为
+$$
+-\frac{1}{K-1}.
+$$
+这样做可以部分解决以上问题。
+
+## Joint Multi-Class SVM
+
+另一条路线是直接为 $K$ 个分类器定义一个统一目标函数，而不是把多分类问题拆成互相独立的二分类问题。Weston and Watkins 提出的形式，就是同时训练所有 $K$ 个 SVM，并让正确类别相对于其他类别都保持 margin。
+
+这种方法概念上更统一，但训练代价更高。若 one-versus-the-rest 相当于求解 $K$ 个规模为 $N$ 的优化问题，整体代价可粗略记为
+$$
+O(KN^2).
+$$
+而同时训练时，需要求解一个规模约为
+$$
+(K-1)N
+$$
+的单一优化问题，代价可达到
+$$
+O(K^2N^2).
+$$
+所以它减少了启发式拼接的味道，却牺牲了训练效率。
+
+## One-versus-one
+
+另一种常用方法是 **one-versus-one**。它为每一对类别训练一个二分类 SVM，因此一共需要
+$$
+\frac{K(K-1)}{2}
+$$
+个分类器。预测时，每个 pairwise classifier 投一票，最后选择票数最多的类别。
+
+这种方法的优点是每个子问题只区分两个类别，任务更局部；缺点是分类器数量随 $K$ 二次增长。类别很多时，训练时间和预测时的计算量都会明显增加。同时，简单投票仍然可能出现 ambiguity，例如多个类别票数相同，或者局部两两决策无法组成一个全局一致的分类结果。
+
+## DAGSVM
+
+为了降低 one-versus-one 在预测阶段的计算量，Platt et al. 提出了 **DAGSVM**。它仍然拥有
+$$
+\frac{K(K-1)}{2}
+$$
+个 pairwise classifiers，但把这些分类器组织成一个 directed acyclic graph。
+
+对一个新样本预测时，不需要评估全部 pairwise classifiers，而是沿着图中的某条路径逐步排除类别。对于 $K$ 个类别，只需要评估
+$$
+K-1
+$$
+个二分类器。
+
+:::: {.callout-note title="DAGSVM 的定位"}
+DAGSVM 没有减少需要训练的 pairwise classifiers 数量，它减少的是 test-time evaluation 的数量。它把“所有两两投票”改成了“沿着有向无环图逐步淘汰”。
+::::
+
+## Error-correcting output codes
+
+还有一种更一般的思路是 **error-correcting output codes**。它不只把类别两两拆分，也不只做 one-versus-the-rest，而是用多个二分类器对类别集合进行更一般的划分。
+
+可以把每个类别看成一个 codeword：这个 codeword 由多个二分类器的理想输出组成。预测新样本时，先得到一串二分类输出，再通过 decoding scheme 找到最接近的类别 codeword。
+
+这种方法的好处是具有一定纠错能力。即使某几个二分类器输出错误，只要整体编码仍然更接近正确类别，最终预测仍可能正确。因此它可以缓解 individual classifiers 的错误和 ambiguity。
+
+## 实践上的取舍
+
+Bishop 对多分类 SVM 的态度相当谨慎：**SVM 如何自然地扩展到多分类，本身仍然不是一个完全干净的问题**。不同方案各有代价：
+
+| 方法 | 训练数量或规模 | 主要优点 | 主要问题 |
+|---|---:|---|---|
+| One-versus-the-rest | $K$ 个分类器 | 简单，实践中常用 | 分数尺度不可比，训练集不平衡 |
+| Joint multiclass SVM | 一个较大的联合问题 | 目标更统一 | 训练代价高 |
+| One-versus-one | $K(K-1)/2$ 个分类器 | 每个子问题更局部 | 训练和预测开销随 $K$ 二次增长 |
+| DAGSVM | 训练 $K(K-1)/2$ 个，预测评估 $K-1$ 个 | 降低预测计算量 | 路径依赖，仍需训练大量分类器 |
+| Output codes | 多个编码分类器 | 有纠错能力 | 需要设计编码和解码规则 |
+
+尽管 one-versus-the-rest 有明显的 ad-hoc 成分和实践限制，它仍然是应用中最广泛使用的方案之一。原因并不神秘：它简单、容易实现，也容易接到已有的二分类 SVM 训练器上。
+
+# One-class SVM
+
+它处理的不是多分类问题，而是一种无监督学习问题，和 density estimation 有关。one-class SVM 并不直接估计完整概率密度
+$$
+p(x).
+$$
+它的目标更弱一些：**找到一个平滑边界，围住数据分布中的高密度区域**。这个边界可以理解为某个 density quantile：预先给定一个介于 0 和 1 之间的概率值，希望从数据分布中抽出的点有相应比例落在边界内部。
+
+Bishop 提到两类思路：
+
+| 方法 | 几何直觉 |
+|---|---|
+| Schölkopf et al. | 在特征空间中找一个超平面，把除固定比例 $\nu$ 外的数据与原点分开，同时最大化离原点的 margin |
+| Tax and Duin | 在特征空间中找一个尽可能小的球，允许有比例 $\nu$ 的点落在球外 |
+
+对于只依赖差值的 kernel，例如满足
+$$
+k(x,x')=g(x-x')
+$$
+的平移不变核，这两种 one-class SVM 算法是等价的。
+
+
+# SVM 回归
+
+本节内容旨在将 SVM 从分类问题扩展到 regression problem，同时保留 sparse solution 的性质。分类 SVM 的稀疏性来自 hinge loss 的平坦区域：样本只要位于 margin 外侧，就不再贡献损失。回归版 SVM 也采用类似思想：**只要预测值和目标值的误差落在一个允许范围内，就把误差视为 0**。
+
+参考 @eq-hinge-loss ，普通线性回归常用平方误差加二次正则项：
+$$
+\frac12\sum_{n=1}^{N}(y_n-t_n)^2+\frac{\lambda}{2}\|w\|^2.
+$$
+平方误差的问题是，每个样本都会持续影响模型，即使预测已经足够接近目标值。为了得到稀疏解，support vector regression 用 $\epsilon$-insensitive error 替代平方误差。
+
+## $\epsilon$-insensitive loss
+
+$\epsilon$-insensitive loss 定义为
+$$
+E_\epsilon(y(x)-t)=
+\begin{cases}
+0, & |y(x)-t|<\epsilon,\\
+|y(x)-t|-\epsilon, & \text{otherwise}.
+\end{cases}
+$${#eq-insensitive-loss}
+它的含义是：如果预测误差在
+$$
+[-\epsilon,\epsilon]
+$$
+范围内，就不惩罚；只有误差超过这个范围，才对超出的部分施加线性惩罚。
+
+![$\epsilon$-不敏感损失函数](https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/image-3-20260504105120867.webp){#fig-epsilon-insensitivity-error}
+
+因此，SVM regression 的目标函数可以写成
+$$
+C\sum_{n=1}^{N}E_\epsilon(y(x_n)-t_n)+\frac12\|w\|^2.
+$$
+这里 $C$ 仍然是 inverse regularization parameter，控制误差惩罚和模型平滑度之间的权衡。$C$ 越大，模型越不愿意让样本落在 $\epsilon$-tube 外；$C$ 越小，模型越愿意接受更大的训练误差，以换取更平滑的函数。
+
+![$\epsilon$-tube 示意图](https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/2026-05-04_10-51-45-20260504105207443.webp){#fig-epsilon-tube}
+
+:::: {.callout-important title="$\epsilon$-tube 的直觉"}
+SVM 回归不是让曲线尽可能穿过每个数据点，而是围绕预测函数 $y(x)$ 建立一个宽度为 $2\epsilon$ 的 tube。落在 tube 内的点被认为“已经足够好”，不会继续推动模型；落在 tube 边界上或 tube 外的点，才可能成为 support vectors。
+::::
+
+
+:::: {.callout-tip title="稳健预测"}
+现在我们有个问题，我们希望预测时有更强的稳健性，并且让其对随机误差不那么敏感。可以借用 @eq-insensitive-loss 的思想，修改 loss function 实现。
+::::
+
+
+## Slack variables
+
+为了把 $\epsilon$-insensitive loss 写成约束优化形式，每个样本需要两个 slack variables：
+$$
+\xi_n\ge 0,\qquad \hat{\xi}_n\ge 0.
+$$
+其中 $\xi_n$ 对应目标值高于 tube 上边界的情形：
+$$
+t_n>y(x_n)+\epsilon,
+$$
+而 $\hat{\xi}_n$ 对应目标值低于 tube 下边界的情形：
+$$
+t_n<y(x_n)-\epsilon.
+$$
+
+若令 $y_n=y(x_n)$，样本位于 $\epsilon$-tube 内的条件是
+$$
+y_n-\epsilon\le t_n\le y_n+\epsilon.
+$$
+引入 slack variables 后，允许样本越出 tube，但越出的距离要进入目标函数：
+$$
+t_n\le y(x_n)+\epsilon+\xi_n,
+$$
+$$
+t_n\ge y(x_n)-\epsilon-\hat{\xi}_n.
+$$
+于是 support vector regression 的 primal problem 为
+
+$$
+\min_{w,b,\xi,\hat{\xi}}
+C\sum_{n=1}^{N}(\xi_n+\hat{\xi}_n)
++\frac12\|w\|^2.
+$$
+
+subject to
+$$
+t_n\le y(x_n)+\epsilon+\xi_n,
+$$
+$$
+t_n\ge y(x_n)-\epsilon-\hat{\xi}_n,
+$$
+and
+$$
+\xi_n\ge 0,\qquad \hat{\xi}_n\ge 0.
+$$
+
+这个形式和 soft-margin SVM 非常平行：$\frac12\|w\|^2$ 希望函数平滑，$C\sum_n(\xi_n+\hat{\xi}_n)$ 惩罚落在 tube 外的点。区别在于，分类问题只有“margin 不够或错分”这一种违反方式；回归问题有上下两个方向的误差，所以需要两组 slack variables。
+
+## 对偶形式
+
+和分类 SVM 一样，SVM 回归也可以通过 Lagrange multipliers 转成对偶问题。对两组 tube 约束引入
+$$
+a_n\ge 0,\qquad \hat a_n\ge 0,
+$$
+对 slack variables 的非负约束引入
+$$
+\mu_n\ge 0,\qquad \hat\mu_n\ge 0.
+$$
+
+对应的拉格朗日函数为
+$$
+\begin{aligned}
+L
+=&
+\frac12\|w\|^2
++C\sum_{n=1}^N(\xi_n+\hat{\xi}_n)
+-\sum_{n=1}^N(\mu_n\xi_n+\hat\mu_n\hat{\xi}_n)\\
+&-\sum_{n=1}^N a_n\{\epsilon+\xi_n+y(x_n)-t_n\}\\
+&-\sum_{n=1}^N \hat a_n\{\epsilon+\hat{\xi}_n-y(x_n)+t_n\}.
+\end{aligned}
+$$
+
+这里第一组大括号对应
+$$
+\epsilon+\xi_n+y(x_n)-t_n\ge 0,
+$$
+也就是目标值超过 tube 上边界时的约束；第二组大括号对应
+$$
+\epsilon+\hat{\xi}_n-y(x_n)+t_n\ge 0,
+$$
+也就是目标值低于 tube 下边界时的约束。
+
+对 $w,b,\xi_n,\hat{\xi}_n$ 分别求 stationarity，可得
+$$
+w=\sum_{n=1}^{N}(a_n-\hat a_n)\phi(x_n),
+$$
+$$
+\sum_{n=1}^{N}(a_n-\hat a_n)=0,
+$$
+$$
+C-a_n-\mu_n=0,
+$$
+$$
+C-\hat a_n-\hat\mu_n=0.
+$$
+
+由于 $\mu_n,\hat\mu_n\ge 0$，最后两条条件给出 box constraints：
+$$
+0\le a_n\le C,\qquad 0\le \hat a_n\le C.
+$$
+
+消去 primal variables 后，对偶问题是最大化
+$$
+\begin{aligned}
+\tilde L(a,\hat a)
+=&
+-\frac12
+\sum_{n=1}^{N}\sum_{m=1}^{N}
+(a_n-\hat a_n)(a_m-\hat a_m)k(x_n,x_m)\\
+&-\epsilon\sum_{n=1}^{N}(a_n+\hat a_n)
++\sum_{n=1}^{N}(a_n-\hat a_n)t_n,
+\end{aligned}
+$$
+subject to
+$$
+0\le a_n\le C,\qquad 0\le \hat a_n\le C,
+$$
+and
+$$
+\sum_{n=1}^{N}(a_n-\hat a_n)=0.
+$$
+
+训练完成后，对新输入的预测为
+$$
+y(x)=\sum_{n=1}^{N}(a_n-\hat a_n)k(x,x_n)+b.
+$$
+这和分类 SVM 一样，只依赖核函数；区别在于分类中的系数是 $\alpha_n t_n$，而回归中的系数是
+$$
+a_n-\hat a_n.
+$$
+
+## KKT 条件与 support vectors
+
+SVM 回归中的 KKT 互补松弛条件包括
+$$
+a_n\{\epsilon+\xi_n+y(x_n)-t_n\}=0,
+$$
+$$
+\hat a_n\{\epsilon+\hat{\xi}_n-y(x_n)+t_n\}=0,
+$$
+$$
+(C-a_n)\xi_n=0,
+$$
+$$
+(C-\hat a_n)\hat{\xi}_n=0.
+$$
+
+这些条件可以读出 support vectors 的来源：
+
+| 样本位置 | 系数状态 | 是否影响预测 |
+|---|---|---|
+| 在 $\epsilon$-tube 内部 | $a_n=\hat a_n=0$ | 不影响 |
+| 在 tube 上边界或上方 | 可能有 $a_n\ne 0$ | 影响 |
+| 在 tube 下边界或下方 | 可能有 $\hat a_n\ne 0$ | 影响 |
+
+更具体地说，若样本严格落在 $\epsilon$-tube 内，则两组 tube 约束都有松弛余量，因此互补松弛迫使
+$$
+a_n=\hat a_n=0.
+$$
+这些点不会出现在最终核展开中。若 $a_n>0$，则第一条 tube 约束必须取等号，说明样本位于上边界或上方；若 $\hat a_n>0$，则第二条 tube 约束必须取等号，说明样本位于下边界或下方。
+
+由于 $\epsilon>0$，同一个样本不可能同时位于 tube 的上边界和下边界，所以对于每个 $x_n$，$a_n$ 和 $\hat a_n$ 至少有一个为 0，也可能两个都为 0。
+
+这就解释了 SVM regression 的稀疏性：**tube 内的样本全部被忽略，只有落在 tube 边界上或 tube 外的样本会出现在最终核展开中**。这些点就是 regression setting 下的 support vectors。
+
+## 偏置项 $b$
+
+偏置项 $b$ 可以由 tube 边界上的 support vectors 恢复。若某个样本满足
+$$
+0<a_n<C,
+$$
+则由 $(C-a_n)\xi_n=0$ 可知 $\xi_n=0$。再由
+$$
+a_n\{\epsilon+\xi_n+y(x_n)-t_n\}=0
+$$
+可得
+$$
+\epsilon+y(x_n)-t_n=0.
+$$
+代入核展开式，得到
+$$
+b
+=t_n-\epsilon-\sum_{m=1}^{N}(a_m-\hat a_m)k(x_n,x_m).
+$$
+
+类似地，若某个样本满足
+$$
+0<\hat a_n<C,
+$$
+则 $\hat{\xi}_n=0$，并且
+$$
+\epsilon-y(x_n)+t_n=0,
+$$
+从而
+$$
+b
+=t_n+\epsilon-\sum_{m=1}^{N}(a_m-\hat a_m)k(x_n,x_m).
+$$
+
+实践中可以对所有满足 $0<a_n<C$ 或 $0<\hat a_n<C$ 的样本给出的 $b$ 取平均，以降低数值误差。
+
+:::: {.callout-note title="哪些点适合用来求 $b$"}
+用于恢复 $b$ 的最好是落在 tube 边界上的 support vectors，也就是 $0<a_n<C$ 或 $0<\hat a_n<C$ 的点。若 $a_n=C$ 或 $\hat a_n=C$，样本可能已经落在 tube 外部，对应的 slack variable 不一定为 0，因此不适合直接使用边界等式。
+::::
+
+## $\nu$-SVR
+
+和分类 SVM 类似，SVM 回归也有一个 $\nu$-formulation。它不直接固定 $\epsilon$，而是引入参数 $\nu$ 来控制 tube 宽度与 support vectors 数量之间的关系。对应的对偶问题可以写成最大化
+$$
+\begin{aligned}
+\tilde L(a,\hat a)
+=&
+-\frac12
+\sum_{n=1}^{N}\sum_{m=1}^{N}
+(a_n-\hat a_n)(a_m-\hat a_m)k(x_n,x_m)\\
+&+\sum_{n=1}^{N}(a_n-\hat a_n)t_n,
+\end{aligned}
+$$
+subject to
+$$
+0\le a_n\le \frac{C}{N},
+$$
+$$
+0\le \hat a_n\le \frac{C}{N},
+$$
+$$
+\sum_{n=1}^{N}(a_n-\hat a_n)=0,
+$$
+and
+$$
+\sum_{n=1}^{N}(a_n+\hat a_n)\le \nu C.
+$$
+
+这个形式的好处是 **$\nu$ 的解释更直观**。它会约束落在 $\epsilon$-tube 外的数据比例，并同时给出 support vectors 比例的下界。更精确地说，在适当条件下，tube 外的数据点至多约为 $\nu N$ 个，而 support vectors 至少约为 $\nu N$ 个。也就是说，$\nu$ 直接控制“允许多少点真的违反 tube”以及“至少有多少点参与决定函数”。
+
+
+![$\nu$-SVM回归示意图](https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/nu-svm-reg-20260513-110745.png){#fig-nu-svm-reg}
+
+上图例子展示了用 $\nu$-SVR 处理一维 sinusoidal regression。红色曲线是预测函数，阴影区域对应 $\epsilon$-insensitive tube；落在 tube 内部的样本不会影响最终模型，落在边界上或外部的样本成为 support vectors。图中也能看到，SVR 学到的不是穿过所有点的插值曲线，而是在误差容忍带内寻找尽可能平滑、稀疏的函数。
+
+:::: {.callout-important title="SVM 回归的核心"}
+SVR 的关键不是把分类标签换成连续目标值那么简单，而是把最大间隔思想改写成一个“误差容忍带”：tube 内的误差被视为无关紧要，tube 外的误差才被线性惩罚。正是这个平坦区域使得大量样本的 $a_n=\hat a_n=0$，从而得到 sparse kernel expansion。
+::::
+
+## 本节小结
+
+SVM 回归可以按以下逻辑理解：
+
+1. 使用 $\epsilon$-insensitive loss 代替平方误差，使 tube 内误差不产生损失。
+2. 每个样本需要两组 slack variables，分别处理目标值高于上边界和低于下边界的情况。
+3. Primal problem 在函数平滑性 $\frac12\|w\|^2$ 和 tube violation $\sum_n(\xi_n+\hat{\xi}_n)$ 之间权衡。
+4. 对偶形式中的预测函数为 $\sum_n(a_n-\hat a_n)k(x,x_n)+b$。
+5. Tube 内部样本满足 $a_n=\hat a_n=0$，不会参与预测。
+6. 只有 tube 边界上或 tube 外的点成为 regression support vectors。
+7. 偏置项 $b$ 应由满足 $0<a_n<C$ 或 $0<\hat a_n<C$ 的边界 support vectors 恢复。
+8. $\nu$-SVR 用 $\nu$ 取代直接指定 $\epsilon$，让参数更直接地控制 tube 外样本比例和 support vectors 比例。
+
+
+# 计算理论分析
+
+SVM 的发展不仅来自优化和几何直觉，也深受 **computational learning theory** 的影响。这个方向关心的问题不是某个训练集上能不能拟合好，而是：**给定一个模型空间和有限训练样本，学习到的函数在未见数据上需要多少样本才能有好的泛化表现？**
+
+PRML 在这里主要把 SVM 放到 **PAC learning** 的框架中理解。PAC 是 probably approximately correct 的缩写，意思是我们不要求模型永远正确，而是要求它以足够高的概率达到足够小的误差。设训练集
+$$
+\mathcal D=\{(x_n,t_n)\}_{n=1}^N
+$$
+由联合分布 $p(x,t)$ 独立抽样得到。学习算法基于 $\mathcal D$ 从函数空间 $\mathcal F$ 中选出一个函数，记为
+$$
+f(x;\mathcal D).
+$$
+如果希望它具有好的泛化能力，就希望在真实数据分布下的期望错误率足够小：
+$$
+\mathbb E_{x,t}\left[I(f(x;\mathcal D)\ne t)\right]<\epsilon.
+$$
+其中 $I(\cdot)$ 是 indicator function，$\epsilon$ 是预先给定的误差阈值。
+
+这里需要注意，**左边的误差本身仍然是随机变量，因为它依赖随机抽到的训练集 $\mathcal D$**。PAC 框架要求更强一点：上面的不等式要以至少
+$$
+1-\delta
+$$
+的概率成立:
+
+$$
+P(
+\mathbb E_{x,t}\left[I(f(x;\mathcal D)\ne t)\right]<\epsilon
+) \geq 1-\delta,
+$$
+
+也就是说，**若反复从同一个分布中抽取训练集并训练模型，那么大多数情况下，训练出来的函数都应该达到误差小于 $\epsilon$ 的要求**。
+
+在这个框架中，一个核心量是 **Vapnik-Chervonenkis dimension**，简称 **VC dimension**。它衡量函数空间 $\mathcal F$ 的复杂度，并进一步给出样本量 $N$ 的下界：模型空间越复杂，要保证同样的泛化误差和置信度，通常就需要更多训练样本。SVM 的最大间隔思想之所以重要，也可以从这里理解：它并不只是追求训练集分类正确，而是在控制有效复杂度，从而改善泛化界。
+
+不过，PAC 或 VC dimension 给出的界通常是 **worst-case bounds**。它们要对任意数据分布 $p(x,t)$、任意目标函数选择、任意训练集抽样情况都成立，因此往往非常保守。在真实机器学习任务中，数据分布通常有特殊结构，不会覆盖所有理论上可能的最坏情形。结果就是：PAC bounds 经常会严重高估达到某个泛化误差所需的训练样本量，所以它们更多提供理论理解，而不是直接指导实际样本量设计。
+
+后续也有人提出 **PAC-Bayesian framework** 来改进这些界。它考虑函数空间 $\mathcal F$ 上的分布，与贝叶斯思想有相似之处。PAC-Bayesian bounds 通常比经典 PAC bounds 更紧，但仍然带有明显的保守性。
+
+:::: {.callout-note title="这一节的要点"}
+Computational learning theory 试图回答的是泛化保证问题：学习算法需要多少样本，才能以高概率得到低错误率的函数。PAC 框架用 $\epsilon$ 控制可接受误差，用 $\delta$ 控制失败概率，用 VC dimension 衡量模型空间复杂度。它为 SVM 的最大间隔思想提供了理论背景，但由于这些界通常是 worst-case 的，所以实际应用中往往偏保守。
+::::
+
+
+
+# SVM 的注意事项
+
+**虽然训练好的 SVM 在预测时只依赖 support vectors，但训练阶段要确定 $\alpha$ 和 $b$，仍然需要利用整个训练集**。对偶问题是凸二次规划：目标函数是二次函数，约束区域由线性约束定义，因此任何局部最优也是全局最优。直接求解完整 quadratic programming problem 往往代价很高，因为需要处理 $N\times N$ 的核矩阵。
+
+PRML 提到几类常见训练策略：
+
+- chunking 通过逐步丢弃 $\alpha_n=0$ 的样本来缩小问题；
+- decomposition methods 每次求解固定大小的子问题；
+- SMO 则将这种思想推到极端，每次只优化两个拉格朗日乘子，使子问题可以解析求解，从而避免通用数值 QP。
+
+最后，还有两个容易误解的点需要提醒一下。
+
+- kernel trick 并不意味着完全摆脱维度灾难；即便多项式 kernel 将二维输入隐式映射到更高维特征空间，映射后的点仍受原始低维输入的结构约束，并不会任意填满整个高维空间。
+- SVM 是 decision machine，不直接给出 posterior probability。若需要概率输出，可以在训练好的 SVM 输出 $y(x)$ 上再拟合 sigmoid：
+	$$
+	p(t=1\mid x)=\sigma(Ay(x)+B).
+	$$
+	这称为 **Platt scaling**。用于拟合 sigmoid 的数据最好独立于训练 SVM 的数据，否则容易过拟合；而且 SVM 的 $y(x)$ 本身并不是专门为了表示 log-odds 而训练的，所以这种概率近似可能并不理想。
+
+# RVM回归
+
+Relevance Vector Machine 可以看作是对 SVM 稀疏核展开的贝叶斯化改写。它最终也会得到形如
+$$
+y(x)=\sum_{n=1}^N w_n k(x,x_n)+b
+$$
+的预测函数，因此在形式上很像 SVM 的核展开。但二者的来源完全不同：**SVM 的稀疏性来自 margin 约束和 KKT 条件；RVM 的稀疏性来自对每个权重单独设置精度参数，并通过 evidence maximization 自动判断哪些基函数应该被保留**。
+
+更一般地，先考虑一个固定基函数线性模型：
+$$
+y(x)=\sum_{i=1}^M w_i\phi_i(x)=w^\top\phi(x).
+$$
+在 RVM 中，这些基函数通常可以选成以训练样本为中心的 kernel basis functions，这时参数个数大约是 $N+1$，其中额外的一项对应偏置项 $b$。不过 Bishop 特别强调，RVM 的贝叶斯稀疏机制并不要求 kernel 必须正定，也不要求基函数一定和训练样本一一绑定。只要模型可以写成固定基函数的线性组合，这套 ARD 机制就可以使用。
+
+## 回归模型与 ARD 先验
+
+回归 RVM 假设目标值由模型输出加高斯噪声产生：
+$$
+p(t_n\mid x_n,w,\beta)=
+\mathcal N(t_n\mid w^\top\phi(x_n),\beta^{-1}),
+$$
+其中 $\beta=\sigma^{-2}$ 是 noise precision。给定全部训练输入 $X$ 和目标向量
+$$
+t=(t_1,\dots,t_N)^\top,
+$$
+似然函数为
+$$
+p(t\mid X,w,\beta)=
+\prod_{n=1}^N p(t_n\mid x_n,w,\beta).
+$$
+
+RVM 的关键在先验。普通贝叶斯线性回归常对所有权重共享一个正则化强度，而 RVM 为每个权重 $w_i$ 分配一个单独的 precision hyperparameter $\alpha_i$：
+$$
+p(w\mid\alpha)=
+\prod_{i=1}^M \mathcal N(w_i\mid 0,\alpha_i^{-1}).
+$$
+这就是 automatic relevance determination, 简称 ARD。若某个 $\alpha_i$ 被学习到非常大，则 $w_i$ 的先验方差 $\alpha_i^{-1}$ 会趋近于 0，后验也会被压到 0 附近。对应的基函数 $\phi_i(x)$ 便被模型自动剪掉。
+
+:::: {.callout-note title="RVM 的稀疏性来自哪里"}
+RVM 不是通过 hinge loss 的平坦区域来让样本系数为 0，而是通过 evidence maximization 把许多 $\alpha_i$ 推向无穷大。$\alpha_i\to\infty$ 意味着 $w_i$ 的可用方差趋近于 0，因此这个权重无法对预测产生作用。若 $\phi_i(x)$ 是以某个训练样本为中心的 kernel basis function，那么这个训练样本就不会成为 relevance vector。
+::::
+
+## 后验分布与 evidence maximization
+
+令 $\Phi$ 为设计矩阵，其元素为
+$$
+\Phi_{ni}=\phi_i(x_n),
+$$
+并令
+$$
+A=\operatorname{diag}(\alpha_i).
+$$
+由于似然和先验都是高斯分布，权重后验仍然是高斯分布：
+$$
+p(w\mid t,X,\alpha,\beta)=\mathcal N(w\mid m,\Sigma),
+$$
+其中
+$$
+m=\beta\Sigma\Phi^\top t,
+$$
+$$
+\Sigma=(A+\beta\Phi^\top\Phi)^{-1}.
+$$
+这里的 $m$ 是所有权重的后验均值，$\Sigma$ 则描述权重的不确定性。后续预测时，RVM 不是只给出点估计，而是会保留这个后验不确定性。
+
+接下来需要学习 $\alpha$ 和 $\beta$。RVM 采用 type-II maximum likelihood (更常用的名称是**经验贝叶斯**)，也就是最大化把 $w$ 积分掉之后的 marginal likelihood:
+$$
+p(t\mid X,\alpha,\beta)
+=
+\int p(t\mid X,w,\beta)p(w\mid\alpha)\,dw.
+$$
+这个积分仍然是高斯形式，可以写成
+$$
+p(t\mid X,\alpha,\beta)=\mathcal N(t\mid 0,C),
+$$
+其中
+$$
+C=\beta^{-1}I+\Phi A^{-1}\Phi^\top.
+$$
+直观上，$C$ 同时包含观测噪声和由基函数权重不确定性诱导出来的目标值协方差。
+
+对 evidence 求驻点可以得到一组重估公式：
+$$
+\alpha_i^{\mathrm{new}}=\frac{\gamma_i}{m_i^2},
+$$
+$$
+(\beta^{\mathrm{new}})^{-1}
+=
+\frac{\lVert t-\Phi m\rVert^2}
+{N-\sum_i\gamma_i},
+$$
+其中
+$$
+\gamma_i=1-\alpha_i\Sigma_{ii}.
+$$
+$\gamma_i$ 可以理解为第 $i$ 个权重被数据真正确定的程度:
+
+- 如果 $\gamma_i$ 很小，说明数据几乎没有给这个权重提供有效自由度；
+- 如果 $\gamma_i$ 接近 1，则说明这个权重更像是由数据决定，而不是完全由先验压住。
+
+训练流程因此可以概括为：
+
+1. 初始化 $\alpha$ 和 $\beta$。
+2. 用当前超参数计算后验均值 $m$ 和协方差 $\Sigma$。
+3. 用重估公式更新 $\alpha$ 和 $\beta$。
+4. 重复计算后验与更新超参数，直到 evidence 或参数变化收敛。
+
+这个过程会自然把大量 $\alpha_i$ 推大，使相应基函数退出模型。**若采用以训练样本为中心的 kernel basis functions，最后保留下来的样本就是 relevance vectors**。
+
+## 预测分布
+
+当超参数收敛到 $\alpha^\star,\beta^\star$ 后，对于新输入 $x$，预测分布为
+$$
+p(t\mid x,X,t,\alpha^\star,\beta^\star)
+=
+\mathcal N(t\mid m^\top\phi(x),\sigma^2(x)),
+$$
+其中预测方差为
+$$
+\sigma^2(x)
+=
+(\beta^\star)^{-1}+\phi(x)^\top\Sigma\phi(x).
+$$
+第一项来自观测噪声，第二项来自权重后验不确定性。因此，RVM 和 SVM 的一个重要区别是：**RVM 直接给出 predictive distribution，而不是只给出一个未校准的 decision value 或回归函数值**。
+
+不过这也带来一个需要小心的地方。若使用局部化基函数，例如以训练点为中心的高斯核，在远离训练数据的区域里 $\phi(x)$ 可能接近 0，于是第二项 $\phi(x)^\top\Sigma\phi(x)$ 也会很小。这样模型可能在外推区域显得过度自信。Gaussian process regression 通常不会以同样方式出现这个问题，但它在预测时往往需要更高计算成本。
+
+## 稀疏性的质量
+
+上面的重估公式说明了 RVM 会变稀疏，但还没有直接回答：**某个基函数什么时候应该留下，什么时候应该删掉？** Bishop 接着把 marginal likelihood 中与某个 $\alpha_i$ 有关的部分单独分离出来。
+
+记 $\varphi_i$ 为设计矩阵 $\Phi$ 的第 $i$ 列，也就是第 $i$ 个基函数在所有训练样本上的取值向量。将协方差矩阵写成
+$$
+C=C_{-i}+\alpha_i^{-1}\varphi_i\varphi_i^\top,
+$$
+其中 $C_{-i}$ 表示移除第 $i$ 个基函数贡献后的协方差。定义
+$$
+s_i=\varphi_i^\top C_{-i}^{-1}\varphi_i,
+$$
+$$
+q_i=\varphi_i^\top C_{-i}^{-1}t.
+$$
+Bishop 把 $s_i$ 称为 sparsity，把 $q_i$ 称为 quality。粗略地说，$s_i$ 衡量这个基函数和当前模型中已有基函数的重叠程度；$q_i$ 衡量它与当前仍未解释的数据方向的对齐程度。
+
+在固定其他超参数时，$\alpha_i$ 对 log marginal likelihood 的贡献可以写成
+$$
+\lambda(\alpha_i)
+=
+\frac12
+\left[
+\ln\alpha_i-\ln(\alpha_i+s_i)
++\frac{q_i^2}{\alpha_i+s_i}
+\right].
+$$
+对 $\alpha_i$ 求最优解后得到一个非常清楚的选择规则：
+$$
+\alpha_i=
+\frac{s_i^2}{q_i^2-s_i}
+\quad\text{if }q_i^2>s_i,
+$$
+否则
+$$
+\alpha_i\to\infty.
+$$
+
+这条规则揭示了 RVM 稀疏性的核心：**只有当某个基函数对残差方向的解释能力足够强，超过它带来的冗余和复杂度代价时，它才会被保留。若 $q_i^2\le s_i$，最优选择就是把 $\alpha_i$ 推向无穷大，也就是删除这个基函数。**
+
+:::: {.callout-important title="quality 与 sparsity 的取舍"}
+RVM 中的一个基函数并不是因为靠近决策边界或落在 tube 外才重要。它重要，是因为它的取值向量能有效解释当前模型尚未解释的数据方向。如果它主要与已有基函数重复，或者和目标向量对齐很差，evidence maximization 会倾向于把它剪掉。
+::::
+
+这个分析还导出了更快的 sequential sparse Bayesian learning algorithm。算法不必每次同时优化所有 $\alpha_i$，而是依次考察候选基函数：若 $q_i^2>s_i$ 且它尚未进入模型，就加入；若已经进入模型，就更新其 $\alpha_i$；若 $q_i^2\le s_i$ 且它在模型中，就移除。由于每一步只维护 active basis functions，实际矩阵运算规模通常远小于完整训练集大小。
+
+## 与 SVM 回归的对比
+
+| 维度 | SVM 回归 | RVM 回归 |
+|---|---|---|
+| 模型输出 | 点预测函数 | predictive distribution |
+| 稀疏机制 | $\epsilon$-insensitive loss 与 KKT 条件 | ARD prior 与 evidence maximization |
+| 保留下来的点 | support vectors | relevance vectors |
+| 核函数要求 | 通常要求正定核以保证凸优化结构 | 基函数不必一定来自正定核 |
+| 训练目标 | 凸二次规划 | 非凸 evidence optimization |
+| 复杂度参数 | $C,\epsilon$ 或 $\nu$ 常需交叉验证 | $\alpha,\beta$ 可在一次训练中估计 |
+| 预测阶段 | 依赖 support vectors | 通常依赖更少的 relevance vectors |
+
+RVM 的优势是模型往往比对应的 SVM 更稀疏，测试阶段计算更快，并且天然提供概率预测。代价是训练问题不再是凸优化，可能存在局部最优；同时若从 $M$ 个候选基函数开始，后验协方差计算涉及 $M\times M$ 矩阵，朴素实现的代价较高。实践中，快速顺序算法的作用正是在保留 ARD 稀疏机制的同时降低这一训练成本。
+
+# RVM分类
+
+RVM 也可以扩展到分类问题。思路是把第 4 章中的概率线性分类器和第 7 章这里的 ARD prior 结合起来：分类器仍然通过基函数线性组合产生一个 score，但输出不再直接作为回归目标，而是经过 sigmoid 或 softmax 转换为类别概率。
+
+## 二分类模型
+
+先考虑二分类，目标变量取值为
+$$
+t\in\{0,1\}.
+$$
+模型定义为
+$$
+y(x,w)=\sigma(w^\top\phi(x)),
+$$
+其中 $\sigma(\cdot)$ 是 logistic sigmoid。于是每个样本的条件分布是 Bernoulli 分布：
+$$
+p(t_n\mid x_n,w)=
+y_n^{t_n}(1-y_n)^{1-t_n},
+$$
+其中
+$$
+y_n=\sigma(w^\top\phi(x_n)).
+$$
+权重先验仍然采用和回归 RVM 相同的 ARD 形式：
+$$
+p(w\mid\alpha)=
+\prod_{i=1}^M \mathcal N(w_i\mid 0,\alpha_i^{-1}).
+$$
+
+这个模型与贝叶斯 logistic regression 非常接近。区别在于，RVM 不使用一个共享的权重精度，而是继续为每个权重分配单独的 $\alpha_i$，让 evidence optimization 决定哪些基函数应该保留。
+
+## 为什么需要 Laplace approximation
+
+回归 RVM 中，似然和先验都是高斯，因此可以解析地把 $w$ 积分掉。但分类 RVM 的 Bernoulli-logistic likelihood 不是高斯形式，所以
+$$
+p(t\mid\alpha)=
+\int p(t\mid w)p(w\mid\alpha)\,dw
+$$
+不能再像回归情形那样精确计算。Bishop 因此采用 Laplace approximation：先找到后验分布的 mode，再用该点附近的二阶泰勒展开构造一个高斯近似。
+
+固定 $\alpha$ 后，log posterior 可写成
+$$
+\ln p(w\mid t,\alpha)
+=
+\sum_{n=1}^N
+\left[
+t_n\ln y_n+(1-t_n)\ln(1-y_n)
+\right]
+-\frac12 w^\top A w
++\text{const}.
+$$
+它的梯度和 Hessian 为
+$$
+\nabla\ln p(w\mid t,\alpha)
+=
+\Phi^\top(t-y)-Aw,
+$$
+$$
+\nabla\nabla\ln p(w\mid t,\alpha)
+=
+-(\Phi^\top B\Phi+A),
+$$
+其中 $B$ 是对角矩阵，
+$$
+B_{nn}=y_n(1-y_n).
+$$
+利用这些量，可以用 IRLS 找到后验 mode $w^\star$。在 mode 处，Laplace 近似的均值和协方差为
+$$
+w^\star=A^{-1}\Phi^\top(t-y),
+$$
+$$
+\Sigma=(\Phi^\top B\Phi+A)^{-1}.
+$$
+
+接着用 Laplace approximation 近似 marginal likelihood:
+$$
+p(t\mid\alpha)
+\simeq
+p(t\mid w^\star)p(w^\star\mid\alpha)
+(2\pi)^{M/2}|\Sigma|^{1/2}.
+$$
+对这个近似 evidence 关于 $\alpha_i$ 求驻点，可以得到和回归 RVM 形式相同的重估公式：
+$$
+\alpha_i^{\mathrm{new}}
+=
+\frac{\gamma_i}{(w_i^\star)^2},
+$$
+其中
+$$
+\gamma_i=1-\alpha_i\Sigma_{ii}.
+$$
+
+这说明 RVM 分类和 RVM 回归的稀疏机制是同一个：当某个权重在后验 mode 中没有足够证据支撑，或者它的不确定性结构显示该方向并没有被数据有效确定，对应的 $\alpha_i$ 就会被推大，基函数被剪掉。
+
+## 分类中的 relevance vectors
+
+SVM 分类中的 support vectors 通常位于 margin boundary 附近，因为这些点直接决定最大间隔超平面。RVM 分类的 relevance vectors 则不一定靠近决策边界。它们是由 ARD 和 evidence optimization 选出来的基函数中心，标准是能否有效解释整个目标向量，而不是是否位于几何 margin 上。
+
+这也是 RVM 和 SVM 在图形上经常呈现出不同稀疏模式的原因：SVM 的稀疏性是边界几何驱动的；RVM 的稀疏性是概率证据驱动的。一个靠近边界的数据点如果对应的基函数方向和当前目标/残差结构对齐很差，仍然可能被 RVM 删除。
+
+:::: {.callout-note title="分类 RVM 的输出"}
+RVM 分类直接输出
+$$
+p(t=1\mid x)=\sigma(w^\top\phi(x))
+$$
+这样的 posterior probability 近似，而不是像 SVM 那样先得到 decision value 再额外做概率校准。这是 RVM 在需要不确定性或概率输出的应用中很有吸引力的原因。
+::::
+
+## 多分类扩展
+
+对于 $K>2$ 的多分类问题，可以为每个类别建立一个线性 score：
+$$
+a_k=w_k^\top\phi(x),
+$$
+再通过 softmax 得到类别概率：
+$$
+y_k(x)=
+\frac{\exp(a_k)}
+{\sum_j\exp(a_j)}.
+$$
+若目标采用 1-of-$K$ 编码，log likelihood 可以写成
+$$
+\ln p(T\mid w_1,\dots,w_K)
+=
+\sum_{n=1}^N\sum_{k=1}^K
+t_{nk}\ln y_{nk}.
+$$
+这一形式比 SVM 常见的 one-versus-one 或 one-versus-the-rest 更自然，因为它从一开始就是一个统一的概率多分类模型，而不是把多分类拆成许多二分类器再投票或比较分数。
+
+不过，多分类 RVM 的训练代价也更高。Laplace approximation 需要处理所有类别权重的联合 Hessian。如果每个类别有 $M$ 个 active basis functions，那么 Hessian 的规模是 $MK\times MK$，相比二分类情形会引入显著额外计算开销，粗略地说会带来关于类别数 $K$ 的立方级增长。
+
+## 本节小结
+
+RVM 分类可以按以下逻辑理解：
+
+1. 用 sigmoid 或 softmax 把基函数线性组合转成类别概率。
+2. 对权重继续使用 ARD prior，让每个基函数拥有自己的 precision hyperparameter。
+3. 因为 logistic/softmax likelihood 不是高斯，不能精确积分掉 $w$，所以使用 Laplace approximation。
+4. 用 IRLS 找到后验 mode $w^\star$，并用 negative Hessian 的逆近似后验协方差。
+5. 对近似 evidence 重估 $\alpha_i$，得到和回归 RVM 同型的稀疏更新。
+6. Relevance vectors 不一定贴近分类边界，因为它们由概率 evidence 选择，而不是由 margin geometry 选择。
+7. RVM 的优势是稀疏且直接输出类别概率；主要代价是训练目标非凸、训练时间通常长于 SVM，尤其在多分类情形下更明显。

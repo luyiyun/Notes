@@ -21,3 +21,7 @@ assets/images/
 assets/images/**
 assets/attachments/
 assets/attachments/**
+
+
+# 可能存在的codex文件
+*.log

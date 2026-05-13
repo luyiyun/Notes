@@ -1,0 +1,22 @@
+---
+title: "PRML"
+subtitle: "Pattern Recognition and Machine Learning"
+description: "Bishop《Pattern Recognition and Machine Learning》学习笔记。"
+draft: false
+listing:
+  contents: "*.qmd"
+  type: table
+  sort: "order"
+  fields: [title, tags, date]
+  sort-ui: false
+  filter-ui: false
+---
+
+这里收录 C. M. Bishop 的 *Pattern Recognition and Machine Learning* 专题学习笔记。当前迁移范围包括第 6 章核方法与第 7 章稀疏核机器。
+
+## 笔记目录
+
+下面的目录由 Quarto 自动生成，并按照每篇笔记 YAML 中的 `order` 字段排序。
+
+:::{#listing}
+:::
