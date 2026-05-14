@@ -27,17 +27,16 @@ order: 6
 
 ## 准分布函数和分布函数
 
-1. $\mathbb{R}$ 上非降右连续实值函数 $F$ 被称为**准分布函数**。即 $F$ 满足 （单调、右连续、非负）
+1. $\mathbb{R}$ 上非降右连续实值函数 $F$ 被称为**准分布函数**。即 $F$ 满足 :
 
-$$
-  x\leq y\implies F(x)\leq F(y);\quad \lim_{ y \to x,y> x } =F(x); \quad F(-\infty)=\lim_{ x \to -\infty } F(x)=0
-$$
+    a. 单调：$x\leq y\implies F(x)\leq F(y)$；
+    b. 右连续：$\quad \lim_{ y \to x,y> x } =F(x)$；
+    c. 非负：$F(-\infty)=\lim_{ x \to -\infty } F(x)=0$；
 
 2.  若准分布函数 $F$ 满足下面的条件，则称其为**分布函数**
-
-$$
+  $$
     F(\infty)=\lim_{ x \to \infty } F(x)=1,
-$$
+  $$
 
 :::
 
@@ -49,7 +48,7 @@ $$
 
 ## 准分布函数 $\to$ 测度
 
-令 $\mathcal{I}_{\mathbb{R}}=\{ (a,b]|a,b\in\mathbb{R} \}$，F 是一个准分布函数，对于任意的 $a,b\in\mathbb{R}$，我们定义
+令 $\mathcal{I}_{\mathbb{R}}=\{ (a,b]|a,b\in\mathbb{R} \}$，$F$ 是一个准分布函数，对于任意的 $a,b\in\mathbb{R}$，我们定义
 
 $$
 \mu((a,b])=\left\{\begin{align}
@@ -58,7 +57,9 @@ $$
 \end{align}\right.
 $$
 
-则 $\mu$ 是 $\mathcal{I}_{\mathbb{R}}$ 上的测度。将其扩张至 $\mathcal{B}$ 后可以得到唯一的一个 **$\sigma$ 有限**测度，其对于 $\mathcal{J}_{\mathbb{R}}=\{ (-\infty,a]|a\in\mathbb{R} \}$ 中的元素有
+则 $\mu$ 是 $\mathcal{I}_{\mathbb{R}}$ 上的测度。
+
+将其扩张至 $\mathcal{B}$ 后可以得到唯一的一个 **$\sigma$ 有限**测度，其对于 $\mathcal{J}_{\mathbb{R}}=\{ (-\infty,a]|a\in\mathbb{R} \}$ 中的元素有
 
 $$
 \mu((-\infty,a])=F(a),\quad\forall a\in\mathbb{R}.
@@ -70,6 +71,7 @@ $$
 
 ::: {.proof}
 首先容易知道 $\mu(\emptyset)=0$ 和非负性，所以我们只需要证明可列可加性就可以。证明过程可以分为 4 个步骤：
+
 **(1)** 证明有限可加性。
 假设 $\{ (a_{i},b_{i}] \}$ 两两不交且 $\bigcup_{i=1}^{n}(a_{i},b_{i}]=(a,b]$，则我们一定可以通过排列这些区间的先后顺序，得到下面的关系
 
@@ -84,6 +86,7 @@ $$
 $$
 
 有限可加性得证。
+
 **(2)** 证明：如果 $\{ (a_{i},b_{i}] \}$ 两两不交且 $\bigcup_{i=1}^{\infty}(a_{i},b_{i}]\subset (a,b]$，则 $\mu((a,b])\geq \sum\limits_{n=1}^{\infty}\mu((a_{n},b_{n}])$.
 因为两两不交，对于前 $n$ 个区间，同样我们可以排列形成下面的关系
 
@@ -103,16 +106,15 @@ $$
 $$
 
 令 $n\to \infty$ 即得到结论。
+
 **(3)** 证明：如果 $\{ (a_{i},b_{i}] \}$ 和 $(a,b]$ 满足 $\bigcup_{i=1}^{n}(a_{i},b_{i}]\supset(a,b]$（没有两两不交的要求），则有
 
 $$
 \mu((a,b])\leq \sum\limits_{i=1}^{n}\mu((a_{i},b_{i}])
-$$
+$${#eq-semi-finite-add}
 
-<span id="eq-semi-finite-add"></span>
-
-也就是**半有限可加性**。我们使用数学归纳法来进行证明，显然当 $n=1$ 时式 [eq-semi-finite-add](#eq-semi-finite-add) 成立。假设其对于 $n=k$ 也成立，现在我们来证明其对于 $n=k+1$ 也成立。
-我们首先找到一个下标 $i_{0}$，使得其对应的 $b_{i_{0}}$ 是最大的。如果 $a\geq a_{i_{0}}$，则直接可以得到 [eq-semi-finite-add](#eq-semi-finite-add) 成立。如果 $a<a_{i_{0}}$，必有 $(a,a_{i_{0}}]\subset \bigcup_{i\neq i_{0}}(a_{i},b_{i}]$，则可以通过归纳法前提得到
+也就是**半有限可加性**。我们使用数学归纳法来进行证明，显然当 $n=1$ 时式 @eq-semi-finite-add 成立。假设其对于 $n=k$ 也成立，现在我们来证明其对于 $n=k+1$ 也成立。
+我们首先找到一个下标 $i_{0}$，使得其对应的 $b_{i_{0}}$ 是最大的。如果 $a\geq a_{i_{0}}$，则直接可以得到 @eq-semi-finite-add 成立。如果 $a<a_{i_{0}}$，必有 $(a,a_{i_{0}}]\subset \bigcup_{i\neq i_{0}}(a_{i},b_{i}]$，则可以通过归纳法前提得到
 
 $$
 \begin{align}
@@ -125,6 +127,7 @@ $$
 $$
 
 归纳法证明结束。
+
 **(4)** 证明：$\{ (a_{i},b_{i}] \}$ 两两不交，且 $\bigcup_{i=1}^{\infty}(a_{i},b_{i}]=(a,b]$，则 $\mu((a,b])\leq \sum\limits_{i=1}^{\infty}\mu((a_{i},b_{i}])$.
 由 $F$ 的右连续性，$\forall\epsilon>0,\exists\delta_i>0$ 使得
 
@@ -163,7 +166,7 @@ $$
 \nu((a,b])=\nu((-\infty,b])-\mu((-\infty,a])=F(b)-F(a)=\mu((a,b])
 $$
 
-也就是说 $\nu$ 和 $\mu$ 在 $\mathcal{I}_{\mathbb{R}}$ 上是一致的。我们取 $\{ (n,n+1],n\in\mathbb{Z} \}$，可知它们每个都是有界的且其并为整个空间 $\mathbb{R}$，则根据 @thm-measure-extension，可知测度是唯一的，即 $\mu=\nu$。
+也就是说 $\nu$ 和 $\mu$ 在 $\mathcal{I}_{\mathbb{R}}$ 上是一致的。我们取 $\{ (n,n+1],n\in\mathbb{Z} \}$，可知它们每个都是有界的且其并为整个空间 $\mathbb{R}$，则根据 [测度扩张定理](05-measure-extension.qmd#thm-measure-extension)，可知测度是唯一的，即 $\mu=\nu$。
 :::
 
 反过来可能略有区别，这是因为很可能 $F(a)=\mu((-\infty,a])=\infty$，这样的话 $F$ 就不是一个实值函数了。因此，我们需要将 $\mu$ 进行限制，其不能是任意的测度。
@@ -183,7 +186,7 @@ $$
 :::
 
 ::: {.proof}
-由测度的单调性和下连续性可直接推出 $F$ 是一个准分布函数。然后，容易证明 $\mu$ 是一个 $\sigma$ 有限测度。假设由不同的 $\mu_{1}$ 和 $\mu_{2}$ 得到相同的 $F$，则根据 @thm-dist2measure，$\mu_{1}$ 应该和 $\mu_{2}$ 相等，出现矛盾，因此 $F$ 必然不同。
+由测度的单调性和下连续性可直接推出 $F$ 是一个准分布函数。然后，容易证明 $\mu$ 是一个 $\sigma$ 有限测度。假设由不同的 $\mu_{1}$ 和 $\mu_{2}$ 得到相同的 $F$，则根据 @prp-dist2measure，$\mu_{1}$ 应该和 $\mu_{2}$ 相等，出现矛盾，因此 $F$ 必然不同。
 :::
 
 # 左连续逆
@@ -211,6 +214,7 @@ $$
 ## 左连续逆的性质
 
 对于任何准分布函数 $F$，有
+
 1. $F^{\leftarrow}(t)\in\mathbb{R},\forall t\in(F(-\infty),F(\infty))$;
 2. $\forall t\in(F(-\infty),F(\infty)),x \in\mathbb{R}$ 有 $F^{\leftarrow}(t)\leq x \iff F(x)\geq t$;
 3. $F^{\leftarrow}$ 非降且左连续;
@@ -300,9 +304,9 @@ $$
 
 # Lebesgue 测度
 
-显然，根据定义，$F(x)=x$ 也是一个准分布函数，所以我们可以根据 @thm-dist2measure 来得到一个唯一对应的 $\sigma$ 有限测度，其在 $(\mathbb{R},\mathcal{B})$ 上，我们称之为为**Lebesgue 测度**，简称**L 测度**。
+显然，根据定义，$F(x)=x$ 也是一个准分布函数，所以我们可以根据 @prp-dist2measure 来得到一个唯一对应的 $\sigma$ 有限测度，其在 $(\mathbb{R},\mathcal{B})$ 上，我们称之为为**Lebesgue 测度**，简称**L 测度**。
 
-若对准分布函数没有任何限制，则根据 @thm-dist2measure 得到的唯一对应 $\sigma$ 有限测度，可以认为是 Lebesgue 测度的推广，称之为**Lebesgue-Stieltjes 测度**，简称**L-S 测度**。
+若对准分布函数没有任何限制，则根据 @prp-dist2measure 得到的唯一对应 $\sigma$ 有限测度，可以认为是 Lebesgue 测度的推广，称之为**Lebesgue-Stieltjes 测度**，简称**L-S 测度**。
 
 下面，我们来证明几个 L 测度的性质。
 
@@ -364,7 +368,17 @@ $$
 
 ## L-measure 的平移不变性
 
-假设 measurable space 是 $(\mathbb{R},\mathcal{B},m)$，其中 $m$ 表示 L- 测度，则有 $\forall x \in \mathbb{R}, A\in\mathcal{B}, A+x:=\{ a+x|a\in A \},\implies A+x \in\mathcal{B},m(A+x)=m(A)$
+假设 measurable space 是 $(\mathbb{R},\mathcal{B},m)$，其中 $m$ 表示 L- 测度。若有
+
+$$
+\forall x \in \mathbb{R}, A\in\mathcal{B}, A+x:=\{ a+x|a\in A \},
+$$
+
+则有
+
+$$
+A+x \in\mathcal{B},m(A+x)=m(A)
+$$
 
 :::
 ::: {.proof}
@@ -411,16 +425,28 @@ $$
 
 # 为什么需要 Sigma 域
 
-如果 $\Omega$ 是至多可数的，则一般考虑 $\mathcal{F}$ 是其所有子集组成的集合（power set，其势至多为 $\aleph_{1}$），这一般不会造成什么问题。但如果 $\Omega$ 是不可数的（如 $\mathbb{R}$），则其 power set 就太过多和复杂（其势为 $\aleph_{2}$）。这时候，几乎很难定义一个“合理的”的 measure 使之能够在所有的子集上有预期的效果，总有一些“奇奇怪怪的“集合会让 measure 失效，这些集合被称为**不可测集合**。其中最出名的莫过于 **Vitali set**。
+如果 $\Omega$ 是至多可数的，则一般考虑 $\mathcal{F}$ 是其所有子集组成的集合（power set，其势至多为 $\aleph_{1}$），这一般不会造成什么问题。
+
+但如果 $\Omega$ 是不可数的（如 $\mathbb{R}$），则其 power set 就太过多和复杂（其势为 $\aleph_{2}$）。这时候，几乎很难定义一个“合理的”的 measure 使之能够在所有的子集上有预期的效果，总有一些“奇奇怪怪的“集合会让 measure 失效，这些集合被称为**不可测集合**。其中最出名的莫过于 **Vitali set**。
 
 ::: {#def-06-distribution-function-8}
 
 ## Vitali set
 
-对于两个实数 $x$ 和 $y$，如果 $x-y\in \mathbb{Q}$，则记作 $x\sim y$。可以证明 $\sim$ 是一个等价关系，因此我们可以构造 $[x]=\{ y\in\mathbb{R}|y\sim x \}$ 称为 $x$ 的等价类。这是对 $\mathbb{R}$ 的不可数划分。根据选择公理，我们可以从每个等价类中取出一个在 $[0,1]$ 中的元素，其有且仅有一个，构成集合 $V$。这个集合 $V$ 被称为 Vitali set。
-**Theorem: Vitali set 不是 L 可测集**
+对于两个实数 $x$ 和 $y$，如果 $x-y\in \mathbb{Q}$，则记作 $x\sim y$。可以证明 $\sim$ 是一个等价关系，因此我们可以构造 $[x]=\{ y\in\mathbb{R}|y\sim x \}$ 称为 $x$ 的等价类。这是对 $\mathbb{R}$ 的不可数划分。
+
+根据选择公理，我们可以从每个等价类中取出一个在 $[0,1]$ 中的元素，其有且仅有一个，构成集合 $V$。这个集合 $V$ 被称为 **Vitali set**。
 
 :::
+
+::: {#thm-label}
+
+## Vitali Set Theorem
+
+Vitali set 不是 L 可测集。
+
+:::
+
 ::: {.proof}
 我们使用反证法来证明 $V$ 是不可测的。假设其是可测的，我们将 $[-1,1]$ 中的所有有理数表示为 $q_{1},q_{2},\dots$，然后创建集合 $V_{k}=\{ v+q_{k}|v\in V \}$，由 $V$ 的构造方法可知 $V_{k},k=1,2,3,\dots$ 两两不交。
 
