@@ -42,7 +42,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../../site_libs/bootstrap/bootstrap-2e2adf1e2d0a37c341127e2b833c6681.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-28ea277c781a11f752ceea7d06312459.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -391,7 +391,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">修改于</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">2026年5月13日</p>
+      <p class="date-modified">2026年5月14日</p>
     </div>
   </div>
     
@@ -422,7 +422,15 @@ f^{-1}(B):=\{ x \in X|f(x)\in B \}
 </div>
 <p>映射的原像是个非常好的运算，其几乎在所有集合运算上保持不变。</p>
 <div id="prp-07-measurable-functions-2" class="theorem proposition">
-<p><span class="theorem-title"><strong>命题 1 (原像的性质)</strong></span> 对于映射 <span class="math inline">\(f:X\to Y\)</span>，<span class="math inline">\(\forall B,B_{1},B_{2}\subset Y\)</span>，任意的指标集合 <span class="math inline">\(T\)</span>， 有 1. <span class="math inline">\(f^{-1}(\emptyset)=\emptyset\)</span>; 2. <span class="math inline">\(f^{-1}(Y)=X\)</span>; 3. <span class="math inline">\(B_{1}\subset B_{2}\implies f^{-1}(B_{1})\subset f^{-1}(B_{2})\)</span>; 4. <span class="math inline">\((f^{-1}(B))^{c}=f^{-1}(B^{c})\)</span>; 5. <span class="math inline">\(f^{-1}\left( \bigcup_{t\in T}A_{t} \right)=\bigcup_{t\in T}f^{-1}(A_{t}),\quad\forall \{ A_{t}\subset Y,t\in T \}\)</span> 6. <span class="math inline">\(f^{-1}\left( \bigcap_{t\in T}A_{t} \right)=\bigcap_{t\in T}f^{-1}(A_{t}),\quad\forall \{ A_{t}\subset Y,t\in T \}\)</span></p>
+<p><span class="theorem-title"><strong>命题 1 (原像的性质)</strong></span> 对于映射 <span class="math inline">\(f:X\to Y\)</span>，<span class="math inline">\(\forall B,B_{1},B_{2}\subset Y\)</span>，任意的指标集合 <span class="math inline">\(T\)</span>， 有</p>
+<ol type="1">
+<li><span class="math inline">\(f^{-1}(\emptyset)=\emptyset\)</span>;</li>
+<li><span class="math inline">\(f^{-1}(Y)=X\)</span>;</li>
+<li><span class="math inline">\(B_{1}\subset B_{2}\implies f^{-1}(B_{1})\subset f^{-1}(B_{2})\)</span>;</li>
+<li><span class="math inline">\((f^{-1}(B))^{c}=f^{-1}(B^{c})\)</span>;</li>
+<li><span class="math inline">\(f^{-1}\left( \bigcup_{t\in T}A_{t} \right)=\bigcup_{t\in T}f^{-1}(A_{t}),\quad\forall \{ A_{t}\subset Y,t\in T \}\)</span></li>
+<li><span class="math inline">\(f^{-1}\left( \bigcap_{t\in T}A_{t} \right)=\bigcap_{t\in T}f^{-1}(A_{t}),\quad\forall \{ A_{t}\subset Y,t\in T \}\)</span></li>
+</ol>
 </div>
 <p>基于以上给出的性质，我们有下面的定理：</p>
 <div id="thm-inverse-image" class="theorem">
@@ -461,8 +469,10 @@ f^{-1}(B):=\{ x \in X|f(x)\in B \}
 <p><span class="math display">\[
 (a,b):=\{ x \in \bar{\mathbb{R}}|a&lt;x&lt;b \}
 \]</span></p>
-<p><span class="math inline">\([a,b),(a,b],[a,b]\)</span> 的定义类似。 <strong>Definition: 广义 Borel 可测集</strong></p>
-<p><span class="math display">\[
+<p><span class="math inline">\([a,b),(a,b],[a,b]\)</span> 的定义类似。</p>
+</div>
+<div id="def-general-borel-set" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 4 (广义 Borel 可测集)</strong></span> <span class="math display">\[
 \mathcal{B}_{\bar{\mathbb{R}}}:=\sigma(\mathcal{B}_{\mathbb{R}},\{ -\infty \},\{ \infty \})
 \]</span></p>
 </div>
@@ -470,8 +480,11 @@ f^{-1}(B):=\{ x \in X|f(x)\in B \}
 <div id="thm-09224b" class="theorem">
 <p><span class="theorem-title"><strong>定理 2 (Theorem)</strong></span> <span class="math display">\[
 \begin{align}
-\mathcal{B}_{\bar{\mathbb{R}}}&amp;=\sigma([-\infty,a)|a\in\mathbb{R}) =\sigma([-\infty,a]|a\in\mathbb{R}) \\
-&amp;=\sigma((a,\infty]|a\in\mathbb{R}) =\sigma([a,\infty]|a\in\mathbb{R})
+\mathcal{B}_{\bar{\mathbb{R}}}
+&amp;=\sigma([-\infty,a)|a\in\mathbb{R}) \\
+&amp;=\sigma([-\infty,a]|a\in\mathbb{R}) \\
+&amp;=\sigma((a,\infty]|a\in\mathbb{R})  \\
+&amp;=\sigma([a,\infty]|a\in\mathbb{R})
 \end{align}
 \]</span></p>
 </div>
@@ -479,14 +492,34 @@ f^{-1}(B):=\{ x \in X|f(x)\in B \}
 <section id="可测函数和随机变量" class="level1">
 <h1>可测函数和随机变量</h1>
 <div id="def-07-measurable-functions-7" class="theorem definition">
-<p><span class="theorem-title"><strong>定义 4 (可测函数和随机变量)</strong></span> 对于可测空间 <span class="math inline">\((X,\mathcal{F})\)</span> 和 <span class="math inline">\((Y,\mathcal{T})\)</span>，<span class="math inline">\(f:X\to Y\)</span> 是一个映射，若</p>
+<p><span class="theorem-title"><strong>定义 5 (可测函数和随机变量)</strong></span> 对于可测空间 <span class="math inline">\((X,\mathcal{F})\)</span> 和 <span class="math inline">\((Y,\mathcal{T})\)</span>，<span class="math inline">\(f:X\to Y\)</span> 是一个映射，若</p>
 <p><span class="math display">\[
-f^{-1}(\mathcal{T})\in\mathcal{F},\]</span> 称 <span class="math inline">\(f\)</span> 是从 <span class="math inline">\((X,\mathcal{F})\)</span> 到 <span class="math inline">\((Y,\mathcal{T})\)</span> 上的<strong>可测映射</strong> (或随机元)，其中 <span class="math inline">\(f^{-1}(\mathcal{T})\)</span> 称为使映射 <span class="math inline">\(f\)</span> 可测的最小 <span class="math inline">\(\sigma\)</span> -field。 若 <span class="math inline">\((Y,\mathcal{T})=(\bar{\mathbb{R}},\mathcal{B}_{\bar{\mathbb{R}}})\)</span>，则称 <span class="math inline">\(f\)</span> 是广义可测函数或<strong>可测函数</strong>。 若 <span class="math inline">\((Y,\mathcal{T})=(\mathbb{R},\mathcal{B})\)</span>，则称 <span class="math inline">\(f\)</span> 是 Borel可测函数或 <strong>Borel 函数</strong>。此时，若在 <span class="math inline">\((X,\mathcal{F})\)</span> 上定义了概率测度，则一般称 <span class="math inline">\(f\)</span> 为<strong>随机变量</strong>，用大写英文字母来表示。 <strong>Note: 名称的区别</strong> 以上所针对的对象，在不同的教材中可能称呼不同。比如， - 在《测度论与概率论基础》(程士宏) 中，称这里的 Borel 函数为有限值可测函数或随机变量，可测映射和可测函数的定义与这里一致； - 在《mathematical statistics》(Jun Shao) 中，则称这里的可测映射为 measurable function，对 Borel 函数的定义和这里一致，没有 <span class="math inline">\((Y,\mathcal{T})=(\bar{\mathbb{R}},\mathcal{B}_{\bar{\mathbb{R}}})\)</span> 的定义。</p>
+f^{-1}(\mathcal{T})\in\mathcal{F},
+\]</span> 则称 <span class="math inline">\(f\)</span> 是从 <span class="math inline">\((X,\mathcal{F})\)</span> 到 <span class="math inline">\((Y,\mathcal{T})\)</span> 上的<strong>可测映射</strong> (或随机元)，其中 <span class="math inline">\(f^{-1}(\mathcal{T})\)</span> 称为使映射 <span class="math inline">\(f\)</span> 可测的最小 <span class="math inline">\(\sigma\)</span> -field。</p>
+<p>若 <span class="math inline">\((Y,\mathcal{T})=(\bar{\mathbb{R}},\mathcal{B}_{\bar{\mathbb{R}}})\)</span>，则称 <span class="math inline">\(f\)</span> 是广义可测函数或<strong>可测函数</strong>。</p>
+<p>若 <span class="math inline">\((Y,\mathcal{T})=(\mathbb{R},\mathcal{B})\)</span>，则称 <span class="math inline">\(f\)</span> 是 Borel可测函数或 <strong>Borel 函数</strong>。此时，若在 <span class="math inline">\((X,\mathcal{F})\)</span> 上定义了概率测度，则一般称 <span class="math inline">\(f\)</span> 为<strong>随机变量</strong>，用大写英文字母来表示。</p>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+注记
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>以上所针对的对象，在不同的教材中可能称呼不同。比如，</p>
+<ul>
+<li>在《测度论与概率论基础》(程士宏) 中，称这里的 Borel 函数为有限值可测函数或随机变量，可测映射和可测函数的定义与这里一致；</li>
+<li>在《mathematical statistics》(Jun Shao) 中，则称这里的可测映射为 measurable function，对 Borel 函数的定义和这里一致，没有 <span class="math inline">\((Y,\mathcal{T})=(\bar{\mathbb{R}},\mathcal{B}_{\bar{\mathbb{R}}})\)</span> 的定义。</li>
+</ul>
 <p>我们综合了两本书的内容，认为这里的名称可能覆盖更加广泛。</p>
 </div>
+</div>
 <p>根据上面 Borel 函数和广义可测函数的定义，我们有下面的推论</p>
-<div id="prp-308908" class="theorem proposition">
-<p><span class="theorem-title"><strong>命题 2 (Proposition)</strong></span> 对于函数 <span class="math inline">\(f:X\to \bar{\mathbb{R}}\)</span>，若 <span class="math inline">\(f(X)\in \mathbb{R}\)</span> ，则其是 Borel 函数<strong>当且仅当</strong>其是广义可测函数。</p>
+<div id="prp-borel-is-general-borel" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 2 (正常情况下广义可测函数和Borel函数是等价的)</strong></span> 对于函数 <span class="math inline">\(f:X\to \bar{\mathbb{R}}\)</span>，若 <span class="math inline">\(f(X)\in \mathbb{R}\)</span> ，则其是 Borel 函数<strong>当且仅当</strong>其是广义可测函数。</p>
 </div>
 <div class="proof">
 <p><span class="proof-title"><em>证明</em>. </span>当 <span class="math inline">\(f\)</span> 是一个 Borel 函数时，有 <span class="math inline">\(f^{-1}(\mathcal{B})\in\mathcal{F}\)</span> 。因为 <span class="math inline">\(f\)</span> 不可能取到 <span class="math inline">\(-\infty\)</span> 和 <span class="math inline">\(\infty\)</span> ，所以 <span class="math inline">\(f^{-1}(\{ -\infty \})=f^{-1}(\{ \infty \})=\emptyset\in\mathcal{F}\)</span>，因此 <span class="math inline">\(f^{-1}(\mathcal{B}_{\bar{\mathbb{R}}})\in\mathcal{F}\)</span>，即 <span class="math inline">\(f\)</span> 是一个广义可测函数。 当 <span class="math inline">\(f\)</span> 是一个广义可测函数时，有 <span class="math inline">\(f^{-1}(\mathcal{B}_{\bar{\mathbb{R}}})\in\mathcal{F}\)</span>，又因为 <span class="math inline">\(\mathcal{B}\subset \mathcal{B}_{\bar{\mathbb{R}}}\)</span>，所以有</p>
@@ -506,7 +539,7 @@ f^{-1}(\mathcal{B})\subset f^{-1}(\mathcal{B}_{\bar{\mathbb{R}}})\subset \mathca
 <div class="callout-body-container callout-body">
 <ul>
 <li>广义可测函数的概念来自《测度论与概率论基础》(程士宏) ，在《mathematical statistics》(Jun Shao) 中并没有提到。</li>
-<li>在考虑两个函数是否相等时，仅需要考虑定义域是否相同，以及映射关系是否相同即可，不需要考虑值域是否相同，因为值域仅表达函数输出值在值域内。因此，从此意义上来说，Borel 函数就是一个广义可测函数。 然而并没有这么简单，因为在定义 Borel 或可测函数时，我们还需要考虑到装配在值域上的一个 <span class="math inline">\(\sigma\)</span> -field 结构。幸运地是，Borel 和可测函数所涉及的值域结构是有联系的，其最终结果就是 <a href="#308908">308908</a>，在函数的值域能够被限制在 <span class="math inline">\(\mathbb{R}\)</span> 时，两者是同一个东西。</li>
+<li>在考虑两个函数是否相等时，仅需要考虑定义域是否相同，以及映射关系是否相同即可，不需要考虑值域是否相同，因为值域仅表达函数输出值在值域内。因此，从此意义上来说，Borel 函数就是一个广义可测函数。 然而并没有这么简单，因为在定义 Borel 或可测函数时，我们还需要考虑到装配在值域上的一个 <span class="math inline">\(\sigma\)</span> -field 结构。幸运地是，Borel 和可测函数所涉及的值域结构是有联系的，其最终结果就是 <a href="#prp-borel-is-general-borel" class="quarto-xref">命题&nbsp;2</a>，在函数的值域能够被限制在 <span class="math inline">\(\mathbb{R}\)</span> 时，两者是同一个东西。</li>
 <li>然而，当某个函数其值域无法被限制在 <span class="math inline">\(\mathbb{R}\)</span> 时 (<span class="math inline">\(\exists x \in X\implies f(x)\in\{ -\infty,\infty \}\)</span>)，则其只能是广义可测函数而非 Borel 函数。当我们能够将其值域限制在 <span class="math inline">\(\mathbb{R}\)</span> 中时，其定义域一定不再是 <span class="math inline">\(X\)</span> 了。</li>
 <li>一般来说，在概率论中，我们很难遇到是广义可测函数而非 Borel 函数的情况（无穷大值是有意义的）；即便遇到，如果无穷大值所占的测度为 0，则无穷大值存在与否一般对结论也没有影响。</li>
 </ul>
@@ -521,10 +554,17 @@ f^{-1}(\mathcal{E})\subset \mathcal{F}
 </div>
 <p>因为 <span class="math inline">\(\mathcal{B}\)</span> 或 <span class="math inline">\(\mathcal{B}_{\bar{\mathbb{R}}}\)</span> 的结构非常复杂，因此使用定义去验证是不是可测函数是非常难的。但是利用上述定理，我们可以有下面的简单判定方法：</p>
 <div id="thm-measurable-func-decision2" class="theorem">
-<p><span class="theorem-title"><strong>定理 4 (可测函数的简单判别方法)</strong></span> 已知 <span class="math inline">\(f\)</span> 是 <span class="math inline">\((X,\mathcal{F})\)</span> 到 <span class="math inline">\((\bar{\mathbb{R}},\mathcal{B}_{\bar{\mathbb{R}}})\)</span>（或 <span class="math inline">\((\mathbb{R},\mathcal{B})\)</span>）上的映射，则下面的说法等价： 1. <span class="math inline">\(f\)</span> 是广义可测函数（或 Borel 函数）； 2. <span class="math inline">\(\{ f&lt;a \}\in\mathcal{F},\quad\forall a\in\mathbb{R}\)</span>; 3. <span class="math inline">\(\{ f\leq a \}\in\mathcal{F},\quad\forall a\in\mathbb{R}\)</span>; 4. <span class="math inline">\(\{ f&gt; a \}\in\mathcal{F},\quad\forall a\in\mathbb{R}\)</span>; 5. <span class="math inline">\(\{ f\geq a \}\in\mathcal{F},\quad\forall a\in\mathbb{R}\)</span>;</p>
+<p><span class="theorem-title"><strong>定理 4 (可测函数的简单判别方法)</strong></span> 已知 <span class="math inline">\(f\)</span> 是 <span class="math inline">\((X,\mathcal{F})\)</span> 到 <span class="math inline">\((\bar{\mathbb{R}},\mathcal{B}_{\bar{\mathbb{R}}})\)</span>（或 <span class="math inline">\((\mathbb{R},\mathcal{B})\)</span>）上的映射，则下面的说法等价：</p>
+<ol type="1">
+<li><span class="math inline">\(f\)</span> 是广义可测函数（或 Borel 函数）；</li>
+<li><span class="math inline">\(\{ f&lt;a \}\in\mathcal{F},\quad\forall a\in\mathbb{R}\)</span>;</li>
+<li><span class="math inline">\(\{ f\leq a \}\in\mathcal{F},\quad\forall a\in\mathbb{R}\)</span>;</li>
+<li><span class="math inline">\(\{ f&gt; a \}\in\mathcal{F},\quad\forall a\in\mathbb{R}\)</span>;</li>
+<li><span class="math inline">\(\{ f\geq a \}\in\mathcal{F},\quad\forall a\in\mathbb{R}\)</span>;</li>
+</ol>
 </div>
 <div class="proof">
-<p><span class="proof-title"><em>证明</em>. </span>我们先证明 <span class="math inline">\(f\)</span> 是 Borel 函数的情况。 因为 <span class="math inline">\(\{ f&lt;a \}=f^{-1}((-\infty,a))\)</span>，所以 1 蕴含 2。又因为 <span class="math inline">\(\sigma(\{ (-\infty,a)|a\in\mathbb{R} \})=\mathcal{B}\)</span>，所以根据 <a href="#thm-measurable-func-decision" class="quarto-xref">定理&nbsp;3</a>，2 也蕴含 1。其他条件证明类似。 当 <span class="math inline">\(f\)</span> 是广义可测函数时，证明过程类似，只是将 <span class="math inline">\(\mathcal{B}\)</span> 的定义换成 <a href="#09224b">09224b</a> 即可。</p>
+<p><span class="proof-title"><em>证明</em>. </span>我们先证明 <span class="math inline">\(f\)</span> 是 Borel 函数的情况。 因为 <span class="math inline">\(\{ f&lt;a \}=f^{-1}((-\infty,a))\)</span>，所以 1 蕴含 2。又因为 <span class="math inline">\(\sigma(\{ (-\infty,a)|a\in\mathbb{R} \})=\mathcal{B}\)</span>，所以根据 <a href="#thm-measurable-func-decision" class="quarto-xref">定理&nbsp;3</a>，2 也蕴含 1。其他条件证明类似。 当 <span class="math inline">\(f\)</span> 是广义可测函数时，证明过程类似，只是将 <span class="math inline">\(\mathcal{B}\)</span> 的定义换成 <a href="#def-general-borel-set" class="quarto-xref">定义&nbsp;4</a> 即可。</p>
 </div>
 <div class="callout callout-style-default callout-note callout-empty-content callout-titled" title="在面对广义可测函数时，是 ${ f<a }=f^{-1}([-\infty,a))$ 而非 $f^{-1}((-\infty,a))$">
 <div class="callout-header d-flex align-content-center">
@@ -561,7 +601,13 @@ f^{-1}(\mathcal{E})\subset \mathcal{F}
 <section id="算数运算" class="level2">
 <h2 class="anchored" data-anchor-id="算数运算">算数运算</h2>
 <div id="thm-f90039" class="theorem">
-<p><span class="theorem-title"><strong>定理 5 (可测函数的算数运算)</strong></span> 若 <span class="math inline">\(f,g\)</span> 是广义可测函数（或 Borel 函数），则 1. <span class="math inline">\(\forall a\in \bar{\mathbb{R}}\)</span> (或 <span class="math inline">\(\mathbb{R}\)</span>)，<span class="math inline">\(af\)</span> 是广义可测函数（或 Borel 函数）; 2. 若 <span class="math inline">\(f+g\)</span> 有意义，则其是广义可测函数（如果 <span class="math inline">\(f,g\)</span> 是 Borel 函数，则 <span class="math inline">\(f+g\)</span> 一定有意义并且它是 Borel 函数）； 3. <span class="math inline">\(fg\)</span> 是广义可测函数（Borel 函数）; 4. 若 <span class="math inline">\(g(x)\neq 0,\forall x \in X\)</span>，则 <span class="math inline">\(f/g\)</span> 是广义可测函数（Borel 函数）。</p>
+<p><span class="theorem-title"><strong>定理 5 (可测函数的算数运算)</strong></span> 若 <span class="math inline">\(f,g\)</span> 是广义可测函数（或 Borel 函数），则</p>
+<ol type="1">
+<li><span class="math inline">\(\forall a\in \bar{\mathbb{R}}\)</span> (或 <span class="math inline">\(\mathbb{R}\)</span>)，<span class="math inline">\(af\)</span> 是广义可测函数（或 Borel 函数）;</li>
+<li>若 <span class="math inline">\(f+g\)</span> 有意义，则其是广义可测函数（如果 <span class="math inline">\(f,g\)</span> 是 Borel 函数，则 <span class="math inline">\(f+g\)</span> 一定有意义并且它是 Borel 函数）；</li>
+<li><span class="math inline">\(fg\)</span> 是广义可测函数（Borel 函数）;</li>
+<li>若 <span class="math inline">\(g(x)\neq 0,\forall x \in X\)</span>，则 <span class="math inline">\(f/g\)</span> 是广义可测函数（Borel 函数）。</li>
+</ol>
 </div>
 <div class="proof">
 <p><span class="proof-title"><em>证明</em>. </span></p>
@@ -577,7 +623,10 @@ af=\left\{
 \end{matrix}
 \right.
 \]</span></p>
-<p>容易验证，这三个函数都是可测的。 当 <span class="math inline">\(0&lt;a&lt;\infty\)</span> 时，有 <span class="math inline">\(\{ af&gt;b \}=\{ f&gt;b / a \}\)</span> ，由 <a href="#thm-measurable-func-decision2" class="quarto-xref">定理&nbsp;4</a> 可知 <span class="math inline">\(af\)</span> 是可测的; 当 <span class="math inline">\(0&gt;a&gt;-\infty\)</span> 时情况类似。1 得证。 (2) 若 <span class="math inline">\(f+g\)</span> 有意义，则 <span class="math inline">\(\forall a\in\mathbb{R}\)</span>，我们可以将 <span class="math inline">\(\{ f+g&lt;a \}\)</span> 分成三部分，有</p>
+<p>容易验证，这三个函数都是可测的。 当 <span class="math inline">\(0&lt;a&lt;\infty\)</span> 时，有 <span class="math inline">\(\{ af&gt;b \}=\{ f&gt;b / a \}\)</span> ，由 <a href="#thm-measurable-func-decision2" class="quarto-xref">定理&nbsp;4</a> 可知 <span class="math inline">\(af\)</span> 是可测的; 当 <span class="math inline">\(0&gt;a&gt;-\infty\)</span> 时情况类似。1 得证。</p>
+<ol start="2" type="1">
+<li>若 <span class="math inline">\(f+g\)</span> 有意义，则 <span class="math inline">\(\forall a\in\mathbb{R}\)</span>，我们可以将 <span class="math inline">\(\{ f+g&lt;a \}\)</span> 分成三部分，有</li>
+</ol>
 <p><span class="math display">\[
 \{ f+g&lt;a \}=A_{1}\cup A_{2}\cup A_{3},
 \]</span></p>
@@ -595,7 +644,10 @@ A_{3}&amp;=\{ f+g&lt;a,-\infty&lt;f+g&lt;\infty \} \\
 &amp;=\bigcup_{\gamma \in\mathbb{Q}}\left[ \{ f&lt;\gamma \} \cap \{ g&lt;a-\gamma \} \right]\cap \{ -\infty&lt;f,g&lt;\infty \}
 \end{align}
 \]</span></p>
-<p>容易证明，这三个数据集都属于 <span class="math inline">\(\mathcal{F}\)</span>，因此可知 <span class="math inline">\(f+g\)</span> 可测。当 <span class="math inline">\(f,g\)</span> 都是 Borel 函数时，<span class="math inline">\(A_{1}\)</span> 和 <span class="math inline">\(A_{2}\)</span> 都是空集，自然也是成立的。2 得证。 (3) 对于任意的 <span class="math inline">\(a\in\mathbb{R}\)</span>，我们有 <span class="math inline">\(\{ fg&lt;a \}=A_{1}\cup A_{2}\cup A_{3}\)</span>，其中</p>
+<p>容易证明，这三个数据集都属于 <span class="math inline">\(\mathcal{F}\)</span>，因此可知 <span class="math inline">\(f+g\)</span> 可测。当 <span class="math inline">\(f,g\)</span> 都是 Borel 函数时，<span class="math inline">\(A_{1}\)</span> 和 <span class="math inline">\(A_{2}\)</span> 都是空集，自然也是成立的。2 得证。</p>
+<ol start="3" type="1">
+<li>对于任意的 <span class="math inline">\(a\in\mathbb{R}\)</span>，我们有 <span class="math inline">\(\{ fg&lt;a \}=A_{1}\cup A_{2}\cup A_{3}\)</span>，其中</li>
+</ol>
 <p><span class="math display">\[
 \begin{align}
 A_{1}&amp;=\{ fg&lt;a \}\cap \{ fg=-\infty \} \\
@@ -621,7 +673,10 @@ B_{2}&amp;=\{ fg&lt;a \}\cap \{ g\neq 0 \}\\
 \left[ \{ g&lt;0 \}\cap \bigcup_{\gamma \in\mathbb{Q}} \{ f&gt;\gamma,\gamma g&lt;a \}\right] \in\mathcal{F}
 \end{align}
 \]</span></p>
-<p>当 <span class="math inline">\(f,g\)</span> 是 Borel 函数的时候，只有 <span class="math inline">\(A_{3}\)</span>。3 得证。 (4) 我们首先证明 <span class="math inline">\(g^{-1}\)</span> 是可测函数（或 Borel 函数）, 然后利用 3 即可证明。同样的，我们有</p>
+<p>当 <span class="math inline">\(f,g\)</span> 是 Borel 函数的时候，只有 <span class="math inline">\(A_{3}\)</span>。3 得证。</p>
+<ol start="4" type="1">
+<li>我们首先证明 <span class="math inline">\(g^{-1}\)</span> 是可测函数（或 Borel 函数）, 然后利用 3 即可证明。同样的，我们有</li>
+</ol>
 <p><span class="math display">\[
 \{ g^{-1} &lt; a \}=A_{1}\cup A_{2}\cup A_{3}
 \]</span></p>
@@ -703,7 +758,7 @@ x \in\{ \sup_{n}g_{n}&gt;a \}&amp;\iff
 <h2 class="anchored" data-anchor-id="简单函数和典型方法">简单函数和典型方法</h2>
 <p>接下来，我们将研究一种特殊的 Borel 函数，即<strong>简单函数</strong>，其是构成任意可测函数的“基石”。</p>
 <div id="def-finite-measurable-partition" class="theorem definition">
-<p><span class="theorem-title"><strong>定义 5 (有限可测分割)</strong></span> 若存在 <span class="math inline">\(A_{i}\in\mathcal{F},i=1,\dots,n\)</span>，满足</p>
+<p><span class="theorem-title"><strong>定义 6 (有限可测分割)</strong></span> 若存在 <span class="math inline">\(A_{i}\in\mathcal{F},i=1,\dots,n\)</span>，满足</p>
 <p><span class="math display">\[
 A_{i}\cap A_{j}=\emptyset,\forall i\neq j,\quad
 \bigcup_{i=1}^{n}A_{i}=X
@@ -711,7 +766,7 @@ A_{i}\cap A_{j}=\emptyset,\forall i\neq j,\quad
 <p>则称 <span class="math inline">\(\{ A_{i},i=1,\dots,n \}\)</span> 是空间 <span class="math inline">\((X,\mathcal{F})\)</span> 的一个有限可测分割。</p>
 </div>
 <div id="def-07-measurable-functions-15" class="theorem definition">
-<p><span class="theorem-title"><strong>定义 6 (简单函数)</strong></span> 对于某个函数 <span class="math inline">\(f:X\to \mathbb{R}\)</span>，存在一个有限可测分割 <span class="math inline">\(\{ A_{i},i=1,\dots n \}\)</span> 和实数集合 <span class="math inline">\(\{ a_{i}\in\mathbb{R},i=1,\dots,n \}\)</span> 使得</p>
+<p><span class="theorem-title"><strong>定义 7 (简单函数)</strong></span> 对于某个函数 <span class="math inline">\(f:X\to \mathbb{R}\)</span>，存在一个有限可测分割 <span class="math inline">\(\{ A_{i},i=1,\dots n \}\)</span> 和实数集合 <span class="math inline">\(\{ a_{i}\in\mathbb{R},i=1,\dots,n \}\)</span> 使得</p>
 <p><span class="math display">\[
 f=\sum\limits_{i=1}^{n}a_{i}I_{A_{i}}
 \]</span></p>
@@ -719,12 +774,12 @@ f=\sum\limits_{i=1}^{n}a_{i}I_{A_{i}}
 </div>
 <p>为了能够更加明确地叙述简单函数与可测函数之间的联系，我们还需要定义一些函数相关的概念。</p>
 <div id="def-07-measurable-functions-16" class="theorem definition">
-<p><span class="theorem-title"><strong>定义 7 (有界可测函数)</strong></span> 对于可测函数 <span class="math inline">\(f\)</span>，若存在 <span class="math inline">\(M&gt;0\)</span> 使得 <span class="math inline">\(|f(x)|&lt;M,\forall x \in X\)</span>，则称该函数是有界的。</p>
+<p><span class="theorem-title"><strong>定义 8 (有界可测函数)</strong></span> 对于可测函数 <span class="math inline">\(f\)</span>，若存在 <span class="math inline">\(M&gt;0\)</span> 使得 <span class="math inline">\(|f(x)|&lt;M,\forall x \in X\)</span>，则称该函数是有界的。</p>
 </div>
 <p>显然，<strong>有界可测函数必是 Borel 函数</strong>。</p>
 <div id="def-07-measurable-functions-17" class="theorem definition">
-<p><span class="theorem-title"><strong>定义 8 (正部和负部)</strong></span> 对于可测函数 <span class="math inline">\(f\)</span> ，定义其正部 <span class="math inline">\(f^{+}\)</span> 和负部 <span class="math inline">\(f^{-}\)</span> 为</p>
-<p>$$ <span class="math display">\[\begin{align}
+<p><span class="theorem-title"><strong>定义 9 (正部和负部)</strong></span> 对于可测函数 <span class="math inline">\(f\)</span> ，定义其正部 <span class="math inline">\(f^{+}\)</span> 和负部 <span class="math inline">\(f^{-}\)</span> 为</p>
+<p><span class="math display">\[\begin{align}
 &amp;f^{+}(x)=\left( f(x) \right) ^{+}=\left\{\begin{matrix}
 
 f(x),&amp;f(x)&gt;0 \\
@@ -736,11 +791,10 @@ f(x),&amp;f(x)&gt;0 \\
 0,&amp;f(x) \geq 0
 \end{matrix}\right. \\
 \end{align}\]</span></p>
-<p>$$</p>
 </div>
 <p>显然，<strong>可测函数的正部和负部是非负可测函数，并且有 <span class="math inline">\(f=f^{+}-f^{-}\)</span></strong>。</p>
 <div id="def-07-measurable-functions-18" class="theorem definition">
-<p><span class="theorem-title"><strong>定义 9 (一致收敛)</strong></span> 对于均定义在 <span class="math inline">\(X\)</span> 上 的 <span class="math inline">\(\{ f_{n},n=1,2,\dots \}\)</span> 和 <span class="math inline">\(f\)</span>，若 <span class="math inline">\(\forall\epsilon&gt;0\)</span>，存在 <span class="math inline">\(N\in\mathbb{N}^{+}\)</span>，<span class="math inline">\(\forall n&gt;N\)</span> 满足</p>
+<p><span class="theorem-title"><strong>定义 10 (一致收敛)</strong></span> 对于均定义在 <span class="math inline">\(X\)</span> 上 的 <span class="math inline">\(\{ f_{n},n=1,2,\dots \}\)</span> 和 <span class="math inline">\(f\)</span>，若 <span class="math inline">\(\forall\epsilon&gt;0\)</span>，存在 <span class="math inline">\(N\in\mathbb{N}^{+}\)</span>，<span class="math inline">\(\forall n&gt;N\)</span> 满足</p>
 <p><span class="math display">\[
 \sup_{x \in X}|f_{n}(x)-f(x)|&lt;\epsilon
 \]</span></p>
@@ -775,7 +829,10 @@ f_{n}=\sum\limits_{k=0}^{n2^{n}-1} \frac{k}{2^{n}}I_{\left\{  \frac{k}{2^{n}}\le
 <p><span class="math display">\[
 0\leq f(x)-f_{n}(x)\leq 1/2^{n},\quad \forall x \in X，
 \]</span></p>
-<p>即 <span class="math inline">\(f_{n}\uparrow f\)</span> 是一致成立的。 (3) 我们利用 <span class="math inline">\(f=f^{+}-f^{-}\)</span>，然后分别找到 <span class="math inline">\(f^{+}\)</span> 和 <span class="math inline">\(f^{-}\)</span> 的简单函数列 <span class="math inline">\(\{ f^{+}_{n} \}\)</span> 和 <span class="math inline">\(\{ f^{-}_{n} \}\)</span>，则有 <span class="math inline">\(f_{n}=f_{n}^{+}-f_{n}^{-}\)</span> 是简单函数，并且 <span class="math inline">\(f_{n}\to f\)</span>。并且也容易证明，当 <span class="math inline">\(f\)</span> 有界时，<span class="math inline">\(f^{+},f^{-}\)</span> 也有界，进而可以证明收敛是一致成立的。</p>
+<p>即 <span class="math inline">\(f_{n}\uparrow f\)</span> 是一致成立的。</p>
+<ol start="3" type="1">
+<li>我们利用 <span class="math inline">\(f=f^{+}-f^{-}\)</span>，然后分别找到 <span class="math inline">\(f^{+}\)</span> 和 <span class="math inline">\(f^{-}\)</span> 的简单函数列 <span class="math inline">\(\{ f^{+}_{n} \}\)</span> 和 <span class="math inline">\(\{ f^{-}_{n} \}\)</span>，则有 <span class="math inline">\(f_{n}=f_{n}^{+}-f_{n}^{-}\)</span> 是简单函数，并且 <span class="math inline">\(f_{n}\to f\)</span>。并且也容易证明，当 <span class="math inline">\(f\)</span> 有界时，<span class="math inline">\(f^{+},f^{-}\)</span> 也有界，进而可以证明收敛是一致成立的。</li>
+</ol>
 </div>
 <p>以上定理非常重要，因为其提供了一种证明关于可测函数的命题的统一方法论，可以称之为<strong>典型方法</strong>。</p>
 <div class="callout callout-style-default callout-important callout-titled" title="典型方法">
@@ -788,7 +845,13 @@ f_{n}=\sum\limits_{k=0}^{n2^{n}-1} \frac{k}{2^{n}}I_{\left\{  \frac{k}{2^{n}}\le
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>为了证明一个关于可测函数的命题，我们可以将其分为以下几个步骤： 1. 证明该命题对于最简单的函数——指示函数成立； 2. 证明该命题对于非负简单函数——指示函数的线性组合成立； 3. 证明该命题对于非负可测函数——非降非负简单函数列的极限成立； 4. 证明该命题对于一般可测函数——两个非负可测函数的差成立。</p>
+<p>为了证明一个关于可测函数的命题，我们可以将其分为以下几个步骤：</p>
+<ol type="1">
+<li>证明该命题对于最简单的函数——指示函数成立；</li>
+<li>证明该命题对于非负简单函数——指示函数的线性组合成立；</li>
+<li>证明该命题对于非负可测函数——非降非负简单函数列的极限成立；</li>
+<li>证明该命题对于一般可测函数——两个非负可测函数的差成立。</li>
+</ol>
 </div>
 </div>
 <p><span id="typical-method"></span></p>
@@ -815,18 +878,11 @@ f_{n}=\sum\limits_{k=0}^{n2^{n}-1} \frac{k}{2^{n}}I_{\left\{  \frac{k}{2^{n}}\le
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<div class="callout callout-style-default callout-note callout-titled" title="Excalidraw drawing pending export">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">注记</span>Excalidraw drawing pending export
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>原 Obsidian 图形已保留为附件：<a href="../../../assets/attachments/advanced-probability/excalidraw/measurable-functions-2024-04-24-230705.excalidraw.md">center</a>。</p>
-</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/composite-mapping-20260514-181034.png" class="img-fluid figure-img"></p>
+<figcaption>复合可测映射</figcaption>
+</figure>
 </div>
 <ul>
 <li>第二个定理的充分性是第一个定理的特例（<span class="math inline">\(\mathcal{F}=g^{-1}(\mathcal{T})\)</span>，<span class="math inline">\((Z,\mathcal{Z})=(\bar{\mathbb{R}},\mathcal{B}_{\bar{\mathbb{R}}})\)</span>）。</li>
@@ -835,11 +891,11 @@ f_{n}=\sum\limits_{k=0}^{n2^{n}-1} \frac{k}{2^{n}}I_{\left\{  \frac{k}{2^{n}}\le
 </div>
 </div>
 <div class="proof">
-<p><span class="proof-title"><em>证明</em>. </span>我们只需要证明必要性即可。 (1) 首先考虑 <span class="math inline">\(h\)</span> 是 <span class="math inline">\((X,g^{-1}(\mathcal{T}))\)</span> 上的简单函数，即存在 <span class="math inline">\(X\)</span> 的有限分割 <span class="math inline">\(\{ A_{i}\in g^{-1}(\mathcal{T}),=1,\dots,n \}\)</span> 和 <span class="math inline">\(\{ a_{i}\in\mathbb{R},i=1,\dots,n \}\)</span>，使得</p>
-<p><span class="math display">\[
+<p><span class="proof-title"><em>证明</em>. </span>我们只需要证明必要性即可。</p>
+<p>第一，首先考虑 <span class="math inline">\(h\)</span> 是 <span class="math inline">\((X,g^{-1}(\mathcal{T}))\)</span> 上的简单函数，即存在 <span class="math inline">\(X\)</span> 的有限分割 <span class="math inline">\(\{ A_{i}\in g^{-1}(\mathcal{T}),=1,\dots,n \}\)</span> 和 <span class="math inline">\(\{ a_{i}\in\mathbb{R},i=1,\dots,n \}\)</span>，使得</p>
+<p><span id="eq-simple-func"><span class="math display">\[
 h=\sum\limits_{i=1}^{n}a_{i}I_{A_{i}}.
-\]</span></p>
-<p><span id="db41c3"></span></p>
+\tag{1}\]</span></span></p>
 <p>因为 <span class="math inline">\(A_{i}\in g^{-1}(\mathcal{T})\)</span>，所以一定存在 <span class="math inline">\(C_{i}\in \mathcal{T}\)</span> 使得 <span class="math inline">\(A_{i}=g^{-1}(C_{i})\)</span>。<span class="math inline">\(\{ C_{i},i=1,\dots ,n \}\)</span> 不一定是两两不交的，所以我们可以构造新的一列两两不交的集合 <span class="math inline">\(\{ B_{i},i=1,\dots , \}\)</span> ，使得</p>
 <p><span class="math display">\[
 B_{i}=C_{i}\setminus \bigcup_{j=1}^{i}C_{j},
@@ -864,15 +920,13 @@ h(x)=\sum\limits_{i=1}^{n}a_{i}I_{A_{i}}(x)
 \]</span></p>
 <p>这证明了当 <span class="math inline">\(h\)</span> 是简单函数时，结论是成立的，并且 <span class="math inline">\(g\)</span> 也是简单函数。</p>
 <p>当 <span class="math inline">\(h\)</span> 是广义可测函数时，存在简单函数列 <span class="math inline">\(\{ h_{n},n=1,\dots \}\)</span> 满足</p>
-<p><span class="math display">\[
+<p><span id="eq-58b581"><span class="math display">\[
 \lim_{ n \to \infty } h_{n}=h.
-\]</span></p>
-<p><span id="58b581"></span></p>
+\tag{2}\]</span></span></p>
 <p>对于每个简单函数 <span class="math inline">\(h_{n}\)</span> ，依据前面的结论，我们可以找到 <span class="math inline">\((Y,\mathcal{T})\)</span> 上的简单函数 <span class="math inline">\(f_{n}\)</span>，满足</p>
-<p><span class="math display">\[
+<p><span id="eq-0f8852"><span class="math display">\[
 h_{n}=f_{n}\circ g.
-\]</span></p>
-<p><span id="0f8852"></span></p>
+\tag{3}\]</span></span></p>
 <p>令</p>
 <p><span class="math display">\[
 f(y)=\left\{\begin{matrix}
@@ -890,16 +944,17 @@ f_{n}(g(x))=f(g(x)).
 \forall y\in g(X), \exists x \in X,g(x)=y \implies
 f_{n}(y)=f_{n}(g(x))=h_{n}(x)\to h(x)
 \]</span></p>
-<p>以上结论由式 <a href="#58b581">58b581</a> 和式 <a href="#0f8852">0f8852</a> 保证。</p>
+<p>以上结论由式 <a href="#eq-58b581" class="quarto-xref">式&nbsp;2</a> 和式 <a href="#eq-0f8852" class="quarto-xref">式&nbsp;3</a> 保证。</p>
 </div>
 </section>
 <section id="连续函数" class="level2">
 <h2 class="anchored" data-anchor-id="连续函数">连续函数</h2>
-<div id="thm-d0017d" class="theorem">
+<div id="thm-continue-func-measurable" class="theorem">
 <p><span class="theorem-title"><strong>定理 10 (连续函数的可测性)</strong></span> 假设 <span class="math inline">\(\Omega \in\mathbb{R}^{p}\)</span> 是一个 Borel set， <span class="math inline">\(f:\Omega\to \mathbb{R}\)</span> 是一个连续函数，则 <span class="math inline">\(f\)</span> 是 Borel 函数。</p>
 </div>
-<div class="proof">
-<p><span class="proof-title"><em>证明</em>. </span>我们只需要证明 <span class="math inline">\(f^{-1}(-\infty,x)\in \mathcal{B},\forall x \in \mathbb{R}\)</span> 即可。这是显然的，因为 <span class="math inline">\((-\infty,x)\)</span> 是一个开集，根据连续函数的性质：开集的原像一定是开集，所以 <span class="math inline">\(f^{-1}(-\infty,x)\)</span> 也是开集。再根据 1.1 测度空间和概率空间 (<code>1.1 测度空间和概率空间#^14d5de</code>)，可以知道 <span class="math inline">\(f^{-1}(-\infty,x)\in\mathcal{B}\)</span>。</p>
+<div class="open proof">
+<p><span class="proof-title"><em>证明</em>. </span>我们只需要证明 <span class="math inline">\(f^{-1}(-\infty,x)\in \mathcal{B},\forall x \in \mathbb{R}\)</span> 即可。</p>
+<p>这是显然的，因为 <span class="math inline">\((-\infty,x)\)</span> 是一个开集，根据连续函数的性质：开集的原像一定是开集，所以 <span class="math inline">\(f^{-1}(-\infty,x)\)</span> 也是开集。再根据 <a href="../../../src/learn/advanced-probability/02-sigma-field.html#def-borel-sigma-field">Borel <span class="math inline">\(\sigma\)</span>-field 的定义</a>，可以知道 <span class="math inline">\(f^{-1}(-\infty,x)\in\mathcal{B}\)</span>。</p>
 </div>
 </section>
 </section>
@@ -907,10 +962,20 @@ f_{n}(y)=f_{n}(g(x))=h_{n}(x)\to h(x)
 <h1>函数类</h1>
 <p>这里我们介绍两个在程士宏老师的《测度论与概率论基础》一书中提及的概念，其基本上是单调系和 <span class="math inline">\(\lambda\)</span> -class 在函数上的推广，其有助于去证明一些关于可测函数的相关定理。</p>
 <div id="def-func-monoton" class="theorem definition">
-<p><span class="theorem-title"><strong>定义 10 (函数单调类)</strong></span> <span class="math inline">\(\mathcal{M}\)</span> 是由 <span class="math inline">\(X\)</span> 上的非负广义可测函数组成的一个集合，其满足以下条件： (1) <span class="math inline">\(\forall f,g\in\mathcal{M},\forall a,b\in \mathbb{R},a,b\geq 0\implies af+bg\in\mathcal{M}\)</span>; (2) <span class="math inline">\(\forall f_{n}\in\mathcal{M},f_{n}\uparrow f\implies f\in\mathcal{M}\)</span>; 则称 <span class="math inline">\(\mathcal{M}\)</span> 是 <span class="math inline">\(X\)</span> 上的函数单调类。</p>
+<p><span class="theorem-title"><strong>定义 11 (函数单调类)</strong></span> <span class="math inline">\(\mathcal{M}\)</span> 是由 <span class="math inline">\(X\)</span> 上的非负广义可测函数组成的一个集合，其满足以下条件：</p>
+<ol type="1">
+<li><span class="math inline">\(\forall f,g\in\mathcal{M},\forall a,b\in \mathbb{R},a,b\geq 0\implies af+bg\in\mathcal{M}\)</span>;</li>
+<li><span class="math inline">\(\forall f_{n}\in\mathcal{M},f_{n}\uparrow f\implies f\in\mathcal{M}\)</span>;</li>
+</ol>
+<p>则称 <span class="math inline">\(\mathcal{M}\)</span> 是 <span class="math inline">\(X\)</span> 上的函数单调类。</p>
 </div>
 <div id="def-07-measurable-functions-24" class="theorem definition">
-<p><span class="theorem-title"><strong>定义 11 (函数 <span class="math inline">\(\lambda\)</span> 类)</strong></span> <span class="math inline">\(\mathcal{L}\)</span> 是由 <span class="math inline">\(X\)</span> 上的非负广义可测函数组成的一个集合，其满足以下条件： (1) <span class="math inline">\(\mathcal{L}\)</span> 是一个函数单调类； (2) <span class="math inline">\(\mathbb{1}\in\mathcal{L}\)</span>; 则称 <span class="math inline">\(\mathcal{L}\)</span> 是 <span class="math inline">\(X\)</span> 上的函数 <span class="math inline">\(\lambda\)</span> 类。</p>
+<p><span class="theorem-title"><strong>定义 12 (函数 <span class="math inline">\(\lambda\)</span> 类)</strong></span> <span class="math inline">\(\mathcal{L}\)</span> 是由 <span class="math inline">\(X\)</span> 上的非负广义可测函数组成的一个集合，其满足以下条件：</p>
+<ol type="1">
+<li><span class="math inline">\(\mathcal{L}\)</span> 是一个函数单调类；</li>
+<li><span class="math inline">\(\mathbb{1}\in\mathcal{L}\)</span>;</li>
+</ol>
+<p>则称 <span class="math inline">\(\mathcal{L}\)</span> 是 <span class="math inline">\(X\)</span> 上的函数 <span class="math inline">\(\lambda\)</span> 类。</p>
 </div>
 <p>利用典型方法，我们可以证明以上两个函数类满足下面的定理</p>
 <div id="thm-d702d8" class="theorem">
@@ -926,13 +991,13 @@ f_{n}(y)=f_{n}(g(x))=h_{n}(x)\to h(x)
 <section id="随机变量的分布" class="level1">
 <h1>随机变量的分布</h1>
 <div id="def-rv-dist" class="theorem definition">
-<p><span class="theorem-title"><strong>定义 12 (诱导测度和分布)</strong></span> 假设 <span class="math inline">\((X,\mathcal{F},\nu)\)</span> 是一个测度空间，<span class="math inline">\(f\)</span> 是从 <span class="math inline">\((X,\mathcal{F})\)</span> 到 <span class="math inline">\((Y,\mathcal{T})\)</span> 的可测映射，则我们可以定义 <strong><span class="math inline">\(f\)</span> 诱导的测度 (induced measure by <span class="math inline">\(f\)</span> )</strong>，记为 <span class="math inline">\(\nu \circ f^{-1}\)</span>，其在 <span class="math inline">\((Y,\mathcal{T})\)</span> 上，满足</p>
+<p><span class="theorem-title"><strong>定义 13 (诱导测度和分布)</strong></span> 假设 <span class="math inline">\((X,\mathcal{F},\nu)\)</span> 是一个测度空间，<span class="math inline">\(f\)</span> 是从 <span class="math inline">\((X,\mathcal{F})\)</span> 到 <span class="math inline">\((Y,\mathcal{T})\)</span> 的可测映射，则我们可以定义 <strong><span class="math inline">\(f\)</span> 诱导的测度 (induced measure by <span class="math inline">\(f\)</span> )</strong>，记为 <span class="math inline">\(\nu \circ f^{-1}\)</span>，其在 <span class="math inline">\((Y,\mathcal{T})\)</span> 上，满足</p>
 <p><span class="math display">\[
 \nu \circ f^{-1}(B)=\nu(f\in B)=\nu(f^{-1}(B)),\quad \forall B\in\mathcal{T}.
 \]</span></p>
 <p><strong><span class="math inline">\(\nu\circ f^{-1}\)</span> 是测度</strong>由 <a href="#thm-inverse-image" class="quarto-xref">定理&nbsp;1</a> 保证。</p>
 <p>若 <span class="math inline">\((X,\mathcal{F},\nu)\)</span> 是一个概率空间，<span class="math inline">\(f\)</span> 是一个随机变量，则 <span class="math inline">\(\nu \circ f^{-1}\)</span> 被称为<strong>随机变量 <span class="math inline">\(f\)</span> 的分布或分布率（distribution or law）</strong>。一般我们使用 <span class="math inline">\(\nu_{f}\)</span> 来表示。</p>
-<p>根据 <strong>?@def-dist-func</strong>，我们可以定义 <span class="math inline">\(\nu_{f}\)</span> 的分布函数 <span class="math inline">\(F_{f}\)</span>，我们称其为<strong>随机变量 <span class="math inline">\(f\)</span> 的分布函数</strong>(cumulative distribution function，c.d.f)，记作 <span class="math inline">\(f\sim F_{f}\)</span>，称为 <span class="math inline">\(f\)</span> 服从 <span class="math inline">\(F_{f}\)</span>。</p>
+<p>根据 <a href="../../../src/learn/advanced-probability/06-distribution-function.html#def-dist-func">分布函数的定义</a>，我们可以定义 <span class="math inline">\(\nu_{f}\)</span> 的分布函数 <span class="math inline">\(F_{f}\)</span>，我们称其为<strong>随机变量 <span class="math inline">\(f\)</span> 的分布函数</strong>(cumulative distribution function，c.d.f)，记作 <span class="math inline">\(f\sim F_{f}\)</span>，称为 <span class="math inline">\(f\)</span> 服从 <span class="math inline">\(F_{f}\)</span>。</p>
 </div>
 <div class="callout callout-style-default callout-tip callout-empty-content callout-titled" title="Hint: 只有定义在可测空间 $(\mathbb{R},\mathcal{B})$ 上的测度才会被成为分布，因为只有这样的测度会一一对应于一个分布函数。">
 <div class="callout-header d-flex align-content-center">
@@ -947,7 +1012,12 @@ f_{n}(y)=f_{n}(g(x))=h_{n}(x)\to h(x)
 
 </div>
 </div>
-<p>在概率论中，我们会主要关注分布和分布函数，这是因为： - 就像在 <a href="#d2ad88">一开始</a> 提到的一样，这样的分布所对应的测度空间可能是简单的，更易于研究。比如，如果 <span class="math inline">\(f\)</span> 是可测函数，则 <span class="math inline">\((Y,\mathcal{T})\)</span> 一般就是 <span class="math inline">\((\mathbb{R},\mathcal{B})\)</span>，测度空间其实就是 <span class="math inline">\((\mathbb{R},\mathcal{B},\nu \circ f^{-1})\)</span> ，这个可测空间我们研究的很深入了。 - 分布和分布函数融合了随机变量和原始概率空间两部分的信息。 - 分布或分布函数可以看做是原始概率空间的一种抽象化描述。对于两种不同的骰子，请对应的随机变量是相同的；而不同的分布意味着原始概率空间（两个骰子）根本上的差异。所以分布更能够反应其中所蕴含的数学信息。</p>
+<p>在概率论中，我们会主要关注分布和分布函数，这是因为：</p>
+<ul>
+<li>就像在 <a href="#d2ad88">一开始</a> 提到的一样，这样的分布所对应的测度空间可能是简单的，更易于研究。比如，如果 <span class="math inline">\(f\)</span> 是可测函数，则 <span class="math inline">\((Y,\mathcal{T})\)</span> 一般就是 <span class="math inline">\((\mathbb{R},\mathcal{B})\)</span>，测度空间其实就是 <span class="math inline">\((\mathbb{R},\mathcal{B},\nu \circ f^{-1})\)</span> ，这个可测空间我们研究的很深入了。</li>
+<li>分布和分布函数融合了随机变量和原始概率空间两部分的信息。</li>
+<li>分布或分布函数可以看做是原始概率空间的一种抽象化描述。对于两种不同的骰子，请对应的随机变量是相同的；而不同的分布意味着原始概率空间（两个骰子）根本上的差异。所以分布更能够反应其中所蕴含的数学信息。</li>
+</ul>
 <div id="exm-07-measurable-functions-28" class="theorem example">
 <p><span class="theorem-title"><strong>例 1 (离散分布率)</strong></span> 存在一个随机变量 <span class="math inline">\(f: (X,\mathcal{F},\nu)\to(Y,\mathcal{T})\)</span>，<span class="math inline">\((Y,\mathcal{T})\)</span> 满足以下的条件：</p>
 <p><span class="math display">\[
@@ -968,7 +1038,7 @@ f_{n}(y)=f_{n}(g(x))=h_{n}(x)\to h(x)
 <p>这个时候用恒等随机变量 <span class="math inline">\(f(x)=x\)</span>，不难证明，其满足我们的条件。</p>
 </div>
 <p>连续分布率需要学习了 <a href="../../../src/learn/advanced-probability/08-integration.html">积分</a> 和 <a href="../../../src/learn/advanced-probability/11-radon-nikodym-derivative.html">求导</a> 之后才能够精确地定义。</p>
-<p>从定义 <a href="#def-rv-dist" class="quarto-xref">定义&nbsp;12</a> 中我们可以知道，任意的概率空间和随机变量，都可以构造与之对应的 c.d.f。接下来，我们将证明其反面，一个重要的存在性定理。</p>
+<p>从定义 <a href="#def-rv-dist" class="quarto-xref">定义&nbsp;13</a> 中我们可以知道，任意的概率空间和随机变量，都可以构造与之对应的 c.d.f。接下来，我们将证明其反面，一个重要的存在性定理。</p>
 <div id="thm-6a18be" class="theorem">
 <p><span class="theorem-title"><strong>定理 13 (概率空间和随机变量的存在性)</strong></span> 对于任意的 c.d.f <span class="math inline">\(F\)</span>，必存在一个概率空间 <span class="math inline">\((X,\mathcal{F},P)\)</span> 和它上面的随机变量 <span class="math inline">\(f\)</span>，使得 <span class="math inline">\(f\sim F\)</span>。</p>
 </div>
@@ -981,11 +1051,13 @@ U(t)=t,
 <p><span class="math display">\[
 f(t)=F^{\leftarrow}\circ U(t)=F^{\leftarrow}(U(t)).
 \]</span></p>
-<p>根据 1.1 测度空间和概率空间 (<code>1.1 测度空间和概率空间#^0378ce</code>)，<span class="math inline">\(\forall  x \in\mathbb{R}\)</span></p>
+<p><span class="math inline">\(\forall  x \in\mathbb{R}\)</span>，我们有</p>
 <p><span class="math display">\[
-\{ f&lt;x \}=\{ t\in X|F^{\leftarrow}(U(t))\leq x \}=
-\{ t\in X|F^{\leftarrow}(t)\leq x \}=
-\{ t\in X| t\leq F(x) \}\in \mathcal{B}
+\begin{align}
+\{ f&lt;x \}&amp;=\{ t\in X|F^{\leftarrow}(U(t))\leq x \} \\
+&amp;=\{ t\in X|F^{\leftarrow}(t)\leq x \} \\
+&amp;=\{ t\in X| t\leq F(x) \}\in \mathcal{B}
+\end{align}
 \]</span></p>
 <p>所以 <span class="math inline">\(f\)</span> 是一个随机变量，同时有</p>
 <p><span class="math display">\[
@@ -993,17 +1065,17 @@ P(\{ f&lt;x \})=P(\{ t\in X| t\leq F(x) \})=F(x).
 \]</span></p>
 <p>命题得证。</p>
 </div>
-<div class="callout callout-style-default callout-note callout-empty-content callout-titled" title="以上证明过程中所构造的随机变量涉及到统计中非常重要的一种采样方法：逆分布函数采样。">
+<div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">注记</span>以上证明过程中所构造的随机变量涉及到统计中非常重要的一种采样方法：逆分布函数采样。
+注记
 </div>
 </div>
 <div class="callout-body-container callout-body">
-
+<p>以上证明过程中所构造的随机变量涉及到统计中非常重要的一种采样方法：逆分布函数采样。</p>
 </div>
 </div>
 

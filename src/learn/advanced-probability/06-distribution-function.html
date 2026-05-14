@@ -42,7 +42,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../../site_libs/bootstrap/bootstrap-2e2adf1e2d0a37c341127e2b833c6681.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-28ea277c781a11f752ceea7d06312459.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -382,7 +382,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">修改于</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">2026年5月13日</p>
+      <p class="date-modified">2026年5月14日</p>
     </div>
   </div>
     
@@ -399,38 +399,39 @@ window.Quarto = {
 <div id="def-dist-func" class="theorem definition">
 <p><span class="theorem-title"><strong>定义 1 (准分布函数和分布函数)</strong></span> &nbsp;</p>
 <ol type="1">
-<li><span class="math inline">\(\mathbb{R}\)</span> 上非降右连续实值函数 <span class="math inline">\(F\)</span> 被称为<strong>准分布函数</strong>。即 <span class="math inline">\(F\)</span> 满足 （单调、右连续、非负）</li>
+<li><p><span class="math inline">\(\mathbb{R}\)</span> 上非降右连续实值函数 <span class="math inline">\(F\)</span> 被称为<strong>准分布函数</strong>。即 <span class="math inline">\(F\)</span> 满足 :</p>
+<ol type="a">
+<li>单调：<span class="math inline">\(x\leq y\implies F(x)\leq F(y)\)</span>；</li>
+<li>右连续：<span class="math inline">\(\quad \lim_{ y \to x,y&gt; x } =F(x)\)</span>；</li>
+<li>非负：<span class="math inline">\(F(-\infty)=\lim_{ x \to -\infty } F(x)=0\)</span>；</li>
+</ol></li>
+<li><p>若准分布函数 <span class="math inline">\(F\)</span> 满足下面的条件，则称其为<strong>分布函数</strong> <span class="math display">\[
+F(\infty)=\lim_{ x \to \infty } F(x)=1,
+  \]</span></p></li>
 </ol>
-<p><span class="math display">\[
-  x\leq y\implies F(x)\leq F(y);\quad \lim_{ y \to x,y&gt; x } =F(x); \quad F(-\infty)=\lim_{ x \to -\infty } F(x)=0
-\]</span></p>
-<ol start="2" type="1">
-<li>若准分布函数 <span class="math inline">\(F\)</span> 满足下面的条件，则称其为<strong>分布函数</strong></li>
-</ol>
-<p><span class="math display">\[
-    F(\infty)=\lim_{ x \to \infty } F(x)=1,
-\]</span></p>
 </div>
 </section>
 <section id="准分布函数与测度" class="level1">
 <h1>准分布函数与测度</h1>
 <p>现在我们需要证明（准）分布函数和测度之间的<strong>一一对应</strong>性质。首先我们证明，<strong>对于每一个准分布函数，都可以诱导出一个唯一的 <span class="math inline">\(\sigma\)</span> 有限测度且其在 <span class="math inline">\(\pi\)</span>-class <span class="math inline">\(\mathcal{J}_{\mathbb{R}}\)</span> 上满足确定的性质</strong>。</p>
 <div id="prp-dist2measure" class="theorem proposition">
-<p><span class="theorem-title"><strong>命题 1 (准分布函数 <span class="math inline">\(\to\)</span> 测度)</strong></span> 令 <span class="math inline">\(\mathcal{I}_{\mathbb{R}}=\{ (a,b]|a,b\in\mathbb{R} \}\)</span>，F 是一个准分布函数，对于任意的 <span class="math inline">\(a,b\in\mathbb{R}\)</span>，我们定义</p>
+<p><span class="theorem-title"><strong>命题 1 (准分布函数 <span class="math inline">\(\to\)</span> 测度)</strong></span> 令 <span class="math inline">\(\mathcal{I}_{\mathbb{R}}=\{ (a,b]|a,b\in\mathbb{R} \}\)</span>，<span class="math inline">\(F\)</span> 是一个准分布函数，对于任意的 <span class="math inline">\(a,b\in\mathbb{R}\)</span>，我们定义</p>
 <p><span class="math display">\[
 \mu((a,b])=\left\{\begin{align}
 &amp;F(b)-F(a),&amp;a&lt;b,\\
 &amp;0,&amp;a\geq b
 \end{align}\right.
 \]</span></p>
-<p>则 <span class="math inline">\(\mu\)</span> 是 <span class="math inline">\(\mathcal{I}_{\mathbb{R}}\)</span> 上的测度。将其扩张至 <span class="math inline">\(\mathcal{B}\)</span> 后可以得到唯一的一个 <strong><span class="math inline">\(\sigma\)</span> 有限</strong>测度，其对于 <span class="math inline">\(\mathcal{J}_{\mathbb{R}}=\{ (-\infty,a]|a\in\mathbb{R} \}\)</span> 中的元素有</p>
+<p>则 <span class="math inline">\(\mu\)</span> 是 <span class="math inline">\(\mathcal{I}_{\mathbb{R}}\)</span> 上的测度。</p>
+<p>将其扩张至 <span class="math inline">\(\mathcal{B}\)</span> 后可以得到唯一的一个 <strong><span class="math inline">\(\sigma\)</span> 有限</strong>测度，其对于 <span class="math inline">\(\mathcal{J}_{\mathbb{R}}=\{ (-\infty,a]|a\in\mathbb{R} \}\)</span> 中的元素有</p>
 <p><span class="math display">\[
 \mu((-\infty,a])=F(a),\quad\forall a\in\mathbb{R}.
 \]</span></p>
 <p>如果存在另外一个 <span class="math inline">\(\mathcal{B}\)</span> 上的测度 <span class="math inline">\(\nu\)</span> 对于 <span class="math inline">\(\mathcal{J}_{\mathbb{R}}\)</span> 上的元素也满足上式，则 <span class="math inline">\(\mu=\nu\)</span>。当 <span class="math inline">\(F\)</span> 是一个分布函数时，<span class="math inline">\(\mu\)</span> 是一个概率测度。</p>
 </div>
 <div class="proof">
-<p><span class="proof-title"><em>证明</em>. </span>首先容易知道 <span class="math inline">\(\mu(\emptyset)=0\)</span> 和非负性，所以我们只需要证明可列可加性就可以。证明过程可以分为 4 个步骤： <strong>(1)</strong> 证明有限可加性。 假设 <span class="math inline">\(\{ (a_{i},b_{i}] \}\)</span> 两两不交且 <span class="math inline">\(\bigcup_{i=1}^{n}(a_{i},b_{i}]=(a,b]\)</span>，则我们一定可以通过排列这些区间的先后顺序，得到下面的关系</p>
+<p><span class="proof-title"><em>证明</em>. </span>首先容易知道 <span class="math inline">\(\mu(\emptyset)=0\)</span> 和非负性，所以我们只需要证明可列可加性就可以。证明过程可以分为 4 个步骤：</p>
+<p><strong>(1)</strong> 证明有限可加性。 假设 <span class="math inline">\(\{ (a_{i},b_{i}] \}\)</span> 两两不交且 <span class="math inline">\(\bigcup_{i=1}^{n}(a_{i},b_{i}]=(a,b]\)</span>，则我们一定可以通过排列这些区间的先后顺序，得到下面的关系</p>
 <p><span class="math display">\[
 a=a_{1}\leq b_{1}=a_{2}\leq b_{2}=\dots=a_{n}\leq b_{n}=b.
 \]</span></p>
@@ -438,7 +439,8 @@ a=a_{1}\leq b_{1}=a_{2}\leq b_{2}=\dots=a_{n}\leq b_{n}=b.
 <p><span class="math display">\[
 \mu((a,b])=F(b)-F(a)=\sum\limits_{i=1}^{n}[F(b_{i})-F(a_{i})]=\sum\limits_{i=1}^{n}\mu((a_{i},b_{i}]).
 \]</span></p>
-<p>有限可加性得证。 <strong>(2)</strong> 证明：如果 <span class="math inline">\(\{ (a_{i},b_{i}] \}\)</span> 两两不交且 <span class="math inline">\(\bigcup_{i=1}^{\infty}(a_{i},b_{i}]\subset (a,b]\)</span>，则 <span class="math inline">\(\mu((a,b])\geq \sum\limits_{n=1}^{\infty}\mu((a_{n},b_{n}])\)</span>. 因为两两不交，对于前 <span class="math inline">\(n\)</span> 个区间，同样我们可以排列形成下面的关系</p>
+<p>有限可加性得证。</p>
+<p><strong>(2)</strong> 证明：如果 <span class="math inline">\(\{ (a_{i},b_{i}] \}\)</span> 两两不交且 <span class="math inline">\(\bigcup_{i=1}^{\infty}(a_{i},b_{i}]\subset (a,b]\)</span>，则 <span class="math inline">\(\mu((a,b])\geq \sum\limits_{n=1}^{\infty}\mu((a_{n},b_{n}])\)</span>. 因为两两不交，对于前 <span class="math inline">\(n\)</span> 个区间，同样我们可以排列形成下面的关系</p>
 <p><span class="math display">\[
 a\leq a_{1}\leq b_{1}\leq a_{2}\leq b_{2}\leq\dots\leq a_{n}\leq b_{n}\leq b
 \]</span></p>
@@ -451,12 +453,12 @@ a\leq a_{1}\leq b_{1}\leq a_{2}\leq b_{2}\leq\dots\leq a_{n}\leq b_{n}\leq b
 &amp;\geq \sum\limits_{i=1}^{n}[F(b_{i})-F(a_{i})]=\sum\limits_{i=1}^{n}\mu((a_{i},b_{i}])
 \end{align}
 \]</span></p>
-<p>令 <span class="math inline">\(n\to \infty\)</span> 即得到结论。 <strong>(3)</strong> 证明：如果 <span class="math inline">\(\{ (a_{i},b_{i}] \}\)</span> 和 <span class="math inline">\((a,b]\)</span> 满足 <span class="math inline">\(\bigcup_{i=1}^{n}(a_{i},b_{i}]\supset(a,b]\)</span>（没有两两不交的要求），则有</p>
-<p><span class="math display">\[
+<p>令 <span class="math inline">\(n\to \infty\)</span> 即得到结论。</p>
+<p><strong>(3)</strong> 证明：如果 <span class="math inline">\(\{ (a_{i},b_{i}] \}\)</span> 和 <span class="math inline">\((a,b]\)</span> 满足 <span class="math inline">\(\bigcup_{i=1}^{n}(a_{i},b_{i}]\supset(a,b]\)</span>（没有两两不交的要求），则有</p>
+<p><span id="eq-semi-finite-add"><span class="math display">\[
 \mu((a,b])\leq \sum\limits_{i=1}^{n}\mu((a_{i},b_{i}])
-\]</span></p>
-<p><span id="eq-semi-finite-add"></span></p>
-<p>也就是<strong>半有限可加性</strong>。我们使用数学归纳法来进行证明，显然当 <span class="math inline">\(n=1\)</span> 时式 <a href="#eq-semi-finite-add">eq-semi-finite-add</a> 成立。假设其对于 <span class="math inline">\(n=k\)</span> 也成立，现在我们来证明其对于 <span class="math inline">\(n=k+1\)</span> 也成立。 我们首先找到一个下标 <span class="math inline">\(i_{0}\)</span>，使得其对应的 <span class="math inline">\(b_{i_{0}}\)</span> 是最大的。如果 <span class="math inline">\(a\geq a_{i_{0}}\)</span>，则直接可以得到 <a href="#eq-semi-finite-add">eq-semi-finite-add</a> 成立。如果 <span class="math inline">\(a&lt;a_{i_{0}}\)</span>，必有 <span class="math inline">\((a,a_{i_{0}}]\subset \bigcup_{i\neq i_{0}}(a_{i},b_{i}]\)</span>，则可以通过归纳法前提得到</p>
+\tag{1}\]</span></span></p>
+<p>也就是<strong>半有限可加性</strong>。我们使用数学归纳法来进行证明，显然当 <span class="math inline">\(n=1\)</span> 时式 <a href="#eq-semi-finite-add" class="quarto-xref">式&nbsp;1</a> 成立。假设其对于 <span class="math inline">\(n=k\)</span> 也成立，现在我们来证明其对于 <span class="math inline">\(n=k+1\)</span> 也成立。 我们首先找到一个下标 <span class="math inline">\(i_{0}\)</span>，使得其对应的 <span class="math inline">\(b_{i_{0}}\)</span> 是最大的。如果 <span class="math inline">\(a\geq a_{i_{0}}\)</span>，则直接可以得到 <a href="#eq-semi-finite-add" class="quarto-xref">式&nbsp;1</a> 成立。如果 <span class="math inline">\(a&lt;a_{i_{0}}\)</span>，必有 <span class="math inline">\((a,a_{i_{0}}]\subset \bigcup_{i\neq i_{0}}(a_{i},b_{i}]\)</span>，则可以通过归纳法前提得到</p>
 <p><span class="math display">\[
 \begin{align}
 \mu((a,b])&amp;=F(b)-F(a) \\
@@ -466,7 +468,8 @@ a\leq a_{1}\leq b_{1}\leq a_{2}\leq b_{2}\leq\dots\leq a_{n}\leq b_{n}\leq b
 &amp;=\sum\limits_{i=1}^{k}\mu((a_{i},b_{i}])
 \end{align}
 \]</span></p>
-<p>归纳法证明结束。 <strong>(4)</strong> 证明：<span class="math inline">\(\{ (a_{i},b_{i}] \}\)</span> 两两不交，且 <span class="math inline">\(\bigcup_{i=1}^{\infty}(a_{i},b_{i}]=(a,b]\)</span>，则 <span class="math inline">\(\mu((a,b])\leq \sum\limits_{i=1}^{\infty}\mu((a_{i},b_{i}])\)</span>. 由 <span class="math inline">\(F\)</span> 的右连续性，<span class="math inline">\(\forall\epsilon&gt;0,\exists\delta_i&gt;0\)</span> 使得</p>
+<p>归纳法证明结束。</p>
+<p><strong>(4)</strong> 证明：<span class="math inline">\(\{ (a_{i},b_{i}] \}\)</span> 两两不交，且 <span class="math inline">\(\bigcup_{i=1}^{\infty}(a_{i},b_{i}]=(a,b]\)</span>，则 <span class="math inline">\(\mu((a,b])\leq \sum\limits_{i=1}^{\infty}\mu((a_{i},b_{i}])\)</span>. 由 <span class="math inline">\(F\)</span> 的右连续性，<span class="math inline">\(\forall\epsilon&gt;0,\exists\delta_i&gt;0\)</span> 使得</p>
 <p><span class="math display">\[
 F(b_{i}+\delta_{i})-F(b_{i})&lt;\epsilon / 2^{i}
 \]</span></p>
@@ -492,7 +495,7 @@ F(b)-F(b+\eta)&amp;\leq \sum\limits_{i=1}^{n}[F(b_{i}+\delta_{i})-F(a_{i})] \\
 <p><span class="math display">\[
 \nu((a,b])=\nu((-\infty,b])-\mu((-\infty,a])=F(b)-F(a)=\mu((a,b])
 \]</span></p>
-<p>也就是说 <span class="math inline">\(\nu\)</span> 和 <span class="math inline">\(\mu\)</span> 在 <span class="math inline">\(\mathcal{I}_{\mathbb{R}}\)</span> 上是一致的。我们取 <span class="math inline">\(\{ (n,n+1],n\in\mathbb{Z} \}\)</span>，可知它们每个都是有界的且其并为整个空间 <span class="math inline">\(\mathbb{R}\)</span>，则根据 <strong>?@thm-measure-extension</strong>，可知测度是唯一的，即 <span class="math inline">\(\mu=\nu\)</span>。</p>
+<p>也就是说 <span class="math inline">\(\nu\)</span> 和 <span class="math inline">\(\mu\)</span> 在 <span class="math inline">\(\mathcal{I}_{\mathbb{R}}\)</span> 上是一致的。我们取 <span class="math inline">\(\{ (n,n+1],n\in\mathbb{Z} \}\)</span>，可知它们每个都是有界的且其并为整个空间 <span class="math inline">\(\mathbb{R}\)</span>，则根据 <a href="../../../src/learn/advanced-probability/05-measure-extension.html#thm-measure-extension">测度扩张定理</a>，可知测度是唯一的，即 <span class="math inline">\(\mu=\nu\)</span>。</p>
 </div>
 <p>反过来可能略有区别，这是因为很可能 <span class="math inline">\(F(a)=\mu((-\infty,a])=\infty\)</span>，这样的话 <span class="math inline">\(F\)</span> 就不是一个实值函数了。因此，我们需要将 <span class="math inline">\(\mu\)</span> 进行限制，其不能是任意的测度。</p>
 <div id="prp-measure2dist" class="theorem proposition">
@@ -503,7 +506,7 @@ F(x)=\mu((-\infty,x])
 <p>若 <strong><span class="math inline">\(\forall x \in\mathbb{R}\implies F(x)&lt;\infty\)</span></strong>，则 <span class="math inline">\(F\)</span> 是一个准分布函数，并且根据不同的 <span class="math inline">\(\mu\)</span> 定义出的 <span class="math inline">\(F\)</span> 不同。若 <span class="math inline">\(\mu\)</span> 是一个概率测度，则 <span class="math inline">\(F\)</span> 是一个分布函数。</p>
 </div>
 <div class="proof">
-<p><span class="proof-title"><em>证明</em>. </span>由测度的单调性和下连续性可直接推出 <span class="math inline">\(F\)</span> 是一个准分布函数。然后，容易证明 <span class="math inline">\(\mu\)</span> 是一个 <span class="math inline">\(\sigma\)</span> 有限测度。假设由不同的 <span class="math inline">\(\mu_{1}\)</span> 和 <span class="math inline">\(\mu_{2}\)</span> 得到相同的 <span class="math inline">\(F\)</span>，则根据 <strong>?@thm-dist2measure</strong>，<span class="math inline">\(\mu_{1}\)</span> 应该和 <span class="math inline">\(\mu_{2}\)</span> 相等，出现矛盾，因此 <span class="math inline">\(F\)</span> 必然不同。</p>
+<p><span class="proof-title"><em>证明</em>. </span>由测度的单调性和下连续性可直接推出 <span class="math inline">\(F\)</span> 是一个准分布函数。然后，容易证明 <span class="math inline">\(\mu\)</span> 是一个 <span class="math inline">\(\sigma\)</span> 有限测度。假设由不同的 <span class="math inline">\(\mu_{1}\)</span> 和 <span class="math inline">\(\mu_{2}\)</span> 得到相同的 <span class="math inline">\(F\)</span>，则根据 <a href="#prp-dist2measure" class="quarto-xref">命题&nbsp;1</a>，<span class="math inline">\(\mu_{1}\)</span> 应该和 <span class="math inline">\(\mu_{2}\)</span> 相等，出现矛盾，因此 <span class="math inline">\(F\)</span> 必然不同。</p>
 </div>
 </section>
 <section id="左连续逆" class="level1">
@@ -518,7 +521,14 @@ F^{\leftarrow}(t)=\inf\{ x \in\mathbb{R}|F(x)\geq t \}
 </div>
 <p>左连续逆存在一些性质，在后面可能会用到。</p>
 <div id="prp-left-inv" class="theorem proposition">
-<p><span class="theorem-title"><strong>命题 3 (左连续逆的性质)</strong></span> 对于任何准分布函数 <span class="math inline">\(F\)</span>，有 1. <span class="math inline">\(F^{\leftarrow}(t)\in\mathbb{R},\forall t\in(F(-\infty),F(\infty))\)</span>; 2. <span class="math inline">\(\forall t\in(F(-\infty),F(\infty)),x \in\mathbb{R}\)</span> 有 <span class="math inline">\(F^{\leftarrow}(t)\leq x \iff F(x)\geq t\)</span>; 3. <span class="math inline">\(F^{\leftarrow}\)</span> 非降且左连续; 4. <span class="math inline">\(F(F^{\leftarrow}(t))\geq t,\quad F^{\leftarrow}(F(x))\leq x\)</span>; 5. 令 <span class="math inline">\(x=F^{\leftarrow}(t)\)</span>, <span class="math inline">\(\forall \epsilon&gt;0\)</span>, 则有 <span class="math inline">\(F(x-\epsilon)&lt;t, F(x+\epsilon)\geq t\)</span>. 若 <span class="math inline">\(F^{\leftarrow}\)</span> 在 <span class="math inline">\(t\)</span> 点连续, 则 <span class="math inline">\(F(x+\epsilon)&gt;t\)</span>.</p>
+<p><span class="theorem-title"><strong>命题 3 (左连续逆的性质)</strong></span> 对于任何准分布函数 <span class="math inline">\(F\)</span>，有</p>
+<ol type="1">
+<li><span class="math inline">\(F^{\leftarrow}(t)\in\mathbb{R},\forall t\in(F(-\infty),F(\infty))\)</span>;</li>
+<li><span class="math inline">\(\forall t\in(F(-\infty),F(\infty)),x \in\mathbb{R}\)</span> 有 <span class="math inline">\(F^{\leftarrow}(t)\leq x \iff F(x)\geq t\)</span>;</li>
+<li><span class="math inline">\(F^{\leftarrow}\)</span> 非降且左连续;</li>
+<li><span class="math inline">\(F(F^{\leftarrow}(t))\geq t,\quad F^{\leftarrow}(F(x))\leq x\)</span>;</li>
+<li>令 <span class="math inline">\(x=F^{\leftarrow}(t)\)</span>, <span class="math inline">\(\forall \epsilon&gt;0\)</span>, 则有 <span class="math inline">\(F(x-\epsilon)&lt;t, F(x+\epsilon)\geq t\)</span>. 若 <span class="math inline">\(F^{\leftarrow}\)</span> 在 <span class="math inline">\(t\)</span> 点连续, 则 <span class="math inline">\(F(x+\epsilon)&gt;t\)</span>.</li>
+</ol>
 </div>
 <div class="proof">
 <p><span class="proof-title"><em>证明</em>. </span>对于 1，我们只需要证明 <span class="math inline">\(\{ x \in \mathbb{R}|F(x) &gt;t\}\)</span> 对于每个 <span class="math inline">\(t\)</span> 都有下界即可。因为 <span class="math inline">\(t\in(F(-\infty), F(\infty))\)</span>，所以一定存在 <span class="math inline">\(x \in\mathbb{R},F(x) \geq t\)</span>，所以 1 得证。</p>
@@ -585,8 +595,8 @@ F^{\leftarrow}(t+0)\geq x+\epsilon=F^{\leftarrow}(t)+\epsilon,
 </section>
 <section id="lebesgue-测度" class="level1">
 <h1>Lebesgue 测度</h1>
-<p>显然，根据定义，<span class="math inline">\(F(x)=x\)</span> 也是一个准分布函数，所以我们可以根据 <strong>?@thm-dist2measure</strong> 来得到一个唯一对应的 <span class="math inline">\(\sigma\)</span> 有限测度，其在 <span class="math inline">\((\mathbb{R},\mathcal{B})\)</span> 上，我们称之为为<strong>Lebesgue 测度</strong>，简称<strong>L 测度</strong>。</p>
-<p>若对准分布函数没有任何限制，则根据 <strong>?@thm-dist2measure</strong> 得到的唯一对应 <span class="math inline">\(\sigma\)</span> 有限测度，可以认为是 Lebesgue 测度的推广，称之为<strong>Lebesgue-Stieltjes 测度</strong>，简称<strong>L-S 测度</strong>。</p>
+<p>显然，根据定义，<span class="math inline">\(F(x)=x\)</span> 也是一个准分布函数，所以我们可以根据 <a href="#prp-dist2measure" class="quarto-xref">命题&nbsp;1</a> 来得到一个唯一对应的 <span class="math inline">\(\sigma\)</span> 有限测度，其在 <span class="math inline">\((\mathbb{R},\mathcal{B})\)</span> 上，我们称之为为<strong>Lebesgue 测度</strong>，简称<strong>L 测度</strong>。</p>
+<p>若对准分布函数没有任何限制，则根据 <a href="#prp-dist2measure" class="quarto-xref">命题&nbsp;1</a> 得到的唯一对应 <span class="math inline">\(\sigma\)</span> 有限测度，可以认为是 Lebesgue 测度的推广，称之为<strong>Lebesgue-Stieltjes 测度</strong>，简称<strong>L-S 测度</strong>。</p>
 <p>下面，我们来证明几个 L 测度的性质。</p>
 <div id="prp-06-distribution-function-6" class="theorem proposition">
 <p><span class="theorem-title"><strong>命题 4 (开集对 L 可侧集的逼近)</strong></span> 假设使用 <span class="math inline">\(m\)</span> 表示 L 测度，<span class="math inline">\(\forall A\in\mathcal{B},\forall\epsilon &gt;0,\exists O\)</span>，<span class="math inline">\(O\)</span> 是一个 open set，且有</p>
@@ -626,7 +636,14 @@ m(O\setminus A)\leq \sum\limits_{i=1}^{\infty}m(O_{i}\setminus A_{i})\leq\epsilo
 </div>
 <p>接下来我们来证明 L 测度的平移不变性。</p>
 <div id="thm-06-distribution-function-7" class="theorem">
-<p><span class="theorem-title"><strong>定理 1 (L-measure 的平移不变性)</strong></span> 假设 measurable space 是 <span class="math inline">\((\mathbb{R},\mathcal{B},m)\)</span>，其中 <span class="math inline">\(m\)</span> 表示 L- 测度，则有 <span class="math inline">\(\forall x \in \mathbb{R}, A\in\mathcal{B}, A+x:=\{ a+x|a\in A \},\implies A+x \in\mathcal{B},m(A+x)=m(A)\)</span></p>
+<p><span class="theorem-title"><strong>定理 1 (L-measure 的平移不变性)</strong></span> 假设 measurable space 是 <span class="math inline">\((\mathbb{R},\mathcal{B},m)\)</span>，其中 <span class="math inline">\(m\)</span> 表示 L- 测度。若有</p>
+<p><span class="math display">\[
+\forall x \in \mathbb{R}, A\in\mathcal{B}, A+x:=\{ a+x|a\in A \},
+\]</span></p>
+<p>则有</p>
+<p><span class="math display">\[
+A+x \in\mathcal{B},m(A+x)=m(A)
+\]</span></p>
 </div>
 <div class="proof">
 <p><span class="proof-title"><em>证明</em>. </span>首先我们来证明存在性。 令 <span class="math inline">\(\mathcal{H}=\{ A\in\mathcal{B}|A+x \in\mathcal{B},\forall x \in\mathbb{R} \}\)</span>，则可知</p>
@@ -657,9 +674,14 @@ m(A+x)=\inf\left\{ \sum\limits_{i=1}^{\infty}m((a_{i},b_{i}])|
 </section>
 <section id="为什么需要-sigma-域" class="level1">
 <h1>为什么需要 Sigma 域</h1>
-<p>如果 <span class="math inline">\(\Omega\)</span> 是至多可数的，则一般考虑 <span class="math inline">\(\mathcal{F}\)</span> 是其所有子集组成的集合（power set，其势至多为 <span class="math inline">\(\aleph_{1}\)</span>），这一般不会造成什么问题。但如果 <span class="math inline">\(\Omega\)</span> 是不可数的（如 <span class="math inline">\(\mathbb{R}\)</span>），则其 power set 就太过多和复杂（其势为 <span class="math inline">\(\aleph_{2}\)</span>）。这时候，几乎很难定义一个“合理的”的 measure 使之能够在所有的子集上有预期的效果，总有一些“奇奇怪怪的“集合会让 measure 失效，这些集合被称为<strong>不可测集合</strong>。其中最出名的莫过于 <strong>Vitali set</strong>。</p>
+<p>如果 <span class="math inline">\(\Omega\)</span> 是至多可数的，则一般考虑 <span class="math inline">\(\mathcal{F}\)</span> 是其所有子集组成的集合（power set，其势至多为 <span class="math inline">\(\aleph_{1}\)</span>），这一般不会造成什么问题。</p>
+<p>但如果 <span class="math inline">\(\Omega\)</span> 是不可数的（如 <span class="math inline">\(\mathbb{R}\)</span>），则其 power set 就太过多和复杂（其势为 <span class="math inline">\(\aleph_{2}\)</span>）。这时候，几乎很难定义一个“合理的”的 measure 使之能够在所有的子集上有预期的效果，总有一些“奇奇怪怪的“集合会让 measure 失效，这些集合被称为<strong>不可测集合</strong>。其中最出名的莫过于 <strong>Vitali set</strong>。</p>
 <div id="def-06-distribution-function-8" class="theorem definition">
-<p><span class="theorem-title"><strong>定义 3 (Vitali set)</strong></span> 对于两个实数 <span class="math inline">\(x\)</span> 和 <span class="math inline">\(y\)</span>，如果 <span class="math inline">\(x-y\in \mathbb{Q}\)</span>，则记作 <span class="math inline">\(x\sim y\)</span>。可以证明 <span class="math inline">\(\sim\)</span> 是一个等价关系，因此我们可以构造 <span class="math inline">\([x]=\{ y\in\mathbb{R}|y\sim x \}\)</span> 称为 <span class="math inline">\(x\)</span> 的等价类。这是对 <span class="math inline">\(\mathbb{R}\)</span> 的不可数划分。根据选择公理，我们可以从每个等价类中取出一个在 <span class="math inline">\([0,1]\)</span> 中的元素，其有且仅有一个，构成集合 <span class="math inline">\(V\)</span>。这个集合 <span class="math inline">\(V\)</span> 被称为 Vitali set。 <strong>Theorem: Vitali set 不是 L 可测集</strong></p>
+<p><span class="theorem-title"><strong>定义 3 (Vitali set)</strong></span> 对于两个实数 <span class="math inline">\(x\)</span> 和 <span class="math inline">\(y\)</span>，如果 <span class="math inline">\(x-y\in \mathbb{Q}\)</span>，则记作 <span class="math inline">\(x\sim y\)</span>。可以证明 <span class="math inline">\(\sim\)</span> 是一个等价关系，因此我们可以构造 <span class="math inline">\([x]=\{ y\in\mathbb{R}|y\sim x \}\)</span> 称为 <span class="math inline">\(x\)</span> 的等价类。这是对 <span class="math inline">\(\mathbb{R}\)</span> 的不可数划分。</p>
+<p>根据选择公理，我们可以从每个等价类中取出一个在 <span class="math inline">\([0,1]\)</span> 中的元素，其有且仅有一个，构成集合 <span class="math inline">\(V\)</span>。这个集合 <span class="math inline">\(V\)</span> 被称为 <strong>Vitali set</strong>。</p>
+</div>
+<div id="thm-label" class="theorem">
+<p><span class="theorem-title"><strong>定理 2 (Vitali Set Theorem)</strong></span> Vitali set 不是 L 可测集。</p>
 </div>
 <div class="proof">
 <p><span class="proof-title"><em>证明</em>. </span>我们使用反证法来证明 <span class="math inline">\(V\)</span> 是不可测的。假设其是可测的，我们将 <span class="math inline">\([-1,1]\)</span> 中的所有有理数表示为 <span class="math inline">\(q_{1},q_{2},\dots\)</span>，然后创建集合 <span class="math inline">\(V_{k}=\{ v+q_{k}|v\in V \}\)</span>，由 <span class="math inline">\(V\)</span> 的构造方法可知 <span class="math inline">\(V_{k},k=1,2,3,\dots\)</span> 两两不交。</p>
