@@ -1,0 +1,683 @@
+---
+title: "VAE 聚类方法（一）：从潜变量假设到基础模型"
+subtitle: "VAE Clustering I: Latent-variable Assumptions, VaDE, GMVAE, and M2"
+description: "介绍为什么用 VAE 做聚类，以及 VaDE、GMVAE、M2/categorical latent VAE 等基础模型的生成过程、变分推断、ELBO 与模型差异。"
+draft: true
+tags:
+  - VAE
+  - clustering
+  - deep generative models
+  - 聚类
+date: 2026-05-16
+date-modified: last-modified
+order: 2
+bibliography: ../../../resources/bibliography/vae-clustering.bib
+reference-section-title: "参考文献"
+---
+
+# 系列定位
+
+这篇笔记属于 **Deep Generative Models** 系列下的 **VAE cluster** 子系列。
+
+整个 Deep Generative Models 系列会依次整理 VAE、GAN、Autoregressive Model、Diffusion Model、Flow Model 等模型的基本思想和扩展方向。VAE cluster 子系列则专门讨论一个更具体的问题：如何把 VAE 从连续表示学习模型扩展成能够产生 cluster assignment 的深度生成模型。
+
+本篇是 VAE cluster 子系列的第一篇，目标不是穷尽所有扩展，而是建立一个基础地图：
+
+- 为什么普通 VAE 学到的潜在表示不等于聚类？
+- 如何通过改变生成图结构和变分后验，让 VAE 显式学习离散簇变量？
+- VaDE、GMVAE、M2/categorical latent VAE 这三条基础路线有什么区别？
+
+后续笔记会再分别展开稳定训练、鲁棒混合先验、自动确定簇数、纵向轨迹聚类、生存结局联合建模、多模态聚类等方向。
+
+```{mermaid}
+%%| label: fig-vae-clustering-map
+%%| fig-cap: "VAE 聚类方法的基础路线图。"
+
+flowchart LR
+  A["普通 VAE<br/>p(z)=N(0,I)"] --> B["post-hoc clustering<br/>先学 z 再聚类"]
+  A --> C["VaDE<br/>c -> z -> x"]
+  C --> D["GMVAE<br/>(c,w) -> z -> x"]
+  A --> E["M2 / categorical VAE<br/>(c,z) -> x"]
+  C --> F["后续扩展<br/>稳定训练、鲁棒先验、纵向、生存、多模态"]
+  D --> F
+  E --> F
+```
+
+# 为什么要用 VAE 做聚类？
+
+## 普通 VAE 不天然给出簇结构
+
+普通 VAE 的核心目标是最大化观测数据的边际似然下界。它假设一个连续潜变量 $z$，通常使用标准正态先验：
+
+$$
+p(z)=\mathcal{N}(0,I).
+$$
+
+encoder 近似后验：
+
+$$
+q_\phi(z|x)=\mathcal{N}\{z|\mu_\phi(x),\mathrm{diag}(\sigma_\phi^2(x))\},
+$$
+
+decoder 则从 $z$ 生成或重构观测变量：
+
+$$
+p_\theta(x|z).
+$$
+
+这种结构很适合学习连续低维表示，但它并不要求潜在空间中出现清晰的类别边界。也就是说，普通 VAE 可以把相似样本放得更近，却不保证这些样本会自然形成几个可解释的簇。
+
+## 后处理聚类的局限
+
+一种直接做法是先训练普通 VAE，再对潜在表示 $z$ 使用 K-means 或 GMM。这种方法简单，但它只是：
+
+$$
+\text{representation learning} \rightarrow \text{post-hoc clustering}.
+$$
+
+问题在于，聚类结果不会反向参与 VAE 的生成模型学习。encoder 和 decoder 在训练时并不知道后面会做聚类，因此它们学到的 $z$ 未必是最适合 cluster assignment 的表示。
+
+更生成式的做法是：把 cluster assignment 显式写进概率图模型，让离散潜变量 $c$ 参与生成过程和变分推断。这样模型训练时优化的就不只是重构，也包括潜在簇结构。
+
+## 三种思路的差异
+
+| 思路 | 基本做法 | 聚类是否参与训练 | 典型输出 |
+|---|---|---:|---|
+| 降维表示 | 学习连续潜变量 $z$ | 否 | 低维 embedding |
+| 后处理聚类 | 先学 $z$，再对 $z$ 做 K-means/GMM | 否 | 硬聚类标签 |
+| 生成式聚类 | 在模型中加入离散潜变量 $c$ | 是 | $q(c|x)$ 或 $p(c|z)$ |
+
+因此，VAE 聚类方法的核心不是“用神经网络替代传统聚类”，而是把“样本来自哪个潜在簇”这件事建模为一个可推断的随机变量。
+
+# 统一符号与基本问题
+
+本文统一使用如下符号。
+
+| 符号 | 含义 |
+|---|---|
+| $x$ | 观测变量，例如图像、临床特征、组学表达、纵向轨迹等 |
+| $z$ | 连续潜变量，表示样本的低维嵌入或生成因子 |
+| $c$ | 离散潜变量，表示样本所属的潜在类别或簇 |
+| $w$ | 额外连续潜变量，常用于描述簇内连续变化 |
+| $K$ | 预设簇数或类别数 |
+| $\pi_c$ | 第 $c$ 个簇的先验概率或混合权重 |
+| $\mu_c,\Sigma_c$ | 第 $c$ 个高斯成分的均值和协方差 |
+| $p_\theta(x|z)$ | decoder，从潜变量生成观测变量的条件分布 |
+| $q_\phi(z|x)$ | encoder，从观测变量近似推断连续潜变量的变分后验 |
+| $q_\phi(c|x)$ | 离散簇变量的变分后验或聚类分配概率 |
+
+引入 $c$ 之后，VAE 聚类模型通常需要回答三个问题。
+
+第一，生成模型如何设定？也就是 $c,z,w,x$ 的概率图结构是什么。不同图结构会给出不同模型族。
+
+第二，变分后验如何设定？离散变量 $c$ 不能像连续高斯潜变量那样直接使用标准重参数化技巧，所以要决定 $q(c|x)$ 是由分类网络输出、由责任度计算，还是通过 Gumbel-Softmax 等近似。
+
+第三，聚类结果如何读取？常见方式包括：
+
+$$
+\hat c_i=\arg\max_c q_\phi(c|x_i),
+$$
+
+或
+
+$$
+\hat c_i=\arg\max_c p(c|z_i).
+$$
+
+前者把聚类看作直接的 amortized inference，后者把聚类看作潜在空间中混合成分的后验责任度。
+
+# 基本路线：不同图结构导出不同模型
+
+VAE 是概率图模型。要让它做聚类，最关键的决定是把离散变量 $c$ 放在什么位置。下面三种图结构构成了 VAE 聚类方法的基础路线。
+
+## 路线 A：混合先验结构
+
+第一条路线是：
+
+$$
+c \rightarrow z \rightarrow x.
+$$
+
+先采样簇变量 $c$，再根据该簇生成连续潜变量 $z$，最后由 $z$ 生成观测变量 $x$。这相当于把普通 VAE 的标准正态先验替换成混合先验：
+
+$$
+p(z)=\sum_{c=1}^K \pi_c p(z|c).
+$$
+
+VaDE 属于这条路线。它把 $p(z|c)$ 设为高斯分布，因此得到一个 GMM prior + VAE decoder 的模型。
+
+## 路线 B：条件混合或层级结构
+
+第二条路线是：
+
+$$
+(c,w) \rightarrow z \rightarrow x.
+$$
+
+这里 $c$ 表示离散簇，$w$ 表示额外连续变化。二者共同决定 $z$ 的先验分布。GMVAE 属于这条路线，它可以表达“不同簇之间有差异，同一簇内部仍有连续变化”的情形。
+
+这条路线比固定 GMM prior 更灵活，但也更容易出现训练不稳定和解释困难。
+
+## 路线 C：类别条件生成结构
+
+第三条路线是：
+
+$$
+(c,z) \rightarrow x.
+$$
+
+这里 $c$ 不只是决定 $z$ 的先验，而是直接和 $z$ 一起进入 decoder。Kingma 等人在半监督学习中提出的 M2 模型就属于这条路线 [@kingma2014semi]。
+
+M2 原本服务于半监督分类：有标签样本的 $c$ 是观测标签，无标签样本的 $c$ 是潜变量。但如果所有样本都没有标签，也可以把 $c$ 解释为 latent cluster。这个方向可以连接到 categorical latent VAE、Cluster-aware Generative Model 和 InfoCatVAE 等后续工作 [@maaloe2017cluster; @pineau2018infocatvae]。
+
+# VaDE：GMM Prior + VAE Decoder
+
+## 问题动机
+
+VaDE 是 VAE 聚类方法中最直接的一种基础模型 [@jiang2017vade]。它的想法很清楚：普通 VAE 使用单个标准正态先验，潜在空间没有显式簇结构；如果把先验改为高斯混合分布，那么每个高斯成分就可以对应一个潜在簇。
+
+普通 VAE 假设：
+
+$$
+p(z)=\mathcal{N}(0,I).
+$$
+
+VaDE 假设：
+
+$$
+p(z)=\sum_{c=1}^{K}\pi_c\mathcal{N}(z|\mu_c,\Sigma_c).
+$$
+
+因此，VaDE 可以理解为：
+
+$$
+\text{GMM prior} + \text{VAE decoder}.
+$$
+
+## 概率图与生成过程
+
+```{mermaid}
+%%| label: fig-vade-graph
+%%| fig-cap: "VaDE 的生成图结构。"
+
+graph LR
+  C((c)) --> Z((z))
+  Z --> X((x))
+```
+
+VaDE 的联合分布为：
+
+$$
+p_\theta(x,z,c)=p(c)p(z|c)p_\theta(x|z).
+$$
+
+其中：
+
+$$
+p(c)=\operatorname{Cat}(\pi),
+$$
+
+$$
+p(z|c)=\mathcal{N}(z|\mu_c,\Sigma_c),
+$$
+
+$$
+p_\theta(x|z)=\operatorname{Decoder}_\theta(z).
+$$
+
+生成过程可以写成：
+
+1. 采样簇变量 $c\sim\operatorname{Cat}(\pi)$。
+2. 根据簇生成连续潜变量 $z|c\sim\mathcal{N}(\mu_c,\Sigma_c)$。
+3. 通过 decoder 生成观测变量 $x|z\sim p_\theta(x|z)$。
+
+对于图像数据，$p_\theta(x|z)$ 常用 Bernoulli 或 Gaussian likelihood；对于计数型组学数据，也可以换成 Poisson 或 Negative Binomial likelihood。VaDE 的关键不在 likelihood 类型，而在 $z$ 的先验被改成了混合分布。
+
+## 变分设置
+
+VaDE 需要近似真实后验：
+
+$$
+p(z,c|x).
+$$
+
+一种常见分解是：
+
+$$
+q_\phi(z,c|x)=q_\phi(z|x)q_\phi(c|x).
+$$
+
+其中：
+
+$$
+q_\phi(z|x)=\mathcal{N}\{z|\mu_\phi(x),\mathrm{diag}(\sigma_\phi^2(x))\}.
+$$
+
+对 $q(c|x)$ 的理解要稍微小心。它可以由单独的分类网络输出，但在 VaDE 中更自然的做法是通过 GMM responsibility 计算。给定一个 $z$，它属于第 $c$ 个混合成分的后验概率为：
+
+$$
+p(c|z)=
+\frac{
+\pi_c\mathcal{N}(z|\mu_c,\Sigma_c)
+}{
+\sum_{j=1}^{K}\pi_j\mathcal{N}(z|\mu_j,\Sigma_j)
+}.
+$$
+
+因此，样本 $x_i$ 的聚类分配可以由 encoder 给出的 $z_i$ 或 $\mu_\phi(x_i)$ 代入上式得到。
+
+## ELBO
+
+VaDE 的目标仍然是最大化：
+
+$$
+\log p_\theta(x)\geq \mathcal{L}_{\mathrm{VaDE}}(x).
+$$
+
+由联合分布和变分分布可得：
+
+$$
+\begin{aligned}
+\mathcal{L}_{\mathrm{VaDE}}(x)
+&=
+\mathbb{E}_{q_\phi(z,c|x)}
+\left[
+\log p_\theta(x,z,c)-\log q_\phi(z,c|x)
+\right] \\
+&=
+\mathbb{E}_{q_\phi(z,c|x)}
+\left[
+\log p_\theta(x|z)
++ \log p(z|c)
++ \log p(c)
+- \log q_\phi(z|x)
+- \log q_\phi(c|x)
+\right].
+\end{aligned}
+$$
+
+这几个项可以解释为：
+
+- $\log p_\theta(x|z)$ 是重构或生成项，要求 $z$ 能解释 $x$。
+- $\log p(z|c)$ 是混合先验项，要求 $z$ 靠近某个高斯成分。
+- $\log p(c)$ 和 $-\log q(c|x)$ 共同调节簇分配的先验与后验不确定性。
+- $-\log q(z|x)$ 是连续后验的熵相关项。
+
+因此，VaDE 不只是先学习 embedding 再聚类，而是在同一个 ELBO 中同时学习表示、生成模型和簇结构。
+
+## 训练与聚类输出
+
+VaDE 通常采用如下训练流程：
+
+1. 先训练一个普通 autoencoder 或 VAE，使潜在表示不会一开始完全混乱。
+2. 对预训练得到的潜在表示拟合 GMM，用来初始化 $\pi_c,\mu_c,\Sigma_c$。
+3. 联合优化 encoder、decoder 和 GMM prior 参数。
+4. 训练完成后用 responsibility 读取聚类结果：
+
+$$
+\hat c_i=\arg\max_c p(c|z_i).
+$$
+
+也可以使用 $q_\phi(c|x_i)$ 的最大后验类别作为聚类标签。
+
+## 优点与局限
+
+VaDE 的优点是结构清晰、解释直接。每个簇就是潜在空间中的一个高斯成分，适合教学和作为后续扩展的基础模板。
+
+它的主要局限也来自这个简单假设：
+
+- 需要预先指定簇数 $K$。
+- 每个簇在潜在空间中近似为高斯形态。
+- 对初始化敏感，通常需要 autoencoder 预训练和 GMM 初始化。
+- 可能出现 cluster degeneracy，即某些簇几乎没有样本，或多个簇学到相似区域。
+- 对异常点和长尾分布的鲁棒性有限。
+
+# GMVAE：离散簇 + 簇内连续变化
+
+## 问题动机
+
+GMVAE 也使用混合结构做无监督聚类，但它比 VaDE 多引入一个连续潜变量 $w$ [@dilokthanakul2016gmvae]。直觉上，$c$ 表示样本属于哪个离散簇，$w$ 表示同一簇内部的连续变化。
+
+这很适合描述下面这类情况：
+
+$$
+\text{离散亚型} + \text{亚型内部连续异质性}.
+$$
+
+例如在临床轨迹中，$c$ 可以表示不同疾病进展亚型，$w$ 可以表示同一亚型内部的严重程度、进展速度或个体差异。
+
+## 概率图与生成过程
+
+```{mermaid}
+%%| label: fig-gmvae-graph
+%%| fig-cap: "GMVAE 的生成图结构。"
+
+graph LR
+  C((c)) --> Z((z))
+  W((w)) --> Z
+  Z --> X((x))
+```
+
+GMVAE 的联合分布可以写成：
+
+$$
+p_{\theta,\beta}(x,z,w,c)
+=p(w)p(c)p_\beta(z|w,c)p_\theta(x|z).
+$$
+
+其中：
+
+$$
+p(w)=\mathcal{N}(0,I),
+$$
+
+$$
+p(c)=\operatorname{Cat}(\pi),
+$$
+
+$$
+p_\beta(z|w,c)=
+\mathcal{N}\{z|\mu_\beta(w,c),\Sigma_\beta(w,c)\},
+$$
+
+$$
+p_\theta(x|z)=\operatorname{Decoder}_\theta(z).
+$$
+
+与 VaDE 不同，GMVAE 中 $p(z|w,c)$ 的均值和方差不是固定参数，而是可以由神经网络根据 $w$ 和 $c$ 动态生成。生成过程为：
+
+1. 采样簇内连续变量 $w\sim\mathcal{N}(0,I)$。
+2. 采样离散簇变量 $c\sim\operatorname{Cat}(\pi)$。
+3. 根据 $w$ 和 $c$ 生成 $z|w,c$。
+4. 根据 $z$ 生成 $x|z$。
+
+因此，GMVAE 的先验可以看成条件混合先验：
+
+$$
+p(z|w)=\sum_{c=1}^{K}\pi_c
+\mathcal{N}\{z|\mu_\beta(w,c),\Sigma_\beta(w,c)\}.
+$$
+
+边缘化 $w$ 之后，$p(z)$ 可以比固定 GMM prior 表达更复杂的潜在结构。
+
+## 变分设置
+
+GMVAE 需要近似：
+
+$$
+p(z,w,c|x).
+$$
+
+一种常见分解是：
+
+$$
+q_\phi(z,w,c|x)
+=q_\phi(z|x)q_\phi(c|z)q_\phi(w|z,c).
+$$
+
+这个分解和生成方向并不完全相同。生成时是 $w,c$ 共同决定 $z$；推断时则常先从 $x$ 得到 $z$，再根据 $z$ 推断 $c$ 和 $w$。这是 amortized variational inference 中很常见的做法。
+
+这里需要强调：$w$ 不是第二个 cluster label。它是连续变量，用来吸收同一簇内部仍然存在的变化。如果没有 $w$，模型会把簇内连续变化也强行塞进固定高斯成分里；如果 $w$ 太灵活，模型又可能绕开 $c$，导致离散簇变量没有被有效使用。
+
+## ELBO
+
+在上述变分分解下，GMVAE 的 ELBO 可以写成：
+
+$$
+\begin{aligned}
+\mathcal{L}_{\mathrm{GMVAE}}(x)
+&=
+\mathbb{E}_{q_\phi(z,w,c|x)}
+\left[
+\log p_\theta(x|z)
++ \log p_\beta(z|w,c)
++ \log p(w)
++ \log p(c)
+\right. \\
+&\qquad\left.
+- \log q_\phi(z|x)
+- \log q_\phi(c|z)
+- \log q_\phi(w|z,c)
+\right].
+\end{aligned}
+$$
+
+与 VaDE 相比，这个 ELBO 多了 $w$ 的先验与后验项，也多了条件先验 $p_\beta(z|w,c)$。从功能上看：
+
+- 重构项让 $z$ 能生成 $x$。
+- 条件混合先验项让 $z$ 同时受到 $c$ 和 $w$ 的约束。
+- $w$ 的 KL 相关项控制簇内连续变化的复杂度。
+- $c$ 的类别项控制离散簇的使用。
+
+GMVAE 的训练难点在于，模型可能过度依赖连续变量 $w$，而忽略离散变量 $c$。Dilokthanakul 等人特别指出，普通 VAE 中的 over-regularization 也会在 GMVAE 中表现为 cluster degeneracy，并使用 minimum information constraint 缓解这一问题 [@dilokthanakul2016gmvae]。
+
+## 训练与聚类输出
+
+GMVAE 的聚类结果通常从离散后验读取：
+
+$$
+\hat c_i=\arg\max_c q_\phi(c|z_i),
+$$
+
+其中 $z_i$ 来自 $q_\phi(z|x_i)$。如果实现中使用 $q(c|x)$，也可以直接取：
+
+$$
+\hat c_i=\arg\max_c q_\phi(c|x_i).
+$$
+
+训练上通常需要额外关注：
+
+- KL annealing，避免早期正则过强。
+- minimum information constraint，避免潜变量被过度压缩。
+- cluster usage monitoring，检查是否有簇长期空置。
+- 多次初始化和稳定性分析。
+
+详细训练技巧适合放到 VAE cluster 子系列的稳定训练专题中展开。
+
+## 优点与局限
+
+GMVAE 的优点是表达力强。它不仅能表示簇间差异，还能表示簇内连续异质性，因此比 VaDE 更适合复杂潜在结构。
+
+它的局限是训练和解释都更困难：
+
+- 需要同时推断 $z,w,c$。
+- $c$ 和 $w$ 的语义可能纠缠。
+- 连续变量过强时，离散簇变量可能被忽略。
+- 聚类解释不如 VaDE 中“一个高斯成分一个簇”那么直接。
+
+# M2 / Categorical Latent VAE：类别变量直接参与生成
+
+## 问题动机
+
+前面两条路线都让 $c$ 影响 $z$ 的先验。M2 模型代表另一种思路：让类别变量 $c$ 和连续变量 $z$ 一起直接参与生成 $x$ [@kingma2014semi]。
+
+M2 原本是半监督学习模型。在有标签样本中，$c$ 是观测标签；在无标签样本中，$c$ 是需要推断的离散潜变量。若完全不使用标签，也可以把 $c$ 解释为 latent cluster。
+
+因此，M2 可以看成 categorical latent VAE 的一个基础形式。
+
+## 概率图与生成过程
+
+```{mermaid}
+%%| label: fig-m2-graph
+%%| fig-cap: "M2 / categorical latent VAE 的生成图结构。"
+
+graph LR
+  C((c)) --> X((x))
+  Z((z)) --> X
+```
+
+M2 的联合分布为：
+
+$$
+p_\theta(x,z,c)=p(c)p(z)p_\theta(x|z,c).
+$$
+
+其中：
+
+$$
+p(c)=\operatorname{Cat}(\pi),
+$$
+
+$$
+p(z)=\mathcal{N}(0,I),
+$$
+
+$$
+p_\theta(x|z,c)=\operatorname{Decoder}_\theta(z,c).
+$$
+
+生成过程为：
+
+1. 采样类别变量 $c\sim\operatorname{Cat}(\pi)$。
+2. 采样连续变量 $z\sim\mathcal{N}(0,I)$。
+3. decoder 同时接收 $z$ 和 $c$，生成 $x|z,c$。
+
+这和 VaDE 的差异非常重要。VaDE 中 $c$ 通过 $z$ 间接影响 $x$；M2 中 $c$ 直接进入 decoder。
+
+## 变分设置
+
+对于无标签样本，M2 需要近似：
+
+$$
+p(z,c|x).
+$$
+
+常见变分分解为：
+
+$$
+q_\phi(z,c|x)=q_\phi(c|x)q_\phi(z|x,c).
+$$
+
+其中 $q_\phi(c|x)$ 类似一个分类器，输出每个类别或簇的后验概率；$q_\phi(z|x,c)$ 则在给定类别的条件下推断连续潜变量。
+
+如果样本有标签，$c$ 是观测变量，只需要推断 $q_\phi(z|x,c)$。如果样本没有标签，就需要对所有可能的 $c$ 求和或求期望。
+
+## Unlabeled ELBO
+
+对于无标签样本 $x$，M2 的 ELBO 可以写成：
+
+$$
+\begin{aligned}
+\mathcal{L}_{\mathrm{M2}}(x)
+&=
+\mathbb{E}_{q_\phi(c,z|x)}
+\left[
+\log p_\theta(x|z,c)
++ \log p(z)
++ \log p(c)
+- \log q_\phi(z|x,c)
+- \log q_\phi(c|x)
+\right] \\
+&=
+\sum_{c=1}^{K} q_\phi(c|x)
+\left[
+\mathbb{E}_{q_\phi(z|x,c)}
+\left\{
+\log p_\theta(x|z,c)
++ \log p(z)
++ \log p(c)
+- \log q_\phi(z|x,c)
+\right\}
+- \log q_\phi(c|x)
+\right].
+\end{aligned}
+$$
+
+这个式子说明，无标签样本会对所有类别进行加权平均，权重就是 $q_\phi(c|x)$。因此，在完全无监督设置下，$q_\phi(c|x)$ 可以被解释为 soft cluster assignment。
+
+## 能不能直接用 M2 做无监督聚类？
+
+原则上可以，但需要谨慎。
+
+M2 的 $c$ 是离散潜变量；在全部样本无标签时，它确实可以承担 cluster assignment 的角色。但是，朴素无监督 M2 不一定会自动学出有意义的簇。常见失败模式是：
+
+$$
+q_\phi(c|x)\approx p(c),
+$$
+
+也就是每个样本的类别后验都接近类别先验，$c$ 没有携带多少关于 $x$ 的信息。另一种失败模式是 decoder 主要依赖连续变量 $z$，从而绕开离散变量 $c$。
+
+所以 M2 更适合被理解为“类别条件生成路线”的基础图结构，而不是一个开箱即用的强聚类算法。后续围绕这条路线的改造通常会增加额外机制，例如：
+
+- Cluster-aware Generative Model 利用无标签数据学习自然簇，并允许少量标签细化簇结构 [@maaloe2017cluster]。
+- InfoCatVAE 通过互信息思想强化 categorical code 与生成样本之间的关联 [@pineau2018infocatvae]。
+- Gumbel-Softmax categorical VAE 使用连续松弛来处理离散变量采样。
+- GMVAE-style 改造让 $p(z|c)$ 或 $q(z|x,c)$ 更显式地依赖类别结构。
+
+## 优点与局限
+
+M2 / categorical latent VAE 的优点是概念上直接：类别变量 $c$ 明确进入 decoder，因此它天然适合连接半监督学习、类别条件生成和聚类。
+
+它的局限也很清楚：
+
+- 在无监督场景中，$c$ 不一定自动对应有意义的簇。
+- 需要防止 decoder 或连续变量 $z$ 忽略 $c$。
+- 聚类解释依赖 $q(c|x)$ 的质量，而不一定对应潜在空间中的几何混合成分。
+- 如果没有标签或互信息约束，类别变量可能缺乏可识别性。
+
+# 三类基础模型比较
+
+## 总体比较
+
+| 维度 | VaDE | GMVAE | M2 / categorical latent VAE |
+|---|---|---|---|
+| 图结构 | $c\rightarrow z\rightarrow x$ | $(c,w)\rightarrow z\rightarrow x$ | $(c,z)\rightarrow x$ |
+| $c$ 的语义 | 高斯混合成分 | 离散簇或类别因素 | 类别条件或潜在类别 |
+| $z$ 的先验 | GMM prior | conditional mixture prior | 标准正态 prior |
+| decoder 是否直接看见 $c$ | 否 | 通常否 | 是 |
+| 常见变分后验 | $q(z|x)q(c|x)$ | $q(z|x)q(c|z)q(w|z,c)$ | $q(c|x)q(z|x,c)$ |
+| 聚类输出 | $p(c|z)$ 或 $q(c|x)$ | $q(c|z)$ 或 $q(c|x)$ | $q(c|x)$ |
+| 主要优点 | 结构清晰，解释直接 | 能表达簇内连续异质性 | 连接半监督和类别条件生成 |
+| 主要失败模式 | 初始化敏感、簇塌缩 | $w$ 过强导致忽略 $c$ | $q(c|x)$ 退化到先验 |
+| 教学解释 | 把 VAE prior 换成 GMM | 簇 + 簇内连续变化 | 类别变量直接控制生成 |
+
+## 如何选择模型？
+
+如果目标是建立 VAE 聚类的基础直觉，优先从 VaDE 开始。它的图结构最清楚，也最接近传统 GMM 的生成式聚类思想。
+
+如果数据中既有离散亚型，又有明显的亚型内部连续变化，可以考虑 GMVAE。它的表达力更强，但训练诊断也更重要。
+
+如果希望连接半监督学习、类别条件生成，或者希望 decoder 明确使用类别变量，可以从 M2 / categorical latent VAE 入手。不过，在完全无监督聚类中，需要额外机制避免 $c$ 被忽略。
+
+更一般地说，三者的根本差异不是 encoder 或 decoder 的神经网络形式，而是 $c,z,w,x$ 的生成关系：
+
+$$
+\begin{aligned}
+\text{VaDE:} \quad & c\rightarrow z\rightarrow x,\\
+\text{GMVAE:} \quad & (c,w)\rightarrow z\rightarrow x,\\
+\text{M2:} \quad & (c,z)\rightarrow x.
+\end{aligned}
+$$
+
+# 后续笔记路线图
+
+这篇笔记只讨论基础模型。VAE cluster 子系列后续可以沿以下方向展开。
+
+| 后续方向 | 核心问题 | 代表关键词 |
+|---|---|---|
+| 稳定训练与 cluster collapse | 如何避免 posterior collapse、cluster degeneracy 和类别使用不均衡 | KL annealing, minimum information constraint, entropy regularization |
+| 鲁棒混合先验 | 如何处理异常值、长尾分布和非高斯潜在结构 | Student-t mixture, skew-normal mixture, outlier component |
+| 自动确定簇数 | 如何避免预先固定 $K$ | Dirichlet process, stick-breaking, truncated variational inference |
+| 纵向轨迹聚类 | 如何处理不规则时间序列、缺失和随访长度不同 | recurrent VAE, Transformer VAE, VaDER |
+| 生存结局联合建模 | 如何让聚类与预后、风险或治疗反应相关 | VaDeSC, mixture survival model, cluster-specific hazard |
+| 多模态与缺失模态 | 如何融合临床、影像、组学等不同模态 | multimodal VAE, product-of-experts, shared/private latent variables |
+| 图结构与单细胞数据 | 如何把图结构、细胞表达矩阵和批次效应纳入 VAE 聚类 | VGAE, scVI, graph VAE |
+
+这些方向大多可以理解为在本篇三条基础路线之上进一步修改先验、likelihood、encoder/decoder 或训练目标。
+
+# 小结
+
+VAE 聚类方法的关键，不是简单地把 VAE 和 K-means 拼在一起，而是把 cluster assignment 作为离散潜变量 $c$ 放入生成模型，并通过变分推断学习 $q(c|x)$ 或 $p(c|z)$。
+
+VaDE 的核心是改 prior：用 GMM prior 替代标准正态先验，使每个混合成分对应一个潜在簇。
+
+GMVAE 的核心是加簇内连续因子：用 $c$ 表示离散簇，用 $w$ 表示同一簇内部的连续变化。
+
+M2 / categorical latent VAE 的核心是让类别变量直接参与生成：$c$ 和 $z$ 一起进入 decoder，因此它自然连接半监督学习和类别条件生成。
+
+理解这三种图结构，就抓住了 VAE cluster 后续扩展的主线。后面的各种模型，本质上大多是在回答同一个问题：我们到底希望离散变量 $c$ 在生成机制中承担什么角色？
+
+# 参考文献
+
+::: {#refs}
+:::

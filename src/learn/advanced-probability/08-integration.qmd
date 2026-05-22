@@ -20,9 +20,9 @@ order: 8
 
 # 几乎处处成立
 
-对于测度空间 $X,\mathcal{F},\mu$ 上的 $X$ 的一个元素 $x$ 的命题，若存在 $(X,\mathcal{F},\mu)$ 上的一个零测集 $N$ ，使得该命题对所有 $x \in N^{c}$ 成立，则称该命题**几乎处处成立**，记作 **a.e.** (almost everywhere) 。
+对于测度空间 $X,\mathcal{F},\mu$ 上的 $X$ 的一个元素 $x$ 的命题，若存在 $(X,\mathcal{F},\mu)$ 上的一个零测集 $N$ ，使得该命题对所有 $x \in N^{c}$ 成立，则称该命题**几乎处处成立** (almost everywhere) ，记作 **a.e.**。
 
-若该测度空间是一个概率空间，则几乎处处成立也被称为**几乎必然成立**，记作 **a.s.** (almost surely)。
+若该测度空间是一个概率空间，则几乎处处成立也被称为**几乎必然成立** (almost surely)，记作 **a.s.**。
 
 # 定义
 
@@ -103,8 +103,9 @@ $$
 :::
 
 ::: {.proof}
-通过定义可以直接证明 (1), (2), (3) 。
-(4) $f+g$ 也还是简单函数，若 $f=\sum\limits_{i=1}^{n}a_{i}I_{A_{i}}$ ，$g=\sum\limits_{j=1}^{m}b_{j}I_{B_{j}}$，则
+通过定义可以直接证明 **(1), (2), (3)** 。
+
+**(4)** $f+g$ 也还是简单函数，若 $f=\sum\limits_{i=1}^{n}a_{i}I_{A_{i}}$ ，$g=\sum\limits_{j=1}^{m}b_{j}I_{B_{j}}$，则
 
 $$
 f+g=\sum\limits_{i=1}^{n}\sum\limits_{j=1}^{m}(a_{i}+b_{j})I_{A_{i}\cap B_{j}},
@@ -123,23 +124,22 @@ $$
 \end{align}
 $$
 
-(4) 得证。
-(5) 我们构造 $h=f-g\geq 0$，可知 $h$ 也是简单函数，利用 (2), (3), (4) 的结论，我们有
+因此 (4) 得证。
+
+**(5)** 我们构造 $h=f-g\geq 0$，可知 $h$ 也是简单函数，利用 (2), (3), (4) 的结论，我们有
 
 $$
 \int _{X}f \, d \mu=\int _{X}g+h \, d \mu
 =\int_{X} g \, d \mu+\int_{X} h \, d \mu \geq \int _{X}g \, d \mu
 $$
 
-(6) 取 $\alpha \in(0,1)$，然后令 $A_{n}(\alpha)=\{ f_{n}\geq \alpha g \}$。不妨我们将 $g$ 表示为 $g=\sum\limits_{j=1}^{m}b_{j}I_{B_{j}}$，注意到 $f_{n}I_{A_{n}(\alpha)}$ 和 $gI_{A_{n}(\alpha)}$ 依然是简单函数，并且有 $f_{n}I_{A_{n}(\alpha)}\geq \alpha gI_{A_{n}(\alpha)}$，因此由 (5) 可知
+**(6)** 取 $\alpha \in(0,1)$，然后令 $A_{n}(\alpha)=\{ f_{n}\geq \alpha g \}$。不妨我们将 $g$ 表示为 $g=\sum\limits_{j=1}^{m}b_{j}I_{B_{j}}$，注意到 $f_{n}I_{A_{n}(\alpha)}$ 和 $gI_{A_{n}(\alpha)}$ 依然是简单函数，并且有 $f_{n}I_{A_{n}(\alpha)}\geq \alpha gI_{A_{n}(\alpha)}$，因此由 (5) 可知
 
 $$
 \int _{X}f \, d\mu\geq \int _{X}f_{n}I_{A_{n}(\alpha)} \, d \mu
 \geq \alpha \int _{X}gI_{A_{n}(\alpha)} \, d \mu=
 \alpha \sum\limits_{j=1}^{m}b_{j}\mu(B_{j}\cap A_{n}(\alpha)).
-$$
-
-<span id="e7de7b"></span>
+$${#eq-e7de7b}
 
 又因为
 
@@ -151,7 +151,7 @@ f_{n}\uparrow &\implies A_{n}(\alpha)\uparrow \\
 $$
 
 (第二行结论可以使用反证法证明) 。所以，
-令式 [e7de7b](#e7de7b) 右侧 $n\to \infty$，有
+令式 @eq-e7de7b 右侧 $n\to \infty$，有
 
 $$
 \int _{X}f \, d\mu\geq \alpha \sum\limits_{j=1}^{m}b_{j}\lim_{ n \to \infty } \mu(B_{j}\cap A_{n}(\alpha))=\alpha \sum\limits_{j=1}^{m}b_{j}\mu(B_{j})
@@ -186,16 +186,15 @@ $$
 ## 非负可测函数积分的性质
 
 设 $f$ 是测度空间 $(X, \mathcal{F}, \mu)$ 上的非负可测函数，则
+
 (1) 若 $f$ 是非负简单函数，则由 @def-inte-simple-func 和 @def-inte-noneg-func 确定的 $\int _{X}f \, d\mu$ 相同。
 (2) 若 $\{ f_{n},n=1,2,\dots \}$ 是非负简单函数，且 $f_{n}\uparrow f$，则有 $\lim_{ n \to \infty }\int _{X}f_{n} \, d\mu=\int _{X}f \, d\mu$。
 (3) 由 @def-inte-noneg-func 确定的积分值为
-
-$$
-\int _{X}f \, d \mu=\lim_{ n \to \infty } \left[
-\sum\limits_{k=0}^{n2^{n}-1}\frac{k}{2^{n}}\mu\left( \frac{k}{2^{n}}
-\leq f<\frac{k+1}{2^{n}} \right)+n\mu(f\geq n) \right] .
-$$
-
+  $$
+  \int _{X}f \, d \mu=\lim_{ n \to \infty } \left[
+  \sum\limits_{k=0}^{n2^{n}-1}\frac{k}{2^{n}}\mu\left( \frac{k}{2^{n}}
+  \leq f<\frac{k+1}{2^{n}} \right)+n\mu(f\geq n) \right] .
+  $$
 (4) $\int _{X}f \, d\mu\geq 0$。
 (5) $\int _{X}(af) \, d\mu=a\int _{X}f \, d\mu,\forall a\geq 0$。
 (6) $\int _{X}(f+g) \, d\mu=\int _{X}f \, d\mu+\int _{X}g \, d\mu$。
@@ -204,17 +203,21 @@ $$
 :::
 
 ::: {.proof}
-(1) 证明非常简单，只需要明确知道，$f$ 本身也是 $\leq f$ 的 $g$ 中的一员即可。
-(2) 由定义可知 $\int _{X}f_{n} \, d\mu\leq \int _{X}f \, d\mu$，因此有 $\lim_{ n \to \infty }\int _{X}f_{n} \, d\mu\leq \int _{X}f \, d\mu$。又因为 $\forall g\leq f$，$g$ 是简单函数，所有有关系
+**(1)** 证明非常简单，只需要明确知道，$f$ 本身也是 $\leq f$ 的 $g$ 中的一员即可。
+
+**(2)** 由定义可知 $\int _{X}f_{n} \, d\mu\leq \int _{X}f \, d\mu$，因此有 $\lim_{ n \to \infty }\int _{X}f_{n} \, d\mu\leq \int _{X}f \, d\mu$。又因为 $\forall g\leq f$，$g$ 是简单函数，所有有关系
 
 $$
 \lim_{ n \to \infty } f_{n}\geq g,
 $$
 
 根据 @prp-inte-simple-func 中的第 6 条可知，$\lim_{ n \to \infty }\int _{X}f_{n} \, d\mu\geq \int _{X}g \, d\mu,\forall g\leq f$，因此有 $\lim_{ n \to \infty }\int _{X}f_{n} \, d\mu\geq \int _{X}f \, d\mu$。命题得证。
-(3) 将 (2) 应用于 @thm-simple-func-converge 中构造的那一列简单函数即可。
-(4) 由定义和 @prp-inte-simple-func 中的第 2 条直接推出。
-(5) 由 @thm-simple-func-converge 可知，任意非负可测函数都可以找到一列非负简单函数 $f_{n}$ 来向上逼近它，再根据这场的 (2) 和 @prp-inte-simple-func 中的 (3) 可以得到
+
+**(3)** 将 (2) 应用于 [简单函数逼近](07-measurable-functions.qmd#thm-simple-func-converge) 中构造的那一列简单函数即可。
+
+**(4)** 由定义和 @prp-inte-simple-func 中的第 2 条直接推出。
+
+**(5)** 由 [简单函数逼近](07-measurable-functions.qmd#thm-simple-func-converge) 可知，任意非负可测函数都可以找到一列非负简单函数 $f_{n}$ 来向上逼近它，再根据这场的 (2) 和 @prp-inte-simple-func 中的 (3) 可以得到
 
 $$
 \begin{align}
@@ -225,10 +228,12 @@ $$
 $$
 
 不难证明，当 $a=\infty$ 时，以上还是成立的。
-(6) 证明方法与 (5) 类似。
-(7) 由定义可以直接得到。
+
+**(6)** 证明方法与 (5) 类似。
+
+**(7)** 由定义可以直接得到。
 :::
-注意，根据 @thm-simple-func-converge，任意非负可测函数都能够找到一列非负简单函数列来向上逼近它，而又根据上面的性质 (2)，这一列非负简单函数列的积分的极限等于非负可测函数的积分，这其实体现了非负可测函数积分的另一种定义方式。
+注意，根据 [简单函数逼近](07-measurable-functions.qmd#thm-simple-func-converge)，任意非负可测函数都能够找到一列非负简单函数列来向上逼近它，而又根据上面的性质 (2)，这一列非负简单函数列的积分的极限等于非负可测函数的积分，这其实体现了非负可测函数积分的另一种定义方式。
 
 ::: {#def-inte-noneg-func-2}
 
@@ -243,9 +248,10 @@ $$
 :::
 
 关于这两个定义之间的关系，需要说明几点：
+
 - @def-inte-noneg-func 需要进一步讨论其一意性，因为每个 $f$ 可能有不同的逼近方式。但根据以上的性质 (2)，该一意性得到保证。
 - 同样根据性质 (2)，我们知道，两者定义是等价的。
-- 根据性质 (3)，我们甚至能够实际写出定义的表达式，只需要将简单函数列固定到 @thm-simple-func-converge 所构造的那个简单函数列即可。
+- 根据性质 (3)，我们甚至能够实际写出定义的表达式，只需要将简单函数列固定到 [简单函数逼近](07-measurable-functions.qmd#thm-simple-func-converge) 所构造的那个简单函数列即可。
 
 ## 一般可测函数的积分
 
@@ -293,10 +299,17 @@ $$
 $$
 
 为 $f$ 在集合 $A$ 上的积分，记为 $\int _{A}f \, d\mu$。容易知道，**$f$ 积分存在（可积）则 $f$ 在任意 $A\in\mathcal{F}$ 上积分存在（可积）**。
-**Example: L-S 积分和 L 积分**
+
+:::
+
+::: {#exm-label}
+
+### L-S 积分和 L 积分**
+
 略
 
 :::
+
 # 性质
 
 ## 积分存在和可积性的相关性质
@@ -308,15 +321,14 @@ $$
 ## 积分存在 (可积) 的性质
 
 设 $f,g$ 是测度空间 $(X,\mathcal{F},\mu)$ 上的可测函数，则
+
 (1) 若 $f$ 积分存在，则 $|\int _{X}f \, d\mu|\leq\int _{X}|f| \, d\mu$;
 (2) $f$ 可积，当且仅当 $|f|$ 可积;
 (3) 若 $f$ 可积，则 $|f|<\infty$ a.e.;
 (4) 若 $f$ 积分存在，则
-
-$$
-\forall A\in\mathcal{F},\mu(A)=0\implies \int _{A}f \, d\mu=0;
-$$
-
+  $$
+  \forall A\in\mathcal{F},\mu(A)=0\implies \int _{A}f \, d\mu=0;
+  $$
 (5) 若 $f,g$ 积分存在且 $f\geq g$ a.e.，则 $\int _{X}f \, d\mu\geq \int _{X}g \, d\mu$;
 (6) 若 $f=g$ a.e.，则其中一个积分存在 (可积)，另一个也积分存在 (可积)，并且两个的积分值相同；
 (7) 若 $f=0$ a.e.，则 $\int _{X}f \, d\mu=0$；若 $\int _{X}f \, d\mu=0$，且 $f\geq 0$ a.e.，则 $f=0$ a.e.。
@@ -766,7 +778,7 @@ $$
 :::
 
 ::: {.proof}
-根据 @prp-inte-exists (6) ，我们不妨认为 $f_{n}\uparrow f$。$\forall n$，根据 @thm-simple-func-converge 和 @prp-inte-noneg-func (2)，可以找到 $\{ f_{n,k},k=1,\dots \}$，且满足
+根据 @prp-inte-exists (6) ，我们不妨认为 $f_{n}\uparrow f$。$\forall n$，根据 [简单函数逼近](07-measurable-functions.qmd#thm-simple-func-converge) 和 @prp-inte-noneg-func (2)，可以找到 $\{ f_{n,k},k=1,\dots \}$，且满足
 
 $$
 f_{n,k}\uparrow f_{n}.

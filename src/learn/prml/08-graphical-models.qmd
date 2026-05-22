@@ -1,0 +1,1026 @@
+---
+title: "图模型"
+subtitle: "Graphical Models"
+description: "PRML 第 8 章关于贝叶斯网络、条件独立、马尔可夫随机场、因子图、sum-product 与 max-sum 推断"
+draft: false
+aliases:
+  - 图模型
+  - Graphical Models
+  - 概率图模型
+  - Bayesian Networks
+  - Markov Random Fields
+  - Belief Propagation
+tags:
+  - PRML
+  - 机器学习
+  - 概率图模型
+  - 贝叶斯网络
+  - 马尔可夫随机场
+  - 信念传播
+date: 2026-05-21
+date-modified: last-modified
+order: 8
+---
+
+# 引言
+
+第 8 章讨论的核心，是把概率模型的结构从一长串代数公式中抽出来，变成一张可以观察、操作和推断的图。前面各章已经反复使用概率论的两个基本规则：
+$$
+p(x,y)=p(y\mid x)p(x),
+$$
+以及
+$$
+p(x)=\sum_y p(x,y).
+$$
+理论上，任何复杂概率推断都可以通过反复使用 product rule 与 sum rule 来完成。但是如果只依赖代数展开，我们很快会被巨大的联合分布、条件分布和边缘化求和淹没。图模型的价值就在这里：**它把一个联合分布如何分解、哪些变量在给定条件下相互独立、以及推断时应该如何复用中间结果，放进同一套图结构中表达**。
+
+从这个角度看，graphical model 不是一种单独的算法，而是一种组织概率模型的方法。图中的节点表示随机变量，边表示变量之间的直接概率关系。更重要的是，图不仅是可视化工具，它还对应一个明确的联合分布分解：
+$$
+p(x_1,\dots,x_K)
+$$
+可以被写成若干局部因子的乘积，每个局部因子只涉及少数变量。这个分解一旦成立，就会同时带来三件事：
+
+| 作用 | 图模型回答的问题 | 对应主题 |
+|---|---|---|
+| 表达 | 联合分布如何由局部条件或局部相容性组成？ | Bayesian networks, Markov random fields |
+| 理解 | 观察某些变量后，哪些变量会变得独立或相关？ | conditional independence, d-separation |
+| 计算 | 如何避免对指数级状态空间做暴力求和或最大化？ | factor graphs, sum-product, max-sum |
+
+:::: {.callout-note title="本章的主线"}
+第 8 章可以理解为从概率模型到计算图的过渡。
+
+1. 贝叶斯网络强调从局部条件分布构造联合分布，适合表达生成过程与因果方向。
+2. 马尔可夫随机场强调局部变量配置之间的相容性，适合表达对称约束。
+3. 因子图则进一步把联合分布的因子化结构显式展开，使消息传递算法能够直接在图上运行。
+
+因此，本章的目标不是记住几种画图规则，而是理解一个统一问题：**如何利用图结构把高维概率分布拆成局部结构，并由此读出独立性和设计高效推断算法**。
+::::
+
+上一章 [稀疏核机器](07-sparse-kernel-machines.qmd) 主要关注判别函数如何通过少数训练样本表达。第 8 章的视角更一般：无论是分类、回归、隐变量模型还是序列模型，只要它们有概率结构，就可以尝试通过图来描述变量之间的依赖与推断路径。
+
+# Bayesian Networks
+
+Bayesian network 又称 directed graphical model。它使用有向无环图 (directed acyclic graph, DAG) 来表达一个联合分布的因子化方式。
+
+## 从 product rule 到有向图
+
+考虑三个变量 $a,b,c$ 的联合分布。根据 product rule，可以写成
+$$
+p(a,b,c)=p(c\mid a,b)p(b\mid a)p(a).
+$$
+这个分解对应一张有向图：$a$ 指向 $b$，$a$ 和 $b$ 共同指向 $c$。
+
+```{mermaid}
+%%| label: fig-bn-three-variables
+%%| fig-cap: "三个变量的有向图分解示意。"
+flowchart LR
+  A["a"] --> B["b"]
+  A --> C["c"]
+  B --> C
+```
+
+如果某条边从 $a$ 指向 $b$，则称 $a$ 是 $b$ 的 parent，$b$ 是 $a$ 的 child。图中的每个节点都对应一个局部条件分布。对上面的图来说，这些局部分布就是
+$$
+p(a),\qquad p(b\mid a),\qquad p(c\mid a,b).
+$$
+
+对于 $K$ 个变量，product rule 总可以写成
+$$
+p(x_1,\dots,x_K)
+=p(x_K\mid x_1,\dots,x_{K-1})\cdots p(x_2\mid x_1)p(x_1).
+$$
+注意，以上变量顺序是任意的，打乱变量之间的顺序上述关系依然存在。
+
+如果完全照这个式子画图，后面的变量会依赖前面几乎所有变量，图会非常稠密（这被成为fully connected，全连接图）。贝叶斯网络真正有用的地方在于：**如果某些条件分布实际上只依赖少数父节点，就可以删去多余的边**。
+
+于是一般的贝叶斯网络分解写成
+$$
+p(x_1,\dots,x_K)=\prod_{k=1}^K p(x_k\mid \operatorname{pa}_k),
+$$
+其中 $\operatorname{pa}_k$ 表示节点 $x_k$ 的父节点集合。
+
+
+![包含7个变量的DAG示意图](https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/example-of-dag-20260521-154727.png){#fig-example-of-dag}
+
+比如，上图的DAG所表示的概率分布就是：
+
+$$
+p(x_1)p(x_2)p(x_3)p(x_4|x_1,x_2,x_3)p(x5|x_1,x_3)p(x6|x_4)p(x_7|x_4,x_5).
+$$
+
+
+:::: {.callout-important title="边的含义"}
+在贝叶斯网络中，一条边并不表示两个变量之间一定有强相关，也不直接等同于因果关系。它首先表示联合分布分解中某个局部条件分布需要把另一个变量作为条件。
+
+如果图是根据生成过程设计的，那么边的方向常常有因果解释；但从纯概率建模角度看，边的最小含义仍然是条件分布的依赖结构。
+::::
+
+## 有向无环性与变量顺序
+
+Bayesian network 要求图中不能有 directed cycle。如果存在
+$$
+x_1\to x_2\to \cdots \to x_m\to x_1,
+$$
+那么每个变量的生成都要等待另一个变量，局部条件分布的乘积就不能自然解释为一个按顺序生成变量的过程。
+
+DAG 的无环性等价于存在某种节点排序，使得所有边都从较早的节点指向较晚的节点。在这个排序下，我们可以依次为每个节点指定条件分布，然后把它们相乘得到一个合法的联合分布。
+
+这也解释了一个容易忽略的事实：同一个联合分布可以用不同变量顺序展开，并得到不同的图。图不是联合分布唯一的外形，而是对联合分布某种因子化结构的表达。
+
+## Plate notation
+
+实际模型经常包含大量重复结构。例如在监督学习中，我们有 $N$ 个输入输出对 $(x_n,t_n)$，它们共享同一组参数 $w$。如果为每个样本重复画一遍节点，图会变得很笨重。Plate notation 用一个矩形框表示重复结构，框角标标出重复次数。
+
+
+
+![监督回归模型的 plate notation 示意图](https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/plate-notation-of-supervise-20260521-164512.png){#fig-plate-notation-of-supervise}
+
+
+在多项式回归或线性回归中，常见的条件分布可以写成
+$$
+p(t_n\mid x_n,w,\beta)
+=\mathcal N\bigl(t_n\mid y(x_n,w),\beta^{-1}\bigr).
+$$
+如果 $w$ 也有先验，例如
+$$
+p(w\mid \alpha)=\mathcal N(w\mid 0,\alpha^{-1}I),
+$$
+那么完整联合分布就是
+$$
+p(w,t_1,\dots,t_N\mid x_1,\dots,x_N,\alpha,\beta)
+=p(w\mid \alpha)\prod_{n=1}^N p(t_n\mid x_n,w,\beta).
+$$
+
+这个式子体现了 plate notation 的作用：每个样本的观测 $t_n$ 在给定共享参数 $w$ 后条件独立，但它们在边缘意义下并不独立，因为它们都通过同一个未知 $w$ 发生耦合。
+
+:::: {.callout-note title="阴影节点与观测"}
+图模型中常用阴影节点表示 observed variables，未阴影节点表示 latent variables 或 parameters，非随机变量（如预先给定的超参数）则不使用节点表示。
+
+这个视觉约定很重要，因为推断问题通常就是在已观测节点固定后，计算未观测节点的后验分布。
+::::
+
+## Generative models
+
+如果一个图模型为**所有变量**都指定了概率分布，并且可以按照图的拓扑顺序从上游变量采样到下游变量，那么它就是一个 **generative model**。典型过程如下：
+
+::: {.callout-note}
+
+@fig-plate-notation-of-supervise 中描述的过程不是一个generative
+model，因为没有给予$x_n$一个分布。让其成为generative model的方式也比较简单，设置一个$p(x)$给$x_n$即可。
+
+:::
+
+1. 先从没有父节点的变量采样。
+2. 再按照 DAG 顺序，对每个节点从 $p(x_k\mid \operatorname{pa}_k)$ 采样。
+3. 最后得到一个完整样本 $(x_1,\dots,x_K)$。
+
+这个过程称为 **ancestral sampling**。
+
+生成模型的典型用途是**用低维潜变量解释复杂观测**。例如,在图像识别中，观测图像是像素强度向量，而对象类别、位置、朝向可以作为潜变量。模型先生成对象身份、位置和朝向，再生成图像。因此，一定程度上，generativee model可以描述causal process，这也是pearl用它来作为表述结构因果模型的工具的原因。
+
+相反的，给定一张图像后，**推断问题**则反过来：计算对象类别、位置和朝向的后验分布。
+
+:::: {.callout-important title="生成方向与推断方向不同"}
+有向图的箭头通常描述生成方向，但推断可以沿任意方向进行。给定结果推断原因，就是贝叶斯公式在图模型中的基本用法。后面讨论消息传递时，我们会看到这种“逆向信息流”可以通过局部消息系统化实现。
+::::
+
+## 离散变量与参数数量
+
+接下来，我们来介绍一下图模型如何来建模**离散变量**。假设每个离散变量有 $K$ 个状态。若 $M$ 个变量完全没有条件独立结构，一个一般联合分布需要
+$$
+K^M-1
+$$
+个自由参数，因为所有状态组合共有 $K^M$ 个概率，且总和为 1。
+
+显然，参数的数量随着变量的数量指数增长，这非常不利于模型的学习和推断。通过引入一些假设，我们可以有效降低参数的数量，这对应于不同的图模型结构。
+
+
+### 完全独立
+
+如果这些变量完全独立，则
+$$
+p(x_1,\dots,x_M)=\prod_{m=1}^M p(x_m),
+$$
+每个边缘分布需要 $K-1$ 个参数，总参数数为
+$$
+M(K-1).
+$$
+
+
+### 链式模型
+
+链式贝叶斯网络位于两者之间：
+$$
+p(x_1,\dots,x_M)=p(x_1)\prod_{m=2}^M p(x_m\mid x_{m-1}).
+$$
+其中 $p(x_1)$ 需要 $K-1$ 个参数，每个条件分布 $p(x_m\mid x_{m-1})$ 需要 $K(K-1)$ 个参数，因此总数为
+$$
+K-1+(M-1)K(K-1).
+$$
+这随着链长 $M$ 线性增长，而不是指数增长。
+
+```{mermaid}
+%%| label: fig-bn-chain
+%%| fig-cap: "离散链式模型通过局部条件分布控制参数数量。"
+flowchart LR
+  X1["x1"] --> X2["x2"] --> X3["x3"] --> Dots["..."] --> XM["xM"]
+```
+
+我们还可以进一步减少参数。例如让所有转移分布 $p(x_m\mid x_{m-1})$ 共享同一组参数，则链长增加不会引入新的转移参数。这是很多**序列模型**的基本思想。
+
+### 参数模型
+
+另一种可以有效控制参数数量的方式是使用参数模型。一种更紧凑的选择是使用 logistic sigmoid：
+$$
+p(y=1\mid x_1,\dots,x_M)
+=\sigma\left(w_0+\sum_{m=1}^M w_mx_m\right),
+$$
+其中
+$$
+\sigma(a)=\frac{1}{1+\exp(-a)}.
+$$
+这样参数数量从指数级的 $2^M$ 降到 $M+1$。代价是模型类受限：并非任意条件概率表都可以用一个线性 logit 表达。
+
+:::: {.callout-note title="图结构与局部分布是两层选择"}
+图结构决定某个变量依赖哪些父节点，局部条件分布的函数形式决定这种依赖如何发生。即使图相同，使用条件概率表、logistic 模型或神经网络参数化，也会得到不同的模型族。
+::::
+
+## Linear-Gaussian models
+
+对于**连续变量**，贝叶斯网络常见的一类模型是 **linear-Gaussian model**。假设节点 $x_i$ 的父节点集合为 $\operatorname{pa}_i$，条件分布写成
+$$
+p(x_i\mid \operatorname{pa}_i)
+=\mathcal N\left(
+x_i\ \middle|\ \sum_{j\in\operatorname{pa}_i}w_{ij}x_j+b_i,\ v_i
+\right).
+$$
+也就是说，每个节点在给定父节点后服从一维高斯分布，其均值是父节点的线性组合。
+
+整个联合分布为
+$$
+p(x)=\prod_{i=1}^D p(x_i\mid \operatorname{pa}_i).
+$$
+取对数后，所有条件高斯项都是二次函数，因此联合分布仍然是 multivariate Gaussian。换句话说，**linear-Gaussian Bayesian network 是一种用图结构约束高斯联合分布的方法**。
+
+从生成角度也可以写成结构方程：
+$$
+x_i=\sum_{j\in\operatorname{pa}_i}w_{ij}x_j+b_i+\sqrt{v_i}\epsilon_i,
+$$
+其中 $\epsilon_i\sim\mathcal N(0,1)$，不同节点的噪声相互独立。于是均值可以递归计算：
+$$
+\mathbb E[x_i]=\sum_{j\in\operatorname{pa}_i}w_{ij}\mathbb E[x_j]+b_i.
+$$
+
+类似的，我们也可以推导出任意两个变量之间的协方差是。
+
+:::: {.callout-tip title="linear-Gaussian 的定位"}
+Linear-Gaussian model 是很多经典隐变量模型的共同骨架，例如 probabilistic PCA, factor analysis 和 linear dynamical systems。它的优势是连续变量推断通常仍可保持高斯形式，因而有解析或高效算法。
+::::
+
+# Conditional Independence
+
+图模型最重要的能力之一，是让我们直接从图上读出 conditional independence。对三个变量 $a,b,c$，条件独立记作
+$$
+a\perp\!\!\!\perp b\mid c,
+$$
+含义是
+$$
+p(a,b\mid c)=p(a\mid c)p(b\mid c).
+$$
+在分母非零的情形下，它也等价于
+$$
+p(a\mid b,c)=p(a\mid c).
+$$
+也就是说，一旦知道 $c$，再知道 $b$ 不会改变我们对 $a$ 的分布判断。
+
+条件独立非常重要，因为知道它有助于我们简化模型和解决推断问题。更加重要的一点是，我们可以直接从图结构中直接读出条件独立的关系，而不需要任何其他的计算。这被称为d-分离（d-separation）。
+
+## 三种基本局部结构
+
+有向图中的条件独立规则可以从三种三节点结构开始理解。
+
+第一种是 tail-to-tail，也称 common cause：
+
+```{mermaid}
+%%| label: fig-tail-to-tail
+%%| fig-cap: "Tail-to-tail 结构：给定共同原因 c 后，a 与 b 条件独立。"
+flowchart LR
+  C["c"] --> A["a"]
+  C --> B["b"]
+```
+
+联合分布分解为
+$$
+p(a,b,c)=p(a\mid c)p(b\mid c)p(c).
+$$
+给定 $c$ 后，
+$$
+p(a,b\mid c)=p(a\mid c)p(b\mid c),
+$$
+因此
+$$
+a\perp\!\!\!\perp b\mid c.
+$$
+但如果不观测 $c$，$a$ 和 $b$ 一般会相关，因为它们共享同一个随机原因。
+
+第二种是 head-to-tail，也就是链式传播：
+
+```{mermaid}
+%%| label: fig-head-to-tail
+%%| fig-cap: "Head-to-tail 结构：链中间节点 c 被观测后，路径被阻断。"
+flowchart LR
+  A["a"] --> C["c"] --> B["b"]
+```
+
+联合分布为
+$$
+p(a,b,c)=p(a)p(c\mid a)p(b\mid c).
+$$
+给定中间变量 $c$ 后，$a$ 对 $b$ 的影响已经通过 $c$ 被总结，因此
+$$
+a\perp\!\!\!\perp b\mid c.
+$$
+
+第三种是 head-to-head，也称 collider（对撞）：
+
+```{mermaid}
+%%| label: fig-head-to-head
+%%| fig-cap: "Head-to-head 结构：未观测碰撞点 c 时，a 与 b 边缘独立；观测 c 后反而相关。"
+flowchart LR
+  A["a"] --> C["c"]
+  B["b"] --> C
+```
+
+联合分布为
+$$
+p(a,b,c)=p(a)p(b)p(c\mid a,b).
+$$
+如果没有观测 $c$，则
+$$
+p(a,b)=p(a)p(b),
+$$
+所以
+$$
+a\perp\!\!\!\perp b.
+$$
+但是一旦观测 $c$，通常有
+$$
+p(a,b\mid c)\ne p(a\mid c)p(b\mid c).
+$$
+这就是 collider 的特殊性：观测共同结果会打开路径。
+
+:::: {.callout-warning title="Collider 与前两种结构相反"}
+Tail-to-tail 和 head-to-tail 的路径在中间节点未观测时是打开的，观测中间节点后被阻断。
+
+Head-to-head 正好相反：中间节点未观测时路径被阻断，观测中间节点或其中某个后代后路径被打开。
+::::
+
+## Explaining away
+
+Collider 结构中最典型的现象是 **explaining away**。假设汽车油表显示空，可能有两个原因：油箱真的空了，也可能电池没电导致油表失效。令
+$$
+F=\text{fuel},\qquad B=\text{battery},\qquad G=\text{gauge}.
+$$
+图结构为
+$$
+F\to G\leftarrow B.
+$$
+在没有观察油表前，油箱状态和电池状态可以是独立的。**但一旦观察到油表显示空，二者就相关了。如果进一步发现电池没电，那么“油表显示空”这一证据已经被电池解释了一部分，油箱为空的后验概率可能下降**。这就是 explaining away。
+
+:::: {.callout-note title="为什么观测结果会引入相关性"}
+在 collider 中，两个原因原本可以独立生成同一个结果。观测结果之后，原因之间开始竞争解释这个结果。知道其中一个原因成立，会改变另一个原因的后验概率，因此二者在条件于结果时变得相关。
+::::
+
+## D-separation
+
+**D-separation 是从任意有向无环图中判断条件独立的通用规则**。设 $A,B,C$ 是互不相交的节点集合，我们想判断图是否蕴含
+$$
+A\perp\!\!\!\perp B\mid C.
+$$
+做法是检查从 $A$ 中任意节点到 $B$ 中任意节点的所有无向路径。如果每条路径都被 $C$ 阻断，则称 **$A$ 与 $B$ 被 $C$ d-separated**。
+
+一条路径在以下情况下被阻断：
+
+| 路径上的局部结构 | 阻断条件 |
+|---|---|
+| head-to-tail | 中间节点属于 $C$ |
+| tail-to-tail | 中间节点属于 $C$ |
+| head-to-head | 中间节点不属于 $C$，且它的后代也没有任何一个属于 $C$ |
+
+如果存在至少一条未被阻断的路径，则图本身不能保证 $A$ 与 $B$ 在给定 $C$ 后独立。
+
+:::: {.callout-important title="d-separation 的作用"}
+D-separation 不是一种数值计算方法，而是一种结构判定方法。它告诉我们：只要联合分布按照这个 DAG 分解，那么哪些条件独立关系必然成立。具体概率参数可能让更多独立关系偶然成立，但这些额外独立性不是图结构保证的。
+::::
+
+
+![d-separation 示意图](https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/d-seperation-20260521-201400.png){#fig-d-separation}
+
+对应以上两个结构，深色表示被阻断的路径（条件），那此时$a,b$之间是否是独立的呢？
+
+
+对 @fig-d-separation 中的两种结构，可以直接用上面的规则判断。左图中，$f$ 虽然位于 $a$ 到 $b$ 的路径上，但它是 tail-to-tail 节点且没有被观测，所以不会阻断路径；$e$ 是 head-to-head 节点，但它的后代 $c$ 被观测，因此这条路径也被打开。所以仅给定 $c$ 时，图并不蕴含
+$$
+a\perp\!\!\!\perp b\mid c.
+$$
+右图中，$f$ 被观测，并且它是 tail-to-tail 节点，因此路径被阻断；同时 $e$ 是 head-to-head 节点，且它和它的后代都没有被观测，也会阻断路径。因此右图蕴含
+$$
+a\perp\!\!\!\perp b\mid f.
+$$
+
+## 用 d-separation 回看已有模型
+
+D-separation 不只是用来分析抽象图结构，也可以帮助我们重新理解前面章节里已经接触过的模型。
+
+首先需要注意参数节点。PRML 的图中常把固定参数画成小的实心圆，例如噪声方差 $\sigma^2$、精度参数 $\alpha$ 或其它超参数。对于 d-separation 来说，这些固定参数节点可以像 observed nodes 一样处理，因为它们的值已经给定。不过它们不是随机变量，没有对应的边缘分布，而且通常没有父节点。因此，穿过这类参数节点的路径往往是 tail-to-tail 结构，并会因为参数被固定而阻断。
+
+一个基础例子是从一维 Gaussian 中估计未知均值 $\mu$。假设
+$$
+p(\mu,x_1,\dots,x_N)
+=p(\mu)\prod_{n=1}^N p(x_n\mid \mu).
+$$
+图结构可以理解为 $\mu$ 同时指向所有观测 $x_n$。任意两个观测 $x_i$ 与 $x_j$ 之间的唯一路径是
+$$
+x_i\leftarrow \mu\to x_j.
+$$
+这是一个 tail-to-tail 结构。若给定 $\mu$，路径被阻断，所以有
+$$
+x_i\perp\!\!\!\perp x_j\mid \mu,\qquad i\ne j.
+$$
+因此，在给定 $\mu$ 时，数据集 $D=\{x_1,\dots,x_N\}$ 的似然可以分解为
+$$
+p(D\mid \mu)=\prod_{n=1}^N p(x_n\mid \mu).
+$$
+这就是 i.i.d. 假设在图模型中的含义：**独立性通常是条件于共享参数或潜变量成立的，而不是无条件成立的**。
+
+如果把 $\mu$ 积分掉，观测之间一般就不再边缘独立：
+$$
+p(D)=\int p(D\mid \mu)p(\mu)\,d\mu
+\ne
+\prod_{n=1}^N p(x_n).
+$$
+直觉上，所有观测都共享同一个未知均值。看到一个样本偏大，会改变我们对 $\mu$ 的后验判断，进而改变对其它样本的预测。因此，条件于 $\mu$ 的独立性在边缘化 $\mu$ 后会消失。
+
+Bayesian polynomial regression 也有同样结构。训练目标 $\{t_n\}$、新输入处的预测目标 $\hat t$ 都通过共享参数 $w$ 发生关联。给定 $w$ 后，从 $\hat t$ 到任意训练目标 $t_n$ 的路径在 $w$ 处被阻断，因此
+$$
+\hat t\perp\!\!\!\perp t_n\mid w.
+$$
+这说明：一旦知道多项式系数 $w$，新预测 $\hat t$ 就不需要再直接依赖训练目标。训练数据的作用是先把我们对 $w$ 的不确定性更新为后验分布，然后预测时再对 $w$ 的后验进行平均。
+
+:::: {.callout-note title="训练数据如何被 posterior 汇总"}
+在 Bayesian polynomial regression 中，训练数据并不是在预测时逐条重新参与计算。它们先通过贝叶斯更新塑造 $p(w\mid D)$，之后预测新点时使用的是这个 posterior over $w$。图模型中的条件独立关系正好解释了这种“先学习参数后预测”的计算分工。
+::::
+
+## Naive Bayes
+
+Naive Bayes 是 d-separation 的另一个重要例子。它是一个用于**分类**的生成模型。设类别标签为 $z$，输入向量为
+$$
+x=(x_1,\dots,x_D)^\top.
+$$
+模型先从类别先验中生成 $z$，再根据类别生成每个输入分量：
+$$
+p(z,x)=p(z)\prod_{d=1}^D p(x_d\mid z).
+$$
+
+```{mermaid}
+%%| label: fig-naive-bayes
+%%| fig-cap: "Naive Bayes 假设输入分量在给定类别标签 z 后条件独立。"
+flowchart LR
+  Z["z"] --> X1["x1"]
+  Z --> X2["x2"]
+  Z --> XD["xD"]
+```
+
+这个模型的核心假设是：**给定类别 $z$ 后，输入的各个维度条件独立**：
+$$
+p(x\mid z)=\prod_{d=1}^D p(x_d\mid z).
+$$
+从图上看，任意两个输入分量之间的路径都是
+$$
+x_i\leftarrow z\to x_j.
+$$
+当 $z$ 被给定时，这条 tail-to-tail 路径被阻断，所以
+$$
+x_i\perp\!\!\!\perp x_j\mid z,\qquad i\ne j.
+$$
+
+但是如果 $z$ 没有被观测，而是被边缘化掉，那么输入分量之间一般不再独立：
+$$
+p(x)=\sum_z p(z)\prod_{d=1}^D p(x_d\mid z)
+\ne
+\prod_{d=1}^D p(x_d).
+$$
+这是因为类别标签是所有输入分量的共同原因。知道某个特征的取值会改变我们对类别的判断，进而改变其它特征的预测分布。
+
+在 Gaussian naive Bayes 中，每一类的类条件密度通常写成各维 Gaussian 的乘积：
+$$
+p(x\mid z=k)
+=\prod_{d=1}^D \mathcal N(x_d\mid \mu_{kd},\sigma_{kd}^2).
+$$
+这等价于说每一类内部的协方差矩阵是 diagonal covariance matrix。于是每个类别内的等密度轮廓是轴对齐的椭球。但边缘密度
+$$
+p(x)=\sum_{k=1}^K p(z=k)p(x\mid z=k)
+$$
+是多个 diagonal Gaussians 的 mixture，一般不会再按输入维度分解。
+
+:::: {.callout-important title="为什么 naive Bayes 仍然常常有效"}
+Naive Bayes 的条件独立假设非常强，真实数据通常不会严格满足。但分类任务最终关心的是后验类别大小关系或决策边界，而不是类条件密度的每个细节都被精确拟合。因此，即使密度模型本身比较粗糙，naive Bayes 仍可能给出不错的分类性能，尤其是在维度高、样本相对有限、不同特征类型需要分别建模时。
+::::
+
+## 图模型作为分布过滤器
+
+现在可以更抽象地理解 d-separation theorem。一个 directed graph 可以被看作对所有可能联合分布的过滤器：只有那些能够按该图分解为
+$$
+p(x)=\prod_k p(x_k\mid \operatorname{pa}_k)
+$$
+的分布，才通过这个过滤器。
+
+另一方面，我们也可以先从图上用 d-separation 读出所有条件独立语句，再要求一个分布必须满足这些独立性。D-separation theorem 说明，在有向图中，这两种过滤方式得到的是同一类分布：**按图分解的分布，恰好满足图通过 d-separation 所蕴含的条件独立关系**。
+
+需要注意的是，图给出的独立性是结构保证的独立性。某个具体分布可能因为参数取值特殊而拥有额外独立性，例如完全因子化的分布可以满足很多图的独立性要求（diagonal covariant multivariate Normal）。但这些额外独立性不是图结构本身表达出来的。
+
+:::: {.callout-note title="图表达的是模型族，而不是单个参数点"}
+一张图通常对应一整个概率分布族。D-separation 读出的是这个分布族中所有成员共同满足的条件独立关系，而不是某个特定参数设置偶然满足的额外关系。
+::::
+
+## Markov blanket
+
+对有向图中的某个节点 $x_i$，它的 **Markov blanket (Markov boundary)** 是最小的一组节点，使得给定这组节点后，$x_i$ 与图中所有其他节点条件独立。
+
+在 Bayesian network 中，$x_i$ 的 Markov blanket 包括三类节点：
+
+| 组成部分 | 原因 |
+|---|---|
+| parents | 直接影响 $x_i$ 的条件分布 |
+| children | $x_i$ 直接影响的变量 |
+| co-parents | 与 $x_i$ 共同解释某个 child 的其他父节点 |
+
+因此有
+$$
+x_i\perp\!\!\!\perp \{ \text{all other nodes} \}\mid \operatorname{MB}(x_i).
+$$
+
+```{mermaid}
+%%| label: fig-markov-blanket
+%%| fig-cap: "有向图中节点 x 的 Markov blanket 由父节点、子节点和子节点的其他父节点组成。"
+flowchart LR
+  P1["parent 1"] --> X["x"]
+  P2["parent 2"] --> X
+  X --> C1["child 1"]
+  X --> C2["child 2"]
+  O1["co-parent"] --> C1
+  O2["co-parent"] --> C2
+```
+
+这个概念在 Gibbs sampling、局部更新和概率模型调试中非常重要，因为它说明更新某个节点时并不需要查看全图，只需要查看 Markov blanket。
+
+
+![Markov blanket 示例](https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/markov-blanket-example-20260521-204952.png){#fig-markov-blanket-example width=80%}
+
+
+# Markov Random Fields
+
+Bayesian network 使用有向边和局部条件分布来表达联合分布。**Markov random field**, **MRF**, 又称 **Markov network**、**undirected graphical model**，则使用无向边和局部 potential functions 来表达变量之间的相容性。
+
+
+## 无向图中的条件独立
+
+无向图中的条件独立规则比有向图更直接。给定三组节点 $A,B,C$，如果从 $A$ 到 $B$ 的每条路径都必须经过 $C$ 中至少一个节点，那么 $C$ separates $A$ and $B$，于是
+$$
+A\perp\!\!\!\perp B\mid C.
+$$
+
+```{mermaid}
+%%| label: fig-undirected-separation
+%%| fig-cap: "无向图中，集合 C 截断 A 到 B 的所有路径时，A 与 B 在给定 C 后条件独立。"
+flowchart LR
+  A1["A"] --- C1["C"]
+  C1 --- B1["B"]
+  A1 --- C2["C"]
+  C2 --- B1
+```
+
+
+
+![无向图中的条件独立性示例](https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/condition-mrf-example-20260521-205815.png){#fig-condition-mrf-example width=80%}
+
+无向图没有 collider 的特殊开关规则，也没有箭头方向带来的生成顺序。它适合表达对称关系，例如相邻像素倾向于取相同值、相邻词标签彼此约束、空间网格中的局部平滑等。
+
+## Clique 与 potential
+
+和有向图不同，无向图没有箭头方向，因此也没有生成顺序。在无向图中，我们先去定义条件独立规则，然后再去想办法如何构造联合分布，使之满足这个条件独立规则。所以，我们引出下面关于
+clique 的定义。
+
+无向图中的 **clique** 是一组两两相连的节点。若一个 clique 不能再加入任何其他节点而仍保持两两相连，则称为 **maximal clique** (最大的全连接子图)。
+
+
+![clique 示例](https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/clique-example-20260522-110249.png){#fig-clique-example width=80%}
+
+此时，我们有这样的一个定理：
+
+
+::: {#thm-hc}
+
+### Hammersley-Clifford theorem
+
+在 **strictly positive distribution** 的条件下，下面两件事是等价的：
+
+1. 分布满足无向图的 graph separation 所蕴含的条件独立关系。
+2. 分布可以分解为该无向图 maximal cliques 上 potential functions 的乘积：
+   $$
+   p(x)=\frac{1}{Z}\prod_C \psi_C(x_C).
+   $$
+
+其中 $C$ 遍历 maximal cliques（可以重合），$x_C$ 表示 clique 中变量的集合，$\psi_C(x_C)\ge 0$ 是 potential function，而
+$$
+Z=\sum_x \prod_C \psi_C(x_C)
+$$
+是 normalization constant 或 partition function。
+
+:::
+
+::: {.proof}
+
+这里给一个不是特别严谨的证明。
+
+直觉上，如果节点集合 $C$ 在图上把 $A$ 和 $B$ 分开，那么任何 clique 都不可能同时包含 $A$ 侧变量和 $B$ 侧变量而完全绕开 $C$。否则这些变量之间就会存在一条不经过 $C$ 的局部连接，和“$C$ 分隔 $A$ 与 $B$”矛盾。
+
+因此，所有 clique potentials 可以按图结构拆成两组：一组只涉及 $A$ 侧变量和分隔集 $C$，另一组只涉及 $B$ 侧变量和分隔集 $C$。把其它变量边缘化后，可以得到类似
+$$
+p(a,b,c)=\frac{1}{Z}g(a,c)h(b,c).
+$$
+于是给定 $c$ 后，
+$$
+p(a,b\mid c)
+=
+\frac{g(a,c)h(b,c)}
+{\sum_a\sum_b g(a,c)h(b,c)}
+=
+\frac{g(a,c)}{\sum_a g(a,c)}
+\frac{h(b,c)}{\sum_b h(b,c)}.
+$$
+这就得到
+$$
+p(a,b\mid c)=p(a\mid c)p(b\mid c),
+$$
+也就是
+$$
+A\perp\!\!\!\perp B\mid C.
+$$
+
+
+:::
+
+:::: {.callout-note title="为什么要求 strictly positive"}
+严格正条件排除了概率为 0 的特殊配置。若允许某些状态概率为 0，模型中可能出现确定性约束，导致一些条件概率不定义，或者产生并非由图结构表达的额外独立关系。Hammersley-Clifford theorem 在严格正分布下避免这些病态情况，从而让图分离和 clique factorization 可以干净地等价起来。
+::::
+
+与 Bayesian network 中的条件分布不同，potential function 通常没有直接的概率解释。它只需要非负，用来表达局部变量配置的偏好。$\psi_C(x_C)$ 越大，该 clique 配置越被模型偏好。
+
+:::: {.callout-warning title="Potential 不是条件概率"}
+不要把 $\psi_C(x_C)$ 理解成 $p(x_i\mid x_j)$ 或某个局部概率。它可以任意缩放，单独看也不必归一化。真正的概率分布只有在所有 clique potentials 相乘并除以 $Z$ 后才得到。
+::::
+
+:::: {.callout-important title="H-C theorem 的意义"}
+Hammersley-Clifford theorem 不是说“任何 clique potential 写法都只是方便记号”，而是说：在概率严格为正时，**无向图的分离语义**和**基于 maximal cliques 的概率因子化**刻画的是同一类分布。
+
+因此，MRF 的图结构不是单纯的可视化。它一方面告诉我们哪些变量集合可以有直接局部相互作用，另一方面也告诉我们哪些条件独立关系必须成立。
+::::
+
+
+## Gibbs distribution 与 energy
+
+如果 potential strictly positive，就可以写成指数形式：
+$$
+\psi_C(x_C)=\exp\{-E_C(x_C)\}.
+$$
+于是联合分布变成
+$$
+p(x)=\frac{1}{Z}\exp\{-E(x)\},
+$$
+其中总能量为
+$$
+E(x)=\sum_C E_C(x_C).
+$$
+这称为 **Gibbs distribution** 或 **Boltzmann distribution**。
+
+能量视角非常直观：**低能量配置对应高概率，高能量配置对应低概率。建模时我们可以为不希望出现的局部配置设置高能量，为希望出现的局部配置设置低能量**。
+
+## Image denoising 示例
+
+PRML 用二值图像去噪展示 MRF 的建模方式。设观测到的噪声图像为
+$$
+y_i\in\{-1,+1\},
+$$
+真实无噪声图像为
+$$
+x_i\in\{-1,+1\}.
+$$
+我们希望恢复 $x=(x_1,\dots,x_D)$。
+
+模型包含两类局部偏好：
+
+| Clique | 能量项 | 含义 |
+|---|---|---|
+| $\{x_i,y_i\}$ | $-\eta x_iy_i$ | 恢复像素 $x_i$ 倾向于与观测像素 $y_i$ 相同 |
+| $\{x_i,x_j\}$ 邻接像素 | $-\beta x_ix_j$ | 相邻恢复像素倾向于相同 |
+| 单点偏置 | $h x_i$ | 偏向某一种像素符号 |
+
+总能量可写成
+$$
+E(x,y)
+=h\sum_i x_i-\beta\sum_{\{i,j\}}x_ix_j-\eta\sum_i x_iy_i.
+$$
+于是联合分布为
+$$
+p(x,y)=\frac{1}{Z}\exp\{-E(x,y)\}.
+$$
+当 $y$ 固定为观测图像后，就得到关于 $x$ 的后验分布 $p(x\mid y)$（在物理学中，也被称为**Ising model**）。图像恢复可以被看作寻找高后验概率的 $x$，理想情况下是求
+$$
+x^\star=\arg\max_x p(x\mid y).
+$$
+
+:::: {.callout-important title="局部约束之间的权衡"}
+$\eta$ 越大，模型越相信观测图像；$\beta$ 越大，模型越偏向平滑图像；$h$ 则加入整体符号偏置。去噪的本质不是简单复制观测，也不是盲目平滑，而是在观测一致性和邻域平滑性之间寻找平衡。
+::::
+
+一个简单求解方法是 iterated conditional modes, ICM。它先初始化 $x_i=y_i$，然后每次选择一个像素 $x_j$，固定其他像素，只比较 $x_j=+1$ 与 $x_j=-1$ 哪个使能量更低。不断重复这个局部更新，直到没有单点翻转能继续降低能量。
+
+ICM 的优点是局部、简单、快速；缺点是只能保证到达局部最优，不保证全局最优。
+
+
+![图像去躁示意图，其中左上方是原始观测图像，右上方是加躁后的图像，左下方是使用ICM去躁后的结果，右下方是使用graph cut去躁后的结果](https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/image-denoise-example-20260522-112908.png){#fig-image-denoise-example}
+
+## 有向图与无向图的关系
+
+Directed graphs 和 undirected graphs 都表达联合分布分解与条件独立，但表达能力并不完全相同。
+
+从有向图转成无向图时，需要先 moralization：把每个节点的所有父节点两两相连，然后去掉箭头。例如
+$$
+a\to c\leftarrow b
+$$
+转为无向图时要加边 $a-b$。这是因为 collider 的两个父节点在给定共同子节点后会发生依赖，无向图若不连接它们，就无法表达这种局部结构。
+
+```{mermaid}
+%%| label: fig-moralization
+%%| fig-cap: "Moralization 会连接共同子节点的父节点，然后去掉箭头。"
+flowchart LR
+  subgraph D["directed"]
+    A["a"] --> C["c"]
+    B["b"] --> C
+  end
+  subgraph U["moralized undirected"]
+    A2["a"] --- B2["b"]
+    A2 --- C2["c"]
+    B2 --- C2
+  end
+```
+
+从无向图转成有向图通常更困难，并且并非总是能无损完成。有些条件独立结构只能由有向图表达，有些只能由无向图表达，也有一些两者都不能完全表达。实际建模时，选择哪种图往往取决于我们更关心生成过程、局部约束，还是推断算法的便利性。
+
+# Inference in Graphical Models
+
+图模型的表示只是第一步。真正使用模型时，我们通常要做 inference，也就是**在某些变量被观测后，计算其他变量的边缘分布、后验分布、MAP 配置或证据**。
+
+最朴素的方法是直接对联合分布求和。例如要计算 $p(x_n)$，可以写成
+$$
+p(x_n)=\sum_{x_1}\cdots\sum_{x_{n-1}}\sum_{x_{n+1}}\cdots\sum_{x_N}p(x_1,\dots,x_N).
+$$
+如果每个变量有 $K$ 个状态，这个暴力求和通常是 $O(K^N)$ 级别。图模型推断算法的核心，是利用因子分解把重复计算缓存为消息。
+
+## 链上的精确推断
+
+考虑无向链：
+$$
+p(x)=\frac{1}{Z}\prod_{n=1}^{N-1}\psi_{n,n+1}(x_n,x_{n+1}).
+$$
+如果要计算中间节点 $x_n$ 的边缘分布，可以把链拆成左半边、节点本身和右半边：
+$$
+p(x_n)=\frac{1}{Z}\alpha(x_n)\beta(x_n),
+$$
+其中 $\alpha(x_n)$ 汇总左侧所有变量对 $x_n$ 的影响，$\beta(x_n)$ 汇总右侧所有变量对 $x_n$ 的影响。
+
+递推形式可以写成
+$$
+\alpha(x_n)=\sum_{x_{n-1}}\alpha(x_{n-1})\psi_{n-1,n}(x_{n-1},x_n),
+$$
+以及
+$$
+\beta(x_n)=\sum_{x_{n+1}}\psi_{n,n+1}(x_n,x_{n+1})\beta(x_{n+1}).
+$$
+
+这就是动态规划在概率图中的最基本形态。它避免了对整条链的所有状态组合重复求和，使复杂度从指数级降到随链长线性增长。
+
+:::: {.callout-note title="消息的直觉"}
+消息不是新的概率模型，而是局部求和的缓存结果。左侧子图把自己对边界变量 $x_n$ 的影响压缩成一个关于 $x_n$ 的函数；右侧子图也做同样的事情。最后把两边消息相乘并归一化，就得到节点边缘分布。
+::::
+
+## Trees
+
+链是树的一种特例。对于任意 tree-structured graph，只要没有 loop，就可以选择一个根节点，让消息从叶节点向根节点传递，再从根节点向外传递。每条边两个方向各传一次消息后，所有节点的边缘分布都可以由收到的局部消息相乘得到。
+
+树结构推断高效的根本原因是：切断任意一条边都会把图分成两个互不相连的部分。于是一个子树对外部世界的影响可以完整地压缩成边界变量上的一个消息。
+
+如果图有环，这种简单分解不再成立，因为信息可能沿多条路径重复返回同一个节点。
+
+## Factor graphs
+
+Factor graph 是第 8 章推断部分的关键桥梁。它把联合分布写成一般因子乘积：
+$$
+p(x)=\frac{1}{Z}\prod_s f_s(x_s),
+$$
+其中 $x_s$ 是因子 $f_s$ 涉及的变量集合。
+
+Factor graph 是二分图：一类节点是变量节点，另一类节点是因子节点。变量节点只连接到包含该变量的因子节点。
+
+```{mermaid}
+%%| label: fig-factor-graph
+%%| fig-cap: "因子图显式表示变量与局部因子的连接关系。"
+flowchart LR
+  X1["x1"] --- F1["f_a"]
+  X2["x2"] --- F1
+  X2 --- F2["f_b"]
+  X3["x3"] --- F2
+  X1 --- F3["f_c"]
+  X3 --- F3
+```
+
+例如上图可以表示
+$$
+p(x_1,x_2,x_3)=\frac{1}{Z}f_a(x_1,x_2)f_b(x_2,x_3)f_c(x_1,x_3).
+$$
+
+Factor graph 比无向图更细，因为同一个无向 clique 结构可能对应不同的因子分解。它直接暴露了计算应该如何拆分，因此特别适合推导消息传递算法。
+
+:::: {.callout-important title="为什么需要 factor graph"}
+无向图告诉我们哪些变量局部相连，但不一定告诉我们联合分布具体分成哪些因子。Factor graph 把因子作为节点显式画出来，使 sum-product 和 max-sum 的局部更新规则可以统一写成变量到因子、因子到变量两类消息。
+::::
+
+## Sum-product algorithm
+
+Sum-product algorithm 用于在 tree-structured factor graph 上精确计算边缘分布。设 $x$ 是变量节点，$f$ 是相邻因子节点。
+
+变量节点到因子节点的消息为
+$$
+\mu_{x\to f}(x)
+=\prod_{h\in \operatorname{ne}(x)\setminus f}
+\mu_{h\to x}(x).
+$$
+也就是说，变量节点把从其他因子收到的消息相乘后发给目标因子。
+
+因子节点到变量节点的消息为
+$$
+\mu_{f\to x}(x)
+=
+\sum_{x_f\setminus x}
+f(x_f)
+\prod_{y\in \operatorname{ne}(f)\setminus x}
+\mu_{y\to f}(y).
+$$
+也就是说，因子节点把因子本身乘上其他相邻变量传来的消息，然后对除目标变量之外的变量求和。
+
+当所有入射消息都可用时，变量节点 $x$ 的边缘分布与以下乘积成正比：
+$$
+p(x)\propto
+\prod_{f\in\operatorname{ne}(x)}\mu_{f\to x}(x).
+$$
+归一化后即可得到真正的边缘概率。
+
+:::: {.callout-note title="两类消息的记法"}
+变量到因子的消息负责汇总“其他因子对这个变量的看法”。因子到变量的消息负责汇总“这个局部因子及其背后子树对这个变量的看法”。这两类消息交替传递，就把全局求和拆成局部求和。
+::::
+
+叶节点提供递推边界。若叶节点是变量节点，则它向唯一相邻因子发送常数消息 1。若叶节点是因子节点，则它向相邻变量发送该因子本身。对于树图，只要每条边两个方向的消息都完成，就可以得到所有变量的边缘分布。
+
+## Evidence 与观测变量
+
+如果某些变量被观测，可以把观测值直接代入相关因子，或者为观测变量引入一个只在观测状态取 1 的指示因子。这样 sum-product 仍然可以按原规则运行。
+
+例如若 $x_o$ 被观测为 $\hat x_o$，可加入因子
+$$
+I(x_o=\hat x_o)=
+\begin{cases}
+1, & x_o=\hat x_o,\\
+0, & \text{otherwise}.
+\end{cases}
+$$
+消息传递完成后，未观测变量的边缘分布自然就是条件于观测证据的后验边缘。
+
+归一化常数本身也有意义。它对应 evidence，也就是观测数据在模型下的边缘概率。后面进行模型比较或结构学习时，evidence 会成为评分的一部分。
+
+## Max-sum algorithm
+
+Sum-product 计算的是边缘分布。如果目标是寻找联合分布最大的整体配置，则需要 MAP inference：
+$$
+x_{\max}=\arg\max_x p(x).
+$$
+不要把它和逐个变量最大化边缘分布混淆。一般来说，
+$$
+\arg\max_x p(x)
+\ne
+\left(\arg\max_{x_1}p(x_1),\dots,\arg\max_{x_M}p(x_M)\right).
+$$
+逐点最可能的状态组合甚至可能对应很低的联合概率。
+
+Max-product algorithm 把 sum-product 中的求和替换为最大化。为了数值稳定，通常取对数，把乘积变成加法，于是得到 max-sum algorithm。
+
+变量到因子的消息为
+$$
+\mu_{x\to f}(x)
+=
+\sum_{h\in \operatorname{ne}(x)\setminus f}
+\mu_{h\to x}(x).
+$$
+因子到变量的消息为
+$$
+\mu_{f\to x}(x)
+=
+\max_{x_f\setminus x}
+\left[
+\log f(x_f)
++
+\sum_{y\in \operatorname{ne}(f)\setminus x}
+\mu_{y\to f}(y)
+\right].
+$$
+最终在根节点处求最大值即可得到最大联合 log probability。
+
+要恢复具体的最优变量配置，还需要在每次最大化时记录 argmax，也就是 backpointer。随后从根节点的最优状态开始，沿消息方向反向回溯，依次恢复其他变量。
+
+:::: {.callout-important title="MAP 是整体配置问题"}
+Sum-product 的输出是局部边缘，max-sum 的输出是全局最优配置。二者回答的问题不同。边缘分布告诉我们单个变量的不确定性，MAP 配置告诉我们哪个完整状态组合概率最大。
+::::
+
+## General graphs 与 junction tree
+
+Sum-product 和 max-sum 在树上是精确且高效的。现实模型常常有 loops，这时可以把一般图转换为 junction tree，再在新的树结构上做精确消息传递。
+
+Junction tree algorithm 的大致步骤是：
+
+1. 如果原图是有向图，先 moralize 成无向图。
+2. 对无向图 triangulate，也就是为长度至少为 4 的 chordless cycles 添加弦。
+3. 找出 triangulated graph 的 maximal cliques。
+4. 把 maximal cliques 作为新图节点，按照共享变量连接成 join tree。
+5. 选择满足 running intersection property 的 junction tree。
+6. 在 junction tree 上运行消息传递。
+
+Running intersection property 指的是：如果某个变量出现在两个 clique 中，那么它也必须出现在连接这两个 clique 的路径上的每个 clique 中。这个性质保证关于该变量的信息在 clique tree 中保持一致。
+
+精确推断的代价由最大 clique 的大小决定。若变量离散且每个变量有 $K$ 个状态，一个包含 $m$ 个变量的 clique 需要处理 $K^m$ 个状态组合。因此 treewidth 越高，junction tree 推断越困难。
+
+:::: {.callout-warning title="精确推断的瓶颈"}
+Junction tree 把有环图上的精确推断转化为树上的精确推断，但它不是免费的。转换过程中 clique 可能变得很大，复杂度会随最大 clique 大小指数增长。这也是为什么图模型推断经常需要近似方法。
+::::
+
+## Loopy belief propagation
+
+Loopy belief propagation 的想法非常直接：即使图中有环，也照样使用 sum-product 的局部消息更新规则。因为这些规则只依赖相邻节点，所以从形式上看并不要求全图一定是树。
+
+但是有环图中信息可能绕圈回到自己，导致两个问题：
+
+| 问题 | 含义 |
+|---|---|
+| 不保证终止 | 图中可能总有 pending messages |
+| 不保证精确 | 即使收敛，得到的通常也是近似边缘 |
+
+实践中，loopy belief propagation 在一些问题上效果很好，例如某些 error-correcting codes 的解码；在另一些问题上则可能收敛慢、振荡或给出质量较差的近似。
+
+:::: {.callout-note title="如何看待 loopy belief propagation"}
+Loopy belief propagation 不是严格从树上精确推断直接继承来的保证，而是一种把局部一致性规则推广到有环图的近似算法。它的吸引力在于实现简单、局部并行、常常有效；风险在于缺少一般精确性与收敛保证。
+::::
+
+## Learning the graph structure
+
+前面的讨论默认图结构已知。更进一步的问题是从数据中学习图结构本身。设不同图结构由 $m$ 索引，数据为 $D$。贝叶斯视角下，可以写出结构后验：
+$$
+p(m\mid D)\propto p(m)p(D\mid m).
+$$
+其中 $p(m)$ 是图结构先验，$p(D\mid m)$ 是模型 evidence，可用来评价结构 $m$ 对数据的解释能力。
+
+困难在于两方面。第一，计算 evidence 往往需要对参数和潜变量边缘化，本身就是困难推断问题。第二，可能图结构数量随节点数指数增长，无法穷举搜索。因此实际结构学习通常需要启发式搜索、约束假设或近似评分。
+
+:::: {.callout-important title="本章的收束"}
+第 8 章从图表示开始，到条件独立，再到消息传递推断，最后触及结构学习。主线始终是同一个问题：如何让高维联合分布的结构显式化，使我们能够看见它、压缩它，并在它上面计算。
+::::
+
+# 本章小结
+
+第 8 章把概率模型组织成三种互相衔接的图语言。
+
+| 图语言 | 核心分解 | 最适合表达 |
+|---|---|---|
+| Bayesian network | $\prod_k p(x_k\mid \operatorname{pa}_k)$ | 生成过程、因果方向、局部条件分布 |
+| Markov random field | $Z^{-1}\prod_C\psi_C(x_C)$ | 对称约束、局部相容性、能量函数 |
+| Factor graph | $Z^{-1}\prod_s f_s(x_s)$ | 具体因子分解、消息传递推断 |
+
+理解本章时，最重要的是把“图”同时看成三件事：
+
+1. 一种联合分布的压缩表达。
+2. 一种条件独立关系的读取规则。
+3. 一种推断算法的计算骨架。
+
+Bayesian network 通过 DAG 把联合分布分解为局部条件分布；d-separation 告诉我们哪些条件独立关系由图结构保证。Markov random field 通过 clique potentials 表达局部相容性；graph separation 给出无向图中的条件独立关系。Factor graph 则把因子化结构直接暴露给算法，使 sum-product 与 max-sum 可以通过局部消息完成边缘化或 MAP 推断。
+
+:::: {.callout-note title="继续往后读"}
+后续章节中的很多模型都可以重新放回本章框架中理解：mixture models 是带离散潜变量的图模型，hidden Markov models 是链式图模型，linear dynamical systems 是 linear-Gaussian 图模型，variational inference 和 sampling methods 则是在精确消息传递不可行时处理复杂图模型的近似推断工具。
+::::
