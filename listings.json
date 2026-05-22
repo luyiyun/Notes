@@ -3,7 +3,15 @@
     "listing": "/src/learn/prml/index.html",
     "items": [
       "/src/learn/prml/06-kernel-methods.html",
-      "/src/learn/prml/07-sparse-kernel-machines.html"
+      "/src/learn/prml/07-sparse-kernel-machines.html",
+      "/src/learn/prml/08-graphical-models.html"
+    ]
+  },
+  {
+    "listing": "/src/learn/index.html",
+    "items": [
+      "/src/learn/prml/index.html",
+      "/src/learn/advanced-probability/index.html"
     ]
   },
   {
@@ -28,13 +36,6 @@
       "/src/learn/advanced-probability/17-statistical-distributions-and-density-functions.html",
       "/src/learn/advanced-probability/18-moments.html",
       "/src/learn/advanced-probability/19-convergence-theory.html"
-    ]
-  },
-  {
-    "listing": "/src/learn/index.html",
-    "items": [
-      "/src/learn/prml/index.html",
-      "/src/learn/advanced-probability/index.html"
     ]
   }
 ]

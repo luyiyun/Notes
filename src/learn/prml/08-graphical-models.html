@@ -1,0 +1,2261 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="PRML 第 8 章关于贝叶斯网络、条件独立、马尔可夫随机场、因子图、sum-product 与 max-sum 推断">
+
+<title>图模型 – Rong’s Notes</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-28ea277c781a11f752ceea7d06312459.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+<script src="../../../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../../../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../../styles.css">
+</head>
+
+<body class="nav-sidebar docked nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">Rong’s Notes</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="搜索"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="展开或折叠导航栏" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="../../../index.html" aria-current="page"> 
+<span class="menu-text">首页</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../src/learn/index.html"> 
+<span class="menu-text">专题学习</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../about.html"> 
+<span class="menu-text">关于</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/prml/index.html">PRML</a></li><li class="breadcrumb-item"><a href="../../../src/learn/prml/08-graphical-models.html">图模型</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">首页</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../../src/learn/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">专题学习</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Deep Generative Model</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 show">  
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../../src/learn/advanced-probability/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">高等概率论</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/01-introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">介绍</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/02-sigma-field.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sigma 域</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/03-measure.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">测度</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/04-outer-measure.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">外测度</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/05-measure-extension.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">测度扩张</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/06-distribution-function.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">分布函数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/07-measurable-functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">可测函数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/08-integration.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">积分</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/09-lp-spaces.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lp 空间</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/10-signed-measures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">符号测度</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/11-radon-nikodym-derivative.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R-N 导数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/12-lebesgue-decomposition.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lebesgue 分解</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/13-finite-product-spaces.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">有限乘积空间</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/14-infinite-product-spaces.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">无限乘积空间</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/15-independence-and-conditional-expectation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">独立和条件期望</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/16-markov-chains-and-martingales.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">马尔可夫链与鞅</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/17-statistical-distributions-and-density-functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">统计分布与密度函数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/18-moments.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">矩</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/19-convergence-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">收敛理论</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../../src/learn/prml/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">PRML</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/prml/06-kernel-methods.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">核方法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/prml/07-sparse-kernel-machines.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">稀疏核机器</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/prml/08-graphical-models.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">图模型</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../about.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">关于</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#引言" id="toc-引言" class="nav-link active" data-scroll-target="#引言">引言</a></li>
+  <li><a href="#bayesian-networks" id="toc-bayesian-networks" class="nav-link" data-scroll-target="#bayesian-networks">Bayesian Networks</a>
+  <ul class="collapse">
+  <li><a href="#从-product-rule-到有向图" id="toc-从-product-rule-到有向图" class="nav-link" data-scroll-target="#从-product-rule-到有向图">从 product rule 到有向图</a></li>
+  <li><a href="#有向无环性与变量顺序" id="toc-有向无环性与变量顺序" class="nav-link" data-scroll-target="#有向无环性与变量顺序">有向无环性与变量顺序</a></li>
+  <li><a href="#plate-notation" id="toc-plate-notation" class="nav-link" data-scroll-target="#plate-notation">Plate notation</a></li>
+  <li><a href="#generative-models" id="toc-generative-models" class="nav-link" data-scroll-target="#generative-models">Generative models</a></li>
+  <li><a href="#离散变量与参数数量" id="toc-离散变量与参数数量" class="nav-link" data-scroll-target="#离散变量与参数数量">离散变量与参数数量</a>
+  <ul class="collapse">
+  <li><a href="#完全独立" id="toc-完全独立" class="nav-link" data-scroll-target="#完全独立">完全独立</a></li>
+  <li><a href="#链式模型" id="toc-链式模型" class="nav-link" data-scroll-target="#链式模型">链式模型</a></li>
+  <li><a href="#参数模型" id="toc-参数模型" class="nav-link" data-scroll-target="#参数模型">参数模型</a></li>
+  </ul></li>
+  <li><a href="#linear-gaussian-models" id="toc-linear-gaussian-models" class="nav-link" data-scroll-target="#linear-gaussian-models">Linear-Gaussian models</a></li>
+  </ul></li>
+  <li><a href="#conditional-independence" id="toc-conditional-independence" class="nav-link" data-scroll-target="#conditional-independence">Conditional Independence</a>
+  <ul class="collapse">
+  <li><a href="#三种基本局部结构" id="toc-三种基本局部结构" class="nav-link" data-scroll-target="#三种基本局部结构">三种基本局部结构</a></li>
+  <li><a href="#explaining-away" id="toc-explaining-away" class="nav-link" data-scroll-target="#explaining-away">Explaining away</a></li>
+  <li><a href="#d-separation" id="toc-d-separation" class="nav-link" data-scroll-target="#d-separation">D-separation</a></li>
+  <li><a href="#用-d-separation-回看已有模型" id="toc-用-d-separation-回看已有模型" class="nav-link" data-scroll-target="#用-d-separation-回看已有模型">用 d-separation 回看已有模型</a></li>
+  <li><a href="#naive-bayes" id="toc-naive-bayes" class="nav-link" data-scroll-target="#naive-bayes">Naive Bayes</a></li>
+  <li><a href="#图模型作为分布过滤器" id="toc-图模型作为分布过滤器" class="nav-link" data-scroll-target="#图模型作为分布过滤器">图模型作为分布过滤器</a></li>
+  <li><a href="#markov-blanket" id="toc-markov-blanket" class="nav-link" data-scroll-target="#markov-blanket">Markov blanket</a></li>
+  </ul></li>
+  <li><a href="#markov-random-fields" id="toc-markov-random-fields" class="nav-link" data-scroll-target="#markov-random-fields">Markov Random Fields</a>
+  <ul class="collapse">
+  <li><a href="#无向图中的条件独立" id="toc-无向图中的条件独立" class="nav-link" data-scroll-target="#无向图中的条件独立">无向图中的条件独立</a></li>
+  <li><a href="#clique-与-potential" id="toc-clique-与-potential" class="nav-link" data-scroll-target="#clique-与-potential">Clique 与 potential</a></li>
+  <li><a href="#gibbs-distribution-与-energy" id="toc-gibbs-distribution-与-energy" class="nav-link" data-scroll-target="#gibbs-distribution-与-energy">Gibbs distribution 与 energy</a></li>
+  <li><a href="#image-denoising-示例" id="toc-image-denoising-示例" class="nav-link" data-scroll-target="#image-denoising-示例">Image denoising 示例</a></li>
+  <li><a href="#有向图与无向图的关系" id="toc-有向图与无向图的关系" class="nav-link" data-scroll-target="#有向图与无向图的关系">有向图与无向图的关系</a></li>
+  </ul></li>
+  <li><a href="#inference-in-graphical-models" id="toc-inference-in-graphical-models" class="nav-link" data-scroll-target="#inference-in-graphical-models">Inference in Graphical Models</a>
+  <ul class="collapse">
+  <li><a href="#链上的精确推断" id="toc-链上的精确推断" class="nav-link" data-scroll-target="#链上的精确推断">链上的精确推断</a></li>
+  <li><a href="#trees" id="toc-trees" class="nav-link" data-scroll-target="#trees">Trees</a></li>
+  <li><a href="#factor-graphs" id="toc-factor-graphs" class="nav-link" data-scroll-target="#factor-graphs">Factor graphs</a></li>
+  <li><a href="#sum-product-algorithm" id="toc-sum-product-algorithm" class="nav-link" data-scroll-target="#sum-product-algorithm">Sum-product algorithm</a></li>
+  <li><a href="#evidence-与观测变量" id="toc-evidence-与观测变量" class="nav-link" data-scroll-target="#evidence-与观测变量">Evidence 与观测变量</a></li>
+  <li><a href="#max-sum-algorithm" id="toc-max-sum-algorithm" class="nav-link" data-scroll-target="#max-sum-algorithm">Max-sum algorithm</a></li>
+  <li><a href="#general-graphs-与-junction-tree" id="toc-general-graphs-与-junction-tree" class="nav-link" data-scroll-target="#general-graphs-与-junction-tree">General graphs 与 junction tree</a></li>
+  <li><a href="#loopy-belief-propagation" id="toc-loopy-belief-propagation" class="nav-link" data-scroll-target="#loopy-belief-propagation">Loopy belief propagation</a></li>
+  <li><a href="#learning-the-graph-structure" id="toc-learning-the-graph-structure" class="nav-link" data-scroll-target="#learning-the-graph-structure">Learning the graph structure</a></li>
+  </ul></li>
+  <li><a href="#本章小结" id="toc-本章小结" class="nav-link" data-scroll-target="#本章小结">本章小结</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/prml/index.html">PRML</a></li><li class="breadcrumb-item"><a href="../../../src/learn/prml/08-graphical-models.html">图模型</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">图模型</h1>
+<p class="subtitle lead">Graphical Models</p>
+</div>
+
+<div>
+  <div class="description">
+    PRML 第 8 章关于贝叶斯网络、条件独立、马尔可夫随机场、因子图、sum-product 与 max-sum 推断
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">发布于</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">2026年5月21日</p>
+    </div>
+  </div>
+  
+    <div>
+    <div class="quarto-title-meta-heading">修改于</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date-modified">2026年5月22日</p>
+    </div>
+  </div>
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="引言" class="level1">
+<h1>引言</h1>
+<p>第 8 章讨论的核心，是把概率模型的结构从一长串代数公式中抽出来，变成一张可以观察、操作和推断的图。前面各章已经反复使用概率论的两个基本规则： <span class="math display">\[
+p(x,y)=p(y\mid x)p(x),
+\]</span> 以及 <span class="math display">\[
+p(x)=\sum_y p(x,y).
+\]</span> 理论上，任何复杂概率推断都可以通过反复使用 product rule 与 sum rule 来完成。但是如果只依赖代数展开，我们很快会被巨大的联合分布、条件分布和边缘化求和淹没。图模型的价值就在这里：<strong>它把一个联合分布如何分解、哪些变量在给定条件下相互独立、以及推断时应该如何复用中间结果，放进同一套图结构中表达</strong>。</p>
+<p>从这个角度看，graphical model 不是一种单独的算法，而是一种组织概率模型的方法。图中的节点表示随机变量，边表示变量之间的直接概率关系。更重要的是，图不仅是可视化工具，它还对应一个明确的联合分布分解： <span class="math display">\[
+p(x_1,\dots,x_K)
+\]</span> 可以被写成若干局部因子的乘积，每个局部因子只涉及少数变量。这个分解一旦成立，就会同时带来三件事：</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>作用</th>
+<th>图模型回答的问题</th>
+<th>对应主题</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>表达</td>
+<td>联合分布如何由局部条件或局部相容性组成？</td>
+<td>Bayesian networks, Markov random fields</td>
+</tr>
+<tr class="even">
+<td>理解</td>
+<td>观察某些变量后，哪些变量会变得独立或相关？</td>
+<td>conditional independence, d-separation</td>
+</tr>
+<tr class="odd">
+<td>计算</td>
+<td>如何避免对指数级状态空间做暴力求和或最大化？</td>
+<td>factor graphs, sum-product, max-sum</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-note callout-titled" title="本章的主线">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>本章的主线
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>第 8 章可以理解为从概率模型到计算图的过渡。</p>
+<ol type="1">
+<li>贝叶斯网络强调从局部条件分布构造联合分布，适合表达生成过程与因果方向。</li>
+<li>马尔可夫随机场强调局部变量配置之间的相容性，适合表达对称约束。</li>
+<li>因子图则进一步把联合分布的因子化结构显式展开，使消息传递算法能够直接在图上运行。</li>
+</ol>
+<p>因此，本章的目标不是记住几种画图规则，而是理解一个统一问题：<strong>如何利用图结构把高维概率分布拆成局部结构，并由此读出独立性和设计高效推断算法</strong>。</p>
+</div>
+</div>
+<p>上一章 <a href="../../../src/learn/prml/07-sparse-kernel-machines.html">稀疏核机器</a> 主要关注判别函数如何通过少数训练样本表达。第 8 章的视角更一般：无论是分类、回归、隐变量模型还是序列模型，只要它们有概率结构，就可以尝试通过图来描述变量之间的依赖与推断路径。</p>
+</section>
+<section id="bayesian-networks" class="level1">
+<h1>Bayesian Networks</h1>
+<p>Bayesian network 又称 directed graphical model。它使用有向无环图 (directed acyclic graph, DAG) 来表达一个联合分布的因子化方式。</p>
+<section id="从-product-rule-到有向图" class="level2">
+<h2 class="anchored" data-anchor-id="从-product-rule-到有向图">从 product rule 到有向图</h2>
+<p>考虑三个变量 <span class="math inline">\(a,b,c\)</span> 的联合分布。根据 product rule，可以写成 <span class="math display">\[
+p(a,b,c)=p(c\mid a,b)p(b\mid a)p(a).
+\]</span> 这个分解对应一张有向图：<span class="math inline">\(a\)</span> 指向 <span class="math inline">\(b\)</span>，<span class="math inline">\(a\)</span> 和 <span class="math inline">\(b\)</span> 共同指向 <span class="math inline">\(c\)</span>。</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-bn-three-variables" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-bn-three-variables-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+<pre class="mermaid mermaid-js" data-label="fig-bn-three-variables">flowchart LR
+  A["a"] --&gt; B["b"]
+  A --&gt; C["c"]
+  B --&gt; C
+</pre>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-bn-three-variables-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;1 三个变量的有向图分解示意。
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>如果某条边从 <span class="math inline">\(a\)</span> 指向 <span class="math inline">\(b\)</span>，则称 <span class="math inline">\(a\)</span> 是 <span class="math inline">\(b\)</span> 的 parent，<span class="math inline">\(b\)</span> 是 <span class="math inline">\(a\)</span> 的 child。图中的每个节点都对应一个局部条件分布。对上面的图来说，这些局部分布就是 <span class="math display">\[
+p(a),\qquad p(b\mid a),\qquad p(c\mid a,b).
+\]</span></p>
+<p>对于 <span class="math inline">\(K\)</span> 个变量，product rule 总可以写成 <span class="math display">\[
+p(x_1,\dots,x_K)
+=p(x_K\mid x_1,\dots,x_{K-1})\cdots p(x_2\mid x_1)p(x_1).
+\]</span> 注意，以上变量顺序是任意的，打乱变量之间的顺序上述关系依然存在。</p>
+<p>如果完全照这个式子画图，后面的变量会依赖前面几乎所有变量，图会非常稠密（这被成为fully connected，全连接图）。贝叶斯网络真正有用的地方在于：<strong>如果某些条件分布实际上只依赖少数父节点，就可以删去多余的边</strong>。</p>
+<p>于是一般的贝叶斯网络分解写成 <span class="math display">\[
+p(x_1,\dots,x_K)=\prod_{k=1}^K p(x_k\mid \operatorname{pa}_k),
+\]</span> 其中 <span class="math inline">\(\operatorname{pa}_k\)</span> 表示节点 <span class="math inline">\(x_k\)</span> 的父节点集合。</p>
+<div id="fig-example-of-dag" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-example-of-dag-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/example-of-dag-20260521-154727.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-example-of-dag-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;2 包含7个变量的DAG示意图
+</figcaption>
+</figure>
+</div>
+<p>比如，上图的DAG所表示的概率分布就是：</p>
+<p><span class="math display">\[
+p(x_1)p(x_2)p(x_3)p(x_4|x_1,x_2,x_3)p(x5|x_1,x_3)p(x6|x_4)p(x_7|x_4,x_5).
+\]</span></p>
+<div class="callout callout-style-default callout-important callout-titled" title="边的含义">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">重要</span>边的含义
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>在贝叶斯网络中，一条边并不表示两个变量之间一定有强相关，也不直接等同于因果关系。它首先表示联合分布分解中某个局部条件分布需要把另一个变量作为条件。</p>
+<p>如果图是根据生成过程设计的，那么边的方向常常有因果解释；但从纯概率建模角度看，边的最小含义仍然是条件分布的依赖结构。</p>
+</div>
+</div>
+</section>
+<section id="有向无环性与变量顺序" class="level2">
+<h2 class="anchored" data-anchor-id="有向无环性与变量顺序">有向无环性与变量顺序</h2>
+<p>Bayesian network 要求图中不能有 directed cycle。如果存在 <span class="math display">\[
+x_1\to x_2\to \cdots \to x_m\to x_1,
+\]</span> 那么每个变量的生成都要等待另一个变量，局部条件分布的乘积就不能自然解释为一个按顺序生成变量的过程。</p>
+<p>DAG 的无环性等价于存在某种节点排序，使得所有边都从较早的节点指向较晚的节点。在这个排序下，我们可以依次为每个节点指定条件分布，然后把它们相乘得到一个合法的联合分布。</p>
+<p>这也解释了一个容易忽略的事实：同一个联合分布可以用不同变量顺序展开，并得到不同的图。图不是联合分布唯一的外形，而是对联合分布某种因子化结构的表达。</p>
+</section>
+<section id="plate-notation" class="level2">
+<h2 class="anchored" data-anchor-id="plate-notation">Plate notation</h2>
+<p>实际模型经常包含大量重复结构。例如在监督学习中，我们有 <span class="math inline">\(N\)</span> 个输入输出对 <span class="math inline">\((x_n,t_n)\)</span>，它们共享同一组参数 <span class="math inline">\(w\)</span>。如果为每个样本重复画一遍节点，图会变得很笨重。Plate notation 用一个矩形框表示重复结构，框角标标出重复次数。</p>
+<div id="fig-plate-notation-of-supervise" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-plate-notation-of-supervise-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/plate-notation-of-supervise-20260521-164512.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-plate-notation-of-supervise-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;3 监督回归模型的 plate notation 示意图
+</figcaption>
+</figure>
+</div>
+<p>在多项式回归或线性回归中，常见的条件分布可以写成 <span class="math display">\[
+p(t_n\mid x_n,w,\beta)
+=\mathcal N\bigl(t_n\mid y(x_n,w),\beta^{-1}\bigr).
+\]</span> 如果 <span class="math inline">\(w\)</span> 也有先验，例如 <span class="math display">\[
+p(w\mid \alpha)=\mathcal N(w\mid 0,\alpha^{-1}I),
+\]</span> 那么完整联合分布就是 <span class="math display">\[
+p(w,t_1,\dots,t_N\mid x_1,\dots,x_N,\alpha,\beta)
+=p(w\mid \alpha)\prod_{n=1}^N p(t_n\mid x_n,w,\beta).
+\]</span></p>
+<p>这个式子体现了 plate notation 的作用：每个样本的观测 <span class="math inline">\(t_n\)</span> 在给定共享参数 <span class="math inline">\(w\)</span> 后条件独立，但它们在边缘意义下并不独立，因为它们都通过同一个未知 <span class="math inline">\(w\)</span> 发生耦合。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="阴影节点与观测">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>阴影节点与观测
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>图模型中常用阴影节点表示 observed variables，未阴影节点表示 latent variables 或 parameters，非随机变量（如预先给定的超参数）则不使用节点表示。</p>
+<p>这个视觉约定很重要，因为推断问题通常就是在已观测节点固定后，计算未观测节点的后验分布。</p>
+</div>
+</div>
+</section>
+<section id="generative-models" class="level2">
+<h2 class="anchored" data-anchor-id="generative-models">Generative models</h2>
+<p>如果一个图模型为<strong>所有变量</strong>都指定了概率分布，并且可以按照图的拓扑顺序从上游变量采样到下游变量，那么它就是一个 <strong>generative model</strong>。典型过程如下：</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+注记
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><a href="#fig-plate-notation-of-supervise" class="quarto-xref">图&nbsp;3</a> 中描述的过程不是一个generative model，因为没有给予<span class="math inline">\(x_n\)</span>一个分布。让其成为generative model的方式也比较简单，设置一个<span class="math inline">\(p(x)\)</span>给<span class="math inline">\(x_n\)</span>即可。</p>
+</div>
+</div>
+<ol type="1">
+<li>先从没有父节点的变量采样。</li>
+<li>再按照 DAG 顺序，对每个节点从 <span class="math inline">\(p(x_k\mid \operatorname{pa}_k)\)</span> 采样。</li>
+<li>最后得到一个完整样本 <span class="math inline">\((x_1,\dots,x_K)\)</span>。</li>
+</ol>
+<p>这个过程称为 <strong>ancestral sampling</strong>。</p>
+<p>生成模型的典型用途是<strong>用低维潜变量解释复杂观测</strong>。例如,在图像识别中，观测图像是像素强度向量，而对象类别、位置、朝向可以作为潜变量。模型先生成对象身份、位置和朝向，再生成图像。因此，一定程度上，generativee model可以描述causal process，这也是pearl用它来作为表述结构因果模型的工具的原因。</p>
+<p>相反的，给定一张图像后，<strong>推断问题</strong>则反过来：计算对象类别、位置和朝向的后验分布。</p>
+<div class="callout callout-style-default callout-important callout-titled" title="生成方向与推断方向不同">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">重要</span>生成方向与推断方向不同
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>有向图的箭头通常描述生成方向，但推断可以沿任意方向进行。给定结果推断原因，就是贝叶斯公式在图模型中的基本用法。后面讨论消息传递时，我们会看到这种“逆向信息流”可以通过局部消息系统化实现。</p>
+</div>
+</div>
+</section>
+<section id="离散变量与参数数量" class="level2">
+<h2 class="anchored" data-anchor-id="离散变量与参数数量">离散变量与参数数量</h2>
+<p>接下来，我们来介绍一下图模型如何来建模<strong>离散变量</strong>。假设每个离散变量有 <span class="math inline">\(K\)</span> 个状态。若 <span class="math inline">\(M\)</span> 个变量完全没有条件独立结构，一个一般联合分布需要 <span class="math display">\[
+K^M-1
+\]</span> 个自由参数，因为所有状态组合共有 <span class="math inline">\(K^M\)</span> 个概率，且总和为 1。</p>
+<p>显然，参数的数量随着变量的数量指数增长，这非常不利于模型的学习和推断。通过引入一些假设，我们可以有效降低参数的数量，这对应于不同的图模型结构。</p>
+<section id="完全独立" class="level3">
+<h3 class="anchored" data-anchor-id="完全独立">完全独立</h3>
+<p>如果这些变量完全独立，则 <span class="math display">\[
+p(x_1,\dots,x_M)=\prod_{m=1}^M p(x_m),
+\]</span> 每个边缘分布需要 <span class="math inline">\(K-1\)</span> 个参数，总参数数为 <span class="math display">\[
+M(K-1).
+\]</span></p>
+</section>
+<section id="链式模型" class="level3">
+<h3 class="anchored" data-anchor-id="链式模型">链式模型</h3>
+<p>链式贝叶斯网络位于两者之间： <span class="math display">\[
+p(x_1,\dots,x_M)=p(x_1)\prod_{m=2}^M p(x_m\mid x_{m-1}).
+\]</span> 其中 <span class="math inline">\(p(x_1)\)</span> 需要 <span class="math inline">\(K-1\)</span> 个参数，每个条件分布 <span class="math inline">\(p(x_m\mid x_{m-1})\)</span> 需要 <span class="math inline">\(K(K-1)\)</span> 个参数，因此总数为 <span class="math display">\[
+K-1+(M-1)K(K-1).
+\]</span> 这随着链长 <span class="math inline">\(M\)</span> 线性增长，而不是指数增长。</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-bn-chain" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-bn-chain-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+<pre class="mermaid mermaid-js" data-label="fig-bn-chain">flowchart LR
+  X1["x1"] --&gt; X2["x2"] --&gt; X3["x3"] --&gt; Dots["..."] --&gt; XM["xM"]
+</pre>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-bn-chain-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;4 离散链式模型通过局部条件分布控制参数数量。
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>我们还可以进一步减少参数。例如让所有转移分布 <span class="math inline">\(p(x_m\mid x_{m-1})\)</span> 共享同一组参数，则链长增加不会引入新的转移参数。这是很多<strong>序列模型</strong>的基本思想。</p>
+</section>
+<section id="参数模型" class="level3">
+<h3 class="anchored" data-anchor-id="参数模型">参数模型</h3>
+<p>另一种可以有效控制参数数量的方式是使用参数模型。一种更紧凑的选择是使用 logistic sigmoid： <span class="math display">\[
+p(y=1\mid x_1,\dots,x_M)
+=\sigma\left(w_0+\sum_{m=1}^M w_mx_m\right),
+\]</span> 其中 <span class="math display">\[
+\sigma(a)=\frac{1}{1+\exp(-a)}.
+\]</span> 这样参数数量从指数级的 <span class="math inline">\(2^M\)</span> 降到 <span class="math inline">\(M+1\)</span>。代价是模型类受限：并非任意条件概率表都可以用一个线性 logit 表达。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="图结构与局部分布是两层选择">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>图结构与局部分布是两层选择
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>图结构决定某个变量依赖哪些父节点，局部条件分布的函数形式决定这种依赖如何发生。即使图相同，使用条件概率表、logistic 模型或神经网络参数化，也会得到不同的模型族。</p>
+</div>
+</div>
+</section>
+</section>
+<section id="linear-gaussian-models" class="level2">
+<h2 class="anchored" data-anchor-id="linear-gaussian-models">Linear-Gaussian models</h2>
+<p>对于<strong>连续变量</strong>，贝叶斯网络常见的一类模型是 <strong>linear-Gaussian model</strong>。假设节点 <span class="math inline">\(x_i\)</span> 的父节点集合为 <span class="math inline">\(\operatorname{pa}_i\)</span>，条件分布写成 <span class="math display">\[
+p(x_i\mid \operatorname{pa}_i)
+=\mathcal N\left(
+x_i\ \middle|\ \sum_{j\in\operatorname{pa}_i}w_{ij}x_j+b_i,\ v_i
+\right).
+\]</span> 也就是说，每个节点在给定父节点后服从一维高斯分布，其均值是父节点的线性组合。</p>
+<p>整个联合分布为 <span class="math display">\[
+p(x)=\prod_{i=1}^D p(x_i\mid \operatorname{pa}_i).
+\]</span> 取对数后，所有条件高斯项都是二次函数，因此联合分布仍然是 multivariate Gaussian。换句话说，<strong>linear-Gaussian Bayesian network 是一种用图结构约束高斯联合分布的方法</strong>。</p>
+<p>从生成角度也可以写成结构方程： <span class="math display">\[
+x_i=\sum_{j\in\operatorname{pa}_i}w_{ij}x_j+b_i+\sqrt{v_i}\epsilon_i,
+\]</span> 其中 <span class="math inline">\(\epsilon_i\sim\mathcal N(0,1)\)</span>，不同节点的噪声相互独立。于是均值可以递归计算： <span class="math display">\[
+\mathbb E[x_i]=\sum_{j\in\operatorname{pa}_i}w_{ij}\mathbb E[x_j]+b_i.
+\]</span></p>
+<p>类似的，我们也可以推导出任意两个变量之间的协方差是。</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="linear-Gaussian 的定位">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">提示</span>linear-Gaussian 的定位
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Linear-Gaussian model 是很多经典隐变量模型的共同骨架，例如 probabilistic PCA, factor analysis 和 linear dynamical systems。它的优势是连续变量推断通常仍可保持高斯形式，因而有解析或高效算法。</p>
+</div>
+</div>
+</section>
+</section>
+<section id="conditional-independence" class="level1">
+<h1>Conditional Independence</h1>
+<p>图模型最重要的能力之一，是让我们直接从图上读出 conditional independence。对三个变量 <span class="math inline">\(a,b,c\)</span>，条件独立记作 <span class="math display">\[
+a\perp\!\!\!\perp b\mid c,
+\]</span> 含义是 <span class="math display">\[
+p(a,b\mid c)=p(a\mid c)p(b\mid c).
+\]</span> 在分母非零的情形下，它也等价于 <span class="math display">\[
+p(a\mid b,c)=p(a\mid c).
+\]</span> 也就是说，一旦知道 <span class="math inline">\(c\)</span>，再知道 <span class="math inline">\(b\)</span> 不会改变我们对 <span class="math inline">\(a\)</span> 的分布判断。</p>
+<p>条件独立非常重要，因为知道它有助于我们简化模型和解决推断问题。更加重要的一点是，我们可以直接从图结构中直接读出条件独立的关系，而不需要任何其他的计算。这被称为d-分离（d-separation）。</p>
+<section id="三种基本局部结构" class="level2">
+<h2 class="anchored" data-anchor-id="三种基本局部结构">三种基本局部结构</h2>
+<p>有向图中的条件独立规则可以从三种三节点结构开始理解。</p>
+<p>第一种是 tail-to-tail，也称 common cause：</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-tail-to-tail" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-tail-to-tail-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+<pre class="mermaid mermaid-js" data-label="fig-tail-to-tail">flowchart LR
+  C["c"] --&gt; A["a"]
+  C --&gt; B["b"]
+</pre>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-tail-to-tail-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;5 Tail-to-tail 结构：给定共同原因 c 后，a 与 b 条件独立。
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>联合分布分解为 <span class="math display">\[
+p(a,b,c)=p(a\mid c)p(b\mid c)p(c).
+\]</span> 给定 <span class="math inline">\(c\)</span> 后， <span class="math display">\[
+p(a,b\mid c)=p(a\mid c)p(b\mid c),
+\]</span> 因此 <span class="math display">\[
+a\perp\!\!\!\perp b\mid c.
+\]</span> 但如果不观测 <span class="math inline">\(c\)</span>，<span class="math inline">\(a\)</span> 和 <span class="math inline">\(b\)</span> 一般会相关，因为它们共享同一个随机原因。</p>
+<p>第二种是 head-to-tail，也就是链式传播：</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-head-to-tail" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-head-to-tail-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+<pre class="mermaid mermaid-js" data-label="fig-head-to-tail">flowchart LR
+  A["a"] --&gt; C["c"] --&gt; B["b"]
+</pre>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-head-to-tail-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6 Head-to-tail 结构：链中间节点 c 被观测后，路径被阻断。
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>联合分布为 <span class="math display">\[
+p(a,b,c)=p(a)p(c\mid a)p(b\mid c).
+\]</span> 给定中间变量 <span class="math inline">\(c\)</span> 后，<span class="math inline">\(a\)</span> 对 <span class="math inline">\(b\)</span> 的影响已经通过 <span class="math inline">\(c\)</span> 被总结，因此 <span class="math display">\[
+a\perp\!\!\!\perp b\mid c.
+\]</span></p>
+<p>第三种是 head-to-head，也称 collider（对撞）：</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-head-to-head" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-head-to-head-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+<pre class="mermaid mermaid-js" data-label="fig-head-to-head">flowchart LR
+  A["a"] --&gt; C["c"]
+  B["b"] --&gt; C
+</pre>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-head-to-head-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;7 Head-to-head 结构：未观测碰撞点 c 时，a 与 b 边缘独立；观测 c 后反而相关。
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>联合分布为 <span class="math display">\[
+p(a,b,c)=p(a)p(b)p(c\mid a,b).
+\]</span> 如果没有观测 <span class="math inline">\(c\)</span>，则 <span class="math display">\[
+p(a,b)=p(a)p(b),
+\]</span> 所以 <span class="math display">\[
+a\perp\!\!\!\perp b.
+\]</span> 但是一旦观测 <span class="math inline">\(c\)</span>，通常有 <span class="math display">\[
+p(a,b\mid c)\ne p(a\mid c)p(b\mid c).
+\]</span> 这就是 collider 的特殊性：观测共同结果会打开路径。</p>
+<div class="callout callout-style-default callout-warning callout-titled" title="Collider 与前两种结构相反">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">警告</span>Collider 与前两种结构相反
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Tail-to-tail 和 head-to-tail 的路径在中间节点未观测时是打开的，观测中间节点后被阻断。</p>
+<p>Head-to-head 正好相反：中间节点未观测时路径被阻断，观测中间节点或其中某个后代后路径被打开。</p>
+</div>
+</div>
+</section>
+<section id="explaining-away" class="level2">
+<h2 class="anchored" data-anchor-id="explaining-away">Explaining away</h2>
+<p>Collider 结构中最典型的现象是 <strong>explaining away</strong>。假设汽车油表显示空，可能有两个原因：油箱真的空了，也可能电池没电导致油表失效。令 <span class="math display">\[
+F=\text{fuel},\qquad B=\text{battery},\qquad G=\text{gauge}.
+\]</span> 图结构为 <span class="math display">\[
+F\to G\leftarrow B.
+\]</span> 在没有观察油表前，油箱状态和电池状态可以是独立的。<strong>但一旦观察到油表显示空，二者就相关了。如果进一步发现电池没电，那么“油表显示空”这一证据已经被电池解释了一部分，油箱为空的后验概率可能下降</strong>。这就是 explaining away。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="为什么观测结果会引入相关性">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>为什么观测结果会引入相关性
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>在 collider 中，两个原因原本可以独立生成同一个结果。观测结果之后，原因之间开始竞争解释这个结果。知道其中一个原因成立，会改变另一个原因的后验概率，因此二者在条件于结果时变得相关。</p>
+</div>
+</div>
+</section>
+<section id="d-separation" class="level2">
+<h2 class="anchored" data-anchor-id="d-separation">D-separation</h2>
+<p><strong>D-separation 是从任意有向无环图中判断条件独立的通用规则</strong>。设 <span class="math inline">\(A,B,C\)</span> 是互不相交的节点集合，我们想判断图是否蕴含 <span class="math display">\[
+A\perp\!\!\!\perp B\mid C.
+\]</span> 做法是检查从 <span class="math inline">\(A\)</span> 中任意节点到 <span class="math inline">\(B\)</span> 中任意节点的所有无向路径。如果每条路径都被 <span class="math inline">\(C\)</span> 阻断，则称 <strong><span class="math inline">\(A\)</span> 与 <span class="math inline">\(B\)</span> 被 <span class="math inline">\(C\)</span> d-separated</strong>。</p>
+<p>一条路径在以下情况下被阻断：</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>路径上的局部结构</th>
+<th>阻断条件</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>head-to-tail</td>
+<td>中间节点属于 <span class="math inline">\(C\)</span></td>
+</tr>
+<tr class="even">
+<td>tail-to-tail</td>
+<td>中间节点属于 <span class="math inline">\(C\)</span></td>
+</tr>
+<tr class="odd">
+<td>head-to-head</td>
+<td>中间节点不属于 <span class="math inline">\(C\)</span>，且它的后代也没有任何一个属于 <span class="math inline">\(C\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>如果存在至少一条未被阻断的路径，则图本身不能保证 <span class="math inline">\(A\)</span> 与 <span class="math inline">\(B\)</span> 在给定 <span class="math inline">\(C\)</span> 后独立。</p>
+<div class="callout callout-style-default callout-important callout-titled" title="d-separation 的作用">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">重要</span>d-separation 的作用
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>D-separation 不是一种数值计算方法，而是一种结构判定方法。它告诉我们：只要联合分布按照这个 DAG 分解，那么哪些条件独立关系必然成立。具体概率参数可能让更多独立关系偶然成立，但这些额外独立性不是图结构保证的。</p>
+</div>
+</div>
+<div id="fig-d-separation" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-d-separation-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/d-seperation-20260521-201400.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-d-separation-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;8 d-separation 示意图
+</figcaption>
+</figure>
+</div>
+<p>对应以上两个结构，深色表示被阻断的路径（条件），那此时<span class="math inline">\(a,b\)</span>之间是否是独立的呢？</p>
+<p>对 <a href="#fig-d-separation" class="quarto-xref">图&nbsp;8</a> 中的两种结构，可以直接用上面的规则判断。左图中，<span class="math inline">\(f\)</span> 虽然位于 <span class="math inline">\(a\)</span> 到 <span class="math inline">\(b\)</span> 的路径上，但它是 tail-to-tail 节点且没有被观测，所以不会阻断路径；<span class="math inline">\(e\)</span> 是 head-to-head 节点，但它的后代 <span class="math inline">\(c\)</span> 被观测，因此这条路径也被打开。所以仅给定 <span class="math inline">\(c\)</span> 时，图并不蕴含 <span class="math display">\[
+a\perp\!\!\!\perp b\mid c.
+\]</span> 右图中，<span class="math inline">\(f\)</span> 被观测，并且它是 tail-to-tail 节点，因此路径被阻断；同时 <span class="math inline">\(e\)</span> 是 head-to-head 节点，且它和它的后代都没有被观测，也会阻断路径。因此右图蕴含 <span class="math display">\[
+a\perp\!\!\!\perp b\mid f.
+\]</span></p>
+</section>
+<section id="用-d-separation-回看已有模型" class="level2">
+<h2 class="anchored" data-anchor-id="用-d-separation-回看已有模型">用 d-separation 回看已有模型</h2>
+<p>D-separation 不只是用来分析抽象图结构，也可以帮助我们重新理解前面章节里已经接触过的模型。</p>
+<p>首先需要注意参数节点。PRML 的图中常把固定参数画成小的实心圆，例如噪声方差 <span class="math inline">\(\sigma^2\)</span>、精度参数 <span class="math inline">\(\alpha\)</span> 或其它超参数。对于 d-separation 来说，这些固定参数节点可以像 observed nodes 一样处理，因为它们的值已经给定。不过它们不是随机变量，没有对应的边缘分布，而且通常没有父节点。因此，穿过这类参数节点的路径往往是 tail-to-tail 结构，并会因为参数被固定而阻断。</p>
+<p>一个基础例子是从一维 Gaussian 中估计未知均值 <span class="math inline">\(\mu\)</span>。假设 <span class="math display">\[
+p(\mu,x_1,\dots,x_N)
+=p(\mu)\prod_{n=1}^N p(x_n\mid \mu).
+\]</span> 图结构可以理解为 <span class="math inline">\(\mu\)</span> 同时指向所有观测 <span class="math inline">\(x_n\)</span>。任意两个观测 <span class="math inline">\(x_i\)</span> 与 <span class="math inline">\(x_j\)</span> 之间的唯一路径是 <span class="math display">\[
+x_i\leftarrow \mu\to x_j.
+\]</span> 这是一个 tail-to-tail 结构。若给定 <span class="math inline">\(\mu\)</span>，路径被阻断，所以有 <span class="math display">\[
+x_i\perp\!\!\!\perp x_j\mid \mu,\qquad i\ne j.
+\]</span> 因此，在给定 <span class="math inline">\(\mu\)</span> 时，数据集 <span class="math inline">\(D=\{x_1,\dots,x_N\}\)</span> 的似然可以分解为 <span class="math display">\[
+p(D\mid \mu)=\prod_{n=1}^N p(x_n\mid \mu).
+\]</span> 这就是 i.i.d. 假设在图模型中的含义：<strong>独立性通常是条件于共享参数或潜变量成立的，而不是无条件成立的</strong>。</p>
+<p>如果把 <span class="math inline">\(\mu\)</span> 积分掉，观测之间一般就不再边缘独立： <span class="math display">\[
+p(D)=\int p(D\mid \mu)p(\mu)\,d\mu
+\ne
+\prod_{n=1}^N p(x_n).
+\]</span> 直觉上，所有观测都共享同一个未知均值。看到一个样本偏大，会改变我们对 <span class="math inline">\(\mu\)</span> 的后验判断，进而改变对其它样本的预测。因此，条件于 <span class="math inline">\(\mu\)</span> 的独立性在边缘化 <span class="math inline">\(\mu\)</span> 后会消失。</p>
+<p>Bayesian polynomial regression 也有同样结构。训练目标 <span class="math inline">\(\{t_n\}\)</span>、新输入处的预测目标 <span class="math inline">\(\hat t\)</span> 都通过共享参数 <span class="math inline">\(w\)</span> 发生关联。给定 <span class="math inline">\(w\)</span> 后，从 <span class="math inline">\(\hat t\)</span> 到任意训练目标 <span class="math inline">\(t_n\)</span> 的路径在 <span class="math inline">\(w\)</span> 处被阻断，因此 <span class="math display">\[
+\hat t\perp\!\!\!\perp t_n\mid w.
+\]</span> 这说明：一旦知道多项式系数 <span class="math inline">\(w\)</span>，新预测 <span class="math inline">\(\hat t\)</span> 就不需要再直接依赖训练目标。训练数据的作用是先把我们对 <span class="math inline">\(w\)</span> 的不确定性更新为后验分布，然后预测时再对 <span class="math inline">\(w\)</span> 的后验进行平均。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="训练数据如何被 posterior 汇总">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>训练数据如何被 posterior 汇总
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>在 Bayesian polynomial regression 中，训练数据并不是在预测时逐条重新参与计算。它们先通过贝叶斯更新塑造 <span class="math inline">\(p(w\mid D)\)</span>，之后预测新点时使用的是这个 posterior over <span class="math inline">\(w\)</span>。图模型中的条件独立关系正好解释了这种“先学习参数后预测”的计算分工。</p>
+</div>
+</div>
+</section>
+<section id="naive-bayes" class="level2">
+<h2 class="anchored" data-anchor-id="naive-bayes">Naive Bayes</h2>
+<p>Naive Bayes 是 d-separation 的另一个重要例子。它是一个用于<strong>分类</strong>的生成模型。设类别标签为 <span class="math inline">\(z\)</span>，输入向量为 <span class="math display">\[
+x=(x_1,\dots,x_D)^\top.
+\]</span> 模型先从类别先验中生成 <span class="math inline">\(z\)</span>，再根据类别生成每个输入分量： <span class="math display">\[
+p(z,x)=p(z)\prod_{d=1}^D p(x_d\mid z).
+\]</span></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-naive-bayes" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-naive-bayes-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+<pre class="mermaid mermaid-js" data-label="fig-naive-bayes">flowchart LR
+  Z["z"] --&gt; X1["x1"]
+  Z --&gt; X2["x2"]
+  Z --&gt; XD["xD"]
+</pre>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-naive-bayes-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;9 Naive Bayes 假设输入分量在给定类别标签 z 后条件独立。
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>这个模型的核心假设是：<strong>给定类别 <span class="math inline">\(z\)</span> 后，输入的各个维度条件独立</strong>： <span class="math display">\[
+p(x\mid z)=\prod_{d=1}^D p(x_d\mid z).
+\]</span> 从图上看，任意两个输入分量之间的路径都是 <span class="math display">\[
+x_i\leftarrow z\to x_j.
+\]</span> 当 <span class="math inline">\(z\)</span> 被给定时，这条 tail-to-tail 路径被阻断，所以 <span class="math display">\[
+x_i\perp\!\!\!\perp x_j\mid z,\qquad i\ne j.
+\]</span></p>
+<p>但是如果 <span class="math inline">\(z\)</span> 没有被观测，而是被边缘化掉，那么输入分量之间一般不再独立： <span class="math display">\[
+p(x)=\sum_z p(z)\prod_{d=1}^D p(x_d\mid z)
+\ne
+\prod_{d=1}^D p(x_d).
+\]</span> 这是因为类别标签是所有输入分量的共同原因。知道某个特征的取值会改变我们对类别的判断，进而改变其它特征的预测分布。</p>
+<p>在 Gaussian naive Bayes 中，每一类的类条件密度通常写成各维 Gaussian 的乘积： <span class="math display">\[
+p(x\mid z=k)
+=\prod_{d=1}^D \mathcal N(x_d\mid \mu_{kd},\sigma_{kd}^2).
+\]</span> 这等价于说每一类内部的协方差矩阵是 diagonal covariance matrix。于是每个类别内的等密度轮廓是轴对齐的椭球。但边缘密度 <span class="math display">\[
+p(x)=\sum_{k=1}^K p(z=k)p(x\mid z=k)
+\]</span> 是多个 diagonal Gaussians 的 mixture，一般不会再按输入维度分解。</p>
+<div class="callout callout-style-default callout-important callout-titled" title="为什么 naive Bayes 仍然常常有效">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">重要</span>为什么 naive Bayes 仍然常常有效
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Naive Bayes 的条件独立假设非常强，真实数据通常不会严格满足。但分类任务最终关心的是后验类别大小关系或决策边界，而不是类条件密度的每个细节都被精确拟合。因此，即使密度模型本身比较粗糙，naive Bayes 仍可能给出不错的分类性能，尤其是在维度高、样本相对有限、不同特征类型需要分别建模时。</p>
+</div>
+</div>
+</section>
+<section id="图模型作为分布过滤器" class="level2">
+<h2 class="anchored" data-anchor-id="图模型作为分布过滤器">图模型作为分布过滤器</h2>
+<p>现在可以更抽象地理解 d-separation theorem。一个 directed graph 可以被看作对所有可能联合分布的过滤器：只有那些能够按该图分解为 <span class="math display">\[
+p(x)=\prod_k p(x_k\mid \operatorname{pa}_k)
+\]</span> 的分布，才通过这个过滤器。</p>
+<p>另一方面，我们也可以先从图上用 d-separation 读出所有条件独立语句，再要求一个分布必须满足这些独立性。D-separation theorem 说明，在有向图中，这两种过滤方式得到的是同一类分布：<strong>按图分解的分布，恰好满足图通过 d-separation 所蕴含的条件独立关系</strong>。</p>
+<p>需要注意的是，图给出的独立性是结构保证的独立性。某个具体分布可能因为参数取值特殊而拥有额外独立性，例如完全因子化的分布可以满足很多图的独立性要求（diagonal covariant multivariate Normal）。但这些额外独立性不是图结构本身表达出来的。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="图表达的是模型族，而不是单个参数点">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>图表达的是模型族，而不是单个参数点
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>一张图通常对应一整个概率分布族。D-separation 读出的是这个分布族中所有成员共同满足的条件独立关系，而不是某个特定参数设置偶然满足的额外关系。</p>
+</div>
+</div>
+</section>
+<section id="markov-blanket" class="level2">
+<h2 class="anchored" data-anchor-id="markov-blanket">Markov blanket</h2>
+<p>对有向图中的某个节点 <span class="math inline">\(x_i\)</span>，它的 <strong>Markov blanket (Markov boundary)</strong> 是最小的一组节点，使得给定这组节点后，<span class="math inline">\(x_i\)</span> 与图中所有其他节点条件独立。</p>
+<p>在 Bayesian network 中，<span class="math inline">\(x_i\)</span> 的 Markov blanket 包括三类节点：</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>组成部分</th>
+<th>原因</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>parents</td>
+<td>直接影响 <span class="math inline">\(x_i\)</span> 的条件分布</td>
+</tr>
+<tr class="even">
+<td>children</td>
+<td><span class="math inline">\(x_i\)</span> 直接影响的变量</td>
+</tr>
+<tr class="odd">
+<td>co-parents</td>
+<td>与 <span class="math inline">\(x_i\)</span> 共同解释某个 child 的其他父节点</td>
+</tr>
+</tbody>
+</table>
+<p>因此有 <span class="math display">\[
+x_i\perp\!\!\!\perp \{ \text{all other nodes} \}\mid \operatorname{MB}(x_i).
+\]</span></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-markov-blanket" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-markov-blanket-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+<pre class="mermaid mermaid-js" data-label="fig-markov-blanket">flowchart LR
+  P1["parent 1"] --&gt; X["x"]
+  P2["parent 2"] --&gt; X
+  X --&gt; C1["child 1"]
+  X --&gt; C2["child 2"]
+  O1["co-parent"] --&gt; C1
+  O2["co-parent"] --&gt; C2
+</pre>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-markov-blanket-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;10 有向图中节点 x 的 Markov blanket 由父节点、子节点和子节点的其他父节点组成。
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>这个概念在 Gibbs sampling、局部更新和概率模型调试中非常重要，因为它说明更新某个节点时并不需要查看全图，只需要查看 Markov blanket。</p>
+<div id="fig-markov-blanket-example" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-markov-blanket-example-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/markov-blanket-example-20260521-204952.png" class="img-fluid figure-img" style="width:80.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-markov-blanket-example-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;11 Markov blanket 示例
+</figcaption>
+</figure>
+</div>
+</section>
+</section>
+<section id="markov-random-fields" class="level1">
+<h1>Markov Random Fields</h1>
+<p>Bayesian network 使用有向边和局部条件分布来表达联合分布。<strong>Markov random field</strong>, <strong>MRF</strong>, 又称 <strong>Markov network</strong>、<strong>undirected graphical model</strong>，则使用无向边和局部 potential functions 来表达变量之间的相容性。</p>
+<section id="无向图中的条件独立" class="level2">
+<h2 class="anchored" data-anchor-id="无向图中的条件独立">无向图中的条件独立</h2>
+<p>无向图中的条件独立规则比有向图更直接。给定三组节点 <span class="math inline">\(A,B,C\)</span>，如果从 <span class="math inline">\(A\)</span> 到 <span class="math inline">\(B\)</span> 的每条路径都必须经过 <span class="math inline">\(C\)</span> 中至少一个节点，那么 <span class="math inline">\(C\)</span> separates <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>，于是 <span class="math display">\[
+A\perp\!\!\!\perp B\mid C.
+\]</span></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-undirected-separation" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-undirected-separation-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+<pre class="mermaid mermaid-js" data-label="fig-undirected-separation">flowchart LR
+  A1["A"] --- C1["C"]
+  C1 --- B1["B"]
+  A1 --- C2["C"]
+  C2 --- B1
+</pre>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-undirected-separation-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;12 无向图中，集合 C 截断 A 到 B 的所有路径时，A 与 B 在给定 C 后条件独立。
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div id="fig-condition-mrf-example" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-condition-mrf-example-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/condition-mrf-example-20260521-205815.png" class="img-fluid figure-img" style="width:80.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-condition-mrf-example-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;13 无向图中的条件独立性示例
+</figcaption>
+</figure>
+</div>
+<p>无向图没有 collider 的特殊开关规则，也没有箭头方向带来的生成顺序。它适合表达对称关系，例如相邻像素倾向于取相同值、相邻词标签彼此约束、空间网格中的局部平滑等。</p>
+</section>
+<section id="clique-与-potential" class="level2">
+<h2 class="anchored" data-anchor-id="clique-与-potential">Clique 与 potential</h2>
+<p>和有向图不同，无向图没有箭头方向，因此也没有生成顺序。在无向图中，我们先去定义条件独立规则，然后再去想办法如何构造联合分布，使之满足这个条件独立规则。所以，我们引出下面关于 clique 的定义。</p>
+<p>无向图中的 <strong>clique</strong> 是一组两两相连的节点。若一个 clique 不能再加入任何其他节点而仍保持两两相连，则称为 <strong>maximal clique</strong> (最大的全连接子图)。</p>
+<div id="fig-clique-example" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-clique-example-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/clique-example-20260522-110249.png" class="img-fluid figure-img" style="width:80.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-clique-example-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;14 clique 示例
+</figcaption>
+</figure>
+</div>
+<p>此时，我们有这样的一个定理：</p>
+<div id="thm-hc" class="theorem">
+<p><span class="theorem-title"><strong>定理 1 (Hammersley-Clifford theorem)</strong></span> 在 <strong>strictly positive distribution</strong> 的条件下，下面两件事是等价的：</p>
+<ol type="1">
+<li>分布满足无向图的 graph separation 所蕴含的条件独立关系。</li>
+<li>分布可以分解为该无向图 maximal cliques 上 potential functions 的乘积： <span class="math display">\[
+p(x)=\frac{1}{Z}\prod_C \psi_C(x_C).
+\]</span></li>
+</ol>
+<p>其中 <span class="math inline">\(C\)</span> 遍历 maximal cliques（可以重合），<span class="math inline">\(x_C\)</span> 表示 clique 中变量的集合，<span class="math inline">\(\psi_C(x_C)\ge 0\)</span> 是 potential function，而 <span class="math display">\[
+Z=\sum_x \prod_C \psi_C(x_C)
+\]</span> 是 normalization constant 或 partition function。</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>这里给一个不是特别严谨的证明。</p>
+<p>直觉上，如果节点集合 <span class="math inline">\(C\)</span> 在图上把 <span class="math inline">\(A\)</span> 和 <span class="math inline">\(B\)</span> 分开，那么任何 clique 都不可能同时包含 <span class="math inline">\(A\)</span> 侧变量和 <span class="math inline">\(B\)</span> 侧变量而完全绕开 <span class="math inline">\(C\)</span>。否则这些变量之间就会存在一条不经过 <span class="math inline">\(C\)</span> 的局部连接，和“<span class="math inline">\(C\)</span> 分隔 <span class="math inline">\(A\)</span> 与 <span class="math inline">\(B\)</span>”矛盾。</p>
+<p>因此，所有 clique potentials 可以按图结构拆成两组：一组只涉及 <span class="math inline">\(A\)</span> 侧变量和分隔集 <span class="math inline">\(C\)</span>，另一组只涉及 <span class="math inline">\(B\)</span> 侧变量和分隔集 <span class="math inline">\(C\)</span>。把其它变量边缘化后，可以得到类似 <span class="math display">\[
+p(a,b,c)=\frac{1}{Z}g(a,c)h(b,c).
+\]</span> 于是给定 <span class="math inline">\(c\)</span> 后， <span class="math display">\[
+p(a,b\mid c)
+=
+\frac{g(a,c)h(b,c)}
+{\sum_a\sum_b g(a,c)h(b,c)}
+=
+\frac{g(a,c)}{\sum_a g(a,c)}
+\frac{h(b,c)}{\sum_b h(b,c)}.
+\]</span> 这就得到 <span class="math display">\[
+p(a,b\mid c)=p(a\mid c)p(b\mid c),
+\]</span> 也就是 <span class="math display">\[
+A\perp\!\!\!\perp B\mid C.
+\]</span></p>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="为什么要求 strictly positive">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>为什么要求 strictly positive
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>严格正条件排除了概率为 0 的特殊配置。若允许某些状态概率为 0，模型中可能出现确定性约束，导致一些条件概率不定义，或者产生并非由图结构表达的额外独立关系。Hammersley-Clifford theorem 在严格正分布下避免这些病态情况，从而让图分离和 clique factorization 可以干净地等价起来。</p>
+</div>
+</div>
+<p>与 Bayesian network 中的条件分布不同，potential function 通常没有直接的概率解释。它只需要非负，用来表达局部变量配置的偏好。<span class="math inline">\(\psi_C(x_C)\)</span> 越大，该 clique 配置越被模型偏好。</p>
+<div class="callout callout-style-default callout-warning callout-titled" title="Potential 不是条件概率">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">警告</span>Potential 不是条件概率
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>不要把 <span class="math inline">\(\psi_C(x_C)\)</span> 理解成 <span class="math inline">\(p(x_i\mid x_j)\)</span> 或某个局部概率。它可以任意缩放，单独看也不必归一化。真正的概率分布只有在所有 clique potentials 相乘并除以 <span class="math inline">\(Z\)</span> 后才得到。</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled" title="H-C theorem 的意义">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">重要</span>H-C theorem 的意义
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Hammersley-Clifford theorem 不是说“任何 clique potential 写法都只是方便记号”，而是说：在概率严格为正时，<strong>无向图的分离语义</strong>和<strong>基于 maximal cliques 的概率因子化</strong>刻画的是同一类分布。</p>
+<p>因此，MRF 的图结构不是单纯的可视化。它一方面告诉我们哪些变量集合可以有直接局部相互作用，另一方面也告诉我们哪些条件独立关系必须成立。</p>
+</div>
+</div>
+</section>
+<section id="gibbs-distribution-与-energy" class="level2">
+<h2 class="anchored" data-anchor-id="gibbs-distribution-与-energy">Gibbs distribution 与 energy</h2>
+<p>如果 potential strictly positive，就可以写成指数形式： <span class="math display">\[
+\psi_C(x_C)=\exp\{-E_C(x_C)\}.
+\]</span> 于是联合分布变成 <span class="math display">\[
+p(x)=\frac{1}{Z}\exp\{-E(x)\},
+\]</span> 其中总能量为 <span class="math display">\[
+E(x)=\sum_C E_C(x_C).
+\]</span> 这称为 <strong>Gibbs distribution</strong> 或 <strong>Boltzmann distribution</strong>。</p>
+<p>能量视角非常直观：<strong>低能量配置对应高概率，高能量配置对应低概率。建模时我们可以为不希望出现的局部配置设置高能量，为希望出现的局部配置设置低能量</strong>。</p>
+</section>
+<section id="image-denoising-示例" class="level2">
+<h2 class="anchored" data-anchor-id="image-denoising-示例">Image denoising 示例</h2>
+<p>PRML 用二值图像去噪展示 MRF 的建模方式。设观测到的噪声图像为 <span class="math display">\[
+y_i\in\{-1,+1\},
+\]</span> 真实无噪声图像为 <span class="math display">\[
+x_i\in\{-1,+1\}.
+\]</span> 我们希望恢复 <span class="math inline">\(x=(x_1,\dots,x_D)\)</span>。</p>
+<p>模型包含两类局部偏好：</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Clique</th>
+<th>能量项</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\{x_i,y_i\}\)</span></td>
+<td><span class="math inline">\(-\eta x_iy_i\)</span></td>
+<td>恢复像素 <span class="math inline">\(x_i\)</span> 倾向于与观测像素 <span class="math inline">\(y_i\)</span> 相同</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\{x_i,x_j\}\)</span> 邻接像素</td>
+<td><span class="math inline">\(-\beta x_ix_j\)</span></td>
+<td>相邻恢复像素倾向于相同</td>
+</tr>
+<tr class="odd">
+<td>单点偏置</td>
+<td><span class="math inline">\(h x_i\)</span></td>
+<td>偏向某一种像素符号</td>
+</tr>
+</tbody>
+</table>
+<p>总能量可写成 <span class="math display">\[
+E(x,y)
+=h\sum_i x_i-\beta\sum_{\{i,j\}}x_ix_j-\eta\sum_i x_iy_i.
+\]</span> 于是联合分布为 <span class="math display">\[
+p(x,y)=\frac{1}{Z}\exp\{-E(x,y)\}.
+\]</span> 当 <span class="math inline">\(y\)</span> 固定为观测图像后，就得到关于 <span class="math inline">\(x\)</span> 的后验分布 <span class="math inline">\(p(x\mid y)\)</span>（在物理学中，也被称为<strong>Ising model</strong>）。图像恢复可以被看作寻找高后验概率的 <span class="math inline">\(x\)</span>，理想情况下是求 <span class="math display">\[
+x^\star=\arg\max_x p(x\mid y).
+\]</span></p>
+<div class="callout callout-style-default callout-important callout-titled" title="局部约束之间的权衡">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">重要</span>局部约束之间的权衡
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><span class="math inline">\(\eta\)</span> 越大，模型越相信观测图像；<span class="math inline">\(\beta\)</span> 越大，模型越偏向平滑图像；<span class="math inline">\(h\)</span> 则加入整体符号偏置。去噪的本质不是简单复制观测，也不是盲目平滑，而是在观测一致性和邻域平滑性之间寻找平衡。</p>
+</div>
+</div>
+<p>一个简单求解方法是 iterated conditional modes, ICM。它先初始化 <span class="math inline">\(x_i=y_i\)</span>，然后每次选择一个像素 <span class="math inline">\(x_j\)</span>，固定其他像素，只比较 <span class="math inline">\(x_j=+1\)</span> 与 <span class="math inline">\(x_j=-1\)</span> 哪个使能量更低。不断重复这个局部更新，直到没有单点翻转能继续降低能量。</p>
+<p>ICM 的优点是局部、简单、快速；缺点是只能保证到达局部最优，不保证全局最优。</p>
+<div id="fig-image-denoise-example" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-image-denoise-example-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/image-denoise-example-20260522-112908.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-image-denoise-example-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;15 图像去躁示意图，其中左上方是原始观测图像，右上方是加躁后的图像，左下方是使用ICM去躁后的结果，右下方是使用graph cut去躁后的结果
+</figcaption>
+</figure>
+</div>
+</section>
+<section id="有向图与无向图的关系" class="level2">
+<h2 class="anchored" data-anchor-id="有向图与无向图的关系">有向图与无向图的关系</h2>
+<p>Directed graphs 和 undirected graphs 都表达联合分布分解与条件独立，但表达能力并不完全相同。</p>
+<p>从有向图转成无向图时，需要先 moralization：把每个节点的所有父节点两两相连，然后去掉箭头。例如 <span class="math display">\[
+a\to c\leftarrow b
+\]</span> 转为无向图时要加边 <span class="math inline">\(a-b\)</span>。这是因为 collider 的两个父节点在给定共同子节点后会发生依赖，无向图若不连接它们，就无法表达这种局部结构。</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-moralization" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-moralization-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+<pre class="mermaid mermaid-js" data-label="fig-moralization">flowchart LR
+  subgraph D["directed"]
+    A["a"] --&gt; C["c"]
+    B["b"] --&gt; C
+  end
+  subgraph U["moralized undirected"]
+    A2["a"] --- B2["b"]
+    A2 --- C2["c"]
+    B2 --- C2
+  end
+</pre>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-moralization-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;16 Moralization 会连接共同子节点的父节点，然后去掉箭头。
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>从无向图转成有向图通常更困难，并且并非总是能无损完成。有些条件独立结构只能由有向图表达，有些只能由无向图表达，也有一些两者都不能完全表达。实际建模时，选择哪种图往往取决于我们更关心生成过程、局部约束，还是推断算法的便利性。</p>
+</section>
+</section>
+<section id="inference-in-graphical-models" class="level1">
+<h1>Inference in Graphical Models</h1>
+<p>图模型的表示只是第一步。真正使用模型时，我们通常要做 inference，也就是<strong>在某些变量被观测后，计算其他变量的边缘分布、后验分布、MAP 配置或证据</strong>。</p>
+<p>最朴素的方法是直接对联合分布求和。例如要计算 <span class="math inline">\(p(x_n)\)</span>，可以写成 <span class="math display">\[
+p(x_n)=\sum_{x_1}\cdots\sum_{x_{n-1}}\sum_{x_{n+1}}\cdots\sum_{x_N}p(x_1,\dots,x_N).
+\]</span> 如果每个变量有 <span class="math inline">\(K\)</span> 个状态，这个暴力求和通常是 <span class="math inline">\(O(K^N)\)</span> 级别。图模型推断算法的核心，是利用因子分解把重复计算缓存为消息。</p>
+<section id="链上的精确推断" class="level2">
+<h2 class="anchored" data-anchor-id="链上的精确推断">链上的精确推断</h2>
+<p>考虑无向链： <span class="math display">\[
+p(x)=\frac{1}{Z}\prod_{n=1}^{N-1}\psi_{n,n+1}(x_n,x_{n+1}).
+\]</span> 如果要计算中间节点 <span class="math inline">\(x_n\)</span> 的边缘分布，可以把链拆成左半边、节点本身和右半边： <span class="math display">\[
+p(x_n)=\frac{1}{Z}\alpha(x_n)\beta(x_n),
+\]</span> 其中 <span class="math inline">\(\alpha(x_n)\)</span> 汇总左侧所有变量对 <span class="math inline">\(x_n\)</span> 的影响，<span class="math inline">\(\beta(x_n)\)</span> 汇总右侧所有变量对 <span class="math inline">\(x_n\)</span> 的影响。</p>
+<p>递推形式可以写成 <span class="math display">\[
+\alpha(x_n)=\sum_{x_{n-1}}\alpha(x_{n-1})\psi_{n-1,n}(x_{n-1},x_n),
+\]</span> 以及 <span class="math display">\[
+\beta(x_n)=\sum_{x_{n+1}}\psi_{n,n+1}(x_n,x_{n+1})\beta(x_{n+1}).
+\]</span></p>
+<p>这就是动态规划在概率图中的最基本形态。它避免了对整条链的所有状态组合重复求和，使复杂度从指数级降到随链长线性增长。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="消息的直觉">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>消息的直觉
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>消息不是新的概率模型，而是局部求和的缓存结果。左侧子图把自己对边界变量 <span class="math inline">\(x_n\)</span> 的影响压缩成一个关于 <span class="math inline">\(x_n\)</span> 的函数；右侧子图也做同样的事情。最后把两边消息相乘并归一化，就得到节点边缘分布。</p>
+</div>
+</div>
+</section>
+<section id="trees" class="level2">
+<h2 class="anchored" data-anchor-id="trees">Trees</h2>
+<p>链是树的一种特例。对于任意 tree-structured graph，只要没有 loop，就可以选择一个根节点，让消息从叶节点向根节点传递，再从根节点向外传递。每条边两个方向各传一次消息后，所有节点的边缘分布都可以由收到的局部消息相乘得到。</p>
+<p>树结构推断高效的根本原因是：切断任意一条边都会把图分成两个互不相连的部分。于是一个子树对外部世界的影响可以完整地压缩成边界变量上的一个消息。</p>
+<p>如果图有环，这种简单分解不再成立，因为信息可能沿多条路径重复返回同一个节点。</p>
+</section>
+<section id="factor-graphs" class="level2">
+<h2 class="anchored" data-anchor-id="factor-graphs">Factor graphs</h2>
+<p>Factor graph 是第 8 章推断部分的关键桥梁。它把联合分布写成一般因子乘积： <span class="math display">\[
+p(x)=\frac{1}{Z}\prod_s f_s(x_s),
+\]</span> 其中 <span class="math inline">\(x_s\)</span> 是因子 <span class="math inline">\(f_s\)</span> 涉及的变量集合。</p>
+<p>Factor graph 是二分图：一类节点是变量节点，另一类节点是因子节点。变量节点只连接到包含该变量的因子节点。</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-factor-graph" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-factor-graph-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+<pre class="mermaid mermaid-js" data-label="fig-factor-graph">flowchart LR
+  X1["x1"] --- F1["f_a"]
+  X2["x2"] --- F1
+  X2 --- F2["f_b"]
+  X3["x3"] --- F2
+  X1 --- F3["f_c"]
+  X3 --- F3
+</pre>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-factor-graph-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;17 因子图显式表示变量与局部因子的连接关系。
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>例如上图可以表示 <span class="math display">\[
+p(x_1,x_2,x_3)=\frac{1}{Z}f_a(x_1,x_2)f_b(x_2,x_3)f_c(x_1,x_3).
+\]</span></p>
+<p>Factor graph 比无向图更细，因为同一个无向 clique 结构可能对应不同的因子分解。它直接暴露了计算应该如何拆分，因此特别适合推导消息传递算法。</p>
+<div class="callout callout-style-default callout-important callout-titled" title="为什么需要 factor graph">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">重要</span>为什么需要 factor graph
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>无向图告诉我们哪些变量局部相连，但不一定告诉我们联合分布具体分成哪些因子。Factor graph 把因子作为节点显式画出来，使 sum-product 和 max-sum 的局部更新规则可以统一写成变量到因子、因子到变量两类消息。</p>
+</div>
+</div>
+</section>
+<section id="sum-product-algorithm" class="level2">
+<h2 class="anchored" data-anchor-id="sum-product-algorithm">Sum-product algorithm</h2>
+<p>Sum-product algorithm 用于在 tree-structured factor graph 上精确计算边缘分布。设 <span class="math inline">\(x\)</span> 是变量节点，<span class="math inline">\(f\)</span> 是相邻因子节点。</p>
+<p>变量节点到因子节点的消息为 <span class="math display">\[
+\mu_{x\to f}(x)
+=\prod_{h\in \operatorname{ne}(x)\setminus f}
+\mu_{h\to x}(x).
+\]</span> 也就是说，变量节点把从其他因子收到的消息相乘后发给目标因子。</p>
+<p>因子节点到变量节点的消息为 <span class="math display">\[
+\mu_{f\to x}(x)
+=
+\sum_{x_f\setminus x}
+f(x_f)
+\prod_{y\in \operatorname{ne}(f)\setminus x}
+\mu_{y\to f}(y).
+\]</span> 也就是说，因子节点把因子本身乘上其他相邻变量传来的消息，然后对除目标变量之外的变量求和。</p>
+<p>当所有入射消息都可用时，变量节点 <span class="math inline">\(x\)</span> 的边缘分布与以下乘积成正比： <span class="math display">\[
+p(x)\propto
+\prod_{f\in\operatorname{ne}(x)}\mu_{f\to x}(x).
+\]</span> 归一化后即可得到真正的边缘概率。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="两类消息的记法">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>两类消息的记法
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>变量到因子的消息负责汇总“其他因子对这个变量的看法”。因子到变量的消息负责汇总“这个局部因子及其背后子树对这个变量的看法”。这两类消息交替传递，就把全局求和拆成局部求和。</p>
+</div>
+</div>
+<p>叶节点提供递推边界。若叶节点是变量节点，则它向唯一相邻因子发送常数消息 1。若叶节点是因子节点，则它向相邻变量发送该因子本身。对于树图，只要每条边两个方向的消息都完成，就可以得到所有变量的边缘分布。</p>
+</section>
+<section id="evidence-与观测变量" class="level2">
+<h2 class="anchored" data-anchor-id="evidence-与观测变量">Evidence 与观测变量</h2>
+<p>如果某些变量被观测，可以把观测值直接代入相关因子，或者为观测变量引入一个只在观测状态取 1 的指示因子。这样 sum-product 仍然可以按原规则运行。</p>
+<p>例如若 <span class="math inline">\(x_o\)</span> 被观测为 <span class="math inline">\(\hat x_o\)</span>，可加入因子 <span class="math display">\[
+I(x_o=\hat x_o)=
+\begin{cases}
+1, &amp; x_o=\hat x_o,\\
+0, &amp; \text{otherwise}.
+\end{cases}
+\]</span> 消息传递完成后，未观测变量的边缘分布自然就是条件于观测证据的后验边缘。</p>
+<p>归一化常数本身也有意义。它对应 evidence，也就是观测数据在模型下的边缘概率。后面进行模型比较或结构学习时，evidence 会成为评分的一部分。</p>
+</section>
+<section id="max-sum-algorithm" class="level2">
+<h2 class="anchored" data-anchor-id="max-sum-algorithm">Max-sum algorithm</h2>
+<p>Sum-product 计算的是边缘分布。如果目标是寻找联合分布最大的整体配置，则需要 MAP inference： <span class="math display">\[
+x_{\max}=\arg\max_x p(x).
+\]</span> 不要把它和逐个变量最大化边缘分布混淆。一般来说， <span class="math display">\[
+\arg\max_x p(x)
+\ne
+\left(\arg\max_{x_1}p(x_1),\dots,\arg\max_{x_M}p(x_M)\right).
+\]</span> 逐点最可能的状态组合甚至可能对应很低的联合概率。</p>
+<p>Max-product algorithm 把 sum-product 中的求和替换为最大化。为了数值稳定，通常取对数，把乘积变成加法，于是得到 max-sum algorithm。</p>
+<p>变量到因子的消息为 <span class="math display">\[
+\mu_{x\to f}(x)
+=
+\sum_{h\in \operatorname{ne}(x)\setminus f}
+\mu_{h\to x}(x).
+\]</span> 因子到变量的消息为 <span class="math display">\[
+\mu_{f\to x}(x)
+=
+\max_{x_f\setminus x}
+\left[
+\log f(x_f)
++
+\sum_{y\in \operatorname{ne}(f)\setminus x}
+\mu_{y\to f}(y)
+\right].
+\]</span> 最终在根节点处求最大值即可得到最大联合 log probability。</p>
+<p>要恢复具体的最优变量配置，还需要在每次最大化时记录 argmax，也就是 backpointer。随后从根节点的最优状态开始，沿消息方向反向回溯，依次恢复其他变量。</p>
+<div class="callout callout-style-default callout-important callout-titled" title="MAP 是整体配置问题">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">重要</span>MAP 是整体配置问题
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Sum-product 的输出是局部边缘，max-sum 的输出是全局最优配置。二者回答的问题不同。边缘分布告诉我们单个变量的不确定性，MAP 配置告诉我们哪个完整状态组合概率最大。</p>
+</div>
+</div>
+</section>
+<section id="general-graphs-与-junction-tree" class="level2">
+<h2 class="anchored" data-anchor-id="general-graphs-与-junction-tree">General graphs 与 junction tree</h2>
+<p>Sum-product 和 max-sum 在树上是精确且高效的。现实模型常常有 loops，这时可以把一般图转换为 junction tree，再在新的树结构上做精确消息传递。</p>
+<p>Junction tree algorithm 的大致步骤是：</p>
+<ol type="1">
+<li>如果原图是有向图，先 moralize 成无向图。</li>
+<li>对无向图 triangulate，也就是为长度至少为 4 的 chordless cycles 添加弦。</li>
+<li>找出 triangulated graph 的 maximal cliques。</li>
+<li>把 maximal cliques 作为新图节点，按照共享变量连接成 join tree。</li>
+<li>选择满足 running intersection property 的 junction tree。</li>
+<li>在 junction tree 上运行消息传递。</li>
+</ol>
+<p>Running intersection property 指的是：如果某个变量出现在两个 clique 中，那么它也必须出现在连接这两个 clique 的路径上的每个 clique 中。这个性质保证关于该变量的信息在 clique tree 中保持一致。</p>
+<p>精确推断的代价由最大 clique 的大小决定。若变量离散且每个变量有 <span class="math inline">\(K\)</span> 个状态，一个包含 <span class="math inline">\(m\)</span> 个变量的 clique 需要处理 <span class="math inline">\(K^m\)</span> 个状态组合。因此 treewidth 越高，junction tree 推断越困难。</p>
+<div class="callout callout-style-default callout-warning callout-titled" title="精确推断的瓶颈">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">警告</span>精确推断的瓶颈
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Junction tree 把有环图上的精确推断转化为树上的精确推断，但它不是免费的。转换过程中 clique 可能变得很大，复杂度会随最大 clique 大小指数增长。这也是为什么图模型推断经常需要近似方法。</p>
+</div>
+</div>
+</section>
+<section id="loopy-belief-propagation" class="level2">
+<h2 class="anchored" data-anchor-id="loopy-belief-propagation">Loopy belief propagation</h2>
+<p>Loopy belief propagation 的想法非常直接：即使图中有环，也照样使用 sum-product 的局部消息更新规则。因为这些规则只依赖相邻节点，所以从形式上看并不要求全图一定是树。</p>
+<p>但是有环图中信息可能绕圈回到自己，导致两个问题：</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>问题</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>不保证终止</td>
+<td>图中可能总有 pending messages</td>
+</tr>
+<tr class="even">
+<td>不保证精确</td>
+<td>即使收敛，得到的通常也是近似边缘</td>
+</tr>
+</tbody>
+</table>
+<p>实践中，loopy belief propagation 在一些问题上效果很好，例如某些 error-correcting codes 的解码；在另一些问题上则可能收敛慢、振荡或给出质量较差的近似。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="如何看待 loopy belief propagation">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>如何看待 loopy belief propagation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Loopy belief propagation 不是严格从树上精确推断直接继承来的保证，而是一种把局部一致性规则推广到有环图的近似算法。它的吸引力在于实现简单、局部并行、常常有效；风险在于缺少一般精确性与收敛保证。</p>
+</div>
+</div>
+</section>
+<section id="learning-the-graph-structure" class="level2">
+<h2 class="anchored" data-anchor-id="learning-the-graph-structure">Learning the graph structure</h2>
+<p>前面的讨论默认图结构已知。更进一步的问题是从数据中学习图结构本身。设不同图结构由 <span class="math inline">\(m\)</span> 索引，数据为 <span class="math inline">\(D\)</span>。贝叶斯视角下，可以写出结构后验： <span class="math display">\[
+p(m\mid D)\propto p(m)p(D\mid m).
+\]</span> 其中 <span class="math inline">\(p(m)\)</span> 是图结构先验，<span class="math inline">\(p(D\mid m)\)</span> 是模型 evidence，可用来评价结构 <span class="math inline">\(m\)</span> 对数据的解释能力。</p>
+<p>困难在于两方面。第一，计算 evidence 往往需要对参数和潜变量边缘化，本身就是困难推断问题。第二，可能图结构数量随节点数指数增长，无法穷举搜索。因此实际结构学习通常需要启发式搜索、约束假设或近似评分。</p>
+<div class="callout callout-style-default callout-important callout-titled" title="本章的收束">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">重要</span>本章的收束
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>第 8 章从图表示开始，到条件独立，再到消息传递推断，最后触及结构学习。主线始终是同一个问题：如何让高维联合分布的结构显式化，使我们能够看见它、压缩它，并在它上面计算。</p>
+</div>
+</div>
+</section>
+</section>
+<section id="本章小结" class="level1">
+<h1>本章小结</h1>
+<p>第 8 章把概率模型组织成三种互相衔接的图语言。</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>图语言</th>
+<th>核心分解</th>
+<th>最适合表达</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Bayesian network</td>
+<td><span class="math inline">\(\prod_k p(x_k\mid \operatorname{pa}_k)\)</span></td>
+<td>生成过程、因果方向、局部条件分布</td>
+</tr>
+<tr class="even">
+<td>Markov random field</td>
+<td><span class="math inline">\(Z^{-1}\prod_C\psi_C(x_C)\)</span></td>
+<td>对称约束、局部相容性、能量函数</td>
+</tr>
+<tr class="odd">
+<td>Factor graph</td>
+<td><span class="math inline">\(Z^{-1}\prod_s f_s(x_s)\)</span></td>
+<td>具体因子分解、消息传递推断</td>
+</tr>
+</tbody>
+</table>
+<p>理解本章时，最重要的是把“图”同时看成三件事：</p>
+<ol type="1">
+<li>一种联合分布的压缩表达。</li>
+<li>一种条件独立关系的读取规则。</li>
+<li>一种推断算法的计算骨架。</li>
+</ol>
+<p>Bayesian network 通过 DAG 把联合分布分解为局部条件分布；d-separation 告诉我们哪些条件独立关系由图结构保证。Markov random field 通过 clique potentials 表达局部相容性；graph separation 给出无向图中的条件独立关系。Factor graph 则把因子化结构直接暴露给算法，使 sum-product 与 max-sum 可以通过局部消息完成边缘化或 MAP 推断。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="继续往后读">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>继续往后读
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>后续章节中的很多模型都可以重新放回本章框架中理解：mixture models 是带离散潜变量的图模型，hidden Markov models 是链式图模型，linear dynamical systems 是 linear-Gaussian 图模型，variational inference 和 sampling methods 则是在精确消息传递不可行时处理复杂图模型的近似推断工具。</p>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script>
+(function () {
+  function makeProofsCollapsible() {
+    const proofs = document.querySelectorAll("div.proof");
+
+    proofs.forEach(function (proof) {
+      if (proof.dataset.collapsibleReady === "true") return;
+
+      const details = document.createElement("details");
+
+      details.className = proof.className;
+      details.classList.add("proof-collapsible");
+      details.dataset.collapsibleReady = "true";
+
+      if (proof.id) {
+        details.id = proof.id;
+      }
+
+      details.open = proof.classList.contains("open");
+
+      const summary = document.createElement("summary");
+      const title = proof.querySelector(".proof-title");
+
+      if (title) {
+        summary.innerHTML = title.innerHTML;
+        title.remove();
+      } else {
+        summary.innerHTML = "<strong>Proof</strong>";
+      }
+
+      details.appendChild(summary);
+
+      while (proof.firstChild) {
+        details.appendChild(proof.firstChild);
+      }
+
+      proof.replaceWith(details);
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", makeProofsCollapsible);
+  } else {
+    makeProofsCollapsible();
+  }
+})();
+</script>
+<script>
+(function () {
+  function fixTheoremTitleSpacing() {
+    const titleSelectors = [
+      ".theorem-title",
+      ".lemma-title",
+      ".corollary-title",
+      ".proposition-title",
+      ".conjecture-title",
+      ".definition-title",
+      ".example-title",
+      ".exercise-title",
+      ".solution-title",
+      ".remark-title",
+      ".algorithm-title",
+      ".proof-title"
+    ].join(",");
+
+    document.querySelectorAll(titleSelectors).forEach(function (title) {
+      const p = title.parentElement;
+
+      if (!p || p.tagName.toLowerCase() !== "p") return;
+
+      /*
+        Quarto/Pandoc often inserts a text node like:
+        <p><span class="theorem-title">...</span>&nbsp;</p>
+
+        Remove whitespace-only text nodes, including non-breaking spaces.
+      */
+      Array.from(p.childNodes).forEach(function (node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          const cleaned = node.textContent.replace(/\u00a0/g, " ").trim();
+          if (cleaned === "") {
+            node.remove();
+          }
+        }
+      });
+
+      p.classList.add("math-env-title-p");
+
+      /*
+        If the paragraph only contains the title span after cleanup,
+        mark it as title-only.
+      */
+      const meaningfulChildren = Array.from(p.childNodes).filter(function (node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          return node.textContent.replace(/\u00a0/g, " ").trim() !== "";
+        }
+        return true;
+      });
+
+      if (meaningfulChildren.length === 1 && meaningfulChildren[0] === title) {
+        p.classList.add("math-env-title-only");
+      }
+
+      /*
+        If the title-only paragraph is followed by a list,
+        compress the gap between title and list.
+      */
+      const next = p.nextElementSibling;
+      if (
+        p.classList.contains("math-env-title-only") &&
+        next &&
+        (next.tagName.toLowerCase() === "ol" || next.tagName.toLowerCase() === "ul")
+      ) {
+        p.classList.add("math-env-title-before-list");
+      }
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", fixTheoremTitleSpacing);
+  } else {
+    fixTheoremTitleSpacing();
+  }
+})();
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "已复制");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "已复制");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/luyiyun\.github\.io\/Notes\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<input type="hidden" id="giscus-base-theme" value="light">
+<input type="hidden" id="giscus-alt-theme" value="dark_dimmed">
+<script>
+  function loadGiscus() {
+    // Function to get the theme based on body class
+    const getTheme = () => {
+      let baseTheme = document.getElementById('giscus-base-theme').value;
+      let altTheme = document.getElementById('giscus-alt-theme').value;
+      return document.body.classList.contains('quarto-dark') ? altTheme : baseTheme;
+    };
+    const script = document.createElement("script");
+    script.src = "https://giscus.app/client.js";
+    script.async = true;
+    script.dataset.repo = "luyiyun/Notes-comments";
+    script.dataset.repoId = "R_kgDOScB5XQ";
+    script.dataset.category = "Announcements";
+    script.dataset.categoryId = "DIC_kwDOScB5Xc4C87kL";
+    script.dataset.mapping = "pathname";
+    script.dataset.reactionsEnabled = "1";
+    script.dataset.emitMetadata = "0";
+    script.dataset.inputPosition = "bottom";
+    script.dataset.theme = getTheme();
+    script.dataset.lang = "zh-CN";
+    script.crossOrigin = "anonymous";
+    // Append the script to the desired div instead of at the end of the body
+    document.getElementById("quarto-content").appendChild(script);
+  }
+  loadGiscus();
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
