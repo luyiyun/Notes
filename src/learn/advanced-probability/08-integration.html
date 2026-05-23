@@ -417,7 +417,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">修改于</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">2026年5月22日</p>
+      <p class="date-modified">2026年5月23日</p>
     </div>
   </div>
     
@@ -634,8 +634,8 @@ f_{n}\uparrow &amp;\implies A_{n}(\alpha)\uparrow \\
 <section id="积分存在和可积性的相关性质" class="level2">
 <h2 class="anchored" data-anchor-id="积分存在和可积性的相关性质">积分存在和可积性的相关性质</h2>
 <p>根据上面的定义，我们知道，讨论函数的积分，需要先讨论函数积分是否存在。因此，这里我们将先去讨论一下函数积分存在（可积）相关的一些性质和重要结论。</p>
-<div id="thm-inte-exists" class="theorem">
-<p><span class="theorem-title"><strong>定理 2 (积分存在 (可积) 的性质)</strong></span> 设 <span class="math inline">\(f,g\)</span> 是测度空间 <span class="math inline">\((X,\mathcal{F},\mu)\)</span> 上的可测函数，则</p>
+<div id="prp-inte-exists" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 3 (积分存在 (可积) 的性质)</strong></span> 设 <span class="math inline">\(f,g\)</span> 是测度空间 <span class="math inline">\((X,\mathcal{F},\mu)\)</span> 上的可测函数，则</p>
 <ol type="1">
 <li>若 <span class="math inline">\(f\)</span> 积分存在，则 <span class="math inline">\(|\int _{X}f \, d\mu|\leq\int _{X}|f| \, d\mu\)</span>;</li>
 <li><span class="math inline">\(f\)</span> 可积，当且仅当 <span class="math inline">\(|f|\)</span> 可积;</li>
@@ -649,18 +649,13 @@ f_{n}\uparrow &amp;\implies A_{n}(\alpha)\uparrow \\
 </ol>
 </div>
 <div class="proof">
-<p><span class="proof-title"><em>证明</em>. </span></p>
-<ol type="1">
-<li>根据 <a href="#prp-inte-noneg-func" class="quarto-xref">命题&nbsp;2</a> (7)，有</li>
-</ol>
+<p><span class="proof-title"><em>证明</em>. </span><strong>(1)</strong> 根据 <a href="#prp-inte-noneg-func" class="quarto-xref">命题&nbsp;2</a> (7)，有</p>
 <p><span class="math display">\[
 \left|\int _{X}f \, d\mu \right|=\left|\int _{X}f^{+} \, d\mu -\int _{X}f^{-} \, d\mu \right|
 \leq \max\left\{  \int _{X}f^{+} \, d\mu,\int _{X}f^{-} \, d\mu    \right\}
 \leq \int _{X}\left| f \right|  \, d\mu.
 \]</span></p>
-<ol start="2" type="1">
-<li>同样根据 <a href="#prp-inte-noneg-func" class="quarto-xref">命题&nbsp;2</a> (7)，我们有</li>
-</ol>
+<p><strong>(2)</strong> 同样根据 <a href="#prp-inte-noneg-func" class="quarto-xref">命题&nbsp;2</a> (7)，我们有</p>
 <p><span class="math display">\[
 \max\left\{  \int _{X}f^{+} \, d\mu,\int _{X}f^{-} \, d\mu    \right\}
 \leq \int _{X}\left| f \right|  \, d\mu,
@@ -669,11 +664,14 @@ f_{n}\uparrow &amp;\implies A_{n}(\alpha)\uparrow \\
 <p><span class="math display">\[
 \int _{X}\left| f \right|  \, d\mu=\int _{X}f^{+} \, d\mu+\int _{X}f^{-} \, d\mu&lt;\infty  ,
 \]</span></p>
-<p>因此 <span class="math inline">\(|f|\)</span> 可积。 (3) 我们只需要证明对于所有的非负可测函数成立 (3) 即可。使用反证法，若不成立，则表明 <span class="math inline">\(\mu u(f=\infty)&gt;0\)</span> ，则有</p>
+<p>因此 <span class="math inline">\(|f|\)</span> 可积。</p>
+<p><strong>(3)</strong> 我们只需要证明对于所有的非负可测函数成立 (3) 即可。使用反证法，若不成立，则表明 <span class="math inline">\(\mu u(f=\infty)&gt;0\)</span> ，则有</p>
 <p><span class="math display">\[
 \int _{X}f \, d\mu\geq \int _{X}fI_{f=\infty} \, d\mu\geq n\mu(f=\infty)  ,
 \]</span></p>
-<p>其中 <span class="math inline">\(n\)</span> 可以任意大，这显然与 <span class="math inline">\(|f|\)</span> 可积矛盾。 (4) 使用典型方法，容易证明当 <span class="math inline">\(f\)</span> 是简单函数时成立。利用 <a href="#prp-inte-noneg-func" class="quarto-xref">命题&nbsp;2</a> (2) 可以证明 <span class="math inline">\(f\)</span> 是非负可测函数时也成立。再利用一般可测函数积分的定义得到最终的证明。 (5) 我们先证明 <span class="math inline">\(f,g\geq 0\)</span> 的情况。令 <span class="math inline">\(A={f&lt;g}\)</span>，则由条件可知 <span class="math inline">\(\mu(A)=0\)</span> ，有 (4) 的结论可知</p>
+<p>其中 <span class="math inline">\(n\)</span> 可以任意大，这显然与 <span class="math inline">\(|f|\)</span> 可积矛盾。</p>
+<p><strong>(4)</strong> 使用典型方法，容易证明当 <span class="math inline">\(f\)</span> 是简单函数时成立。利用 <a href="#prp-inte-noneg-func" class="quarto-xref">命题&nbsp;2</a> (2) 可以证明 <span class="math inline">\(f\)</span> 是非负可测函数时也成立。再利用一般可测函数积分的定义得到最终的证明。</p>
+<p><strong>(5)</strong> 我们先证明 <span class="math inline">\(f,g\geq 0\)</span> 的情况。令 <span class="math inline">\(A={f&lt;g}\)</span>，则由条件可知 <span class="math inline">\(\mu(A)=0\)</span> ，有 (4) 的结论可知</p>
 <p><span class="math display">\[
 \begin{align}
 \int _{X}f \, d\mu &amp;=\int _{X}fI_{A} \, d\mu +\int _{X}fI_{A^{c}} \, d\mu \\
@@ -684,12 +682,12 @@ f_{n}\uparrow &amp;\implies A_{n}(\alpha)\uparrow \\
 \end{align}
 \]</span></p>
 <p>其中 1、5 行源于 <a href="#prp-inte-noneg-func" class="quarto-xref">命题&nbsp;2</a> (6)，第 2、4 行源于本定理的 (4)，第 3 行源于 <a href="#prp-inte-noneg-func" class="quarto-xref">命题&nbsp;2</a> (7) 。 现在讨论一般情况，<span class="math inline">\(f\geq g\)</span> a.e.，蕴含 <span class="math inline">\(f^{+}\geq g^{+}\)</span> a.e.和 <span class="math inline">\(f^{-}\leq g^{-}\)</span> a.e.，进而由刚才证明的情况，得到</p>
-<p><span class="math display">\[
+<p><span id="eq-c43562"><span class="math display">\[
 \int _{X}f^{+} \, d\mu\geq \int _{X}g^{+} \, d\mu,\
 \int _{X}f^{-} \, d\mu\leq \int _{X}g^{-} \, d\mu .
-\]</span></p>
-<p><span id="c43562"></span></p>
-<p>进而根据一般可测函数积分的定义得到我们最终要证明的结果。 (6) 注意 (5) 的证明中，得到式 <a href="#c43562">c43562</a> 的过程不需要 <span class="math inline">\(f,g\)</span> 的积分存在性。则由</p>
+\tag{2}\]</span></span></p>
+<p>进而根据一般可测函数积分的定义得到我们最终要证明的结果。</p>
+<p><strong>(6)</strong> 注意 (5) 的证明中，得到式 <a href="#eq-c43562" class="quarto-xref">式&nbsp;2</a> 的过程不需要 <span class="math inline">\(f,g\)</span> 的积分存在性。则由</p>
 <p><span class="math display">\[
 f=g\ a.e.\implies f\geq g,g\leq f\ a.\mathbf{e}
 \]</span></p>
@@ -698,7 +696,8 @@ f=g\ a.e.\implies f\geq g,g\leq f\ a.\mathbf{e}
 \int _{X}f^{+} \, d\mu= \int _{X}g^{+} \, d\mu,\
 \int _{X}f^{-} \, d\mu= \int _{X}g^{-} \, d\mu ,
 \]</span></p>
-<p>这意味着 <span class="math inline">\(f\)</span> 和 <span class="math inline">\(g\)</span> 的积分是同时存在且相同的。 (7) 第一部分直接由 (6) 得到。第二部分的证明采用反证法，这意味 <span class="math inline">\(\mu(f&gt;0)=\mu\left( \bigcup_{i=1}^{n}\{ f\geq 1/n \} \right)&gt;0\)</span>。这意味着必然存在一个 <span class="math inline">\(n_{0}\)</span>，使得</p>
+<p>这意味着 <span class="math inline">\(f\)</span> 和 <span class="math inline">\(g\)</span> 的积分是同时存在且相同的。</p>
+<p><strong>(7)</strong> 第一部分直接由 (6) 得到。第二部分的证明采用反证法，这意味 <span class="math inline">\(\mu(f&gt;0)=\mu\left( \bigcup_{i=1}^{n}\{ f\geq 1/n \} \right)&gt;0\)</span>。这意味着必然存在一个 <span class="math inline">\(n_{0}\)</span>，使得</p>
 <p><span class="math display">\[
 \mu(f\geq 1/n_{0})&gt;0,
 \]</span></p>
@@ -713,7 +712,7 @@ f=g\ a.e.\implies f\geq g,g\leq f\ a.\mathbf{e}
 \]</span></p>
 <p>出现矛盾，命题得证。</p>
 </div>
-<p><strong>?@prp-inte-exists</strong> (6) 表达了一个非常重要的观点：<strong>任意涂改一个可测函数在零测集上的值不会影响积分的存在性、可积性和积分值</strong>。因此根据这个，我们可以将积分的定义进行扩充。</p>
+<p><a href="#prp-inte-exists" class="quarto-xref">命题&nbsp;3</a> (6) 表达了一个非常重要的观点：<strong>任意涂改一个可测函数在零测集上的值不会影响积分的存在性、可积性和积分值</strong>。因此根据这个，我们可以将积分的定义进行扩充。</p>
 <div id="def-inte-func-general" class="theorem definition">
 <p><span class="theorem-title"><strong>定义 6 (广义上的积分)</strong></span> 若 <span class="math inline">\(f\)</span> 是一个 a.e.定义的可测函数（可以在某个零测集上的没有定义），另外还有一个函数 <span class="math inline">\(\tilde{f}\)</span> 满足 <span class="math inline">\(\mu(f\neq \tilde{f})=0\)</span>，若 <span class="math inline">\(\tilde{f}\)</span> 的积分存在，则我们就认为 <span class="math inline">\(f\)</span> 积分存在，并将积分定义为</p>
 <p><span class="math display">\[
@@ -723,7 +722,7 @@ f=g\ a.e.\implies f\geq g,g\leq f\ a.\mathbf{e}
 <p><strong>从此之后，我们讨论的可测函数的积分，均可以理解为 a.e.定义的可测函数积分。</strong></p>
 <p>这里我们再补充一个推论, 用于更好地讨论后面的情况.</p>
 <div id="prp-integrable-exists" class="theorem proposition">
-<p><span class="theorem-title"><strong>命题 3 (可积性保证积分存在)</strong></span> 设 <span class="math inline">\(f,g\)</span> 是测度空间 <span class="math inline">\((X,\mathcal{F},\mu)\)</span> 上的两个可测函数，则若存在</p>
+<p><span class="theorem-title"><strong>命题 4 (可积性保证积分存在)</strong></span> 设 <span class="math inline">\(f,g\)</span> 是测度空间 <span class="math inline">\((X,\mathcal{F},\mu)\)</span> 上的两个可测函数，则若存在</p>
 <p><span class="math display">\[
 f\geq g\ a.e.,
 \]</span></p>
@@ -750,21 +749,22 @@ f\geq g\ a.e.,
 \int _{\{ f&lt;0 \}}\lvert g \rvert  \, d\mu &lt;\infty.
 \]</span></p>
 <p>这也证明了 <span class="math inline">\(f\)</span> 一定积分存在.</p>
-<p>再根据 <strong>?@prp-inte-exists</strong> (5), 得到第二个不等式.</p>
+<p>再根据 <a href="#prp-inte-exists" class="quarto-xref">命题&nbsp;3</a> (5), 得到第二个不等式.</p>
 </div>
 </section>
 <section id="线性性质" class="level2">
 <h2 class="anchored" data-anchor-id="线性性质">线性性质</h2>
-<div id="thm-linear" class="theorem">
-<p><span class="theorem-title"><strong>定理 3 (积分的线性性质)</strong></span> 设 <span class="math inline">\(f,g\)</span> 是测度空间 <span class="math inline">\((X,\mathcal{F},\mu)\)</span> 上积分存在的两个可测函数，则 (1) <span class="math inline">\(\forall a\in\mathbb{R}\)</span>，<span class="math inline">\(af\)</span> 积分存在且 <span class="math inline">\(\int _{X}af \, d\mu=a\int _{X}f \, d\mu\)</span>; (2) 若 <span class="math inline">\(\int _{X}f \, d\mu+\int _{X}g \, d\mu\)</span> 有意义，则 <span class="math inline">\(f+g\)</span> a.e.有定义，积分存在，且</p>
-<p>$$</p>
-<p><em>{X}f+g , d=</em>{X}f , d+_{X}g , d. $$</p>
+<div id="prp-linear" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 5 (积分的线性性质)</strong></span> 设 <span class="math inline">\(f,g\)</span> 是测度空间 <span class="math inline">\((X,\mathcal{F},\mu)\)</span> 上积分存在的两个可测函数，则</p>
+<ol type="1">
+<li><span class="math inline">\(\forall a\in\mathbb{R}\)</span>，<span class="math inline">\(af\)</span> 积分存在且 <span class="math inline">\(\int _{X}af \, d\mu=a\int _{X}f \, d\mu\)</span>;</li>
+<li>若 <span class="math inline">\(\int _{X}f \, d\mu+\int _{X}g \, d\mu\)</span> 有意义，则 <span class="math inline">\(f+g\)</span> a.e.有定义，积分存在，且 <span class="math display">\[
+  \int _{X}f+g \, d\mu =\int _{X}f \, d\mu +\int _{X}g \, d\mu .
+  \]</span></li>
+</ol>
 </div>
 <div class="proof">
-<p><span class="proof-title"><em>证明</em>. </span></p>
-<ol type="1">
-<li>当 <span class="math inline">\(a\geq0\)</span> 且 <span class="math inline">\(f\)</span> 是非负可测函数时，由 <a href="#prp-inte-noneg-func" class="quarto-xref">命题&nbsp;2</a> 知命题成立。若 <span class="math inline">\(a\geq 0\)</span> 且 <span class="math inline">\(f\)</span> 是一般可测函数时，我们有</li>
-</ol>
+<p><span class="proof-title"><em>证明</em>. </span><strong>(1)</strong> 当 <span class="math inline">\(a\geq0\)</span> 且 <span class="math inline">\(f\)</span> 是非负可测函数时，由 <a href="#prp-inte-noneg-func" class="quarto-xref">命题&nbsp;2</a> 知命题成立。若 <span class="math inline">\(a\geq 0\)</span> 且 <span class="math inline">\(f\)</span> 是一般可测函数时，我们有</p>
 <p><span class="math display">\[
 (af)^{+}=af^{+}, (af)^{-}=af^{-},
 \]</span></p>
@@ -781,7 +781,8 @@ f\geq g\ a.e.,
 <p><span class="math display">\[
 (af)^{+}=(-a)f^{-}, (af)^{-}=(-a)f^{+},
 \]</span></p>
-<p>因此使用相同的思路可以证明 <span class="math inline">\(af\)</span> 积分存在且等式成立。 (2) 该定理的证明有些复杂，我们分为三步走。 <strong>第一步</strong> 若 <span class="math inline">\(f,g\geq 0\)</span> a.e.，且两者均可积，<span class="math inline">\(f-g\)</span> a.e.有定义，则 <span class="math inline">\(f-g\)</span> 积分存在且</p>
+<p>因此使用相同的思路可以证明 <span class="math inline">\(af\)</span> 积分存在且等式成立。</p>
+<p><strong>(2)</strong> 该定理的证明有些复杂，我们分为三步走。 <strong>第一步</strong> 若 <span class="math inline">\(f,g\geq 0\)</span> a.e.，且两者均可积，<span class="math inline">\(f-g\)</span> a.e.有定义，则 <span class="math inline">\(f-g\)</span> 积分存在且</p>
 <p><span class="math display">\[
 \int _{X}(f-g) \, d\mu=\int _{X}f \, d\mu-\int _{X}g \, d\mu   .
 \]</span></p>
@@ -793,10 +794,9 @@ f\geq g\ a.e.,
 \end{align}
 \]</span></p>
 <p>由 <a href="#prp-inte-noneg-func" class="quarto-xref">命题&nbsp;2</a> (7) 可以知道</p>
-<p><span class="math display">\[
+<p><span id="eq-f7807f"><span class="math display">\[
 \min\left\{  \int _{X}(f-g)^{+} \, d\mu,\int _{X}(f-g)^{-} \, d\mu    \right\}\leq \min\left\{  \int _{X}f \, d\mu,\int _{X}g \, d\mu    \right\}&lt;\infty.
-\]</span></p>
-<p><span id="f7807f"></span></p>
+\tag{3}\]</span></span></p>
 <p>因此，<span class="math inline">\(f-g\)</span> 积分存在。 注意到有如下等式</p>
 <p><span class="math display">\[
 f-g=(f-g)^{+}-(f-g)^{-}\ a.e. \implies
@@ -806,7 +806,7 @@ f+(f-g)^{-}=(f-g)^{+}+g\ a.e.,
 <p><span class="math display">\[
 \int _{X}f \, d\mu +\int _{X}(f-g)^{-} \, d\mu=\int _{X}g \, d\mu+\int _{X}(f-g)^{+} \, d\mu ,
 \]</span></p>
-<p>加上式 <a href="#f7807f">f7807f</a>， 进而有</p>
+<p>加上式 <a href="#eq-f7807f" class="quarto-xref">式&nbsp;3</a>， 进而有</p>
 <p><span class="math display">\[
 \begin{align}
 \int _{X}(f-g) \, d\mu&amp;=\int _{X}(f-g)^{+} \, dx -\int _{X}(f-g)^{-} \, d\mu \\
@@ -814,12 +814,11 @@ f+(f-g)^{-}=(f-g)^{+}+g\ a.e.,
 \end{align}
 \]</span></p>
 <p><strong>第二步</strong> 若 <span class="math inline">\(\int _{X}f \, d\mu+\int _{X}g \, d\mu\)</span> 有意义，则 <span class="math inline">\((f^{+}+g^{+})-(f^{-}+g^{-})\)</span> a.e. 有意义，并且</p>
-<p><span class="math display">\[
+<p><span id="eq-334006"><span class="math display">\[
 \min\left\{  \int _{X}(f^{+}+g^{+}) \, d\mu,
 \int _{X}(f^{-}+g^{-}) \, d\mu
    \right\} &lt; \infty.
-\]</span></p>
-<p><span id="334006"></span></p>
+\tag{4}\]</span></span></p>
 <p><strong>证</strong>: 我们首先使用反证法证明 <span class="math inline">\((f^{+}+g^{+})-(f^{-}+g^{-})\)</span> a.e. 有意义。现在假设其不成立，则表示</p>
 <p><span class="math display">\[
 \mu(\{ (f^{+}+g^{+})=\infty,(f^{-}+g^{-})=\infty \})&gt;0,
@@ -852,7 +851,7 @@ f+(f-g)^{-}=(f-g)^{+}+g\ a.e.,
 <p><span class="math display">\[
 \mu(\{ (f^{+}+g^{+})=\infty,(f^{-}+g^{-})=\infty \})=0,
 \]</span></p>
-<p>这与假设不符，出现矛盾。 进而我们再来证明式 <a href="#334006">334006</a>。这只需要证明以下两个命题成立</p>
+<p>这与假设不符，出现矛盾。 进而我们再来证明式 <a href="#eq-334006" class="quarto-xref">式&nbsp;4</a>。这只需要证明以下两个命题成立</p>
 <p><span class="math display">\[
 \begin{align}
 &amp;\int _{X}(f^{+}+g^{+}) \, d \mu=\infty\implies
@@ -883,20 +882,27 @@ f+(f-g)^{-}=(f-g)^{+}+g\ a.e.,
 &amp;=\int _{X}f \, d\mu+\int _{X}g \, d\mu,
 \end{align}
 \]</span></p>
-<p>其中第二行能够成立是因为式 <a href="#334006">334006</a> 的成立，第三行成立是因为第一步的结论，第四行是因为 <a href="#prp-inte-noneg-func" class="quarto-xref">命题&nbsp;2</a> (6)，定理证毕。</p>
+<p>其中第二行能够成立是因为式 <a href="#eq-334006" class="quarto-xref">式&nbsp;4</a> 的成立，第三行成立是因为第一步的结论，第四行是因为 <a href="#prp-inte-noneg-func" class="quarto-xref">命题&nbsp;2</a> (6)，定理证毕。</p>
 </div>
 </section>
 <section id="序关系性质" class="level2">
 <h2 class="anchored" data-anchor-id="序关系性质">序关系性质</h2>
 <div id="thm-order" class="theorem">
-<p><span class="theorem-title"><strong>定理 4 (序关系)</strong></span> 设 <span class="math inline">\(f,g\)</span> 是测度空间 <span class="math inline">\((X,\mathcal{F},\mu)\)</span> 上的可测函数，则 (1) 若 <span class="math inline">\(f,g\)</span> 积分存在且 <span class="math inline">\(f\geq g\)</span> a.e.，则 <span class="math inline">\(\int _{X}f \, d\mu\geq \int _{X}g \, d\mu\)</span>; (2) 若 <span class="math inline">\(f=g\)</span> a.e.，则其中一个积分存在 (可积)，另一个也积分存在 (可积)，并且两个的积分值相同； (3) 若 <span class="math inline">\(f=0\)</span> a.e.，则 <span class="math inline">\(\int _{X}f \, d\mu=0\)</span>；若 <span class="math inline">\(\int _{X}f \, d\mu=0\)</span>，且 <span class="math inline">\(f\geq 0\)</span> a.e.，则 <span class="math inline">\(f=0\)</span> a.e.； (4) 若 <span class="math inline">\(\int _{A}f \, d\mu\geq \int _{A}g \, d\mu\)</span> 对每个 <span class="math inline">\(A\in\mathcal{F}\)</span> 都成立，则 <span class="math inline">\(f\geq g\)</span> a.e.； (5) 若 <span class="math inline">\(\int _{A}f \, d\mu= \int _{A}g \, d\mu\)</span> 对每个 <span class="math inline">\(A\in\mathcal{F}\)</span> 都成立，则 <span class="math inline">\(f= g\)</span> a.e.；</p>
+<p><span class="theorem-title"><strong>定理 2 (序关系)</strong></span> 设 <span class="math inline">\(f,g\)</span> 是测度空间 <span class="math inline">\((X,\mathcal{F},\mu)\)</span> 上的可测函数，则</p>
+<ol type="1">
+<li>若 <span class="math inline">\(f,g\)</span> 积分存在且 <span class="math inline">\(f\geq g\)</span> a.e.，则 <span class="math inline">\(\int _{X}f \, d\mu\geq \int _{X}g \, d\mu\)</span>;</li>
+<li>若 <span class="math inline">\(f=g\)</span> a.e.，则其中一个积分存在 (可积)，另一个也积分存在 (可积)，并且两个的积分值相同；</li>
+<li>若 <span class="math inline">\(f=0\)</span> a.e.，则 <span class="math inline">\(\int _{X}f \, d\mu=0\)</span>；若 <span class="math inline">\(\int _{X}f \, d\mu=0\)</span>，且 <span class="math inline">\(f\geq 0\)</span> a.e.，则 <span class="math inline">\(f=0\)</span> a.e.；</li>
+<li>若 <span class="math inline">\(\int _{A}f \, d\mu\geq \int _{A}g \, d\mu\)</span> 对每个 <span class="math inline">\(A\in\mathcal{F}\)</span> 都成立，则 <span class="math inline">\(f\geq g\)</span> a.e.；</li>
+<li>若 <span class="math inline">\(\int _{A}f \, d\mu= \int _{A}g \, d\mu\)</span> 对每个 <span class="math inline">\(A\in\mathcal{F}\)</span> 都成立，则 <span class="math inline">\(f= g\)</span> a.e.；</li>
+</ol>
 </div>
 <div class="proof">
-<p><span class="proof-title"><em>证明</em>. </span>其中第 (1)-(3) 条对应于 <strong>?@prp-inte-exists</strong> 的 (5)-(7) 条，这里只是将其重新归类到此处。 (4) 可以直接推出 (5)，所以我们只需要证明 (4) 即可。 令 <span class="math inline">\(B=\{ f&lt;g \}\)</span> ，则由 <a href="#prp-inte-noneg-func" class="quarto-xref">命题&nbsp;2</a> (4) 有</p>
+<p><span class="proof-title"><em>证明</em>. </span>其中第 (1)-(3) 条对应于 <a href="#prp-inte-exists" class="quarto-xref">命题&nbsp;3</a> 的 (5)-(7) 条，这里只是将其重新归类到此处。 (4) 可以直接推出 (5)，所以我们只需要证明 (4) 即可。 令 <span class="math inline">\(B=\{ f&lt;g \}\)</span> ，则由 <a href="#prp-inte-noneg-func" class="quarto-xref">命题&nbsp;2</a> (4) 有</p>
 <p><span class="math display">\[
 \int _{B}(g-f) \, d \mu=\int _{X}(g-f)I_{B} \, d\mu\geq 0，
 \]</span></p>
-<p>又由 <strong>?@prp-linear</strong> (2) 以及命题条件可知</p>
+<p>又由 <a href="#prp-linear" class="quarto-xref">命题&nbsp;5</a> (2) 以及命题条件可知</p>
 <p><span class="math display">\[
 \int _{B}(g-f) \, d\mu=\int _{B}g \, d\mu-\int _{B}f \, d\mu\leq 0,
 \]</span></p>
@@ -910,7 +916,7 @@ f+(f-g)^{-}=(f-g)^{+}+g\ a.e.,
 <section id="绝对连续性" class="level2">
 <h2 class="anchored" data-anchor-id="绝对连续性">绝对连续性</h2>
 <div id="thm-9b6249" class="theorem">
-<p><span class="theorem-title"><strong>定理 5 (绝对连续性)</strong></span> 若 <span class="math inline">\(f\)</span> 可积，则 <span class="math inline">\(\forall \epsilon&gt;0,\exists\delta&gt;0\)</span> ，使得 <span class="math inline">\(\forall A\in\mathcal{F},\mu(A)&lt;\delta\)</span>，有</p>
+<p><span class="theorem-title"><strong>定理 3 (绝对连续性)</strong></span> 若 <span class="math inline">\(f\)</span> 可积，则 <span class="math inline">\(\forall \epsilon&gt;0,\exists\delta&gt;0\)</span> ，使得 <span class="math inline">\(\forall A\in\mathcal{F},\mu(A)&lt;\delta\)</span>，有</p>
 <p><span class="math display">\[
 \int _{A}\left| f \right|  \, d\mu&lt;\epsilon.
 \]</span></p>
@@ -929,7 +935,7 @@ f+(f-g)^{-}=(f-g)^{+}+g\ a.e.,
 </div>
 </div>
 <div class="proof">
-<p><span class="proof-title"><em>证明</em>. </span>由 <strong>?@prp-inte-exists</strong> (2) 可知，<span class="math inline">\(\left| f \right|\)</span> 可积，可以找到非负简单函数 <span class="math inline">\(g_{n}\uparrow |f|\)</span>，使得</p>
+<p><span class="proof-title"><em>证明</em>. </span>由 <a href="#prp-inte-exists" class="quarto-xref">命题&nbsp;3</a> (2) 可知，<span class="math inline">\(\left| f \right|\)</span> 可积，可以找到非负简单函数 <span class="math inline">\(g_{n}\uparrow |f|\)</span>，使得</p>
 <p><span class="math display">\[
 \lim_{ n \to \infty } \int _{X}g_{n} \, d\mu\uparrow \int _{X}|f| \, d\mu.
 \]</span></p>
@@ -965,40 +971,39 @@ f+(f-g)^{-}=(f-g)^{+}+g\ a.e.,
 <section id="单调收敛定理" class="level3">
 <h3 class="anchored" data-anchor-id="单调收敛定理">单调收敛定理</h3>
 <div id="thm-mct" class="theorem">
-<p><span class="theorem-title"><strong>定理 6 (单调收敛定理, Levi 定理, MCT)</strong></span> <span class="math inline">\(\{ f_{n},n=1,2,\dots \}\)</span> 和 <span class="math inline">\(f\)</span> 均为 a.e.非负可测函数，若 <span class="math inline">\(f_{n}\uparrow f\)</span> a.e.，则</p>
+<p><span class="theorem-title"><strong>定理 4 (单调收敛定理, Levi 定理, MCT)</strong></span> <span class="math inline">\(\{ f_{n},n=1,2,\dots \}\)</span> 和 <span class="math inline">\(f\)</span> 均为 a.e.非负可测函数，若 <span class="math inline">\(f_{n}\uparrow f\)</span> a.e.，则</p>
 <p><span class="math display">\[
 \int _{X}f_{n} \, d\mu\uparrow \int _{X}f \, d\mu
 \]</span></p>
 </div>
 <div class="proof">
-<p><span class="proof-title"><em>证明</em>. </span>根据 <strong>?@prp-inte-exists</strong> (6) ，我们不妨认为 <span class="math inline">\(f_{n}\uparrow f\)</span>。<span class="math inline">\(\forall n\)</span>，根据 <a href="../../../src/learn/advanced-probability/07-measurable-functions.html#thm-simple-func-converge">简单函数逼近</a> 和 <a href="#prp-inte-noneg-func" class="quarto-xref">命题&nbsp;2</a> (2)，可以找到 <span class="math inline">\(\{ f_{n,k},k=1,\dots \}\)</span>，且满足</p>
+<p><span class="proof-title"><em>证明</em>. </span>根据 <a href="#prp-inte-exists" class="quarto-xref">命题&nbsp;3</a> (6) ，我们不妨认为 <span class="math inline">\(f_{n}\uparrow f\)</span>。<span class="math inline">\(\forall n\)</span>，根据 <a href="../../../src/learn/advanced-probability/07-measurable-functions.html#thm-simple-func-converge">简单函数逼近</a> 和 <a href="#prp-inte-noneg-func" class="quarto-xref">命题&nbsp;2</a> (2)，可以找到 <span class="math inline">\(\{ f_{n,k},k=1,\dots \}\)</span>，且满足</p>
 <p><span class="math display">\[
 f_{n,k}\uparrow f_{n}.
 \]</span></p>
-<p>令 <span class="math inline">\(g_{k}=\max_{1\leq n\leq k}f_{n,k}\)</span>，则 (1) <span class="math inline">\(g_{k}\)</span> 是非负简单函数； (2) 由于</p>
+<p>令 <span class="math inline">\(g_{k}=\max_{1\leq n\leq k}f_{n,k}\)</span>，则</p>
+<p><strong>(1)</strong> <span class="math inline">\(g_{k}\)</span> 是非负简单函数；</p>
+<p><strong>(2)</strong> 由于</p>
 <p><span class="math display">\[
 g_{k}=\mathop{\max}_{1\leq n\leq k}f_{n,k}\leq
 \mathop{\max}_{1\leq n\leq k}f_{n,k+1}\leq
 \mathop{\max}_{1\leq n\leq k+1}f_{n,k+1}=g_{k+1},
 \]</span></p>
-<p>所以，<span class="math inline">\(g_{k}\uparrow\)</span> 。 (3) 又因为</p>
+<p>所以，<span class="math inline">\(g_{k}\uparrow\)</span> 。</p>
+<p><strong>(3)</strong> 又因为</p>
 <p><span class="math display">\[
 g_{k}=\mathop{\max}_{1\leq n\leq k}f_{n,k}\leq
 \mathop{\max}_{1\leq n\leq k}f_{n} =f_{k},
 \]</span></p>
 <p>所以有</p>
-<p><span class="math display">\[
+<p><span id="eq-710f62"><span class="math display">\[
 \int _{X}g_{k} \, d\mu\leq \int _{X}f_{k} \, d\mu\leq \int _{X}f \, d\mu,\quad \forall k=1,2,\dots,
-\]</span></p>
-<p><span id="710f62"></span></p>
+\tag{5}\]</span></span></p>
 <p>并且有</p>
-<p><span class="math display">\[
+<p><span id="eq-e53eb1"><span class="math display">\[
 \lim_{ k \to \infty } g_{k}\leq \lim_{ k \to \infty } f_{k}=f.
-\]</span></p>
-<p><span id="e53eb1"></span></p>
-<ol start="4" type="1">
-<li>还有</li>
-</ol>
+\tag{6}\]</span></span></p>
+<p><strong>(4)</strong> 还有</p>
 <p><span class="math display">\[
 g_{k}=\mathop{\max}_{1\leq n\leq k}f_{n,k}\geq f_{n,k},
 \]</span></p>
@@ -1007,36 +1012,20 @@ g_{k}=\mathop{\max}_{1\leq n\leq k}f_{n,k}\geq f_{n,k},
 \lim_{ k \to \infty } g_{k}\geq \lim_{ k \to \infty } f_{n,k}=f_{n},\quad \forall n,
 \]</span></p>
 <p>因此</p>
-<p><span class="math display">\[
+<p><span id="eq-1bea85"><span class="math display">\[
 \lim_{ k \to \infty } g_{k}\geq \lim_{ n \to \infty } f_{n}=f.
-\]</span></p>
-<p><span id="1bea85"></span></p>
-<div class="callout callout-style-default callout-note callout-titled" title="图像说明">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
+\tag{7}\]</span></span></p>
+<div id="fig-levi-proof" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-levi-proof-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/levi-proof-20260523-092609.png" class="img-fluid figure-img" style="width:70.0%">
 </div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">注记</span>图像说明
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-levi-proof-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;1 证明思路
+</figcaption>
+</figure>
 </div>
-</div>
-<div class="callout-body-container callout-body">
-<div class="callout callout-style-default callout-note callout-titled" title="Excalidraw drawing pending export">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">注记</span>Excalidraw drawing pending export
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>原 Obsidian 图形已保留为附件：<a href="../../../assets/attachments/advanced-probability/excalidraw/integration-2024-05-14-091547.excalidraw.md">center</a>。</p>
-</div>
-</div>
-</div>
-</div>
-<p>合并 (1) 、式 <a href="#e53eb1">e53eb1</a> 和 <a href="#1bea85">1bea85</a>，得到</p>
+<p>合并 (1) 、式 <a href="#eq-e53eb1" class="quarto-xref">式&nbsp;6</a> 和 <a href="#eq-1bea85" class="quarto-xref">式&nbsp;7</a>，得到</p>
 <p><span class="math display">\[
 g_{n}\uparrow f,
 \]</span></p>
@@ -1044,17 +1033,17 @@ g_{n}\uparrow f,
 <p><span class="math display">\[
 \int _{X}g_{n} \, d\mu\uparrow\int _{X}f \, d\mu
 \]</span></p>
-<p>再结合式 <a href="#710f62">710f62</a>，我们有</p>
+<p>再结合式 <a href="#eq-710f62" class="quarto-xref">式&nbsp;5</a>，我们有</p>
 <p><span class="math display">\[
 \int _{X}f_{n} \, d\mu\uparrow \int _{X}f \, d\mu.
 \]</span></p>
 <p>问题得证。</p>
 </div>
-<p>基于该定理，我们还可以得到一个常用的推论。这个推论涉及到一个新的概念：可测分割（注意，之前在定义简单函数时我们使用到的是 <strong>?@def-finite-measurable-partition</strong> ，可测分割是其可数推广）。</p>
+<p>基于该定理，我们还可以得到一个常用的推论。这个推论涉及到一个新的概念：可测分割（注意，之前在定义简单函数时我们使用到的是 <a href="07-measureable-functions.qmd#def-finite-measurable-partition">有限可测分割</a> ，可测分割是其可数推广）。</p>
 <div id="def-08-integration-16" class="theorem definition">
-<p><span class="theorem-title"><strong>定义 7 (可测分割)</strong></span> 两两不交的集合序列 <span class="math inline">\(\{ A_{n}\in\mathcal{F},n=1,2,\dots \}\)</span> 若满足 <span class="math inline">\(\bigcup_{n=1}^{\infty}A_{n}=X\)</span>，则称其为是可测空间 <span class="math inline">\((X,\mathcal{F})\)</span> 的一个可列可测分割，简称为可测分割。</p>
+<p><span class="theorem-title"><strong>定义 7 (可测分割)</strong></span> 两两不交的集合序列 <span class="math inline">\(\{ A_{n}\in\mathcal{F},n=1,2,\dots \}\)</span> 若满足 <span class="math inline">\(\bigcup_{n=1}^{\infty}A_{n}=X\)</span>，则称其为是可测空间 <span class="math inline">\((X,\mathcal{F})\)</span> 的一个可列可测分割，简称为<strong>可测分割</strong>。</p>
 </div>
-<p>由 <a href="#thm-mct" class="quarto-xref">定理&nbsp;6</a> 可以得到下面的推论：</p>
+<p>由 <a href="#thm-mct" class="quarto-xref">定理&nbsp;4</a> 可以得到下面的推论：</p>
 <div id="cor-measurable-seperate" class="theorem corollary">
 <p><span class="theorem-title"><strong>推论 1 (可测分割)</strong></span> 若 <span class="math inline">\(f\)</span> 的积分存在，则对于任意可测分割 <span class="math inline">\(\{ A_{n},n=1,2,\dots \}\)</span>，有</p>
 <p><span class="math display">\[
@@ -1070,7 +1059,7 @@ I_{X}=\sum_{n}I_{A_{n}}
 <p><span class="math display">\[
 \sum_{i=1}^{n}fI_{{A_{i}}}\uparrow f.
 \]</span></p>
-<p>直接利用 <a href="#thm-mct" class="quarto-xref">定理&nbsp;6</a> 有</p>
+<p>直接利用 <a href="#thm-mct" class="quarto-xref">定理&nbsp;4</a> 有</p>
 <p><span class="math display">\[
 \int _{X}\sum\limits_{i=1}^{n}fI_{A_{i}} \, d\mu=
 \sum\limits_{i=1}^{n}\int _{A_{n}}f \, d\mu\uparrow\int _{X}f \, d\mu，
@@ -1085,14 +1074,14 @@ I_{X}=\sum_{n}I_{A_{n}}
 <h3 class="anchored" data-anchor-id="08-integration-fatou-引理">Fatou 引理</h3>
 <p>接下来一个重要的定理涉及到达布极限和积分的交换：</p>
 <div id="thm-fatou" class="theorem">
-<p><span class="theorem-title"><strong>定理 7 (Fatou 引理)</strong></span> 对于任何 a.e. 非负可测函数列 <span class="math inline">\(\{ f_{n},n=1,2,\dots \}\)</span>，有</p>
+<p><span class="theorem-title"><strong>定理 5 (Fatou 引理)</strong></span> 对于任何 a.e. 非负可测函数列 <span class="math inline">\(\{ f_{n},n=1,2,\dots \}\)</span>，有</p>
 <p><span class="math display">\[
 \int _{X}\mathop{\lim\inf}_{n\to \infty}f_n \, d \mu\leq
 \mathop{\lim\inf}_{n\to \infty}\int _{X}f_{n} \, d\mu.
 \]</span></p>
 </div>
 <div class="proof">
-<p><span class="proof-title"><em>证明</em>. </span>令 <span class="math inline">\(g_{k}=\mathop{\inf}_{n\geq k}f_{n}\)</span>，则有 <span class="math inline">\(g_{k}\uparrow \mathop{\lim\inf}_{n\to \infty}f_{n}\)</span>，利用 <a href="#thm-mct" class="quarto-xref">定理&nbsp;6</a>，有</p>
+<p><span class="proof-title"><em>证明</em>. </span>令 <span class="math inline">\(g_{k}=\mathop{\inf}_{n\geq k}f_{n}\)</span>，则有 <span class="math inline">\(g_{k}\uparrow \mathop{\lim\inf}_{n\to \infty}f_{n}\)</span>，利用 <a href="#thm-mct" class="quarto-xref">定理&nbsp;4</a>，有</p>
 <p><span class="math display">\[
 \int _{X}\mathop{\lim\inf}_{n\to \infty}f_n \, d \mu =
 \lim_{ n \to \infty } \int _{X}g_{n} \, d\mu
@@ -1103,16 +1092,16 @@ I_{X}=\sum_{n}I_{A_{n}}
 \]</span></p>
 <p>证毕。</p>
 </div>
-<p>注意到，我们不能直接将 <a href="#thm-fatou" class="quarto-xref">定理&nbsp;7</a> 中的 <span class="math inline">\(\inf\)</span> 换成 <span class="math inline">\(\sup\)</span> 还保证成立（将 <span class="math inline">\(\leq\)</span> 换成 <span class="math inline">\(\geq\)</span> 也不行）。这是因为我们面向的是非负可测函数列，其值域被限制在 <span class="math inline">\([0,+\infty]\)</span>，是不对称的。所以正确的做法是将值域也翻转过来，我们就可以得到下面的额 Reverse version。</p>
+<p>注意到，我们不能直接将 <a href="#thm-fatou" class="quarto-xref">定理&nbsp;5</a> 中的 <span class="math inline">\(\inf\)</span> 换成 <span class="math inline">\(\sup\)</span> 还保证成立（将 <span class="math inline">\(\leq\)</span> 换成 <span class="math inline">\(\geq\)</span> 也不行）。这是因为我们面向的是非负可测函数列，其值域被限制在 <span class="math inline">\([0,+\infty]\)</span>，是不对称的。所以正确的做法是将值域也翻转过来，我们就可以得到下面的额 Reverse version。</p>
 <div id="thm-08-integration-19" class="theorem">
-<p><span class="theorem-title"><strong>定理 8 (Reverse Fatou 引理)</strong></span> 对于任何 a.e. 非<strong>正</strong>可测函数列 <span class="math inline">\(\{ f_{n},n=1,2,\dots \}\)</span>，有</p>
+<p><span class="theorem-title"><strong>定理 6 (Reverse Fatou 引理)</strong></span> 对于任何 a.e. 非<strong>正</strong>可测函数列 <span class="math inline">\(\{ f_{n},n=1,2,\dots \}\)</span>，有</p>
 <p><span class="math display">\[
 \int _{X}\mathop{\lim\sup}_{n\to \infty}f_n \, d \mu\geq
 \mathop{\lim\sup}_{n\to \infty}\int _{X}f_{n} \, d\mu.
 \]</span></p>
 </div>
 <div class="proof">
-<p><span class="proof-title"><em>证明</em>. </span>易得 <span class="math inline">\(g_{n}=-f_{n}\)</span> 是非负可测函数列，运用 <a href="#thm-fatou" class="quarto-xref">定理&nbsp;7</a>，有</p>
+<p><span class="proof-title"><em>证明</em>. </span>易得 <span class="math inline">\(g_{n}=-f_{n}\)</span> 是非负可测函数列，运用 <a href="#thm-fatou" class="quarto-xref">定理&nbsp;5</a>，有</p>
 <p><span class="math display">\[
 \int _{X}\mathop{\lim\inf}_{ n \to \infty } g_{n} \, d\mu
 \leq
@@ -1132,30 +1121,26 @@ I_{X}=\sum_{n}I_{A_{n}}
 </div>
 <p>我们也可以使用另外的一种形式来表示 Fatou 引理，其和上面的 Fatou 引理（Reverse Fatou 引理）是等价的，可以互相推导。但其将非负 (正) 函数列推广到了任意可测函数列:</p>
 <div id="cor-fatou" class="theorem corollary">
-<p><span class="theorem-title"><strong>推论 2 (Fatou 推论)</strong></span> 设 <span class="math inline">\(\{ f_{n},n=1,2,\dots \}\)</span> 是可测函数列， (1) 若存在可积函数 <span class="math inline">\(g\)</span> 使得 <span class="math inline">\(f_{n}\geq g\)</span> 对每个 <span class="math inline">\(n=1,2,3,\dots\)</span> 成立，则 <span class="math inline">\(f_{n}, \mathop{\lim\inf}_{n\to \infty}f_{n}\)</span> 积分存在且下式成立</p>
-<p><span class="math display">\[
-\int _{X}\mathop{\lim\inf}_{n\to \infty}f_n \, d \mu\leq
-\mathop{\lim\inf}_{n\to \infty}\int _{X}f_{n} \, d\mu.
-\]</span></p>
-<ol start="2" type="1">
-<li>若存在可积函数 <span class="math inline">\(g\)</span> 使得 <span class="math inline">\(f_{n}\leq g\)</span> 对每个 <span class="math inline">\(n=1,2,3,\dots\)</span> 成立，则 <span class="math inline">\(f_{n},\mathop{\lim\sup}_{n\to \infty}f_{n}\)</span> 积分存在且下式成立</li>
+<p><span class="theorem-title"><strong>推论 2 (Fatou 推论)</strong></span> 设 <span class="math inline">\(\{ f_{n},n=1,2,\dots \}\)</span> 是可测函数列，</p>
+<ol type="1">
+<li><p>若存在可积函数 <span class="math inline">\(g\)</span> 使得 <span class="math inline">\(f_{n}\geq g\)</span> 对每个 <span class="math inline">\(n=1,2,3,\dots\)</span> 成立，则 <span class="math inline">\(f_{n}, \mathop{\lim\inf}_{n\to \infty}f_{n}\)</span> 积分存在且下式成立 <span class="math display">\[
+  \int _{X}\mathop{\lim\inf}_{n\to \infty}f_n \, d \mu\leq
+  \mathop{\lim\inf}_{n\to \infty}\int _{X}f_{n} \, d\mu.
+  \]</span></p></li>
+<li><p>若存在可积函数 <span class="math inline">\(g\)</span> 使得 <span class="math inline">\(f_{n}\leq g\)</span> 对每个 <span class="math inline">\(n=1,2,3,\dots\)</span> 成立，则 <span class="math inline">\(f_{n},\mathop{\lim\sup}_{n\to \infty}f_{n}\)</span> 积分存在且下式成立 <span class="math display">\[
+  \int _{X}\mathop{\lim\sup}_{n\to \infty}f_n \, d \mu\geq
+  \mathop{\lim\sup}_{n\to \infty}\int _{X}f_{n} \, d\mu.
+  \]</span></p></li>
 </ol>
-<p><span class="math display">\[
-\int _{X}\mathop{\lim\sup}_{n\to \infty}f_n \, d \mu\geq
-\mathop{\lim\sup}_{n\to \infty}\int _{X}f_{n} \, d\mu.
-\]</span></p>
 </div>
 <div class="proof">
-<p><span class="proof-title"><em>证明</em>. </span></p>
-<ol type="1">
-<li>因为 <span class="math inline">\(f_{n}\geq g\)</span>，所以有 <span class="math inline">\(\mathop{\lim\inf}_{ n \to \infty }f_{n}\geq g\)</span>。现在我们来证明，如果可测函数 <span class="math inline">\(f\)</span> 满足 <span class="math inline">\(f\geq g\)</span> ，则 <span class="math inline">\(f\)</span> 积分存在。</li>
-</ol>
+<p><span class="proof-title"><em>证明</em>. </span><strong>(1)</strong> 因为 <span class="math inline">\(f_{n}\geq g\)</span>，所以有 <span class="math inline">\(\mathop{\lim\inf}_{ n \to \infty }f_{n}\geq g\)</span>。现在我们来证明，如果可测函数 <span class="math inline">\(f\)</span> 满足 <span class="math inline">\(f\geq g\)</span> ，则 <span class="math inline">\(f\)</span> 积分存在。</p>
 <p><span class="math display">\[
 f\geq g\implies f^{+}\geq g+,f^{-}\leq g^{-}\implies
 \int _{X}f^{+} \, d\mu\geq \int _{X}g^{+} \, d\mu,
 \int _{X}f^{-} \, d\mu\leq \int _{X}g^{-} \, d\mu,
 \]</span></p>
-<p>再有 <span class="math inline">\(g\)</span> 可积可知 <span class="math inline">\(\int _{X}f^{-} \, d\mu&lt;\infty\)</span> ，自然 <span class="math inline">\(f\)</span> 积分存在。所以现在我们知道了 <span class="math inline">\(f_{n}\)</span> 和 <span class="math inline">\(\mathop{\lim\inf}_{ n \to \infty }f_{n}\)</span> 都是积分存在的。 我们可以构造 <span class="math inline">\(h_{n}=f_{n}-g\geq 0\)</span>，这是一个非负可测函数列，所以可以利用 <a href="#thm-fatou" class="quarto-xref">定理&nbsp;7</a> 得到</p>
+<p>再有 <span class="math inline">\(g\)</span> 可积可知 <span class="math inline">\(\int _{X}f^{-} \, d\mu&lt;\infty\)</span> ，自然 <span class="math inline">\(f\)</span> 积分存在。所以现在我们知道了 <span class="math inline">\(f_{n}\)</span> 和 <span class="math inline">\(\mathop{\lim\inf}_{ n \to \infty }f_{n}\)</span> 都是积分存在的。 我们可以构造 <span class="math inline">\(h_{n}=f_{n}-g\geq 0\)</span>，这是一个非负可测函数列，所以可以利用 <a href="#thm-fatou" class="quarto-xref">定理&nbsp;5</a> 得到</p>
 <p><span class="math display">\[
 \int _{X}\mathop{\lim\inf}_{ n \to \infty } h_{n} \, d\mu
 =\int _{X}\mathop{\lim\inf}_{ n \to \infty } (f_{n}-g) \, d\mu
@@ -1173,14 +1158,15 @@ f\geq g\implies f^{+}\geq g+,f^{-}\leq g^{-}\implies
 \mathop{\lim\inf}_{ n \to \infty } \int _{X}f_{n} \, d\mu-
 \int _{X}g \, d\mu,
 \]</span></p>
-<p>再次利用 <span class="math inline">\(g\)</span> 的可积性，两侧的 <span class="math inline">\(\int _{X}g \, d\mu\)</span> 可以被约去，得到我们需要证明的结论。 <strong>我们也可以使用该推论来证明 <a href="#thm-fatou" class="quarto-xref">定理&nbsp;7</a>，只需要将 <span class="math inline">\(g\equiv0\)</span> 即可。</strong> (2) 的证明类似。</p>
+<p>再次利用 <span class="math inline">\(g\)</span> 的可积性，两侧的 <span class="math inline">\(\int _{X}g \, d\mu\)</span> 可以被约去，得到我们需要证明的结论。 <strong>我们也可以使用该推论来证明 <a href="#thm-fatou" class="quarto-xref">定理&nbsp;5</a>，只需要将 <span class="math inline">\(g\equiv0\)</span> 即可。</strong></p>
+<p><strong>(2) </strong>的证明类似。</p>
 </div>
 </section>
 <section id="控制收敛定理" class="level3">
 <h3 class="anchored" data-anchor-id="控制收敛定理">控制收敛定理</h3>
-<p><a href="#thm-mct" class="quarto-xref">定理&nbsp;6</a> 仅适用于非负可测函数列，<a href="#thm-fatou" class="quarto-xref">定理&nbsp;7</a> 和 <a href="#cor-fatou" class="quarto-xref">推论&nbsp;2</a> 则表示的是达布极限和不等式关系，那对于任意可测函数序列的极限是否存在相关的定理呢？下面我们来介绍</p>
-<div id="thm-7ffb80" class="theorem">
-<p><span class="theorem-title"><strong>定理 9 (控制收敛定理, DCT)</strong></span> <span class="math inline">\(\{ f_{n},n=1,2,\dots \}\)</span> 和 <span class="math inline">\(f\)</span> 是可测函数，若存在非负<strong>可积</strong>函数 <span class="math inline">\(g\)</span> 使得满足 <span class="math inline">\(\left| f_{n} \right|\leq g\)</span> a.e.对于任意 <span class="math inline">\(n\)</span> 成立，则 <span class="math inline">\(f_{n}\overset{a.e.}{\longrightarrow}f\)</span> (或 <span class="math inline">\(f_{n}\overset{ \mu }{ \longrightarrow }f\)</span>) 蕴含</p>
+<p><a href="#thm-mct" class="quarto-xref">定理&nbsp;4</a> 仅适用于非负可测函数列，<a href="#thm-fatou" class="quarto-xref">定理&nbsp;5</a> 和 <a href="#cor-fatou" class="quarto-xref">推论&nbsp;2</a> 则表示的是达布极限和不等式关系，那对于任意可测函数序列的极限是否存在相关的定理呢？下面我们来介绍</p>
+<div id="thm-DCT" class="theorem">
+<p><span class="theorem-title"><strong>定理 7 (控制收敛定理, DCT)</strong></span> <span class="math inline">\(\{ f_{n},n=1,2,\dots \}\)</span> 和 <span class="math inline">\(f\)</span> 是可测函数，若存在非负<strong>可积</strong>函数 <span class="math inline">\(g\)</span> 使得满足 <span class="math inline">\(\left| f_{n} \right|\leq g\)</span> a.e.对于任意 <span class="math inline">\(n\)</span> 成立，则 <span class="math inline">\(f_{n}\overset{a.e.}{\longrightarrow}f\)</span> (或 <span class="math inline">\(f_{n}\overset{ \mu }{ \longrightarrow }f\)</span>) 蕴含</p>
 <p><span class="math display">\[
 \lim_{ n \to \infty } \int _{X}f_{n} \, d\mu =\int _{X}f \, d\mu.
 \]</span></p>
@@ -1228,18 +1214,17 @@ f_{n}\geq-g\ a.e.,\quad f_{n}\leq g\ a.e.,
 <section id="换元积分" class="level2">
 <h2 class="anchored" data-anchor-id="换元积分">换元积分</h2>
 <div id="thm-inte-by-subs" class="theorem">
-<p><span class="theorem-title"><strong>定理 10 (换元积分法)</strong></span> 设 <span class="math inline">\(g\)</span> 是由测度空间 <span class="math inline">\((X,\mathcal{F},\mu)\)</span> 到可测空间 <span class="math inline">\((Y,\mathcal{T})\)</span> 的可测映射。 (1) 令 <span class="math inline">\(\nu=\mu \circ g^{-1}\)</span>，则 <span class="math inline">\((Y,\mathcal{T},\nu)\)</span> 是一个测度空间； (2) 对于 <span class="math inline">\((Y,\mathcal{T},\nu)\)</span> 上的任何可测函数 <span class="math inline">\(f\)</span>，只要等式</p>
-<p><span class="math display">\[
-\int _{Y}f \, d\nu =\int _{X}f\circ g \, d\mu,  
-\]</span></p>
-<p>之一端有意义，就一定成立。</p>
+<p><span class="theorem-title"><strong>定理 8 (换元积分法)</strong></span> 设 <span class="math inline">\(g\)</span> 是由测度空间 <span class="math inline">\((X,\mathcal{F},\mu)\)</span> 到可测空间 <span class="math inline">\((Y,\mathcal{T})\)</span> 的可测映射。</p>
+<ol type="1">
+<li>令 <span class="math inline">\(\nu=\mu \circ g^{-1}\)</span>，则 <span class="math inline">\((Y,\mathcal{T},\nu)\)</span> 是一个测度空间；</li>
+<li>对于 <span class="math inline">\((Y,\mathcal{T},\nu)\)</span> 上的任何可测函数 <span class="math inline">\(f\)</span>，只要等式 <span class="math display">\[
+  \int _{Y}f \, d\nu =\int _{X}f\circ g \, d\mu,  
+  \]</span> 之一端有意义，就一定成立。</li>
+</ol>
 </div>
 <div class="proof">
-<p><span class="proof-title"><em>证明</em>. </span></p>
-<ol type="1">
-<li>由 <strong>?@def-rv-dist</strong> 中的内容可以直接证明。</li>
-<li>我们使用典型方法来证明。假设 <span class="math inline">\(f\)</span> 是一个简单函数，即</li>
-</ol>
+<p><span class="proof-title"><em>证明</em>. </span><strong>(1)</strong> 由 <a href="../../../src/learn/advanced-probability/07-measurable-functions.html#def-rv-dist">随机变量分布</a> 中的内容可以直接证明。</p>
+<p><strong>(2)</strong> 我们使用典型方法来证明。假设 <span class="math inline">\(f\)</span> 是一个简单函数，即</p>
 <p><span class="math display">\[
 \begin{align}
 &amp;f=\sum\limits_{i=1}^{n}a_{n}I_{B_{i}}, \\
@@ -1263,7 +1248,7 @@ f_{n}\geq-g\ a.e.,\quad f_{n}\leq g\ a.e.,
 &amp;=\int _{X}f\circ g \, d \mu,
 \end{align}
 \]</span></p>
-<p>其中第一行是由于非负可测函数积分的定义，第二行是根据上面的证明结论，第三行是因为 <a href="#thm-mct" class="quarto-xref">定理&nbsp;6</a> ，第四行则是根据 <span class="math inline">\(f_{n}\uparrow f\)</span> 可以直接推导出来。 若 <span class="math inline">\(f\)</span> 是一个一般可测函数，则我们可以表示为 <span class="math inline">\(f=f^{+}-f^{-}\)</span>，并且有</p>
+<p>其中第一行是由于非负可测函数积分的定义，第二行是根据上面的证明结论，第三行是因为 <a href="#thm-mct" class="quarto-xref">定理&nbsp;4</a> ，第四行则是根据 <span class="math inline">\(f_{n}\uparrow f\)</span> 可以直接推导出来。 若 <span class="math inline">\(f\)</span> 是一个一般可测函数，则我们可以表示为 <span class="math inline">\(f=f^{+}-f^{-}\)</span>，并且有</p>
 <p><span class="math display">\[
 (f\circ g)^{+}=f^{+}\circ g,\quad (f\circ g)^{-}=f^{-}\circ g.
 \]</span></p>
@@ -1284,10 +1269,27 @@ f_{n}\geq-g\ a.e.,\quad f_{n}\leq g\ a.e.,
 \int _{a}^b g(y) \, dy = \int _{c}^{d}g(f(x))f'(x) \, dx,\quad
 y=f(x).
 \]</span></p>
-<p>这里涉及到两方面的改变： - 换元，将 <span class="math inline">\(y\)</span> 修改为 <span class="math inline">\(x\)</span>，这导致了 <span class="math inline">\(g(y)\)</span> 变成了 <span class="math inline">\(g(f(x))\)</span>，<span class="math inline">\(dy\)</span> 变成了 <span class="math inline">\(dx\)</span>，积分范围由 <span class="math inline">\([a,b]\)</span> 变为 <span class="math inline">\([c,d]\)</span>。这其实对应于 <a href="#thm-inte-by-subs" class="quarto-xref">定理&nbsp;10</a> 中的改变。 - 增加了一个因子 <span class="math inline">\(f'(x)\)</span>，该部分并没有在上述定理中展示出来。该部分完整的理解可能需要在学习完整个积分内容后，但是现在我们也可以去用下面的方式来简单的理解。</p>
+<p>这里涉及到两方面的改变：</p>
+<ul>
+<li>换元，将 <span class="math inline">\(y\)</span> 修改为 <span class="math inline">\(x\)</span>，这导致了 <span class="math inline">\(g(y)\)</span> 变成了 <span class="math inline">\(g(f(x))\)</span>，<span class="math inline">\(dy\)</span> 变成了 <span class="math inline">\(dx\)</span>，积分范围由 <span class="math inline">\([a,b]\)</span> 变为 <span class="math inline">\([c,d]\)</span>。这其实对应于 <a href="#thm-inte-by-subs" class="quarto-xref">定理&nbsp;8</a> 中的改变。</li>
+<li>增加了一个因子 <span class="math inline">\(f'(x)\)</span>，该部分并没有在上述定理中展示出来。该部分完整的理解可能需要在学习完整个积分内容后，但是现在我们也可以去用下面的方式来简单的理解。</li>
+</ul>
 <p>所有的积分都可以被理解为“高度”（函数 <span class="math inline">\(f\)</span>）和“宽度”（积分区间 <span class="math inline">\([a,b]\)</span> 或测度论中的 <span class="math inline">\(X\)</span>）的乘积。黎曼积分的“宽度”是均匀的、等密度的（对应于测度论中的勒贝格积分），而测度论中的积分的“宽度”是不均匀的，或者说在“宽度”这个轴上存在着不均匀的“密度”，这个不均匀的性质被记录在测度 <span class="math inline">\(\mu,\nu\)</span> 中。</p>
 <p>注意到，因为变元函数 <span class="math inline">\(y=f(x)\)</span> 的存在，<strong>在变元后，“宽度”很有可能会变得不均匀。这对于测度论积分来说没有关系，这些信息都会被汇总到新的测度 <span class="math inline">\(\nu=\mu \circ f^{-1}\)</span> 中。但是这对于黎曼积分是无法做到的，所以它的做法是将这个“密度”提取出来作为一个新的函数，或者换句话说，这个“密度”信息被汇总到了“高度”上了。</strong></p>
-<p>这里需要注意到，测度论中的积分相比于黎曼积分，是一个更大的概念，准确的说，<strong>黎曼积分是对应于勒贝格积分的</strong>。要想完整地对应于黎曼积分中的换元积分法，则需要将换元后的哪个部分的“宽度”也对齐到勒贝格测度即可。这在学习了 RN 导数的概念后是可以做到的，也就是计算 <span class="math inline">\(\nu\)</span> 相对于勒贝格测度的 RN 导数，这个导数就叫做“密度”。 <strong>Note: 利用 <a href="#thm-inte-by-subs" class="quarto-xref">定理&nbsp;10</a>，我们还可以简化积分计算。比如对于一个可测函数的积分</strong></p>
+<p>这里需要注意到，测度论中的积分相比于黎曼积分，是一个更大的概念，准确的说，<strong>黎曼积分是对应于勒贝格积分的</strong>。要想完整地对应于黎曼积分中的换元积分法，则需要将换元后的哪个部分的“宽度”也对齐到勒贝格测度即可。这在学习了 RN 导数的概念后是可以做到的，也就是计算 <span class="math inline">\(\nu\)</span> 相对于勒贝格测度的 RN 导数，这个导数就叫做“密度”。</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+提示
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>利用 <a href="#thm-inte-by-subs" class="quarto-xref">定理&nbsp;8</a>，我们还可以简化积分计算。比如对于一个可测函数的积分</strong></p>
 <p><span class="math display">\[
 \int _{X}f \, d\mu,
 \]</span></p>
@@ -1321,7 +1323,9 @@ y=f(x).
 <h2 class="anchored" data-anchor-id="08-integration-积分和微分的交换性">积分和微分的交换性</h2>
 <p>这里的微分是数学分析中的微分和导数。</p>
 <div id="thm-b0ea08" class="theorem">
-<p><span class="theorem-title"><strong>定理 11 (积分微分的交换性)</strong></span> 假设有测度空间 <span class="math inline">\((X,\mathcal{F},\mu)\)</span>，其中对于每个 <span class="math inline">\(\theta \in\mathbb{R}\)</span>，<span class="math inline">\(f(x,\theta)\)</span> 都是其上面的一个<del>可测</del>可积函数。假设 <span class="math inline">\(\frac{ \partial f }{ \partial \theta }\)</span> 在 <span class="math inline">\(\theta \in(a,b)\subset\mathbb{R}\)</span> a.e. 存在，并且满足 <span class="math inline">\(\left| \frac{ \partial f }{ \partial \theta } \right|\leq g(x)\)</span> a.e.，<span class="math inline">\(g\)</span> 是一个 <span class="math inline">\(X\)</span> 上的可积函数。则对于每个 <span class="math inline">\(\theta \in(a,b)\)</span>，<span class="math inline">\(\frac{ \partial f }{ \partial \theta }\)</span> 是可积的，并且有</p>
+<p><span class="theorem-title"><strong>定理 9 (积分微分的交换性)</strong></span> 假设有测度空间 <span class="math inline">\((X,\mathcal{F},\mu)\)</span>，其中对于每个 <span class="math inline">\(\theta \in\mathbb{R}\)</span>，<span class="math inline">\(f(x,\theta)\)</span> 都是其上面的一个<del>可测</del>可积函数。假设 <span class="math inline">\(\frac{ \partial f }{ \partial \theta }\)</span> 在 <span class="math inline">\(\theta \in(a,b)\subset\mathbb{R}\)</span> a.e. 存在，并且满足</p>
+<p><span class="math display">\[\left| \frac{ \partial f }{ \partial \theta } \right|\leq g(x)\ \text{a.e.}\]</span></p>
+<p><span class="math inline">\(g\)</span> 是一个 <span class="math inline">\(X\)</span> 上的可积函数。则对于每个 <span class="math inline">\(\theta \in(a,b)\)</span>，<span class="math inline">\(\frac{ \partial f }{ \partial \theta }\)</span> 是可积的，并且有</p>
 <p><span class="math display">\[
 \frac{d}{d\theta}\int _{X}f(x,\theta) \, d\mu=
 \int _{X}\frac{ \partial f(x,\theta) }{ \partial \theta }  \, d \mu
@@ -1335,20 +1339,24 @@ y=f(x).
 \lim_{ n \to \infty } \frac{f\left( x,\theta+1 / n \right)-f(x,\theta)}{1 / n}=\lim_{ n \to \infty } h_{n}(x,\theta).
 \]</span></p>
 <p>我们现在来证明 <span class="math inline">\(\forall x \in X, \forall \theta \in(a,b),|h_{n}(x,\theta)|\leq g(x)\)</span>。利用牛顿莱布尼兹公式，我们有</p>
-<p><span class="math display">\[
-\left| f(x,\theta_{2})-f(x,\theta_{1}) \right| =
+<p><span id="eq-7cc7ac"><span class="math display">\[
+\begin{align}
+\left| f(x,\theta_{2})-f(x,\theta_{1}) \right| &amp;=
 \left|
 \int _{\theta_{1}}^{\theta_{2}}
 \frac{ \partial f }{ \partial \theta } \, d\theta
-\right|  \leq
+\right|  \\
+&amp;\leq
 \int _{\theta_{1}}^{\theta_{2}}
-\left| \frac{ \partial f }{ \partial \theta } \right|  \, d\theta \leq
-\int _{\theta_{1}}^{\theta_{2}}g(x)d\theta=
+\left| \frac{ \partial f }{ \partial \theta } \right|  \, d\theta \\
+&amp;\leq
+\int _{\theta_{1}}^{\theta_{2}}g(x)d\theta \\
+&amp;=
 g(x)(\theta_{2}-\theta_{1})
-\]</span></p>
-<p><span id="7cc7ac"></span></p>
+\end{align}
+\tag{8}\]</span></span></p>
 <p>其中 <span class="math inline">\(\theta_{1}&lt;\theta_{2},\theta_{1},\theta_{2}\in(a,b)\)</span>。令 <span class="math inline">\(\theta_{1}=\theta,\theta_{2}=\theta+1/n\)</span>，就可以得到我们要证明的结论了。</p>
-<p>现在，我们可以使用 <a href="#7ffb80">7ffb80</a>，有</p>
+<p>现在，我们可以使用 <a href="#thm-DCT" class="quarto-xref">定理&nbsp;7</a>，有</p>
 <p><span class="math display">\[
 \begin{align}
 \int _{X}\frac{ \partial f(x,\theta) }{ \partial \theta }  \, d \mu
@@ -1363,7 +1371,7 @@ f\left( x,\theta+1 / n \right)-f(x,\theta)
 &amp;= \frac{d}{d\theta}\int _{X}f(x,\theta) \, d\mu
 \end{align}
 \]</span></p>
-<p>其中第四行的等号是由 <strong>?@prp-linear</strong> (2) 保证的。</p>
+<p>其中第四行的等号是由 <a href="#prp-linear" class="quarto-xref">命题&nbsp;5</a> (2) 保证的。</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1374,7 +1382,7 @@ f\left( x,\theta+1 / n \right)-f(x,\theta)
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>这里需要注意，我们 <strong>?@prp-linear</strong> (2) 需要条件 :</p>
+<p>这里需要注意，我们 <a href="#prp-linear" class="quarto-xref">命题&nbsp;5</a> (2) 需要条件 :</p>
 <p><span class="math display">\[
 \int _{X}f(x,\theta+1/n) \, d\mu- \int _{X}f(x,\theta) \, d\mu
 \]</span></p>
@@ -1386,7 +1394,14 @@ f\left( x,\theta+1 / n \right)-f(x,\theta)
 </section>
 <section id="lebesgue-积分和-riemann-积分" class="level1">
 <h1>Lebesgue 积分和 Riemann 积分</h1>
-<p>我们在为微积分中学习了 Riemann 积分，其易于计算，并且在很多领域中有非常好的性质（比如场论中的很多观点，Gauss 定理、斯托克斯定理等）。然后，Riemann 积分存在一个难以解决的问题，即<strong>对函数性质的要求过于严格</strong>。注意： - Riemann 积分仅定义在闭区间上，对于无穷区间（比如 <span class="math inline">\(\mathbb{R}\)</span>）需要反常积分进行扩展； - Riemann 可积的<strong>充分必要条件</strong>是<strong>函数有界</strong>且<strong>不连续点的 Lebesgue 测度为 0</strong>； - Riemann 积分中，可积 <span class="math inline">\(\implies\)</span> 绝对可积；反常积分中，绝对可积 <span class="math inline">\(\implies\)</span> 可积；两者反之都不成立； - Riemann 可积构成的空间不是完备的（基于测度定义的积分的完备性将在 <a href="../../../src/learn/advanced-probability/09-lp-spaces.html">Lp空间</a> 中进行讨论）； - Riemann 积分与极限运算之间可换序的条件非常严格，是<strong>一致收敛</strong>。</p>
+<p>我们在为微积分中学习了 Riemann 积分，其易于计算，并且在很多领域中有非常好的性质（比如场论中的很多观点，Gauss 定理、斯托克斯定理等）。然后，Riemann 积分存在一个难以解决的问题，即<strong>对函数性质的要求过于严格</strong>。注意：</p>
+<ul>
+<li>Riemann 积分仅定义在闭区间上，对于无穷区间（比如 <span class="math inline">\(\mathbb{R}\)</span>）需要反常积分进行扩展；</li>
+<li>Riemann 可积的<strong>充分必要条件</strong>是<strong>函数有界</strong>且<strong>不连续点的 Lebesgue 测度为 0</strong>；</li>
+<li>Riemann 积分中，可积 <span class="math inline">\(\implies\)</span> 绝对可积；反常积分中，绝对可积 <span class="math inline">\(\implies\)</span> 可积；两者反之都不成立；</li>
+<li>Riemann 可积构成的空间不是完备的（基于测度定义的积分的完备性将在 <a href="../../../src/learn/advanced-probability/09-lp-spaces.html">Lp空间</a> 中进行讨论）；</li>
+<li>Riemann 积分与极限运算之间可换序的条件非常严格，是<strong>一致收敛</strong>。</li>
+</ul>
 <p>以上这些性质导致 Riemann 积分在很多时候并不十分好用，<strong>因此才会发展测度论和实变函数论以扩展积分理论，而概率理论的公理化反而是一个副产品</strong>。扩展积分理论的最重要产物就是 Lebesgue 积分，其能够解决上面的这些问题。Lebesgue 积分的定义如下。</p>
 <div id="def-08-integration-25" class="theorem definition">
 <p><span class="theorem-title"><strong>定义 8 (Lebesgue 积分)</strong></span> 对于定义在 <span class="math inline">\((\mathbb{R},\mathcal{B},m)\)</span> 上的可测函数 <span class="math inline">\(f\)</span>，其中 <span class="math inline">\(m\)</span> 是 Lebesgue 测度，按照 <a href="#def-inte-func" class="quarto-xref">定义&nbsp;4</a> （或 <a href="#def-inte-func-general" class="quarto-xref">定义&nbsp;6</a>）得到的积分</p>
@@ -1401,7 +1416,7 @@ f\left( x,\theta+1 / n \right)-f(x,\theta)
 <p>从定义中可以知道，Lebesgue 积分不止适用于闭区间上，还可以在任何可测区间上进行，这便解决了 Riemann 积分的<strong>第一个问题</strong>。</p>
 <p>接下来，我们将证明 Riemann 可积则一定 Lebesgue 可积。</p>
 <div id="thm-08-integration-26" class="theorem">
-<p><span class="theorem-title"><strong>定理 12 (Lebesgue vs Riemann)</strong></span> Riemann 可积函数一定（在对应的闭区间上） Lebesgue 可积，并且两者的积分值相同。</p>
+<p><span class="theorem-title"><strong>定理 10 (Lebesgue vs Riemann)</strong></span> Riemann 可积函数一定（在对应的闭区间上） Lebesgue 可积，并且两者的积分值相同。</p>
 </div>
 <div class="proof">
 <p><span class="proof-title"><em>证明</em>. </span>首先，根据 Riemann 可积的充要条件可知，Riemann 可积函数 <span class="math inline">\(f\)</span> 一定有界且 a.e. 连续。根据 <a href="../../../src/learn/advanced-probability/07-measurable-functions.html#continue-func-measurable">7_可测函数</a> 可知 <span class="math inline">\(f\)</span>a.e. 可测，因此，就可以根据 <a href="#def-inte-func-general" class="quarto-xref">定义&nbsp;6</a> 来定义 Lebesgue 积分。</p>
@@ -1423,10 +1438,9 @@ s(T)\leq \int _{[a,b]}f \, dx \leq S(T),
 \]</span></p>
 <p>取极限后知道 <span class="math inline">\(R=\int _{[a, b]}f \, dx\)</span>，即两个积分值相同。</p>
 <p>接下来，对于一般函数 <span class="math inline">\(f\)</span>，我们将其分为 <span class="math inline">\(f^{+}-f^{-}\)</span> 两个非负函数。根据 Riemann 积分的性质，可以知道：若 <span class="math inline">\(f\)</span> 可积，则 <span class="math inline">\(f^{+},f^{-}\)</span> 可积，并且</p>
-<p><span class="math display">\[
+<p><span id="eq-8e7f5d"><span class="math display">\[
 \int _{a}^{b}f \, dx =\int _{a}^{b}f^{+} \, dx -\int _{a}^{b}f^{-} \, dx.
-\]</span></p>
-<p><span id="8e7f5d"></span></p>
+\tag{9}\]</span></span></p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1441,7 +1455,7 @@ s(T)\leq \int _{[a,b]}f \, dx \leq S(T),
 <p><span class="math display">\[
 \max(f(x),g(x))=\frac{1}{2}(f(x)+g(x)+\lvert f(x)-g(x) \rvert ),
 \]</span></p>
-<p>也是可积的，<span class="math inline">\(\min(f(x),g(x))\)</span> 同理。则 <span class="math inline">\(f^{+}=max(f(x),0)\)</span> 和 <span class="math inline">\(f^{-}=\min(f(x),0)\)</span> 也是可积的。再通过线性运算，就可以得到 <a href="#8e7f5d">8e7f5d</a>。</p>
+<p>也是可积的，<span class="math inline">\(\min(f(x),g(x))\)</span> 同理。则 <span class="math inline">\(f^{+}=max(f(x),0)\)</span> 和 <span class="math inline">\(f^{-}=\min(f(x),0)\)</span> 也是可积的。再通过线性运算，就可以得到 <a href="#eq-8e7f5d" class="quarto-xref">式&nbsp;9</a>。</p>
 </div>
 </div>
 <p>而这样的分解正是 Lebesgue 积分在一般函数上的定义，再利用上一步在非负函数上的结论，最终可以证明两者的积分值是相同的。</p>
@@ -1461,12 +1475,11 @@ s(T)\leq \int _{[a,b]}f \, dx \leq S(T),
 </div>
 <div class="proof">
 <p><span class="proof-title"><em>证明</em>. </span>我们先来计算第一个结果。我们使用一个 Feynman technique。首先，我们构造一个新的函数，</p>
-<p><span class="math display">\[
+<p><span id="eq-21d420"><span class="math display">\[
 \begin{align}
 I(b)&amp;=\int _{0}^{\infty}\frac{\sin x}{x}e^{-bx} \, dx  \\
 \end{align}
-\]</span></p>
-<p><span id="21d420"></span></p>
+\tag{10}\]</span></span></p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1490,7 +1503,9 @@ I'(b)&amp;=\frac{d\left( \lim_{ N \to \infty } \int _{0}^{N}\frac{\sin x}{x}e^{-
 \end{align}
 \]</span></p>
 <p>其中第二行需要交换求导和极限运算，第三行需要交换求导和积分运算，或者直接到第四行，这被视为求导和反常积分的换序。反常积分和求导的换序需要以下三个条件成立：</p>
-<p>第一， <span class="math inline">\(\frac{d\left( \frac{\sin x}{x}e^{-bx} \right)}{db}\)</span> 关于 <span class="math inline">\(b,x\)</span> 连续，这是成立的； 第二， <span class="math inline">\(\int _{0}^{\infty}\frac{\sin x}{x}e^{-bx} \, dx\)</span> 是收敛的，成立； 第三， <span class="math inline">\(\int _{0}^{\infty}\frac{d\left( \frac{\sin x}{x}e^{-bx} \right)}{db} \, dx\)</span> 关于 <span class="math inline">\(b\)</span> 一致收敛，也就是 <span class="math inline">\(\forall\epsilon&gt;0\)</span>，存在 <span class="math inline">\(A'&gt;0\)</span>，<span class="math inline">\(\forall A&gt;A'\)</span>，有</p>
+<p>第一， <span class="math inline">\(\frac{d\left( \frac{\sin x}{x}e^{-bx} \right)}{db}\)</span> 关于 <span class="math inline">\(b,x\)</span> 连续，这是成立的；</p>
+<p>第二， <span class="math inline">\(\int _{0}^{\infty}\frac{\sin x}{x}e^{-bx} \, dx\)</span> 是收敛的，成立；</p>
+<p>第三， <span class="math inline">\(\int _{0}^{\infty}\frac{d\left( \frac{\sin x}{x}e^{-bx} \right)}{db} \, dx\)</span> 关于 <span class="math inline">\(b\)</span> 一致收敛，也就是 <span class="math inline">\(\forall\epsilon&gt;0\)</span>，存在 <span class="math inline">\(A'&gt;0\)</span>，<span class="math inline">\(\forall A&gt;A'\)</span>，有</p>
 <p><span class="math display">\[
 \lvert \int _{A}^{\infty}\frac{d\left( \frac{\sin x}{x}e^{-bx} \right)}{db} \, dx \rvert &lt; \epsilon.
 \]</span></p>
@@ -1504,7 +1519,7 @@ I'(b)=-\frac{1}{1+b^{2}},
 <p><span class="math display">\[
 I(b)=-\arctan(b)+C.
 \]</span></p>
-<p>现在我们需要去求解这个常数 <span class="math inline">\(C\)</span> 是多少。这里我们需要考虑式 <a href="#21d420">21d420</a>，然后考虑其极限：</p>
+<p>现在我们需要去求解这个常数 <span class="math inline">\(C\)</span> 是多少。这里我们需要考虑式 <a href="#eq-21d420" class="quarto-xref">式&nbsp;10</a>，然后考虑其极限：</p>
 <p><span class="math display">\[
 I(\infty)=-\arctan(\infty)+C=\int _{0}^{\infty}\frac{\sin x}{x}e^{-\infty x} \, dx,
 \]</span></p>

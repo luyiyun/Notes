@@ -412,7 +412,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">修改于</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">2026年5月22日</p>
+      <p class="date-modified">2026年5月23日</p>
     </div>
   </div>
     
@@ -1608,7 +1608,7 @@ P((\mathbf{a},\mathbf{b}]) \leq 1-\epsilon,
 Y_{n}\overset{ a.s. }{ \longrightarrow }Y,
 \]</span> 则对于有界连续函数 <span class="math inline">\(h\)</span> 有 <span class="math display">\[
 h(Y_{n})\overset{ a.s. }{ \longrightarrow }h(Y),
-\]</span> 进而根据 <a href="../../../src/learn/advanced-probability/08-integration.html#7ffb80">8_积分</a> <span class="math display">\[
+\]</span> 进而根据 <a href="../../../src/learn/advanced-probability/08-integration.html#DCT">8_积分</a> <span class="math display">\[
 \mathbb{E}[h(Y_{n})]\to \mathbb{E}[h(Y)].
 \]</span> 进而注意到 <span class="math display">\[
 \mathbb{E}[h(Y)]=\int h(Y) \, dP=\int h(x) \, dP_{Y}  =\int _{h(x)} \, dP_{X}=\mathbb{E}[h(X)],
@@ -1670,7 +1670,7 @@ e^{i\mathbf{t}^{T}\mathbf{x}}=\cos(\mathbf{t}^{T}\mathbf{x})+i\sin(\mathbf{t}^{T
 <p>其中第二行使用到了 <a href="../../../src/learn/advanced-probability/13-finite-product-spaces.html#9068d0">1.5 乘积空间和高维随机变量</a>.</p>
 <p>因为 <span class="math inline">\(\phi_{X}(t)\)</span> 在 <span class="math inline">\(0\)</span> 点连续, 并且 <span class="math inline">\(\phi_{X}(0)=1\)</span>, 所以对于任意的 <span class="math inline">\(\epsilon&gt;0\)</span>, 我们都可以找到一个 <span class="math inline">\(u&gt;0\)</span> 使得 <span class="math display">\[
 u^{-1}\int _{-u}^{u}[1-\phi_{X}(t)] \, dt &lt; \frac{\epsilon}{2}.
-\]</span> 又因为 <span class="math inline">\(\phi_{X_{n}}\to \phi_{X}\)</span>, 再根据 <a href="../../../src/learn/advanced-probability/08-integration.html#7ffb80">8_积分</a> 得到 <span class="math display">\[
+\]</span> 又因为 <span class="math inline">\(\phi_{X_{n}}\to \phi_{X}\)</span>, 再根据 <a href="../../../src/learn/advanced-probability/08-integration.html#DCT">8_积分</a> 得到 <span class="math display">\[
 \lim_{ n \to \infty } h_{n}(u)= u^{-1}\int _{-u}^{u}[1-\phi_{X_{n}}(t)] \, dt=u^{-1}\int _{-u}^{u}[1-\phi_{X}(t)] \, dt&lt;\frac{\epsilon}{2}.
 \]</span> 这样, 我们可以找到一个 <span class="math inline">\(N\)</span>, <span class="math inline">\(\forall n&gt;N\)</span> 满足 <span class="math display">\[
 h_{n}(u) &lt; \epsilon,
@@ -1826,7 +1826,7 @@ h_{n}(x)=[f_{n}(x)-f(x)]I_{\{ f&lt; f_{n} \}}(x),\quad
 \]</span> 注意到有关系 <span class="math display">\[
 0\leq g_{n}(x)\leq f(x),0\leq h_{n}(x)\leq f_{n}(x)\quad
 g_{n}\to0\ a.e., h_{n}\to0\ a.e..
-\]</span> 所以可以用 <a href="../../../src/learn/advanced-probability/08-integration.html#7ffb80">8_积分</a> 得到定理结论.</p>
+\]</span> 所以可以用 <a href="../../../src/learn/advanced-probability/08-integration.html#DCT">8_积分</a> 得到定理结论.</p>
 </div>
 </section>
 <section id="函数变换下的收敛" class="level1">
