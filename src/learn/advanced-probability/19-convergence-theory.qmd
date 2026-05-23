@@ -1859,7 +1859,7 @@ $$
 $$
 h(Y_{n})\overset{ a.s. }{ \longrightarrow }h(Y),
 $$
-进而根据 [8_积分](08-integration.qmd#7ffb80)
+进而根据 [8_积分](08-integration.qmd#DCT)
 $$
 \mathbb{E}[h(Y_{n})]\to \mathbb{E}[h(Y)].
 $$
@@ -1960,7 +1960,7 @@ $$
 $$
 u^{-1}\int _{-u}^{u}[1-\phi_{X}(t)] \, dt < \frac{\epsilon}{2}. 
 $$
-又因为 $\phi_{X_{n}}\to \phi_{X}$, 再根据 [8_积分](08-integration.qmd#7ffb80) 得到
+又因为 $\phi_{X_{n}}\to \phi_{X}$, 再根据 [8_积分](08-integration.qmd#DCT) 得到
 $$
 \lim_{ n \to \infty } h_{n}(u)= u^{-1}\int _{-u}^{u}[1-\phi_{X_{n}}(t)] \, dt=u^{-1}\int _{-u}^{u}[1-\phi_{X}(t)] \, dt<\frac{\epsilon}{2}.
 $$
@@ -2222,7 +2222,7 @@ $$
 0\leq g_{n}(x)\leq f(x),0\leq h_{n}(x)\leq f_{n}(x)\quad
 g_{n}\to0\ a.e., h_{n}\to0\ a.e..
 $$
-所以可以用 [8_积分](08-integration.qmd#7ffb80) 得到定理结论.
+所以可以用 [8_积分](08-integration.qmd#DCT) 得到定理结论.
 :::
 
 # 函数变换下的收敛

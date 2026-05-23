@@ -314,7 +314,7 @@ $$
 0\leq \phi_{1,n+1}(x_{1})\leq \phi_{1,n}(x_{1})\leq 1,\quad\forall x_{1}\in X_{1}.
 $$
 
-记 $\phi_{1}=\lim_{ n \to \infty }\phi_{1,n}$，则由 [8_积分](08-integration.qmd#7ffb80) 可知
+记 $\phi_{1}=\lim_{ n \to \infty }\phi_{1,n}$，则由 [8_积分](08-integration.qmd#DCT) 可知
 
 $$
 \int _{X_{1}}\phi_{1} \, dP_{1}=\lim_{ n \to \infty } \int _{X_{1}}\phi_{1,n} \, dP_{1}=

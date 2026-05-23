@@ -65,7 +65,7 @@ $$
 :::
 
 ::: {.proof}
-第一条由 @thm-inte-exists (4) 得到，第二条由 @cor-measurable-seperate 得到。
+第一条由 @prp-inte-exists (4) 得到，第二条由 @cor-measurable-seperate 得到。
 :::
 
 # 符号测度的性质
