@@ -14,13 +14,13 @@ _site/
 *.webp
 *.pdf
 *.excalidraw.md
-*.excalidraw
+# *.excalidraw
 
-assets/
-assets/images/
-assets/images/**
-assets/attachments/
-assets/attachments/**
+# assets/
+# assets/images/
+# assets/images/**
+# assets/attachments/
+# assets/attachments/**
 
 
 # 可能存在的codex文件
