@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.37">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -39,10 +39,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../../site_libs/bootstrap/bootstrap-28ea277c781a11f752ceea7d06312459.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-9bf5887a14e445753812c846e9fa6a9b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -443,7 +443,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">修改于</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">2026年5月23日</p>
+      <p class="date-modified">2026年5月28日</p>
     </div>
   </div>
     
@@ -567,7 +567,7 @@ p(x_1,\dots,x_K)=\prod_{k=1}^K p(x_k\mid \operatorname{pa}_k),
 </div>
 <p>比如，上图的DAG所表示的概率分布就是：</p>
 <p><span class="math display">\[
-p(x_1)p(x_2)p(x_3)p(x_4|x_1,x_2,x_3)p(x5|x_1,x_3)p(x6|x_4)p(x_7|x_4,x_5).
+p(x_1)p(x_2)p(x_3)p(x_4|x_1,x_2,x_3)p(x_5|x_1,x_3)p(x_6|x_4)p(x_7|x_4,x_5).
 \]</span></p>
 <div class="callout callout-style-default callout-important callout-titled" title="边的含义">
 <div class="callout-header d-flex align-content-center">
@@ -652,7 +652,7 @@ p(w,t_1,\dots,t_N\mid x_1,\dots,x_N,\alpha,\beta)
 <li>最后得到一个完整样本 <span class="math inline">\((x_1,\dots,x_K)\)</span>。</li>
 </ol>
 <p>这个过程称为 <strong>ancestral sampling</strong>。</p>
-<p>生成模型的典型用途是<strong>用低维潜变量解释复杂观测</strong>。例如,在图像识别中，观测图像是像素强度向量，而对象类别、位置、朝向可以作为潜变量。模型先生成对象身份、位置和朝向，再生成图像。因此，一定程度上，generativee model可以描述causal process，这也是pearl用它来作为表述结构因果模型的工具的原因。</p>
+<p>生成模型的典型用途是<strong>用低维潜变量解释复杂观测</strong>。例如,在图像识别中，观测图像是像素强度向量，而对象类别、位置、朝向可以作为潜变量。模型先生成对象身份、位置和朝向，再生成图像。因此，一定程度上，generative model可以描述causal process，这也是pearl用它来作为表述结构因果模型的工具的原因。</p>
 <p>相反的，给定一张图像后，<strong>推断问题</strong>则反过来：计算对象类别、位置和朝向的后验分布。</p>
 <div class="callout callout-style-default callout-important callout-titled" title="生成方向与推断方向不同">
 <div class="callout-header d-flex align-content-center">
@@ -1384,9 +1384,7 @@ a\to c\leftarrow b
 <section id="inference-in-graphical-models" class="level1">
 <h1>Inference in Graphical Models</h1>
 <p>图模型的表示只是第一步。真正使用模型时，我们通常要做 inference，也就是<strong>在某些变量被观测后，计算其他变量的边缘分布、后验分布、MAP 配置或证据</strong>。</p>
-<p>最朴素的方法是直接对联合分布求和。例如要计算 <span class="math inline">\(p(x_n)\)</span>，可以写成 <span class="math display">\[
-p(x_n)=\sum_{x_1}\cdots\sum_{x_{n-1}}\sum_{x_{n+1}}\cdots\sum_{x_N}p(x_1,\dots,x_N).
-\]</span> 如果每个变量有 <span class="math inline">\(K\)</span> 个状态，这个暴力求和通常是 <span class="math inline">\(O(K^N)\)</span> 级别。图模型推断算法的核心，是利用因子分解把重复计算缓存为消息。</p>
+<p>推断算法的核心思想是：<strong>利用图结构把重复计算缓存为消息</strong>，从而避免对整条链的所有状态组合重复求和，使复杂度从指数级降到随链长线性增长。许多算法可以看作是在图结构上进行消息传递。本章主要介绍的是几种精确推断算法，后面的章节中会介绍更高效的近似算法。</p>
 <section id="链上的精确推断" class="level2">
 <h2 class="anchored" data-anchor-id="链上的精确推断">链上的精确推断</h2>
 <p>考虑无向链： <span class="math display">\[
