@@ -1101,7 +1101,154 @@ p(x)=\prod_{s\in \operatorname{ne}(x)}\mu_{f_s\to x}(x),
 $$
 再根据需要归一化。
 
-设 $x$ 是变量节点，$f$ 是相邻因子节点。Sum-product 中有两类消息。
+::::{.callout-note title="sum-product 的直觉"}
+注意，factor graph 是一个二分图，所以变量节点只连接到包含该变量的因子节点，因子节点只连接到其包含的变量节点。
+::::
+
+接下来推导这两类消息的具体形式。设目标变量节点为 $x$，它相邻的 factor nodes 为
+$$
+\operatorname{ne}(x)=\{f_s\}.
+$$
+由于 factor graph 是树，从 $x$ 出发经过不同 $f_s$ 进入的子图彼此不相交。令 $X_s$ 表示通过 $f_s$ 连接到 $x$ 的那棵子树中、除 $x$ 外的所有变量；令 $F_s(x,X_s)$ 表示这棵子树中所有 factors 的乘积。于是整个 joint distribution 可以按 $x$ 周围的子树写成
+$$
+p(\mathbf{x})
+=
+\prod_{s\in\operatorname{ne}(x)}F_s(x,X_s).
+$$
+因此边缘分布为
+$$
+\begin{aligned}
+p(x)
+&=
+\sum_{\mathbf{x}\setminus x}p(\mathbf{x})\\
+&=
+\sum_{\{X_s\}_s}
+\prod_{s\in\operatorname{ne}(x)}F_s(x,X_s).
+\end{aligned}
+$$
+由于不同 $X_s$ 属于不同子树，求和可以分配到每个子树内部：
+$$
+p(x)
+=
+\prod_{s\in\operatorname{ne}(x)}
+\left[
+\sum_{X_s}F_s(x,X_s)
+\right].
+$$
+这一步就是 sum-product 名字的来源：**全局的“对乘积求和”被改写成局部的“求和后再相乘”**。于是自然定义 factor node $f_s$ 传给变量节点 $x$ 的消息：
+$$
+\mu_{f_s\to x}(x)
+\equiv
+\sum_{X_s}F_s(x,X_s).
+$$
+这样就得到
+$$
+p(x)
+=
+\prod_{s\in\operatorname{ne}(x)}
+\mu_{f_s\to x}(x).
+$$
+
+
+![由factor到变量消息推导局部消息](https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/factor-variable-message-20260529-115332.png){#fig-sum-product-message width=80%}
+
+现在继续把 $\mu_{f_s\to x}(x)$ 写成局部递推形式。假设 factor $f_s$ 除了连接 $x$，还连接变量节点
+$$
+x_1,\dots,x_M.
+$$
+对每个 $x_m$，令 $X_{sm}$ 表示从 $x_m$ 往外、但不包括 $f_s$ 的那棵子树中的其它变量，令 $G_m(x_m,X_{sm})$ 表示该子树中的所有 factors 的乘积。则
+$$
+F_s(x,X_s)
+=
+f_s(x,x_1,\dots,x_M)
+\prod_{m=1}^M
+G_m(x_m,X_{sm}).
+$$
+代入消息定义：
+$$
+\begin{aligned}
+\mu_{f_s\to x}(x)
+&=
+\sum_{x_1}\cdots\sum_{x_M}
+\sum_{X_{s1}}\cdots\sum_{X_{sM}}
+f_s(x,x_1,\dots,x_M)
+\prod_{m=1}^M G_m(x_m,X_{sm})\\
+&=
+\sum_{x_1}\cdots\sum_{x_M}
+f_s(x,x_1,\dots,x_M)
+\prod_{m=1}^M
+\left[
+\sum_{X_{sm}}G_m(x_m,X_{sm})
+\right].
+\end{aligned}
+$$
+括号中的项正是变量节点 $x_m$ 传给 factor node $f_s$ 的消息：
+$$
+\mu_{x_m\to f_s}(x_m)
+\equiv
+\sum_{X_{sm}}G_m(x_m,X_{sm}).
+$$
+因此得到 factor-to-variable message：
+$$
+\mu_{f_s\to x}(x)
+=
+\sum_{x_1}\cdots\sum_{x_M}
+f_s(x,x_1,\dots,x_M)
+\prod_{m=1}^M
+\mu_{x_m\to f_s}(x_m).
+$$
+用邻居集合记号写，就是
+$$
+\mu_{f\to x}(x)
+=
+\sum_{x_f\setminus x}
+f(x_f)
+\prod_{y\in \operatorname{ne}(f)\setminus x}
+\mu_{y\to f}(y).
+$$
+
+
+![由变量节点到因子节点推导局部消息](https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/variable-factor-message-20260529-115626.png){#fig-sum-product-message-2 width=60%}
+
+最后推导 variable-to-factor message。对变量节点 $x_m$ 来说，$G_m(x_m,X_{sm})$ 又可以按它相邻的其它 factor 子树分解。若
+$$
+\operatorname{ne}(x_m)\setminus f_s=\{f_l\},
+$$
+并令 $F_l(x_m,X_{ml})$ 表示通过 $f_l$ 连接出去的子树中所有 factors 的乘积，则
+$$
+G_m(x_m,X_{sm})
+=
+\prod_{l\in\operatorname{ne}(x_m)\setminus f_s}
+F_l(x_m,X_{ml}).
+$$
+因此
+$$
+\begin{aligned}
+\mu_{x_m\to f_s}(x_m)
+&=
+\sum_{X_{sm}}G_m(x_m,X_{sm})\\
+&=
+\prod_{l\in\operatorname{ne}(x_m)\setminus f_s}
+\left[
+\sum_{X_{ml}}F_l(x_m,X_{ml})
+\right]\\
+&=
+\prod_{l\in\operatorname{ne}(x_m)\setminus f_s}
+\mu_{f_l\to x_m}(x_m).
+\end{aligned}
+$$
+也就是说，变量节点本身不做求和；它只是把来自其它 factor 的消息逐点相乘后，传给目标 factor。
+
+:::: {.callout-important title="推导中真正用到的结构"}
+Sum-product 的递推成立，关键依赖两点:
+
+- factor graph 是 tree，所以从某个节点切开后，不同子树变量集合互不重叠。
+- 乘法对加法可分配，所以可以把全局求和拆成局部求和。
+
+若图中有 loop，这种子树分解不再严格成立，后面才会出现 loopy belief propagation 这种近似算法。
+::::
+
+把推导压缩成算法规则，设 $x$ 是变量节点，$f$ 是相邻因子节点。Sum-product 中有两类消息。
 
 变量节点到因子节点的消息为
 $$
