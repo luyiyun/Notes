@@ -2140,6 +2140,7 @@ p_{\max}
 </section>
 <section id="回溯与最优配置" class="level3">
 <h3 class="anchored" data-anchor-id="回溯与最优配置">回溯与最优配置</h3>
+<p>max-sum 不只要算出“最大概率是多少”，还要找出“哪一组变量取值实现了这个最大概率”。</p>
 <p>要恢复具体的最优变量配置，还需要在每次最大化时记录 argmax，也就是 backpointer。对链式模型，可以在向 root 传消息时存储 <span class="math display">\[
 \phi(x_n)=
 \arg\max_{x_{n-1}}
