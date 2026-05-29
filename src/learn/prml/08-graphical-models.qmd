@@ -1368,7 +1368,84 @@ PRML 用一个二元例子说明这一点：
 
 联合分布最大值在 $(x=1,y=0)$，概率为 0.4。但是边缘分布分别在 $x=0$ 和 $y=0$ 处最大，组合为 $(x=0,y=0)$，联合概率只有 0.3。这个例子说明：**最大化每个变量的 marginal，不等于最大化 joint distribution**。
 
-Max-product algorithm 把 sum-product 中的求和替换为最大化。为了数值稳定，通常取对数，把乘积变成加法，于是得到 max-sum algorithm。
+### 从 max-product 到 max-sum
+
+设 factor graph 表示的联合分布为
+$$
+p(\mathbf{x})=\prod_s f_s(x_s).
+$$
+为了找到最大概率值，可以写成
+$$
+\max_{\mathbf{x}}p(\mathbf{x})
+=
+\max_{x_1}\cdots\max_{x_M}
+\prod_s f_s(x_s).
+$$
+在 sum-product 中，我们利用的是乘法对加法的分配律；在 max-product 中，对应使用的是
+$$
+\max(ab,ac)=a\max(b,c),\qquad a\ge 0.
+$$
+因为 graphical model 的 factors 都是非负的，所以最大化也可以像求和一样从全局表达式中向局部推进。
+
+对树形 factor graph，可以沿用 sum-product 的子树推导，只是把边缘化求和换成最大化。设目标变量节点为 $x$，从相邻 factor $f_s$ 连出去的子树仍记为 $F_s(x,X_s)$。则
+$$
+\max_{\mathbf{x}\setminus x}p(\mathbf{x})
+=
+\prod_{s\in\operatorname{ne}(x)}
+\left[
+\max_{X_s}F_s(x,X_s)
+\right].
+$$
+因此可以定义 max-product message：
+$$
+\nu_{f_s\to x}(x)
+\equiv
+\max_{X_s}F_s(x,X_s).
+$$
+变量节点处仍然只是把其它入射消息相乘：
+$$
+\nu_{x\to f}(x)
+=
+\prod_{h\in\operatorname{ne}(x)\setminus f}
+\nu_{h\to x}(x).
+$$
+因子节点到变量节点的消息则为
+$$
+\nu_{f\to x}(x)
+=
+\max_{x_f\setminus x}
+\left[
+f(x_f)
+\prod_{y\in\operatorname{ne}(f)\setminus x}
+\nu_{y\to f}(y)
+\right].
+$$
+最后在 root 变量节点 $x$ 处，最大联合概率值为
+$$
+p_{\max}
+=
+\max_x
+\prod_{f\in\operatorname{ne}(x)}
+\nu_{f\to x}(x).
+$$
+
+不过直接做 max-product 会不断相乘很多小概率，容易数值下溢。因此实际中通常取对数。因为 $\log$ 是单调函数，
+$$
+\log\max_{\mathbf{x}}p(\mathbf{x})
+=
+\max_{\mathbf{x}}\log p(\mathbf{x}).
+$$
+并且
+$$
+\log\prod_s f_s(x_s)=\sum_s \log f_s(x_s).
+$$
+于是 product 变成 sum，max-product 变成 **max-sum**。如果令
+$$
+\mu_{f\to x}(x)=\log \nu_{f\to x}(x),
+\qquad
+\mu_{x\to f}(x)=\log \nu_{x\to f}(x),
+$$
+就得到 max-sum 的两类消息。
 
 变量到因子的消息为
 $$
@@ -1389,7 +1466,16 @@ $$
 \mu_{y\to f}(y)
 \right].
 $$
-最终在根节点处求最大值即可得到最大联合 log probability。
+最终在根节点处求最大值即可得到最大联合 log probability：
+$$
+\log p_{\max}
+=
+\max_x
+\left[
+\sum_{f\in\operatorname{ne}(x)}
+\mu_{f\to x}(x)
+\right].
+$$
 
 叶节点的初始消息也对应 sum-product 的对数版本。变量叶节点发送
 $$
@@ -1399,6 +1485,12 @@ $$
 $$
 \mu_{f\to x}(x)=\log f(x).
 $$
+
+:::: {.callout-note title="max-sum 和 sum-product 的对应关系"}
+Sum-product 中的“求和 + 乘积”在 max-sum 中变成“最大化 + 加法”。形式上看，只要把 sum-product 的 marginalization $\sum$ 替换为 $\max$，并把乘积空间切换到 log 空间，就得到 max-sum 的递推。
+::::
+
+### 回溯与最优配置
 
 要恢复具体的最优变量配置，还需要在每次最大化时记录 argmax，也就是 backpointer。对链式模型，可以在向 root 传消息时存储
 $$
@@ -1410,13 +1502,24 @@ $$
 \mu_{x_{n-1}\to f_{n-1,n}}(x_{n-1})
 \right].
 $$
-先在 root 处确定 $x_N^{\max}$，再通过
+这个函数的含义是：**如果当前变量 $x_n$ 取某个值，那么前一个变量 $x_{n-1}$ 应该取哪个值，才能使从左侧传来的最大化路径与当前值兼容**。
+
+先在 root 处确定
+$$
+x_N^{\max}
+=
+\arg\max_{x_N}
+\mu_{f_{N-1,N}\to x_N}(x_N),
+$$
+再通过
 $$
 x_{n-1}^{\max}=\phi(x_n^{\max})
 $$
 反向回溯，就能得到一个全局一致的 maximizing configuration。
 
-不能简单地先做一遍 max-sum，再对每个节点分别取局部最优状态。若存在多个全局最优路径，逐点选择可能会把不同路径上的状态拼在一起，得到一个并非全局最优的组合。Backtracking 的作用就是保证整条配置来自同一个最大化路径。
+不能简单地先做一遍 max-sum，再对每个节点分别取局部最优状态。原因是最大化不像求和那样会把所有可能路径的贡献都保留下来；它只保留最优路径的分数。如果存在多个全局最优路径，逐点选择可能会把不同路径上的状态拼在一起，得到一个并非全局最优的组合。Backtracking 的作用就是保证整条配置来自同一个最大化路径。
+
+对一般 tree-structured factor graph，原则相同。每次 factor node 向 variable node 发送 max-sum message 时，都会对其它邻居变量做联合最大化；此时需要记录哪些邻居变量取值实现了该最大值。root 的状态确定后，再沿树反向使用这些记录，为所有变量赋值。
 
 :::: {.callout-important title="MAP 是整体配置问题"}
 Sum-product 的输出是局部边缘，max-sum 的输出是全局最优配置。二者回答的问题不同。边缘分布告诉我们单个变量的不确定性，MAP 配置告诉我们哪个完整状态组合概率最大。
