@@ -12,7 +12,7 @@ listing:
   filter-ui: false
 ---
 
-这里收录 C. M. Bishop 的 *Pattern Recognition and Machine Learning* 专题学习笔记。当前迁移范围包括第 6 章核方法、第 7 章稀疏核机器与第 8 章图模型。
+这里收录 C. M. Bishop 的 *Pattern Recognition and Machine Learning* 专题学习笔记。当前迁移范围包括第 6 章核方法、第 7 章稀疏核机器、第 8 章图模型与第 9 章混合模型和 EM。
 
 ## 笔记目录
 

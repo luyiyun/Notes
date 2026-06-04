@@ -30,3 +30,6 @@ _site/
 # quarto相关文件
 .quarto/
 _site/
+_extensions/
+resources/audits/
+.qsync-*.html

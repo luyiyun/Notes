@@ -75,7 +75,6 @@ crossref:
   fig-title: "图"
   fig-prefix: "图"
 
-
 # 自动缓存运行结果
 execute:
   freeze: auto

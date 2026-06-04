@@ -1,0 +1,1049 @@
+---
+title: "混合模型与 EM"
+subtitle: "Mixture Models and EM"
+description: "PRML 第 9 章关于 K-means、Gaussian mixture、latent variable view、EM algorithm、Bernoulli mixture 与一般 EM 下界证明"
+draft: false
+aliases:
+  - 混合模型与 EM
+  - Mixture Models and EM
+  - EM algorithm
+  - Gaussian mixture model
+  - K-means
+tags:
+  - PRML
+  - 机器学习
+  - 无监督学习
+  - 混合模型
+  - EM算法
+date: 2026-05-31
+date-modified: last-modified
+order: 9
+---
+
+# 引言
+
+前面我们在学习的过程中发现，很多问题被建立为概率模型后，一般来说会包含两类变量：**观测变量 $X$ 和隐藏变量 $Z$**。观测变量是数据本身，隐藏变量是数据的内在结构或特征。
+
+这个过程可能来自于我们对现实数据生成机制的模拟，其中的隐藏变量可能正好是我们想要从数据中推断的内容。那我们一旦完成了建模，我们的实际问题就变成了求解这个隐藏变量后验分布的问题，前面学习以及后面学习的诸多方法就有了用武之道。
+
+此外，建模过程可能没有任何现实依据，但是通过增加一个隐藏变量，可以方便地把复杂的问题分解成更简单的子问题，从而更容易求解。例如，我们可以写成
+
+$$
+p(X,Z\mid \theta),
+$$
+再通过边缘化得到观测变量的分布
+$$
+p(X\mid \theta)=\sum_Z p(X,Z\mid \theta).
+$$
+$p(X\mid\theta)$ 可能很复杂，而 $p(X,Z\mid\theta)$ 往往具有更简单的因子化结构。
+
+其中，**混合模型（Mixture Models）**正是这种思想最直接的例子。离散潜变量 $z$ 表示一个样本由哪个 mixture component 生成，观测分布则是多个简单分布的加权叠加。这样做带来了两个好处：
+
+1. **聚类任务**：这样，我们实际上是自然地构建了一个聚类任务，通过求解后验分布 $p(z\mid x)$，从而实现聚类。
+2. **复杂但易处理的概率模型**：尽管每个 mixture component
+   的分布形式可能非常简单，但是“混合”后的边缘分布可能具有非常复杂的形式，而能够描述现实数据的分布。同时，这种结构还可以通过各种方式进行高效求解。
+
+其中一种能够有效解决以上问题的方法是 **expectation-maximization algorithm (EM)**。从数学上叫，EM 给予我们一种能够对复杂模型进行极大似然估计的方法，基本思想是:**如果直接最大化观测数据 likelihood，求和符号会落在对数内部，使优化变得麻烦；但如果潜变量也被观测到，complete-data log likelihood 往往容易最大化。EM 的思想就是在当前参数下估计潜变量后验，再最大化 complete-data log likelihood 的期望。**
+
+:::: {.callout-note title="本章的主线"}
+第 9
+章可以看成是在介绍如何对带有隐变量模型进行极大似然估计的方法。其中，一个典型问题是聚类问题，典型模型是 Gaussian Mixture Model，典型的估计方法是 EM 算法。
+
+1. 作为最常用的聚类算法，K-means 可以被是为 GMM 的特殊形式。
+2. GMM 把聚类改写为带离散潜变量的概率模型。
+3. EM 算法完成对 GMM 模型的高效估计。
+4. 将EM 算法扩展到更加一般的情况。
+::::
+
+# K-means Clustering
+
+## 核心问题
+
+K-means 要解决的是一个无监督聚类问题：给定 $N$ 个 $D$ 维观测
+$$
+\{x_1,\dots,x_N\},
+$$
+把它们划分为 $K$ 个簇。这里先假定 $K$ 已知。直观上，一个簇应该包含彼此距离较近、并且离其它簇较远的数据点。为了形式化这个想法，我哦们为每个簇引入一个 prototype 或 centre：
+$$
+\mu_k,\qquad k=1,\dots,K.
+$$
+
+对每个数据点 $x_n$，再引入 1-of-$K$ assignment indicator：
+$$
+r_{nk}\in \{0,1\},\qquad \sum_{k=1}^K r_{nk}=1.
+$$
+若 $r_{nk}=1$，表示 $x_n$ 被分配给第 $k$ 个簇。
+
+## Distortion measure 与交替优化
+
+基于上面的定义，我们可以构造下面的一个目标函数：
+
+$$
+J
+=
+\sum_{n=1}^{N}\sum_{k=1}^{K}
+r_{nk}\|x_n-\mu_k\|^2.
+$${#eq-distortion-measure}
+
+@eq-distortion-measure 被称为 distortion measure。基于此，K-means 的目标是找到一个 $\{\mu_k\}$和$\{r_{nk}\}$，使得 $J$ 最小化，也就是
+
+$$
+\min_{\{\mu_k\},\{r_{nk}\}} J
+$${#eq-k-means}
+
+它把两个任务绑在一起：
+
+1. 决定每个点属于哪个簇，
+2. 决定每个簇的中心在哪里。
+
+这时候，我们发现，在已知 centre $\{\mu_k\}$，$J$ 对 $r_{nk}$ 是线性的，因此固定 $\mu_k$ 后，每个点独立选择最近的 centre，此时优化 $r_{nk}$ 变得非常简单。另外一方面，如果我们已知了 $r_{nk}$，$J$ 对 $\mu_k$ 是二次函数，因此固定 $r_{nk}$ 后，每个 centre独立更新，此时优化 $\mu_k$ 变得非常简单。
+
+所以，非常自然地，**K-means 采用交替优化：先固定 centres $\{\mu_k\}$，优化 assignments $\{r_{nk}\}$；再固定 assignments，优化 centres**。
+
+由于 $J$ 对每个 $r_{nk}$ 是线性的，固定 $\mu_k$ 后，每个点独立选择最近的 centre：
+$$
+r_{nk}
+=
+\begin{cases}
+1,& k=\arg\min_j \|x_n-\mu_j\|^2,\\
+0,& \text{otherwise}.
+\end{cases}
+$${#eq-r-update}
+这对应公式 (9.2)。它是硬分配：每个点必须完全属于一个簇。
+
+固定 $r_{nk}$ 后，$J$ 对 $\mu_k$ 是二次函数。令导数为零：
+$$
+2\sum_{n=1}^N r_{nk}(x_n-\mu_k)=0,
+$$
+对应公式 (9.3)，可得
+$$
+\mu_k=
+\frac{\sum_n r_{nk}x_n}{\sum_n r_{nk}}.
+$${#eq-mu-update}
+这就是公式 (9.4)：第 $k$ 个 prototype 是分配给该簇的数据点的均值。
+
+:::: {.callout-important title="为什么叫 K-means"}
+算法名称中的 means 不是装饰性的。@eq-mu-update 说明，簇中心必须是当前簇内样本的算术平均。K-means 的几何直觉、目标函数和更新公式都围绕这个事实展开。
+::::
+
+## 收敛、初始化与计算代价
+
+每次 assignment update 不会增加 $J$，每次 centre update 也不会增加 $J$，因此 K-means 的 distortion 单调不增。此外，由于可能的离散 assignment 数量有限，**算法最终会停止在某个局部最优或 stationary assignment 上。但这并不保证达到全局最小值。初始化不同，可能得到不同聚类结果。**
+
+
+![K-means 示意图](https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/k-means-example-20260531-211126.png){#fig-k-means-example}
+
+上图用 Old Faithful 数据展示 K-means 的交替过程：
+
+- 初始 centre 可能很差；
+- step 1 (assignment, E step) 依据垂直平分线把点分到最近 centre；
+- step 2 (centre update, M step) 把 centre 移到所属点的均值；
+- 不断重复直到 assignment 和 centre 不再变化。
+
+下图则展示了每次 E/M step 后 $J$ 的下降轨迹。
+
+
+![K-means 收敛轨迹](https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/kmeans-distrotion-example-20260531-211401.png){#fig-k-means-convergence fig-size=80%}
+
+实际使用时，通常从数据集中随机选取 $K$ 个点作为初始 centre。PRML 特别指出，K-means 也常用于初始化 Gaussian mixture model，然后再用 EM 细化参数。
+
+直接实现 K-means 时，每次 E step 要计算所有点到所有 prototypes 的距离，代价约为 $O(KN)$ 次距离计算。可通过空间数据结构、三角不等式剪枝等方式减少不必要的距离计算。
+
+## Online K-means
+
+上述迭代方案被称为**批量 K-means**，每轮使用整个数据集更新 centres。
+
+我们也可以得到一个 online stochastic version：依次处理样本 $x_n$，只更新最近的 prototype：
+$$
+\mu_k^{\mathrm{new}}
+=
+\mu_k^{\mathrm{old}}
+\eta_n(x_n-\mu_k^{\mathrm{old}}).
+$$
+其中 $\eta_n$ 是通常随样本数递减的 learning rate。这个更新可以理解为“最近 centre 向当前样本移动一小步”。
+
+## K-medoids
+
+K-means 依赖 squared Euclidean distance，因此更适合连续数值变量，并且对 outliers 不够鲁棒。因此，我们可以使用一般 dissimilarity measure $V(x,x')$，进而定义更一般的 distortion：
+$$
+\widetilde{J}
+=
+\sum_{n=1}^N\sum_{k=1}^K r_{nk}V(x_n,\mu_k).
+$$
+这引出 **K-medoids**。K-medoids 常把 prototype 限制为簇内某个真实数据点，这样可以适配更一般的 $V(\cdot,\cdot)$，但 M step 需要在簇内做离散搜索。
+
+:::: {.callout-warning title="易错点"}
+K-means 的 assignment 是 hard assignment，不表达不确定性。若一个点位于两个簇中心中间，K-means 仍会强行把它归入某一簇。Gaussian mixture 的 responsibility 正是对这个问题的概率化改进。
+::::
+
+## Image segmentation and compression
+
+接下来，我们使用图像分割和压缩说明 K-means 的行为。把每个像素看成 RGB 三维空间中的一个点，运行 K-means 后，每个像素被替换为所属簇中心的 RGB 值。于是图像只使用 $K$ 种颜色，相当于颜色 palette 或 vector quantization。
+
+
+![使用kmeans进行图像压缩](https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/image-compression-kmeans-20260602-103517.png){#fig-image-compression}
+
+上图比较了不同 $K$ 下的图像分割结果。$K$ 越小，压缩越强，但图像质量越差；$K$ 越大，颜色细节保留越多，但压缩率下降。若原图有 $N$ 个像素，每个 RGB 通道 8 bits，直接存储需要
+$$
+24N
+$$
+bits。K-means 压缩后，每个像素只需传输最近 centre 的编号，约为 $\log_2K$ bits，外加 $K$ 个 RGB code book vectors，总开销近似为
+$$
+24K+N\log_2K.
+$$
+
+PRML 的例子中，原图为 $240\times 180=43{,}200$ 个像素，直接传输需要 $1{,}036{,}800$ bits；当 $K=2,3,10$ 时，压缩后分别约为原始大小的 $4.2\%$、$8.3\%$、$16.7\%$。
+
+:::: {.callout-note title="提示"}
+K-means 在这里只是把颜色空间聚类，并没有利用像素的空间邻近关系。因此它能说明 vector quantization，却不是一个精细的图像分割算法。
+::::
+
+## 思考题
+
+1. 为什么 K-means 每一步都不会增加 $J$，但仍可能不是全局最优？
+2. 如果一个簇在某次迭代中没有任何数据点，公式 @eq-mu-update 会出现什么问题？
+3. 为什么 K-means 可以作为 Gaussian mixture EM 的初始化方法？
+4. 图像压缩例子中，为什么 $K$ 变大时压缩率下降但质量提升？
+
+# Mixtures of Gaussians
+
+## 从线性叠加到 latent variable view
+
+Gaussian mixture model (GMM) 用多个 Gaussian components 的加权和表示更灵活的概率密度：
+$$
+p(x)=
+\sum_{k=1}^{K}
+\pi_k\mathcal{N}(x\mid \mu_k,\Sigma_k).
+$$
+其中 $\pi_k$ 是 mixing coefficient，必须满足
+$$
+0\leq \pi_k\leq 1,\qquad
+\sum_{k=1}^{K}\pi_k=1.
+$$
+
+为了把 mixture 写成 latent variable model，引入一个 $K$ 维二值随机变量 $z$，采用 1-of-$K$ 表示。若 $z_k=1$，表示第 $k$ 个 component 被选中。于是
+$$
+p(z)=
+\prod_{k=1}^{K}\pi_k^{z_k}.
+$$
+在给定 $z_k=1$ 时，
+$$
+p(x\mid z_k=1)=\mathcal{N}(x\mid \mu_k,\Sigma_k),
+$$
+也可写成
+$$
+p(x\mid z)
+=
+\prod_{k=1}^{K}
+\mathcal{N}(x\mid \mu_k,\Sigma_k)^{z_k}.
+$$
+
+下图表示最简单的 mixture graph：先从 $p(z)$ 选择 component，再从 $p(x\mid z)$ 生成观测 $x$。
+
+
+![混合模型的图表示](https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/mixture-model-graph-20260602-170818.png){#fig-mixture-graph fig-size=50%}
+
+
+边缘化 $z$ 可恢复 mixture density：
+$$
+p(x)
+=
+\sum_z p(z)p(x\mid z)
+=
+\sum_{k=1}^{K}\pi_k\mathcal{N}(x\mid \mu_k,\Sigma_k),
+$$
+因此 GMM 既可以看成 Gaussian 的线性叠加，也可以看成“先选择 component，再生成样本”的概率生成模型。
+
+## Responsibility
+
+观测到 $x$ 之后，我们关心它来自第 $k$ 个 component 的后验概率：
+
+$$
+\gamma(z_k)
+\equiv
+p(z_k=1\mid x)
+= \frac{\pi_k\mathcal{N}(x\mid \mu_k,\Sigma_k)}
+{\sum_{j=1}^{K}\pi_j\mathcal{N}(x\mid \mu_j,\Sigma_j)}.
+$${#eq-responsibility}
+
+这称为 **responsibility**。它的含义是：第 $k$ 个 component 对解释观测 $x$ 承担多大责任。
+
+:::: {.callout-important title="responsibility 的三种读法"}
+同一个量 $\gamma(z_k)$ 可以从三种角度理解。
+
+1. Bayes 后验：观测 $x$ 后 $z_k=1$ 的概率。
+2. Soft assignment：样本对每个簇都有一个归属权重。
+3. EM 权重：M step 中计算均值、协方差和 mixing coefficient 的加权系数。
+::::
+
+![responsibility 的例子](https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/example-of-responsibility-20260602-171146.png){#fig-responsibility}
+
+上图用三组视图说明 complete data、incomplete data 与 responsibility。若知道每个样本真实来自哪个 component，就是 complete data；若只观察 $x$、不知道 $z$，就是 incomplete data；responsibility 图则用颜色混合表示每个点对不同 components 的 posterior probability。
+
+## Maximum likelihood 的困难
+
+给定 i.i.d. 数据 $X=\{x_1,\dots,x_N\}$，GMM 的 log likelihood 为
+
+
+$$
+\ln p(X\mid \pi,\mu,\Sigma)
+=
+\sum_{n=1}^{N}
+\ln
+\left\{
+\sum_{k=1}^{K}
+\pi_k\mathcal{N}(x_n\mid \mu_k,\Sigma_k)
+\right\}.
+$${#eq-likelihood}
+
+优化以上对数似然，存在以下三个难题：
+
+1. **求和在对数内部**：与单个 Gaussian 不同，log 不能直接作用到每个 Gaussian component 上，因此不能直接得到简单闭式最大似然解。
+2. **singularity**：若某个 component 的均值正好落在某个数据点上，例如 $\mu_j=x_n$，并且协方差为 $\Sigma_j=\sigma_j^2I$，则该点对该 component 的密度贡献类似
+  $$
+  \mathcal{N}(x_n\mid x_n,\sigma_j^2I)
+  \propto
+  \frac{1}{\sigma_j}.
+  $$
+  令 $\sigma_j\to 0$，该项趋于无穷，log likelihood 也趋于无穷。下图展示的正是某个 Gaussian component 塌缩到单个样本点的情形。
+3. **identifiability**：若交换 $K$ 个 components 的标签，得到的 mixture distribution 不变。一个 $K$ component mixture 通常有 $K!$ 个等价参数表示。这称为 **label switching**。若目标只是拟合密度，等价标签不影响预测；若要解释每个 component 的意义，identifiability 就很重要。
+
+
+![Singularities](https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/singularities-20260602-172330.png){#fig-singularities fig-size=50%}
+
+:::: {.callout-warning title="Gaussian mixture 的 ML 不是良定问题"}
+GMM 的 likelihood 可以通过 component collapse 变得无界。因此实际使用 maximum likelihood 或 EM 时，必须用初始化、重启、协方差下界、component reset、先验或 Bayesian treatment 避免病态解。
+::::
+
+既然无法得到简单闭式解，我们只能使用迭代算法。其中一种选择是基于梯度的算法（梯度下降、牛顿法等），这些算法确实是可行的，而且一般来讲速度会比我们下面要介绍的EM算法更快。但是，在本章中，我们会更加聚焦于 EM 算法，其一般来讲收敛性更好，更易于实现，更加优雅，而且是一种针对含有隐变量的概率模型的通用方法。
+
+
+## EM for Gaussian mixtures
+
+先看 stationary conditions。对 @eq-likelihood 关于 $\mu_k$ 求导并令其为零，会自然出现 responsibility：
+$$
+0
+=
+-\sum_{n=1}^{N}
+\frac{\pi_k\mathcal{N}(x_n\mid \mu_k,\Sigma_k)}
+{\sum_j \pi_j\mathcal{N}(x_n\mid \mu_j,\Sigma_j)}
+\Sigma_k(x_n-\mu_k).
+$$
+
+记
+
+$$
+N_k=\sum_{n=1}^{N}\gamma(z_{nk}),
+$$
+
+则均值更新为
+$$
+\mu_k
+=
+\frac{1}{N_k}\sum_{n=1}^{N}\gamma(z_{nk})x_n.
+$${#eq-mu-update-gmm-em}
+
+$N_k$ 是第 $k$ 个 component 的 effective number of points。
+
+同理，协方差更新为
+$$
+\Sigma_k
+=
+\frac{1}{N_k}
+\sum_{n=1}^{N}
+\gamma(z_{nk})
+(x_n-\mu_k)(x_n-\mu_k)^\top,
+$${#eq-sigma-update-gmm-em}
+它和单个 Gaussian 的样本协方差形式相同，只是每个点由 responsibility 加权。
+
+对 mixing coefficients，需要在约束 $\sum_k\pi_k=1$ 下最大化。用 Lagrange multiplier 写成
+$$
+\ln p(X\mid\pi,\mu,\Sigma)
++\lambda\left(\sum_{k=1}^{K}\pi_k-1\right),
+$$
+求导消去 $\lambda$ 后得到
+$$
+\pi_k=\frac{N_k}{N},
+$${#eq-pi-update-gmm-em}
+这说明 mixing coefficient 是第 $k$ 个 component 解释数据的平均责任。
+
+这些式子不是一次性的闭式解，因为 responsibility 本身依赖 $\pi,\mu,\Sigma$。但它们提示了迭代算法：
+
+::: {#alg-EM-for-GMM}
+
+### 用于GMM的EM算法
+
+1. **初始化** $\mu_k,\Sigma_k,\pi_k$ 并计算初始 log likelihood。
+2. **E step**：用当前参数计算
+$$
+\gamma(z_{nk})
+=
+\frac{\pi_k\mathcal{N}(x_n\mid\mu_k,\Sigma_k)}
+{\sum_{j=1}^{K}\pi_j\mathcal{N}(x_n\mid\mu_j,\Sigma_j)}.
+$$
+3. **M step**：固定 responsibility，更新
+$$
+\mu_k^{\mathrm{new}}
+=
+\frac{1}{N_k}\sum_{n=1}^{N}\gamma(z_{nk})x_n,
+$$
+$$
+\Sigma_k^{\mathrm{new}}
+=
+\frac{1}{N_k}\sum_{n=1}^{N}
+\gamma(z_{nk})
+(x_n-\mu_k^{\mathrm{new}})(x_n-\mu_k^{\mathrm{new}})^\top,
+$$
+$$
+\pi_k^{\mathrm{new}}=\frac{N_k}{N},
+\qquad
+N_k=\sum_{n=1}^{N}\gamma(z_{nk}).
+$$
+4. 重新计算
+$$
+\ln p(X\mid\mu,\Sigma,\pi)
+=
+\sum_{n=1}^{N}
+\ln\left\{
+\sum_{k=1}^{K}
+\pi_k\mathcal{N}(x_n\mid\mu_k,\Sigma_k)
+\right\},
+$$
+并检查 log likelihood 或参数是否收敛。
+
+:::
+
+
+![GMM-EM算法示例图](https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/example-GMM-EM-20260602-174244.png){#fig-GMM-EM-example}
+
+上图用 Old Faithful 数据展示 GMM EM：
+
+- E step 后点的颜色按 posterior probability 混合，
+- M step 后每个 Gaussian 的均值移到其“质量中心”，协方差变为加权协方差。
+
+相比 K-means，GMM EM 通常迭代更多、每轮计算更重，但它表达了 assignment uncertainty。
+
+## 思考题
+
+1. 为什么 $\gamma(z_{nk})$ 的分母要对所有 components 求和？
+2. $N_k$ 为什么不一定是整数？它和 K-means 中簇内点数有什么关系？
+3. 为什么 @eq-mu-update-gmm-em、@eq-sigma-update-gmm-em、@eq-pi-update-gmm-em 不是 closed-form maximum likelihood solution？
+4. Gaussian mixture 的 label switching 为什么影响解释，却不影响 density fitting？
+
+# Incomplete Data View of EM
+
+我们这里给出 EM 的第二种视角：不是先从 GMM 的 stationary equations 出发，而是把 latent variables 明确纳入优化问题。
+
+## 从 incomplete data 出发
+
+设观测数据为 $X$，潜变量为 $Z$，参数为 $\theta$。观测数据 likelihood 为
+$$
+\ln p(X\mid\theta)
+=
+\ln\left\{
+\sum_Z p(X,Z\mid\theta)
+\right\},
+$$
+困难仍然是：对 $Z$ 的求和在 log 内部。
+
+如果 $Z$ 也被观测到，complete data 为 $\{X,Z\}$，对应 log likelihood 是
+$$
+\ln p(X,Z\mid\theta),
+$${#eq-complete-data-likelihood}
+通常更容易最大化，但实际只有 incomplete data $X$。
+
+既然 @eq-complete-data-likelihood
+更好优化，**我们能不能找一个和它类似的优化目标，同时又能够把观测不到的 $Z$ 给去掉呢？**
+
+一个直观的处理方式是利用积分把 $Z$ 给积分掉，积分时所选择的概率分布是当前参数 $\theta^{\mathrm{old}}$ 下得到后验分布 $p(Z\mid X,\theta^{\mathrm{old}})$
+$$
+Q(\theta,\theta^{\mathrm{old}})
+=
+\sum_Z
+p(Z\mid X,\theta^{\mathrm{old}})
+\ln p(X,Z\mid\theta).
+$${#eq-Q-func}
+
+
+M step 定义为
+$$
+\theta^{\mathrm{new}}
+=
+\arg\max_{\theta}Q(\theta,\theta^{\mathrm{old}}).
+$$
+
+进而得到一般形式的 EM 算法：
+
+::: {#alg-EM}
+
+### 一般形式的 EM
+
+1. 初始化 $\theta^{\mathrm{old}}$，
+2. E step 计算后验 $p(Z\mid X,\theta^{\mathrm{old}})$，
+3. M step 最大化 @eq-Q-func $Q$，
+4. 若未收敛则令 $\theta^{\mathrm{old}}\leftarrow \theta^{\mathrm{new}}$。
+
+:::
+
+这里有几点需要注意：
+
+- EM 也可用于 MAP estimation。若参数有先验 $p(\theta)$，E step 不变，M step 改为最大化
+  $$
+  Q(\theta,\theta^{\mathrm{old}})+\ln p(\theta).
+  $$
+  合适先验可缓解 Gaussian mixture 的 singularity。
+
+- EM 还可用于 missing data (被视为$Z$，可以是连续型)，只要缺失机制满足 missing at random。
+
+- 若不是随机缺失，则不能直接使用 EM 算法，比如传感器只在数值超过阈值时失败，这种缺失就不是随机缺失。
+
+## Gaussian mixtures revisited
+
+若 GMM 的 latent labels $Z$ 已知，则 complete-data likelihood 为
+
+$$
+p(X,Z\mid\mu,\Sigma,\pi)
+=
+\prod_{n=1}^{N}\prod_{k=1}^{K}
+\pi_k^{z_{nk}}
+\mathcal{N}(x_n\mid \mu_k,\Sigma_k)^{z_{nk}}.
+$$
+
+取对数得
+
+$$
+\ln p(X,Z\mid\mu,\Sigma,\pi)
+=
+\sum_{n=1}^{N}\sum_{k=1}^{K}
+z_{nk}
+\left\{
+\ln \pi_k+\ln\mathcal{N}(x_n\mid\mu_k,\Sigma_k)
+\right\}.
+$$
+
+优化这个式子比优化 incomplete-data log likelihood （@eq-likelihood） 简单得多。因为，**log 已经直接作用到每个 component 上，求和与 log 的顺序被交换了**。
+
+若 $z_{nk}$ 已知，每个 component 的参数估计就退化为“只用分配给该 component 的样本估计一个 Gaussian”。mixing coefficient 的 complete-data 最大似然解为
+$$
+\pi_k
+=
+\frac{1}{N}\sum_{n=1}^{N}z_{nk}.
+$$
+
+现实中 $Z$ 未知。用 Bayes rule 可得后验
+$$
+p(Z\mid X,\mu,\Sigma,\pi)
+\propto
+\prod_{n=1}^{N}\prod_{k=1}^{K}
+\left[
+\pi_k\mathcal{N}(x_n\mid\mu_k,\Sigma_k)
+\right]^{z_{nk}},
+$$
+
+
+![全体样本下GMM模型的概率图](https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/gmm-graph-20260603-225511.png){#fig-gmm-graph}
+
+根据上图，再用 D分离，可知该后验对 $n$ 分解，说明各样本的 latent labels 在给定参数和观测后独立。在这个后验下，
+
+$$
+\mathbb{E}[z_{nk}]
+=
+\frac{\pi_k\mathcal{N}(x_n\mid\mu_k,\Sigma_k)}
+{\sum_{j=1}^{K}\pi_j\mathcal{N}(x_n\mid\mu_j,\Sigma_j)}
+=\gamma(z_{nk}),
+$$
+
+这就是后验（因为对于binary 变量，$\mathbb{E}[z]=P(z)$）。
+
+因此 expected complete-data log likelihood 为
+$$
+\mathbb{E}_Z[\ln p(X,Z\mid\mu,\Sigma,\pi)]
+=
+\sum_{n=1}^{N}\sum_{k=1}^{K}
+\gamma(z_{nk})
+\left\{
+\ln\pi_k+\ln\mathcal{N}(x_n\mid\mu_k,\Sigma_k)
+\right\},
+$$
+最大化它就得到前面同样的 GMM EM 更新 (@alg-EM-for-GMM)。
+
+
+## Relation to K-means
+
+K-means 和 GMM EM 的差别可以概括为：
+
+- K-means 做 hard assignment，
+- GMM EM 做 soft assignment。
+
+其实，K-means 可由 GMM EM 的一个极限推出。
+
+设所有 components 的 covariance 都固定为
+
+$$
+\Sigma_k=\epsilon I,
+$$
+则
+$$
+p(x\mid\mu_k,\Sigma_k)
+=
+(2\pi\epsilon)^{-D/2}
+\exp\left\{
+-\frac{1}{2\epsilon}\|x-\mu_k\|^2
+\right\}.
+$$
+
+这是 D 维 Gaussian 形式。 responsibility 变为
+
+$$
+\gamma(z_{nk})
+=
+\frac{
+\pi_k\exp\{-\|x_n-\mu_k\|^2/(2\epsilon)\}
+}{
+\sum_j
+\pi_j\exp\{-\|x_n-\mu_j\|^2/(2\epsilon)\}
+},
+$$
+
+当 $\epsilon\to 0$ 时，离 $x_n$ 最近的 centre 所对应的指数项衰减最慢，因此该 component 的 responsibility 趋于 1，其余趋于 0。这就得到 K-means 的 hard assignment：
+
+$$
+\gamma(z_{nk})\to r_{nk}.
+$$
+
+在同一极限下，EM 的均值更新退化为 K-means 的均值更新.
+
+expected complete-data log likelihood 也退化为
+
+$$
+\mathbb{E}_Z[\ln p(X,Z\mid\mu,\Sigma,\pi)]
+\to
+-\frac{1}{2}
+\sum_{n=1}^{N}\sum_{k=1}^{K}
+r_{nk}\|x_n-\mu_k\|^2
++\text{const}.
+$$
+
+因此最大化它等价于最小化 K-means distortion $J$ @eq-distortion-measure。
+
+:::: {.callout-important title="K-means 是 EM 的小方差极限"}
+K-means 不是随意出现的启发式算法。它可以看成所有 components 具有相同、趋近于零的 spherical covariance 时，Gaussian mixture EM 的极限形式。在这个极限中，不确定性消失，soft responsibility 退化成 0/1 assignment。
+::::
+
+## Mixtures of Bernoulli distributions (LCA)
+
+Bernoulli mixture 是本章用来说明 EM 通用性的离散变量例子。
+
+设 $x=(x_1,\dots,x_D)^\top$，每个 $x_i\in\{0,1\}$，单个 multivariate Bernoulli 分布为
+
+$$
+p(x\mid\mu)
+=
+\prod_{i=1}^{D}
+\mu_i^{x_i}(1-\mu_i)^{1-x_i}.
+$$
+
+它的均值和协方差为
+
+$$
+\mathbb{E}[x]=\mu,
+$$
+$$
+\operatorname{cov}[x]
+=
+\operatorname{diag}\{\mu_i(1-\mu_i)\},
+$$
+
+单个 Bernoulli 模型中，各维在给定 $\mu$ 后独立，协方差为对角阵。Bernoulli mixture 写作
+
+$$
+p(x\mid\mu,\pi)
+=
+\sum_{k=1}^{K}\pi_k p(x\mid\mu_k),
+$$
+
+其中
+
+$$
+p(x\mid\mu_k)
+=
+\prod_{i=1}^{D}
+\mu_{ki}^{x_i}(1-\mu_{ki})^{1-x_i}.
+$$
+
+mixture 的均值与协方差为
+
+$$
+\mathbb{E}[x]=\sum_{k=1}^{K}\pi_k\mu_k,
+$$
+$$
+\operatorname{cov}[x]
+=
+\sum_{k=1}^{K}
+\pi_k(\Sigma_k+\mu_k\mu_k^\top)
+-\mathbb{E}[x]\mathbb{E}[x]^\top,
+$$
+
+其中 $\Sigma_k=\operatorname{diag}\{\mu_{ki}(1-\mu_{ki})\}$。注意 mixture 后协方差不再一定是对角阵，因此 mixture 能表达变量之间的相关性。数据 likelihood 为
+
+$$
+\ln p(X\mid\mu,\pi)
+=
+\sum_{n=1}^{N}
+\ln\left\{
+\sum_{k=1}^{K}
+\pi_kp(x_n\mid\mu_k)
+\right\},
+$$
+同样，求和在 log 内部，直接最大化没有简单闭式解。
+
+引入 latent variable $z$ 后，
+$$
+p(x\mid z,\mu)
+=
+\prod_{k=1}^{K}p(x\mid\mu_k)^{z_k},
+$$
+$$
+p(z\mid\pi)
+=
+\prod_{k=1}^{K}\pi_k^{z_k},
+$$
+
+complete-data log likelihood 为
+
+$$
+\ln p(X,Z\mid\mu,\pi)
+=
+\sum_{n=1}^{N}\sum_{k=1}^{K}
+z_{nk}
+\left\{
+\ln\pi_k+
+\sum_{i=1}^{D}
+\left[
+x_{ni}\ln\mu_{ki}
++(1-x_{ni})\ln(1-\mu_{ki})
+\right]
+\right\},
+$$
+
+取后验期望，得到
+
+$$
+\mathbb{E}_Z[\ln p(X,Z\mid\mu,\pi)]
+=
+\sum_{n=1}^{N}\sum_{k=1}^{K}
+\gamma(z_{nk})
+\left\{
+\ln\pi_k+
+\sum_{i=1}^{D}
+\left[
+x_{ni}\ln\mu_{ki}
++(1-x_{ni})\ln(1-\mu_{ki})
+\right]
+\right\},
+$$
+
+E step 的 responsibility 为
+$$
+\gamma(z_{nk})
+=
+\frac{\pi_kp(x_n\mid\mu_k)}
+{\sum_{j=1}^{K}\pi_jp(x_n\mid\mu_j)},
+$$
+
+M step 中，responsibilities 只通过两个 sufficient statistics 出现：
+
+$$
+N_k=\sum_{n=1}^{N}\gamma(z_{nk}),
+$$
+$$
+\bar{x}_k
+=
+\frac{1}{N_k}\sum_{n=1}^{N}\gamma(z_{nk})x_n,
+$$
+
+更新为
+
+$$
+\mu_k=\bar{x}_k,
+\qquad
+\pi_k=\frac{N_k}{N},
+$$
+对应公式 (9.59) 和 (9.60)。
+
+PRML 还指出，Bernoulli likelihood 有上界，不会像 Gaussian mixture 那样出现 likelihood 趋于无穷的 singularity；但仍可能有 likelihood 为零的病态点，只要 EM 不从病态初值出发通常不会遇到。
+
+## EM for Bayesian linear regression
+
+把 EM 也可应用于 Bayesian linear regression 的 evidence maximization （二型极大似然、经验贝叶斯）。这里被边缘化的权重 $w$ 可以视为 latent variable，目标是最大化
+$$
+p(t\mid \alpha,\beta)
+$$
+关于 hyperparameters $\alpha,\beta$ 的 evidence。
+
+complete-data log likelihood 为
+$$
+\ln p(t,w\mid\alpha,\beta)
+=
+\ln p(t\mid w,\beta)+\ln p(w\mid\alpha),
+$$
+
+对 $w$ 的后验取期望，得到
+
+$$
+\mathbb{E}[\ln p(t,w\mid\alpha,\beta)]
+=
+\frac{M}{2}\ln\frac{\alpha}{2\pi}
+-\frac{\alpha}{2}\mathbb{E}[w^\top w]
++\frac{N}{2}\ln\frac{\beta}{2\pi}
+-\frac{\beta}{2}
+\sum_{n=1}^{N}
+\mathbb{E}\left[(t_n-w^\top\phi_n)^2\right].
+$$
+
+对 $\alpha$ 最大化得
+
+$$
+\alpha
+=
+\frac{M}{\mathbb{E}[w^\top w]}
+=
+\frac{M}{m_N^\top m_N+\operatorname{Tr}(S_N)}.
+$$
+它与第 3 章直接 evidence optimization 的更新式形式不同，但在 stationary point 上等价。关键联系是
+$$
+\gamma
+=
+M-\alpha\sum_{i=1}^{M}\frac{1}{\lambda_i+\alpha}
+=
+M-\alpha\operatorname{Tr}(S_N),
+$$
+在 evidence stationary point，有
+$$
+\alpha m_N^\top m_N
+=
+\gamma
+=
+M-\alpha\operatorname{Tr}(S_N),
+$$
+从而得到与 EM 更新相同的 $\alpha$。
+
+对于 relevance vector machine regression，也可把 $w$ 视为 latent variable。M step 最大化
+$$
+\mathbb{E}_w[\ln p(t\mid X,w,\beta)p(w\mid\alpha)],
+$$
+得到
+$$
+\alpha_i^{\mathrm{new}}
+=
+\frac{1}{m_i^2+\Sigma_{ii}},
+$$
+$$
+(\beta^{\mathrm{new}})^{-1}
+=
+\frac{\|t-\Phi m_N\|^2+\beta^{-1}\sum_i\gamma_i}{N}.
+$$
+这些更新与直接最大化 marginal likelihood 得到的结果形式等价。
+
+:::: {.callout-note title="教学提示"}
+这一小节的重要性不在于重新记住一套线性回归公式，而在于看见 EM 的抽象结构：只要某些变量被边缘化，它们就可以作为 latent variables；E step 计算后验期望，M step 更新控制先验或噪声的 hyperparameters。
+::::
+
+## 思考题
+
+1. 为什么 complete-data log likelihood 中的 log 可以直接作用到 component density 上？
+3. K-means 的 hard assignment 在 $\epsilon\to 0$ 极限中是如何出现的？
+4. Bernoulli mixture 为什么可以表达变量相关性，而单个 multivariate Bernoulli 不行？
+5. Bayesian linear regression 中，为什么 $w$ 可以被看作 latent variable？
+5. 为什么 EM 算法可以应用到 MAP 和 Bayesian 线性回归？
+
+# The EM Algorithm in General
+
+## Lower bound decomposition
+
+这里，我们给出给出一般 EM 的推倒过程和收敛解释。
+
+设观测变量为 $X$，隐藏变量为 $Z$，参数为 $\theta$。观测 likelihood 为
+$$
+p(X\mid\theta)
+=
+\sum_Z p(X,Z\mid\theta),
+$$
+
+这里先写成离散 $Z$ 的求和；若 $Z$ 连续，则把求和换成积分。使用 product rule：
+$$
+\ln p(X,Z\mid\theta)
+=
+\ln p(Z\mid X,\theta)+\ln p(X\mid\theta),
+$$
+
+这里我们引入任意分布 $q(Z)$，则有如下等式：
+
+$$
+\ln q(X\mid\theta)
+= \mathbb{E}_{q(Z)}[\ln q(X\mid\theta)]
+= L(q,\theta) + \operatorname{KL}(q\|p)
+$$
+
+其中
+$$
+L(q,\theta)
+=
+\sum_Z q(Z)
+\ln\frac{p(X,Z\mid\theta)}{q(Z)},
+$${#eq-lower-bound}
+
+$$
+\operatorname{KL}(q\|p)
+=
+-\sum_Z q(Z)
+\ln\frac{p(Z\mid X,\theta)}{q(Z)}.
+$$
+第二个式子等价于通常写法
+$$
+\sum_Z q(Z)\ln\frac{q(Z)}{p(Z\mid X,\theta)}.
+$$
+它非负，并且当且仅当 $q(Z)=p(Z\mid X,\theta)$ 时为 0。
+
+
+由于 KL 非负，
+$$
+L(q,\theta)\leq \ln p(X\mid\theta),
+$$
+所以 $L(q,\theta)$ 是 log likelihood 的 lower bound。下图展示了 log likelihood、lower bound 与 KL gap 的关系。
+
+
+![对数似然、lower bound与KL gap的关系](https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/lower-bound-20260604-101129.png){#fig-lower-bound}
+
+## E step 与 M step 的几何意义
+
+设当前参数为 $\theta^{\mathrm{old}}$。
+
+**E step 固定 $\theta^{\mathrm{old}}$，选择 $q(Z)$ 最大化 $L(q,\theta^{\mathrm{old}})$**。由于 $\ln p(X\mid\theta^{\mathrm{old}})$ 与 $q$ 无关，最大化 lower bound 等价于让 KL gap 为零，因此
+$$
+q(Z)=p(Z\mid X,\theta^{\mathrm{old}}).
+$$
+
+**M step 固定这个 $q(Z)$，最大化 $L(q,\theta)$ 得到 $\theta^{\mathrm{new}}$**。因为 $L$ 是 lower bound，且 M step 使 bound 上升，所以 log likelihood 至少不会下降。
+
+:::{.callout-note}
+注意，虽然 E step 让 lower bound 贴住 likelihood，M step 使 bound 上升，但这并不意味着我们在直接最大化 likelihood。
+:::
+
+下图展示了参数空间下“构造切触下界，再最大化下界”的交替过程。
+
+![参数空间下构造切触下界，再最大化下界的交替过程](https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/em-parameter-space-20260604-103101.png){#fig-em-parameter-space}
+
+对于 exponential-family mixture，bound 在当前点与 log likelihood 有相同梯度，M step 往往比直接最大化 incomplete-data log likelihood 简单。
+
+把 E step 的最优 $q(Z)=p(Z\mid X,\theta^{\mathrm{old}})$ 代入 $L$，得到
+$$
+L(q,\theta)
+=
+\sum_Z p(Z\mid X,\theta^{\mathrm{old}})
+\ln p(X,Z\mid\theta)
+-\sum_Z p(Z\mid X,\theta^{\mathrm{old}})
+\ln p(Z\mid X,\theta^{\mathrm{old}}).
+$$
+第二项对 $\theta$ 是常数，因此
+$$
+L(q,\theta)=Q(\theta,\theta^{\mathrm{old}})+\text{const}.
+$$
+这个公式其实就是我们上面介绍的 Q函数 @eq-Q-func。
+
+:::: {.callout-important title="EM 的单调性来自下界"}
+EM 的单调性来自一个明确的不等式：$L(q,\theta)$ 是 $\ln p(X\mid\theta)$ 的下界。E step 让下界在当前参数处贴住 likelihood，M step 提高这个下界。
+::::
+
+## i.i.d. 数据的后验分解
+
+若有 $N$ 个 i.i.d. 数据点及对应 latent variables，则 joint distribution 对数据点分解。E step 中的后验也分解为
+$$
+p(Z\mid X,\theta)
+=
+\prod_{n=1}^{N}
+p(z_n\mid x_n,\theta).
+$$
+在 GMM 中，这说明样本 $x_n$ 的 responsibility 只依赖 $x_n$ 和当前 mixture parameters，不依赖其它样本的具体取值。其它样本通过参数估计间接影响它，而不是在 E step 公式中直接出现。
+
+## MAP-EM
+
+若给参数加入先验 $p(\theta)$，则
+$$
+\ln p(\theta\mid X)
+=
+\ln p(\theta,X)-\ln p(X),
+$$
+对应公式 (9.76)。利用下界分解可得
+$$
+\ln p(\theta\mid X)
+=
+L(q,\theta)+\operatorname{KL}(q\|p)+\ln p(\theta)-\ln p(X)
+\geq
+L(q,\theta)+\ln p(\theta)-\ln p(X),
+$$
+因此 MAP-EM 的 E step 与 ML-EM 相同，M step 多了 $\ln p(\theta)$。
+
+## GEM 和 ECM
+
+根据以上我们的推倒过程，保证 EM 算法单调的关键有两点：
+
+- E step 选择 $q(Z)$ 时，要最大化 lower bound $L(q,\theta)$.
+- M step 使 lower bound $L(q,\theta)$ 上升。
+
+其中 M step 其实只需要让 lower bound 上升即可，没有要求找到最大值。因此，当 M step 不能精确最大化 $L(q,\theta)$ 时，可以使用 **generalized EM (GEM)**。
+
+::::{#def-gem}
+
+#### Generalized EM (GEM)
+
+不要求找到最大值，只要求让 $L$ 增加。由于 $L$ 是 lower bound，每个完整 GEM cycle 仍能保证 log likelihood 不下降。
+
+::::
+
+
+GEM 还有一种特殊情况，称为 **ECM (expectation conditional maximization)**。其把 M step 拆成多个条件最大化，每次只优化一组参数、固定其它参数。
+
+## E step Approximatioin
+
+有时候，我们无法精确计算 posterior $p(Z\mid
+X,\theta)$，这时候我们可以通过一些近似方法来做到。
+
+首先第一个，M step
+时我们实际上优化的是一个期望，所以，我们实际上不需要知道全部的 posterior，只需要能够计算 基于该 posterior 的log likelihood 的期望即可。使用 重要性采样或MCMC方法可以实现这一点。
+
+我们也可以通过固定 $\theta$ 改进 $q(Z)$ 的方式来优化 $\mathcal{L}(q,\theta)$，这实际上是在降低 KL 散度。这条思路是后续 variational inference 的入口：用一个受限的 $q$ 家族近似真实 posterior，同时优化 lower bound。
+
+## Incremental EM
+
+对 i.i.d. 数据，EM 还可以做 incremental version。普通 batch EM 每轮重算所有样本的 responsibilities；incremental EM 每次只更新一个数据点 $x_m$ 的 responsibility。若 component 属于 exponential family，M step 需要的量通常只是 sufficient statistics，因此可以局部更新。
+
+以 Gaussian mixture 的均值为例，若对样本 $x_m$ 的 responsibility 从 $\gamma^{\mathrm{old}}(z_{mk})$ 变为 $\gamma^{\mathrm{new}}(z_{mk})$，则
+$$
+\mu_k^{\mathrm{new}}
+=
+\mu_k^{\mathrm{old}}
++
+\left(
+\frac{\gamma^{\mathrm{new}}(z_{mk})-\gamma^{\mathrm{old}}(z_{mk})}
+{N_k^{\mathrm{new}}}
+\right)
+(x_m-\mu_k^{\mathrm{old}}),
+$$
+$$
+N_k^{\mathrm{new}}
+=
+N_k^{\mathrm{old}}
++\gamma^{\mathrm{new}}(z_{mk})
+-\gamma^{\mathrm{old}}(z_{mk}).
+$$
+协方差和 mixing coefficient 也有类似的 sufficient-statistic update。因为每次只处理一个数据点，每个 E/M 局部步骤耗时不随总样本数增长；参数也更频繁更新，某些情况下会比 batch EM 收敛更快。
+
+## 思考题
+
+1. 为什么 KL 非负能推出 $L(q,\theta)$ 是 lower bound？
+2. E step 为什么要令 $q(Z)=p(Z\mid X,\theta^{\mathrm{old}})$？
+3. M step 提高的是 $L(q,\theta)$，为什么 log likelihood 也不会下降？
+4. GEM 和普通 EM 的区别是什么？
+5. Incremental EM 为什么需要 sufficient statistics？
+
