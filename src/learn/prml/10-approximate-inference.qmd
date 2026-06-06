@@ -1,0 +1,1511 @@
+---
+title: "近似推断"
+subtitle: "Approximate Inference"
+description: "PRML 第 10 章关于 variational inference、Bayesian Gaussian mixture、local variational methods、variational logistic regression 与 expectation propagation 的学习笔记。"
+draft: false
+aliases:
+  - 近似推断
+  - Approximate Inference
+  - Variational Inference
+  - Variational Bayes
+  - Expectation Propagation
+tags:
+  - PRML
+  - 机器学习
+  - 近似推断
+  - 变分推断
+  - 贝叶斯推断
+date: 2026-06-06
+date-modified: last-modified
+order: 10
+---
+
+# 引言
+
+在现实场景中，特别是包含复杂概率模型的场景，最直接也最麻烦的问题：**我们通常真正需要的不是联合分布本身，而是给定观测数据 $X$ 之后潜变量或参数 $Z$ 的后验分布**
+$$
+p(Z\mid X),
+$$
+**以及关于这个后验分布的各种期望**。第 9 章的 EM 算法已经给出一个典型例子：E step 需要对 complete-data log likelihood 在潜变量后验下取期望。如果这个后验分布不能精确求出，或者期望不能解析计算，那么 EM、预测、模型比较和贝叶斯参数学习都会卡住。
+
+这种困难有两个常见来源。
+
+1. 对连续变量来说，积分可能没有闭式解，并且维度太高时数值积分也不可行。
+2. 对离散变量来说，原则上可以对所有 hidden configurations 求和，但状态数常常随潜变量数量指数增长。
+
+所以，实际上，稍微复杂一点的场景下，后验分布的精确求解一般是不可行的。因此，**近似推断方法**应运而生。近似推断方法大致分成两类：
+
+| 类型 | 代表方法 | 基本特征 |
+|---|---|---|
+| 随机近似 | Markov chain Monte Carlo 等采样方法 | 理论上给无限计算时间可以逼近精确答案，但有限时间下有采样误差，且独立性与收敛性不易判断 |
+| 确定性近似 | Laplace approximation、variational inference、expectation propagation | 用解析可处理的分布族或局部 bound 替代真实后验，通常更适合大规模问题，但一般不可能给出精确结果 |
+
+前面第 4 章已经见过 Laplace approximation，它在后验众数附近做局部 Gaussian 近似。在本章中，我们将学习另外两种近似方法：variational inference 和 expectation propagation (EP)。
+
+:::: {.callout-note title="本章的主线"}
+第 10 章可以看成对第 8、9 章的延续。
+
+1. 第 8 章告诉我们概率模型可以被拆成图和因子。
+2. 第 9 章说明带隐变量模型可以通过 EM 交替优化。
+3. 第 10 章进一步问：如果 E step 或后验积分本身不可解，如何用一个可处理的近似后验替代它？
+::::
+
+# Variational Inference
+
+## 核心问题
+
+Variational inference 的起点是把推断问题写成一个关于分布 $q(Z)$ 的优化问题。设模型给出联合分布 $p(X,Z)$，目标是近似后验 $p(Z\mid X)$ 并估计 evidence $p(X)$。对任意分布 $q(Z)$，有分解
+$$
+\ln p(X)=\mathcal{L}(q)+\operatorname{KL}(q\Vert p),
+$${#eq-prml10-elbo-decomposition}
+其中
+$$
+\mathcal{L}(q)
+=
+\int q(Z)\ln\frac{p(X,Z)}{q(Z)}\,dZ,
+$${#eq-prml10-elbo}
+而
+$$
+\operatorname{KL}(q\Vert p)
+=
+\int q(Z)\ln\frac{q(Z)}{p(Z\mid X)}\,dZ.
+$${#eq-prml10-kl-qp}
+因为 KL divergence 非负，所以 $\mathcal{L}(q)$ 是 $\ln p(X)$ 的 lower bound。这个 bound 现在通常也叫 ELBO。最大化 $\mathcal{L}(q)$ 等价于最小化 $\operatorname{KL}(q(Z)\Vert p(Z\mid X))$。
+
+如果允许 $q(Z)$ 是任意分布，最优解就是真实后验，KL 为 0，bound 等于 $\ln p(X)$。现实问题在于真实后验不可处理，所以我们人为限制 $q(Z)$ 的族，使它足够简单，能够计算期望、归一化和预测；同时又希望它足够灵活，尽可能贴近真实后验。
+
+:::: {.callout-important title="灵活的 q 不是过拟合"}
+prml 特别强调，限制 $q$ 的目的只是计算可处理性。只要仍然可计算，使用更丰富的 variational family 通常只会让近似更接近真实后验，不存在像监督学习里那种因分布族太灵活而“拟合噪声”的同类过拟合问题。
+::::
+
+图 10.1 用第 4 章中一个非 Gaussian 分布做示意：Laplace approximation 围绕某个 mode 做局部二次近似，而 variational Gaussian approximation 是通过全局 KL 目标得到的。因此二者可能给出不同均值、方差和尾部行为。
+
+## Factorized Distributions
+
+最常用的限制方式，是把潜变量分成互不重叠的若干组
+$$
+Z=\{Z_1,\dots,Z_M\},
+$$
+并假设近似后验可以分解为
+$$
+q(Z)=\prod_{i=1}^M q_i(Z_i).
+$${#eq-prml10-mean-field}
+这就是 mean field approximation。注意，这里只假设因子化，不预先规定每个 $q_i$ 的函数形式。
+
+把 @eq-prml10-mean-field 代入 ELBO，并只保留和某个因子 $q_j(Z_j)$ 有关的项，可得
+$$
+\mathcal{L}(q)
+=
+\int q_j(Z_j)\ln \widetilde{p}(X,Z_j)\,dZ_j
+-
+\int q_j(Z_j)\ln q_j(Z_j)\,dZ_j
+ + \text{const},
+$$
+其中
+$$
+\ln \widetilde{p}(X,Z_j)
+=
+\mathbb{E}_{i\neq j}[\ln p(X,Z)] + \text{const}.
+$$
+因此，在其它因子固定时，最优因子满足
+$$
+\ln q_j^\star(Z_j)
+=
+\mathbb{E}_{i\neq j}[\ln p(X,Z)] + \text{const}.
+$${#eq-prml10-vb-factor-update}
+
+@eq-prml10-vb-factor-update 是 mean field variational inference 的核心公式。它说：要更新 $Z_j$ 的变分因子，只需拿联合分布的 log，在其它变量的当前变分分布下取期望，再把结果指数化并归一化。
+
+实际算法就是 coordinate ascent：
+
+1. 初始化所有因子 $q_i(Z_i)$。
+2. 依次用 @eq-prml10-vb-factor-update 更新每个因子。
+3. 重复直到 lower bound 或因子参数收敛。
+
+每次更新都会使 bound 不下降，但由于整体问题一般不是凸的，最终仍可能依赖初始化。
+
+## Factorized Approximation 的性质
+
+为了理解 factorization 会带来什么偏差，Bishop 先考察一个二维相关 Gaussian
+$$
+p(z)=\mathcal{N}(z\mid \mu,\Lambda^{-1}),
+\qquad
+z=(z_1,z_2),
+$$
+其中
+$$
+\mu=
+\begin{pmatrix}
+\mu_1\\
+\mu_2
+\end{pmatrix},
+\qquad
+\Lambda=
+\begin{pmatrix}
+\Lambda_{11} & \Lambda_{12}\\
+\Lambda_{21} & \Lambda_{22}
+\end{pmatrix}.
+$$
+若用 $q(z)=q_1(z_1)q_2(z_2)$ 近似，根据 @eq-prml10-vb-factor-update 可推出
+$$
+q_1^\star(z_1)
+=
+\mathcal{N}(z_1\mid m_1,\Lambda_{11}^{-1}),
+\qquad
+m_1=\mu_1-\Lambda_{11}^{-1}\Lambda_{12}(\mathbb{E}[z_2]-\mu_2),
+$$
+以及对称的
+$$
+q_2^\star(z_2)
+=
+\mathcal{N}(z_2\mid m_2,\Lambda_{22}^{-1}),
+\qquad
+m_2=\mu_2-\Lambda_{22}^{-1}\Lambda_{21}(\mathbb{E}[z_1]-\mu_1).
+$$
+在这个简单例子中，固定点会给出正确的均值 $\mathbb{E}[z_1]=\mu_1$、$\mathbb{E}[z_2]=\mu_2$，但方差被压得过小。图 10.2(a) 展示了这一点：$\operatorname{KL}(q\Vert p)$ 的 mean field 近似倾向于避开真实分布概率很低的区域，因此常常低估后验不确定性。
+
+如果反过来最小化 $\operatorname{KL}(p\Vert q)$，那么最优 factor 是真实分布的边缘：
+$$
+q_j^\star(Z_j)=p(Z_j).
+$$
+对 Gaussian 来说，这会匹配均值和边缘方差，却会在真实联合分布概率很低的区域放置较多质量。图 10.2(b) 展示了这种“覆盖式”近似。
+
+:::: {.callout-warning title="KL 方向很重要"}
+最小化 $\operatorname{KL}(q\Vert p)$ 时，若 $q$ 在 $p$ 近似为 0 的区域放质量，会受到很大惩罚，因此它常表现为 zero-forcing、mode-seeking，并可能低估 support。
+
+最小化 $\operatorname{KL}(p\Vert q)$ 时，若 $p$ 有质量而 $q$ 没覆盖，会受到惩罚，因此它常表现为 zero-avoiding、mass-covering，并可能过度覆盖 support。
+::::
+
+图 10.3 用双峰分布说明这种差异。若用单个 Gaussian 近似多峰后验，$\operatorname{KL}(q\Vert p)$ 可能选择其中一个 mode；$\operatorname{KL}(p\Vert q)$ 则倾向于横跨多个 mode。对 mixture model 来说，后者可能把两个好的参数解平均成一个并不好的参数解。
+
+这些 KL divergence 还可以放进 alpha divergence 家族：
+$$
+D_\alpha(p\Vert q)
+=
+\frac{4}{1-\alpha^2}
+\left[
+1-\int p(x)^{(1+\alpha)/2}q(x)^{(1-\alpha)/2}\,dx
+\right].
+$$
+当 $\alpha\to 1$ 时对应 $\operatorname{KL}(p\Vert q)$；当 $\alpha\to -1$ 时对应 $\operatorname{KL}(q\Vert p)$；当 $\alpha=0$ 时得到与 Hellinger distance 相关的对称 divergence。
+
+## Example: The Univariate Gaussian
+
+Bishop 接着用一维 Gaussian 的均值与 precision 推断来演示 factorized variational update。数据
+$$
+D=\{x_1,\dots,x_N\}
+$$
+来自 Gaussian，似然为
+$$
+p(D\mid \mu,\tau)
+=
+\left(\frac{\tau}{2\pi}\right)^{N/2}
+\exp\left\{
+-\frac{\tau}{2}\sum_{n=1}^N(x_n-\mu)^2
+\right\}.
+$$
+共轭先验取为
+$$
+p(\mu\mid \tau)
+=
+\mathcal{N}\left(\mu\mid \mu_0,(\lambda_0\tau)^{-1}\right),
+\qquad
+p(\tau)=\operatorname{Gam}(\tau\mid a_0,b_0).
+$$
+真实后验是 Gaussian-Gamma，不满足 $q_\mu(\mu)q_\tau(\tau)$ 的独立分解。为了教学，Bishop 人为使用
+$$
+q(\mu,\tau)=q_\mu(\mu)q_\tau(\tau).
+$$
+
+对 $q_\mu$ 使用 mean field 更新，得到
+$$
+\ln q_\mu^\star(\mu)
+=
+-\frac{\mathbb{E}[\tau]}{2}
+\left[
+\lambda_0(\mu-\mu_0)^2+
+\sum_{n=1}^N(x_n-\mu)^2
+\right]
+\text{const},
+$$
+因此
+$$
+q_\mu^\star(\mu)
+=
+\mathcal{N}(\mu\mid \mu_N,\lambda_N^{-1}),
+$$
+其中
+$$
+\mu_N
+=
+\frac{\lambda_0\mu_0+N\bar{x}}{\lambda_0+N},
+\qquad
+\lambda_N=(\lambda_0+N)\mathbb{E}[\tau].
+$$
+
+对 $q_\tau$，得到 Gamma 分布
+$$
+q_\tau^\star(\tau)
+=
+\operatorname{Gam}(\tau\mid a_N,b_N),
+$$
+其中
+$$
+a_N=a_0+\frac{N}{2},
+\qquad
+b_N=b_0+\frac{1}{2}
+\mathbb{E}_{\mu}
+\left[
+\sum_{n=1}^N(x_n-\mu)^2+\lambda_0(\mu-\mu_0)^2
+\right].
+$$
+两个因子彼此耦合，因此通常交替更新。图 10.4 展示了从初始 factorized posterior，到先更新 $q_\mu$、再更新 $q_\tau$，最后收敛到最优 factorized approximation 的过程。
+
+若取宽泛的非信息先验 $\mu_0=a_0=b_0=\lambda_0=0$，可推出
+$$
+\frac{1}{\mathbb{E}[\tau]}
+=
+\frac{1}{N-1}\sum_{n=1}^N(x_n-\bar{x})^2.
+$$
+右侧正是无偏样本方差估计。这个例子说明，虽然我们使用了 factorized 近似，贝叶斯处理仍然保留了对参数不确定性的修正，而不是退化为最大似然的有偏方差估计。
+
+## Model Comparison
+
+变分推断也可用于模型比较。设候选模型用 $m$ 标记，并有先验概率 $p(m)$。因为不同模型可能有不同 latent structure 和维度，不能简单写成 $q(Z)q(m)$，而应写成
+$$
+q(Z,m)=q(Z\mid m)q(m).
+$$
+对每个模型分别优化 $q(Z\mid m)$ 后，模型 posterior 的近似满足
+$$
+q(m)\propto p(m)\exp\{\mathcal{L}_m\}.
+$$
+这里 $\mathcal{L}_m$ 是模型 $m$ 的 variational lower bound。直观上，$\mathcal{L}_m$ 近似 $\ln p(X\mid m)$，因此自动包含数据拟合与模型复杂度的权衡。
+
+## 思考题
+
+1. 为什么最大化 ELBO 等价于最小化 $\operatorname{KL}(q\Vert p)$？
+2. 在多峰后验中，为什么 $\operatorname{KL}(q\Vert p)$ 可能只选择一个 mode？
+3. mean field approximation 低估 posterior variance 的根源是什么？
+4. 在模型比较中，为什么必须使用 $q(Z\mid m)q(m)$ 而不是普通的 $q(Z)q(m)$？
+
+# Illustration: Variational Mixture of Gaussians
+
+## 核心问题
+
+第 9 章用最大似然和 EM 估计 Gaussian mixture model (GMM)，但最大似然有两个严重问题：
+
+1. Gaussian component 可能 collapse 到单个数据点，导致 likelihood singularity。
+2. component 数 $K$ 增大时 likelihood 通常不下降，因此不能直接用于选择 $K$。
+
+第 10.2 节把 GMM 改写为 fully Bayesian model。对 mixing coefficients、均值和 precision 都放置先验，并对所有未知量做后验近似。这不仅保留了 EM 式的可计算更新，还自然引入 complexity penalty。
+
+## 模型与先验
+
+对每个观测 $x_n$，引入 1-of-$K$ 潜变量 $z_n$。给定 mixing coefficients $\pi$，
+$$
+p(Z\mid \pi)
+=
+\prod_{n=1}^N\prod_{k=1}^K \pi_k^{z_{nk}}.
+$$
+给定 component 参数 $\mu=\{\mu_k\}$ 与 precision matrices $\Lambda=\{\Lambda_k\}$，
+$$
+p(X\mid Z,\mu,\Lambda)
+=
+\prod_{n=1}^N\prod_{k=1}^K
+\mathcal{N}(x_n\mid \mu_k,\Lambda_k^{-1})^{z_{nk}}.
+$$
+
+为保持共轭性，取 Dirichlet prior
+$$
+p(\pi)=\operatorname{Dir}(\pi\mid \alpha_0),
+$$
+并对每个 Gaussian component 取 Gaussian-Wishart prior
+$$
+p(\mu,\Lambda)
+=
+\prod_{k=1}^K
+\mathcal{N}(\mu_k\mid m_0,(\beta_0\Lambda_k)^{-1})
+\mathcal{W}(\Lambda_k\mid W_0,\nu_0).
+$$
+
+图 10.5 用 DAG 表示这个 Bayesian mixture。Plate 内的 $z_n,x_n$ 随数据量增长，通常称为 latent variables；plate 外的 $\pi,\mu,\Lambda$ 数量固定，通常称为 parameters。但从图模型角度看，它们都只是随机变量。
+
+联合分布为
+$$
+p(X,Z,\pi,\mu,\Lambda)
+=
+p(X\mid Z,\mu,\Lambda)p(Z\mid \pi)p(\pi)p(\mu\mid \Lambda)p(\Lambda).
+$${#eq-prml10-bayesian-gmm-joint}
+
+## Variational Distribution
+
+变分处理只显式假设
+$$
+q(Z,\pi,\mu,\Lambda)=q(Z)q(\pi,\mu,\Lambda).
+$$
+其它因子化结构将从优化中自动诱导出来。
+
+对 $q(Z)$，根据 mean field 更新式有
+$$
+\ln q^\star(Z)
+=
+\mathbb{E}_{\pi,\mu,\Lambda}
+[\ln p(X,Z,\pi,\mu,\Lambda)]
++\text{const}.
+$$
+只保留和 $Z$ 相关的项，可写成
+$$
+\ln q^\star(Z)
+=
+\sum_{n=1}^N\sum_{k=1}^K z_{nk}\ln \rho_{nk}
++\text{const},
+$$
+其中
+$$
+\ln \rho_{nk}
+=
+\mathbb{E}[\ln \pi_k]
++\frac{1}{2}\mathbb{E}[\ln|\Lambda_k|]
+-\frac{D}{2}\ln(2\pi)
+-\frac{1}{2}
+\mathbb{E}_{\mu_k,\Lambda_k}
+\left[
+(x_n-\mu_k)^T\Lambda_k(x_n-\mu_k)
+\right].
+$$
+归一化后得到
+$$
+q^\star(Z)
+=
+\prod_{n=1}^N\prod_{k=1}^K r_{nk}^{z_{nk}},
+\qquad
+r_{nk}=\frac{\rho_{nk}}{\sum_j \rho_{nj}}.
+$$
+因此
+$$
+\mathbb{E}[z_{nk}]=r_{nk},
+$$
+这些 $r_{nk}$ 仍然扮演 responsibilities 的角色。
+
+给定 responsibilities，定义加权统计量
+$$
+N_k=\sum_{n=1}^N r_{nk},
+\qquad
+\bar{x}_k=\frac{1}{N_k}\sum_{n=1}^N r_{nk}x_n,
+$$
+以及
+$$
+S_k
+=
+\frac{1}{N_k}
+\sum_{n=1}^N r_{nk}(x_n-\bar{x}_k)(x_n-\bar{x}_k)^T.
+$$
+
+对参数部分，优化自动给出
+$$
+q(\pi,\mu,\Lambda)
+=
+q(\pi)\prod_{k=1}^K q(\mu_k,\Lambda_k).
+$$
+其中
+$$
+q^\star(\pi)=\operatorname{Dir}(\pi\mid \alpha),
+\qquad
+\alpha_k=\alpha_0+N_k,
+$$
+而
+$$
+q^\star(\mu_k,\Lambda_k)
+=
+\mathcal{N}(\mu_k\mid m_k,(\beta_k\Lambda_k)^{-1})
+\mathcal{W}(\Lambda_k\mid W_k,\nu_k),
+$$
+参数更新为
+$$
+\beta_k=\beta_0+N_k,
+\qquad
+m_k=\frac{\beta_0m_0+N_k\bar{x}_k}{\beta_k},
+$$
+$$
+W_k^{-1}
+=
+W_0^{-1}
++N_kS_k
++\frac{\beta_0N_k}{\beta_0+N_k}
+(\bar{x}_k-m_0)(\bar{x}_k-m_0)^T,
+$$
+以及
+$$
+\nu_k=\nu_0+N_k.
+$$
+
+为了更新 responsibilities，需要以下期望：
+$$
+\mathbb{E}_{\mu_k,\Lambda_k}
+\left[
+(x_n-\mu_k)^T\Lambda_k(x_n-\mu_k)
+\right]
+=
+\frac{D}{\beta_k}
++\nu_k(x_n-m_k)^TW_k(x_n-m_k),
+$$
+$$
+\ln \widetilde{\Lambda}_k
+\equiv
+\mathbb{E}[\ln|\Lambda_k|]
+=
+\sum_{i=1}^D
+\psi\left(\frac{\nu_k+1-i}{2}\right)
++D\ln 2+\ln|W_k|,
+$$
+$$
+\ln \widetilde{\pi}_k
+\equiv
+\mathbb{E}[\ln\pi_k]
+=
+\psi(\alpha_k)-\psi(\widehat{\alpha}),
+\qquad
+\widehat{\alpha}=\sum_k\alpha_k.
+$$
+于是
+$$
+r_{nk}
+\propto
+\widetilde{\pi}_k\widetilde{\Lambda}_k^{1/2}
+\exp\left\{
+-\frac{D}{2\beta_k}
+-\frac{\nu_k}{2}(x_n-m_k)^TW_k(x_n-m_k)
+\right\}.
+$${#eq-prml10-vbgmm-responsibility}
+
+@eq-prml10-vbgmm-responsibility 和最大似然 EM 中的
+$$
+r_{nk}
+\propto
+\pi_k|\Lambda_k|^{1/2}
+\exp\left\{
+-\frac{1}{2}(x_n-\mu_k)^T\Lambda_k(x_n-\mu_k)
+\right\}
+$$
+非常相似。差别是这里使用的是参数后验下的期望，而不是点估计。
+
+:::: {.callout-note title="变分 E/M 步"}
+Bayesian GMM 的变分更新仍可看成 E/M 交替：
+
+1. 变分 E step：用当前参数后验计算 $\widetilde{\pi}_k$、$\widetilde{\Lambda}_k$ 和 quadratic expectation，从而更新 $r_{nk}$。
+2. 变分 M step：固定 responsibilities，更新 $q(\pi)$ 和各个 $q(\mu_k,\Lambda_k)$。
+
+由于共轭先验，最优变分因子和联合分布中的对应因子保持同一函数族。
+::::
+
+图 10.6 把这个算法应用到 Old Faithful 数据，并从 $K=6$ 个 component 开始。收敛后，只有少数 component 的 expected mixing coefficient 明显高于 prior 水平。若某个 component 几乎不负责解释数据，则 $N_k\simeq 0$，参数后验退回先验，且
+$$
+\mathbb{E}[\pi_k]
+=
+\frac{\alpha_k}{\widehat{\alpha}}
+=
+\frac{\alpha_0+N_k}{K\alpha_0+N}.
+$$
+当 $\alpha_0$ 很小且 $N_k\simeq0$ 时，该 component 实际上被剪掉。
+
+## Variational Lower Bound
+
+对 Bayesian GMM，ELBO 可写成
+$$
+\begin{aligned}
+\mathcal{L}
+&=
+\mathbb{E}[\ln p(X,Z,\pi,\mu,\Lambda)]
+-\mathbb{E}[\ln q(Z,\pi,\mu,\Lambda)]\\
+&=
+\mathbb{E}[\ln p(X\mid Z,\mu,\Lambda)]
++\mathbb{E}[\ln p(Z\mid \pi)]
++\mathbb{E}[\ln p(\pi)]
++\mathbb{E}[\ln p(\mu,\Lambda)]\\
+&\quad
+-\mathbb{E}[\ln q(Z)]
+-\mathbb{E}[\ln q(\pi)]
+-\mathbb{E}[\ln q(\mu,\Lambda)].
+\end{aligned}
+$${#eq-prml10-vbgmm-bound}
+
+Bishop 给出逐项展开，主要用途有三点：监控收敛、检查推导、检查代码实现。每次坐标更新后，$\mathcal{L}$ 不应下降。
+
+最重要的两项是
+$$
+\mathbb{E}[\ln p(X\mid Z,\mu,\Lambda)]
+=
+\frac{1}{2}\sum_{k=1}^K N_k
+\left\{
+\ln\widetilde{\Lambda}_k
+-\frac{D}{\beta_k}
+-\nu_k\operatorname{Tr}(S_kW_k)
+-\nu_k(\bar{x}_k-m_k)^TW_k(\bar{x}_k-m_k)
+-D\ln(2\pi)
+\right\},
+$$
+以及
+$$
+\mathbb{E}[\ln p(Z\mid \pi)]
+=
+\sum_{n=1}^N\sum_{k=1}^K r_{nk}\ln\widetilde{\pi}_k.
+$$
+其余项分别来自 Dirichlet prior、Gaussian-Wishart prior 和三个变分因子的负熵。它们对实现很重要，因为如果某个符号、normalizer 或 digamma 项写错，ELBO 的单调性往往会立刻暴露问题。
+
+更完整地说，Dirichlet 相关项为
+$$
+\mathbb{E}[\ln p(\pi)]
+=
+\ln C(\alpha_0)
++(\alpha_0-1)\sum_{k=1}^K\ln\widetilde{\pi}_k,
+$$
+以及
+$$
+\mathbb{E}[\ln q(\pi)]
+=
+\ln C(\alpha)
++\sum_{k=1}^K(\alpha_k-1)\ln\widetilde{\pi}_k.
+$$
+Gaussian-Wishart prior 项为
+$$
+\begin{aligned}
+\mathbb{E}[\ln p(\mu,\Lambda)]
+&=
+\frac{1}{2}\sum_{k=1}^K
+\left\{
+D\ln\frac{\beta_0}{2\pi}
++\ln\widetilde{\Lambda}_k
+-\frac{D\beta_0}{\beta_k}
+-\beta_0\nu_k(m_k-m_0)^TW_k(m_k-m_0)
+\right\}\\
+&\quad
++K\ln B(W_0,\nu_0)
++\frac{\nu_0-D-1}{2}\sum_{k=1}^K\ln\widetilde{\Lambda}_k
+-\frac{1}{2}\sum_{k=1}^K\nu_k\operatorname{Tr}(W_0^{-1}W_k).
+\end{aligned}
+$$
+变分因子自身的负熵项包括
+$$
+\mathbb{E}[\ln q(Z)]
+=
+\sum_{n=1}^N\sum_{k=1}^K r_{nk}\ln r_{nk},
+$$
+和
+$$
+\mathbb{E}[\ln q(\mu,\Lambda)]
+=
+\sum_{k=1}^K
+\left\{
+\frac{1}{2}\ln\widetilde{\Lambda}_k
++\frac{D}{2}\ln\frac{\beta_k}{2\pi}
+-\frac{D}{2}
+-H[q(\Lambda_k)]
+\right\}.
+$$
+这里 $C(\cdot)$ 是 Dirichlet normalizer，$B(\cdot,\cdot)$ 与 $H[q(\Lambda_k)]$ 分别是 Wishart normalizer 和 Wishart entropy。
+
+:::: {.callout-warning title="不要只看 responsibility 更新"}
+Bayesian GMM 看起来和 EM 很像，但 ELBO 的存在改变了调试方式。最大似然 EM 监控 log likelihood，variational Bayes 应监控 lower bound；如果只看 responsibilities 或聚类图，可能无法发现 normalizer 或 entropy 项的错误。
+::::
+
+## Predictive Density
+
+给定新观测 $\widehat{x}$，预测密度为
+$$
+p(\widehat{x}\mid X)
+=
+\sum_{\widehat{z}}
+\int p(\widehat{x}\mid \widehat{z},\mu,\Lambda)
+p(\widehat{z}\mid \pi)
+p(\pi,\mu,\Lambda\mid X)\,d\pi\,d\mu\,d\Lambda.
+$$
+用变分后验替代真实后验后，积分可解析得到 Student's t mixture：
+$$
+p(\widehat{x}\mid X)
+=
+\frac{1}{\widehat{\alpha}}
+\sum_{k=1}^K
+\alpha_k\,
+\operatorname{St}\left(
+\widehat{x}\mid m_k,L_k,\nu_k+1-D
+\right),
+$$
+其中
+$$
+L_k
+=
+\frac{(\nu_k+1-D)\beta_k}{1+\beta_k}W_k.
+$$
+当 $N$ 很大时，各 component 的参数后验变尖，Student's t mixture 会退化为普通 Gaussian mixture。
+
+## Determining the Number of Components
+
+Bayesian GMM 可以通过 lower bound 比较不同 $K$。不过 mixture model 有 label switching symmetry：若有 $K$ 个 component，同一个观测分布对应 $K!$ 个等价参数标号。最大似然只找到其中一个 mode，所以这不是问题；但 Bayesian evidence 要对所有参数值积分，必须考虑这些等价 modes。
+
+由于 $\operatorname{KL}(q\Vert p)$ 的变分近似通常只覆盖某一个 mode，比较不同 $K$ 时 Bishop 建议给 lower bound 加上近似修正项
+$$
+\ln K!.
+$$
+图 10.7 展示了 Old Faithful 数据上 corrected lower bound 随 $K$ 的变化，在 $K=2$ 达到峰值。这个现象和最大似然形成对比：最大似然 likelihood 通常随 $K$ 增大而不下降，因此不能直接选择模型复杂度。
+
+另一种确定 $K$ 的方式是不对 $\pi$ 保持完整后验，而把 mixing coefficients 当成点估计，通过最大化 lower bound 更新
+$$
+\pi_k=\frac{1}{N}\sum_{n=1}^N r_{nk}.
+$$
+贡献不足的 component 会被推到 $\pi_k=0$，相当于通过 automatic relevance determination 从一个较大的初始 $K$ 中剪掉冗余 component。
+
+## Induced Factorizations
+
+变分推断中有一类容易忽略的现象：我们显式假设一个 factorization，但最优解可能进一步自动分解。Bishop 称之为 induced factorizations。
+
+设潜变量被划分为 $A,B,C$，并显式假设
+$$
+q(A,B,C)=q(A,B)q(C).
+$$
+根据 mean field 更新，
+$$
+\ln q^\star(A,B)
+=
+\mathbb{E}_C[\ln p(A,B\mid X,C)] + \text{const}.
+$$
+因此 $q^\star(A,B)$ 会进一步分解为 $q^\star(A)q^\star(B)$ 当且仅当
+$$
+A\perp\!\!\!\perp B\mid X,C.
+$$
+这可以用第 8 章的 d-separation 规则在图上判断。
+
+在 Bayesian GMM 中，虽然一开始只假设 $q(Z)q(\pi,\mu,\Lambda)$，优化后会诱导出
+$$
+q(\pi,\mu,\Lambda)=q(\pi)\prod_k q(\mu_k,\Lambda_k),
+$$
+以及
+$$
+q(Z)=\prod_n q(z_n).
+$$
+数值实现时必须利用这些结构。若最优 precision matrix 天然是 block diagonal 或 diagonal，却仍维护完整矩阵，会浪费大量计算和存储。
+
+## 思考题
+
+1. Bayesian GMM 为什么不会出现最大似然 GMM 中 Gaussian component collapse 的 singularity？
+2. 在 $K$ 很大时，为什么 Dirichlet prior 的 $\alpha_0$ 会影响 component 是否被剪掉？
+3. 为什么 label switching 对单个 $K$ 的预测影响不大，却会影响不同 $K$ 的 evidence 比较？
+4. induced factorization 为什么是图结构与变分假设共同作用的结果？
+
+# Variational Linear Regression
+
+## 问题背景
+
+第 3 章的 Bayesian linear regression 在 evidence framework 中对超参数 $\alpha,\beta$ 做 point estimate。第 10.3 节改用 fully Bayesian 思路，把 $\alpha$ 也当作随机变量并放置先验。为了简化，Bishop 暂时假设噪声 precision $\beta$ 已知。
+
+模型为
+$$
+p(t\mid w)
+=
+\prod_{n=1}^N
+\mathcal{N}(t_n\mid w^T\phi_n,\beta^{-1}),
+$$
+$$
+p(w\mid \alpha)
+=
+\mathcal{N}(w\mid 0,\alpha^{-1}I),
+\qquad
+p(\alpha)=\operatorname{Gam}(\alpha\mid a_0,b_0).
+$$
+联合分布为
+$$
+p(t,w,\alpha)=p(t\mid w)p(w\mid \alpha)p(\alpha),
+$$
+图 10.8 给出相应的 plate model。
+
+## Variational Distribution
+
+采用 factorization
+$$
+q(w,\alpha)=q(w)q(\alpha).
+$$
+对 $\alpha$，只保留相关项：
+$$
+\ln q^\star(\alpha)
+=
+\ln p(\alpha)+\mathbb{E}_w[\ln p(w\mid \alpha)]
++\text{const}.
+$$
+因此
+$$
+q^\star(\alpha)=\operatorname{Gam}(\alpha\mid a_N,b_N),
+$$
+其中
+$$
+a_N=a_0+\frac{M}{2},
+\qquad
+b_N=b_0+\frac{1}{2}\mathbb{E}[w^Tw].
+$$
+
+对 $w$，得到 quadratic log density：
+$$
+\ln q^\star(w)
+=
+-\frac{1}{2}w^T
+\left(
+\mathbb{E}[\alpha]I+\beta\Phi^T\Phi
+\right)w
++\beta w^T\Phi^Tt
++\text{const}.
+$$
+因此
+$$
+q^\star(w)=\mathcal{N}(w\mid m_N,S_N),
+$$
+其中
+$$
+m_N=\beta S_N\Phi^Tt,
+\qquad
+S_N=
+\left(
+\mathbb{E}[\alpha]I+\beta\Phi^T\Phi
+\right)^{-1}.
+$$
+所需矩为
+$$
+\mathbb{E}[\alpha]=\frac{a_N}{b_N},
+\qquad
+\mathbb{E}[ww^T]=m_Nm_N^T+S_N,
+$$
+以及
+$$
+\mathbb{E}[w^Tw]=m_N^Tm_N+\operatorname{Tr}(S_N).
+$$
+
+当 $a_0=b_0=0$ 时，
+$$
+\mathbb{E}[\alpha]
+=
+\frac{M}{m_N^Tm_N+\operatorname{Tr}(S_N)}.
+$$
+这与第 9 章 evidence framework 中 EM 更新 $\alpha$ 的形式一致，只是 point estimate 被 $\mathbb{E}[\alpha]$ 替代。对这个特别简单的模型，variational treatment 与 evidence framework 给出相同实质结果。
+
+## Predictive Distribution
+
+新输入 $x$ 的预测分布为
+$$
+\begin{aligned}
+p(t\mid x,\mathbf{t})
+&\simeq
+\int
+\mathcal{N}(t\mid w^T\phi(x),\beta^{-1})
+q(w)\,dw\\
+&=
+\mathcal{N}\left(t\mid m_N^T\phi(x),\sigma^2(x)\right),
+\end{aligned}
+$$
+其中
+$$
+\sigma^2(x)=\frac{1}{\beta}+\phi(x)^TS_N\phi(x).
+$$
+第一项是观测噪声，第二项是参数不确定性传到预测上的方差。
+
+## Lower Bound
+
+线性回归的 ELBO 可分解为
+$$
+\begin{aligned}
+\mathcal{L}(q)
+&=
+\mathbb{E}_w[\ln p(t\mid w)]
++\mathbb{E}_{w,\alpha}[\ln p(w\mid \alpha)]
++\mathbb{E}_{\alpha}[\ln p(\alpha)]\\
+&\quad
+-\mathbb{E}_w[\ln q(w)]
+-\mathbb{E}_{\alpha}[\ln q(\alpha)].
+\end{aligned}
+$$
+Bishop 给出闭式展开，用来比较 polynomial order。图 10.9 中，数据来自三阶多项式，lower bound 在 $M=3$ 达到峰值；最大似然则会偏好越来越高阶的模型，因为 residual error 会随复杂度增加而下降。
+
+这些项展开为
+$$
+\begin{aligned}
+\mathbb{E}_w[\ln p(t\mid w)]
+&=
+\frac{N}{2}\ln\frac{\beta}{2\pi}
+-\frac{\beta}{2}t^Tt
++\beta m_N^T\Phi^Tt\\
+&\quad
+-\frac{\beta}{2}
+\operatorname{Tr}
+\left[
+\Phi^T\Phi(m_Nm_N^T+S_N)
+\right],
+\end{aligned}
+$$
+$$
+\mathbb{E}_{w,\alpha}[\ln p(w\mid \alpha)]
+=
+-\frac{M}{2}\ln(2\pi)
++\frac{M}{2}\{\psi(a_N)-\ln b_N\}
+-\frac{a_N}{2b_N}
+\{m_N^Tm_N+\operatorname{Tr}(S_N)\},
+$$
+$$
+\mathbb{E}_{\alpha}[\ln p(\alpha)]
+=
+a_0\ln b_0-\ln\Gamma(a_0)
++(a_0-1)\{\psi(a_N)-\ln b_N\}
+-b_0\frac{a_N}{b_N},
+$$
+$$
+-\mathbb{E}_w[\ln q(w)]
+=
+\frac{1}{2}\ln|S_N|
++\frac{M}{2}\{1+\ln(2\pi)\},
+$$
+以及
+$$
+-\mathbb{E}_{\alpha}[\ln q(\alpha)]
+=
+\ln\Gamma(a_N)
+-(a_N-1)\psi(a_N)
+-\ln b_N
++a_N.
+$$
+
+:::: {.callout-important title="模型选择的本质差异"}
+Maximum likelihood 比较的是拟合误差，很容易偏向复杂模型。Variational lower bound 近似的是 log evidence，因此包含 Occam factor，能惩罚不必要的参数空间体积。
+::::
+
+## 思考题
+
+1. 为什么在线性回归例子中，变分解和 evidence framework 几乎重合？
+2. $\operatorname{Tr}(S_N)$ 在 $\mathbb{E}[w^Tw]$ 中代表什么不确定性？
+3. 为什么 lower bound 可以用于 polynomial order selection？
+
+# Exponential Family Distributions
+
+## 从具体模型到通用形式
+
+前面两个例子都依赖共轭结构。第 10.4 节把这种结构抽象成 exponential family。设独立同分布数据 $X=\{x_n\}$ 及对应 latent variables $Z=\{z_n\}$ 的 complete-data likelihood 为
+$$
+p(X,Z\mid \eta)
+=
+\prod_{n=1}^N
+h(x_n,z_n)g(\eta)
+\exp\{\eta^Tu(x_n,z_n)\},
+$$
+并给自然参数 $\eta$ 放置共轭先验
+$$
+p(\eta\mid \nu_0,\chi_0)
+=
+f(\nu_0,\chi_0)g(\eta)^{\nu_0}
+\exp\{\eta^T\chi_0\}.
+$$
+使用
+$$
+q(Z,\eta)=q(Z)q(\eta)
+$$
+时，mean field 更新给出
+$$
+\ln q^\star(Z)
+=
+\mathbb{E}_{\eta}[\ln p(X,Z\mid \eta)]
++\text{const}.
+$$
+由于 likelihood 对 $n$ 分解，诱导出
+$$
+q^\star(Z)=\prod_n q^\star(z_n),
+$$
+并且
+$$
+q^\star(z_n)
+=
+h(x_n,z_n)g(\mathbb{E}[\eta])
+\exp\{\mathbb{E}[\eta]^Tu(x_n,z_n)\}.
+$$
+
+参数后验仍落在共轭族内：
+$$
+q^\star(\eta)
+=
+f(\nu_N,\chi_N)g(\eta)^{\nu_N}
+\exp\{\eta^T\chi_N\},
+$$
+其中
+$$
+\nu_N=\nu_0+N,
+\qquad
+\chi_N=\chi_0+\sum_{n=1}^N
+\mathbb{E}_{z_n}[u(x_n,z_n)].
+$$
+
+因此共轭 exponential family 下的变分推断有统一的两步结构：用 latent posterior 计算 expected sufficient statistics，再用 parameter posterior 的 expected natural parameters 更新 latent posterior。
+
+## Variational Message Passing
+
+若模型由 directed graph 表示，则联合分布分解为
+$$
+p(x)=\prod_i p(x_i\mid \operatorname{pa}_i).
+$$
+设变分分布完全按节点分解
+$$
+q(x)=\prod_i q_i(x_i),
+$$
+则节点 $x_j$ 的更新为
+$$
+\ln q_j^\star(x_j)
+=
+\mathbb{E}_{i\neq j}
+\left[
+\sum_i\ln p(x_i\mid \operatorname{pa}_i)
+\right]
++\text{const}.
+$$
+只有两类项会真正依赖 $x_j$：节点自己的条件分布 $p(x_j\mid \operatorname{pa}_j)$，以及所有把 $x_j$ 当作 parent 的 child conditional distributions。因此更新 $q_j$ 只需要 $x_j$ 的 Markov blanket。
+
+在 conjugate-exponential graph 中，这个局部更新可以写成 message passing。一个节点收到来自 parents、children 和 co-parents 的消息后，即可更新自己的变分因子。这样的 variational message passing 适合构建通用推断软件，因为算法只需要局部因子形式，而不必为每个大模型手写全局更新。
+
+## 思考题
+
+1. 为什么 complete-data likelihood 在 exponential family 内，会让变分更新保持共轭形式？
+2. induced factorization 为什么在 i.i.d. latent variables 中自然出现？
+3. variational message passing 和第 8 章 sum-product 的共同点与区别是什么？
+
+# Local Variational Methods
+
+## 核心问题
+
+前面的 variational inference 是 global method：直接近似整个 posterior。Local variational methods 则从模型中的某个局部因子入手，用一个可处理的 bound 替换难处理的函数。例如 logistic regression 中的 sigmoid likelihood 破坏了 Gaussian 共轭性，但如果能把 sigmoid 下界写成 exponential quadratic form，就能恢复 Gaussian 后验近似。
+
+## Convex Duality 与局部 Bound
+
+若 $f(x)$ 是 convex function，则任意切线都是它的 lower bound。以
+$$
+f(x)=\exp(-x)
+$$
+为例，在 $x=\xi$ 处的一阶 Taylor 展开为
+$$
+y(x)=f(\xi)+f'(\xi)(x-\xi),
+$$
+并满足 $y(x)\le f(x)$，等号在 $x=\xi$ 处成立。图 10.10 展示了不同切线给出的 lower bounds。
+
+更一般地，convex duality 给出
+$$
+f(x)=\max_{\lambda}\{\lambda x-g(\lambda)\},
+$$
+其中 dual function 为
+$$
+g(\lambda)=\max_x\{\lambda x-f(x)\}.
+$$
+对 concave function，则相应地有 upper bound：
+$$
+f(x)=\min_{\lambda}\{\lambda x-g(\lambda)\}.
+$$
+图 10.11 用几何方式解释了 dual function 的含义：给定斜率 $\lambda$ 后，最佳线性 bound 的截距由函数曲线与直线之间的最小垂直距离决定。
+
+## Logistic Sigmoid 的 Bound
+
+logistic sigmoid 为
+$$
+\sigma(x)=\frac{1}{1+\exp(-x)}.
+$$
+它本身既非 convex 也非 concave，但 $\ln\sigma(x)$ 是 concave。因此可以得到指数形式的 upper bound：
+$$
+\sigma(x)\le \exp\{\lambda x-g(\lambda)\}.
+$$
+这里 $g(\lambda)$ 与 binary entropy 有关。图 10.12 左图展示了这种 exponential upper bound。
+
+对 Bayesian logistic regression 更有用的是 Gaussian 形式的 lower bound。通过把
+$$
+\ln\sigma(x)
+=
+\frac{x}{2}-\ln\left(\exp(x/2)+\exp(-x/2)\right)
+$$
+改写，并把后一项看成 $x^2$ 的函数，可得 Jaakkola-Jordan bound：
+$$
+\sigma(x)
+\ge
+\sigma(\xi)
+\exp\left\{
+\frac{x-\xi}{2}
+-\lambda(\xi)(x^2-\xi^2)
+\right\},
+$${#eq-prml10-logistic-bound}
+其中按照 PRML 在 logistic regression 部分使用的记号，
+$$
+\lambda(\xi)
+=
+\frac{1}{2\xi}\left[\sigma(\xi)-\frac{1}{2}\right].
+$$
+这个 bound 在 $x=\xi$ 与 $x=-\xi$ 处取等号。图 10.12 右图展示了其形状：它是 sigmoid 的下界，同时指数内部是 $x$ 的二次函数，因此和 Gaussian prior 相乘后仍可解析归一化。
+
+:::: {.callout-warning title="容易混淆处"}
+不同教材对 $\lambda(\xi)$ 的符号可能采用不同约定。这里采用 PRML 在公式 (10.149)-(10.150) 的 logistic regression 记号，使 lower bound 写成 @eq-prml10-logistic-bound。
+::::
+
+若要计算
+$$
+I=\int \sigma(a)p(a)\,da,
+$$
+其中 $p(a)$ 是 Gaussian，则可用 @eq-prml10-logistic-bound 得到
+$$
+I\ge \int f(a,\xi)p(a)\,da=F(\xi),
+$$
+再选择 $\xi^\star$ 最大化 $F(\xi)$。该 bound 对单个 $a$ 可精确贴合，但积分时 $\xi^\star$ 是对 $p(a)$ 下所有可能 $a$ 的折中。
+
+Bishop 也指出，这个 sigmoid lower bound 不能直接推广到 multiclass softmax。多分类 local variational bound 需要额外构造，且文中提到的某些 softmax Gaussian bound 缺少严格证明。
+
+## 思考题
+
+1. 为什么 local bound 可以让非共轭 likelihood 重新变得可处理？
+2. logistic sigmoid 的 lower bound 为什么要写成 exponential quadratic？
+3. 如果一个 bound 对每个点都能调到精确，为什么积分后的最优 bound 仍然可能不精确？
+
+# Variational Logistic Regression
+
+## Variational Posterior Distribution
+
+第 4 章用 Laplace approximation 近似 Bayesian logistic regression。第 10.6 节则用 local variational bound。二者都会得到 Gaussian posterior approximation，但变分方法优化的是一个严格的 model evidence lower bound，并且通常比 Laplace 更灵活。
+
+二分类 logistic regression 中，令
+$$
+a=w^T\phi,
+$$
+则
+$$
+p(t\mid w)
+=
+\sigma(a)^t(1-\sigma(a))^{1-t}
+=
+\exp(at)\sigma(-a).
+$$
+对每个训练样本引入局部变分参数 $\xi_n$，使用 sigmoid lower bound，可得到
+$$
+p(t,w)=p(t\mid w)p(w)\ge h(w,\xi)p(w),
+$$
+其中
+$$
+h(w,\xi)
+=
+\prod_{n=1}^N
+\sigma(\xi_n)
+\exp\left\{
+w^T\phi_n t_n
+-\frac{w^T\phi_n+\xi_n}{2}
+-\lambda(\xi_n)
+\left([w^T\phi_n]^2-\xi_n^2\right)
+\right\}.
+$$
+取 Gaussian prior
+$$
+p(w)=\mathcal{N}(w\mid m_0,S_0),
+$$
+则 bound 的 log 对 $w$ 是二次函数：
+$$
+-\frac{1}{2}(w-m_0)^TS_0^{-1}(w-m_0)
++\sum_{n=1}^N
+\left\{
+w^T\phi_n(t_n-\frac{1}{2})
+-\lambda(\xi_n)w^T\phi_n\phi_n^Tw
+\right\}
++\text{const}.
+$$
+因此变分后验为
+$$
+q(w)=\mathcal{N}(w\mid m_N,S_N),
+$$
+其中
+$$
+m_N
+=
+S_N
+\left(
+S_0^{-1}m_0
++\sum_{n=1}^N(t_n-\frac{1}{2})\phi_n
+\right),
+$$
+$$
+S_N^{-1}
+=
+S_0^{-1}
++2\sum_{n=1}^N
+\lambda(\xi_n)\phi_n\phi_n^T.
+$$
+
+图 10.13 展示了线性可分数据上的 Bayesian logistic regression：左图的 predictive contours 在远离数据处向外展开，反映分类不确定性增加；右图展示从 posterior 中抽取多个 $w$ 后得到的不同 decision boundaries。
+
+## Optimizing the Variational Parameters
+
+局部参数 $\{\xi_n\}$ 通过最大化 marginal likelihood lower bound 来确定：
+$$
+\ln p(t)
+=
+\ln\int p(t\mid w)p(w)\,dw
+\ge
+\ln\int h(w,\xi)p(w)\,dw
+=
+\mathcal{L}(\xi).
+$$
+可以把 $w$ 当 latent variable，用 EM 推导更新。给定旧的 $\xi$，E step 计算 Gaussian posterior $q(w)$；M step 最大化
+$$
+Q(\xi,\xi^{\text{old}})
+=
+\mathbb{E}[\ln h(w,\xi)p(w)].
+$$
+对每个 $\xi_n$ 求导后得到
+$$
+(\xi_n^{\text{new}})^2
+=
+\phi_n^T\mathbb{E}[ww^T]\phi_n
+=
+\phi_n^T(S_N+m_Nm_N^T)\phi_n.
+$${#eq-prml10-logistic-xi-update}
+
+积分也可直接解析完成，得到 PRML 公式 (10.164) 的 lower bound：
+$$
+\mathcal{L}(\xi)
+=
+\frac{1}{2}\ln\frac{|S_N|}{|S_0|}
+-\frac{1}{2}m_N^TS_N^{-1}m_N
++\frac{1}{2}m_0^TS_0^{-1}m_0
++\sum_{n=1}^N
+\left\{
+\ln\sigma(\xi_n)
+-\frac{1}{2}\xi_n
+-\lambda(\xi_n)\xi_n^2
+\right\}.
+$$
+这个 bound 可用于收敛判断。通常只需少数轮更新即可收敛。
+
+## Inference of Hyperparameters
+
+如果 prior precision $\alpha$ 也未知，可取
+$$
+p(w\mid \alpha)=\mathcal{N}(w\mid 0,\alpha^{-1}I),
+\qquad
+p(\alpha)=\operatorname{Gam}(\alpha\mid a_0,b_0).
+$$
+此时需要把 global variational approximation 和 local variational bound 结合起来。先有
+$$
+\ln p(t)=\mathcal{L}(q)+\operatorname{KL}(q\Vert p),
+$$
+但由于 likelihood 仍不可处理，再用 local bound 得到更低的 bound
+$$
+\ln p(t)\ge \mathcal{L}(q)\ge \widetilde{\mathcal{L}}(q,\xi).
+$$
+假设
+$$
+q(w,\alpha)=q(w)q(\alpha),
+$$
+则更新为
+$$
+q(w)=\mathcal{N}(w\mid \mu_N,\Sigma_N),
+$$
+其中
+$$
+\Sigma_N^{-1}\mu_N
+=
+\sum_{n=1}^N(t_n-\frac{1}{2})\phi_n,
+$$
+$$
+\Sigma_N^{-1}
+=
+\mathbb{E}[\alpha]I
++2\sum_{n=1}^N\lambda(\xi_n)\phi_n\phi_n^T.
+$$
+超参数后验为
+$$
+q(\alpha)=\operatorname{Gam}(\alpha\mid a_N,b_N),
+$$
+其中
+$$
+a_N=a_0+\frac{M}{2},
+\qquad
+b_N=b_0+\frac{1}{2}\mathbb{E}[w^Tw].
+$$
+局部参数仍满足
+$$
+(\xi_n^{\text{new}})^2
+=
+\phi_n^T(\Sigma_N+\mu_N\mu_N^T)\phi_n.
+$$
+所需矩为
+$$
+\mathbb{E}[\alpha]=\frac{a_N}{b_N},
+\qquad
+\mathbb{E}[w^Tw]
+=
+\operatorname{Tr}(\Sigma_N)+\mu_N^T\mu_N.
+$$
+因此完整算法在 $q(w)$、$q(\alpha)$ 和 $\xi$ 三者之间循环更新。
+
+## 思考题
+
+1. 为什么 sigmoid lower bound 让 Bayesian logistic regression 的 posterior 近似重新变成 Gaussian？
+2. $\xi_n$ 更新式中的 $\phi_n^T(S_N+m_Nm_N^T)\phi_n$ 可以如何解释？
+3. 和 Laplace approximation 相比，variational logistic regression 的目标函数更明确在哪里？
+4. 为什么该 bound 不能直接处理 softmax 多分类？
+
+# Expectation Propagation
+
+## 核心问题
+
+Expectation propagation (EP) 也是确定性近似推断，但它和 variational Bayes 的关键区别在于 KL 方向。Variational Bayes 主要最小化
+$$
+\operatorname{KL}(q\Vert p),
+$$
+而 EP 的局部步骤基于
+$$
+\operatorname{KL}(p\Vert q).
+$$
+因此 EP 更接近 moment matching，通常覆盖 posterior mass 更充分，但在多峰问题中也可能平均多个不兼容的 modes。
+
+设要在 exponential family 内用
+$$
+q(z)=h(z)g(\eta)\exp\{\eta^Tu(z)\}
+$$
+近似固定分布 $p(z)$。最小化 $\operatorname{KL}(p\Vert q)$ 对 $\eta$ 求导，得到
+$$
+\mathbb{E}_{q(z)}[u(z)]
+=
+\mathbb{E}_{p(z)}[u(z)].
+$$
+也就是说，最优 exponential-family 近似通过匹配 sufficient statistics 得到。若 $q$ 是 Gaussian，这就是匹配均值和协方差。
+
+## EP Algorithm
+
+很多模型的 joint distribution 可以写成因子乘积
+$$
+p(D,\theta)=\prod_i f_i(\theta).
+$$
+对应 posterior 为
+$$
+p(\theta\mid D)
+=
+\frac{1}{p(D)}\prod_i f_i(\theta),
+\qquad
+p(D)=\int\prod_i f_i(\theta)\,d\theta.
+$$
+EP 用一组近似因子替代真实因子：
+$$
+q(\theta)
+=
+\frac{1}{Z}\prod_i\widetilde{f}_i(\theta),
+$$
+其中 $\widetilde{f}_i$ 受限于某个 exponential family，使整体 $q$ 可处理。
+
+若要更新第 $j$ 个因子，EP 执行以下步骤：
+
+1. 从当前 posterior approximation 中除去该近似因子，得到 cavity distribution
+   $$
+   q^{\setminus j}(\theta)
+   =
+   \frac{q(\theta)}{\widetilde{f}_j(\theta)}.
+   $$
+2. 把真实因子乘回 cavity，得到 tilted distribution
+   $$
+   \frac{1}{Z_j}f_j(\theta)q^{\setminus j}(\theta),
+   \qquad
+   Z_j=\int f_j(\theta)q^{\setminus j}(\theta)\,d\theta.
+   $$
+3. 在 exponential family 中找新的 $q^{\text{new}}(\theta)$，使它和 tilted distribution 匹配 sufficient statistics。
+4. 用
+   $$
+   \widetilde{f}_j(\theta)
+   =
+   Z_j\frac{q^{\text{new}}(\theta)}{q^{\setminus j}(\theta)}
+   $$
+   存储更新后的局部近似因子。
+
+图 10.14 回到前面 Figure 4.14/10.1 的非 Gaussian 例子，比较 Laplace、variational 和 EP Gaussian approximations。EP 因为使用 $\operatorname{KL}(p\Vert q)$，通常比 $\operatorname{KL}(q\Vert p)$ 的 variational approximation 更宽。
+
+Bishop 总结的 EP 过程是：初始化所有近似因子，反复选择一个因子、除去它、乘回真实因子、做 moment matching、再把更新后的 factor 存回。最后用近似因子替换真实因子来估计 posterior 和 evidence：
+$$
+p(D)\simeq \int\prod_i\widetilde{f}_i(\theta)\,d\theta.
+$$
+
+:::: {.callout-warning title="EP 的收敛性"}
+Variational Bayes 每步都不降低 ELBO。EP 则不同：普通 EP 迭代不保证收敛，也不保证某个能量函数每步下降。若它收敛，收敛点可解释为某个 EP energy 的 stationary point；若直接优化该能量，可以保证收敛，但算法通常更慢、更复杂。
+::::
+
+Assumed density filtering (ADF) 是 EP 的特殊情形：只对因子做一次顺序更新，不回头重用数据。这适合 online learning，但在 batch data 上会依赖数据顺序。EP 的多轮 pass 正是为了消除这种任意顺序带来的弱点。
+
+## Example: The Clutter Problem
+
+图 10.15 展示 clutter problem：观测点来自目标 Gaussian 和背景 clutter Gaussian 的混合，目标是推断目标 Gaussian 的均值 $\theta$。模型为
+$$
+p(x\mid \theta)
+=
+(1-w)\mathcal{N}(x\mid \theta,I)
++w\mathcal{N}(x\mid 0,aI),
+$$
+其中 $w$ 是已知 clutter 比例。先验为
+$$
+p(\theta)=\mathcal{N}(\theta\mid 0,bI).
+$$
+对 $N$ 个观测，
+$$
+p(D,\theta)=p(\theta)\prod_{n=1}^N p(x_n\mid \theta).
+$$
+由于每个 observation 的 likelihood 是二项 mixture，精确 posterior 是 $2^N$ 个 Gaussian 的 mixture，中等规模 $N$ 下就不可处理。
+
+EP 取 spherical Gaussian approximation
+$$
+q(\theta)=\mathcal{N}(\theta\mid m,vI),
+$$
+并把每个 likelihood factor 近似为 exponential-quadratic form
+$$
+\widetilde{f}_n(\theta)
+=
+s_n\mathcal{N}(\theta\mid m_n,v_nI).
+$$
+这里 $\mathcal{N}$ 只是记号便利，$v_n$ 甚至可以为负；只要最终整体 $q(\theta)$ 的方差为正，就不一定有问题。
+
+删除第 $n$ 个近似因子得到 cavity distribution，其 mean 和 inverse variance 满足
+$$
+m^{\setminus n}
+=
+m+v^{\setminus n}v_n^{-1}(m-m_n),
+\qquad
+(v^{\setminus n})^{-1}
+=
+v^{-1}-v_n^{-1}.
+$$
+normalizer 为
+$$
+Z_n
+=
+(1-w)\mathcal{N}(x_n\mid m^{\setminus n},(v^{\setminus n}+1)I)
++w\mathcal{N}(x_n\mid 0,aI).
+$$
+tilted distribution 的 matched mean 和 variance 可写成
+$$
+m
+=
+m^{\setminus n}
++\rho_n
+\frac{v^{\setminus n}}{v^{\setminus n}+1}
+(x_n-m^{\setminus n}),
+$$
+$$
+v
+=
+v^{\setminus n}
+-\rho_n\frac{(v^{\setminus n})^2}{v^{\setminus n}+1}
++\rho_n(1-\rho_n)
+\frac{(v^{\setminus n})^2\|x_n-m^{\setminus n}\|^2}
+{D(v^{\setminus n}+1)^2}.
+$$
+其中
+$$
+\rho_n
+=
+\frac{(1-w)\mathcal{N}(x_n\mid m^{\setminus n},(v^{\setminus n}+1)I)}
+{Z_n}
+$$
+表示当前上下文下第 $n$ 个点不是 clutter 的概率。
+
+完成所有 factor refinement 后，clutter problem 的 evidence approximation 可写为
+$$
+p(D)
+\simeq
+(2\pi v)^{D/2}\exp(B/2)
+\prod_{n=1}^N
+\left\{
+s_n(2\pi v_n)^{-D/2}
+\right\},
+$$
+其中
+$$
+B
+=
+\frac{m^Tm}{v}
+-\sum_{n=1}^N\frac{m_n^Tm_n}{v_n}.
+$$
+这里 $m,v$ 是最终 Gaussian approximation $q(\theta)$ 的参数。
+
+图 10.16 展示了单个 factor 的近似：真实 $f_n(\theta)$、当前 cavity $q^{\setminus n}$ 和近似 factor $\widetilde{f}_n$。关键点是，近似因子不试图在全局逼近 $f_n$，而是在 cavity 所强调的 $\theta$ 区域中逼近它。图 10.17 比较 EP、variational Bayes 和 Laplace approximation 在 clutter problem 上对 posterior mean 与 evidence 的误差，EP 在该例中表现更好。
+
+## Expectation Propagation on Graphs
+
+EP 可以推广到 factor graph。若
+$$
+p(x)=f_a(x_1,x_2)f_b(x_2,x_3)f_c(x_2,x_4),
+$$
+并要求近似因子进一步分解为单变量因子，例如
+$$
+q(x)
+\propto
+\widetilde{f}_{a1}(x_1)\widetilde{f}_{a2}(x_2)
+\widetilde{f}_{b2}(x_2)\widetilde{f}_{b3}(x_3)
+\widetilde{f}_{c2}(x_2)\widetilde{f}_{c4}(x_4),
+$$
+则更新 $\widetilde{f}_b(x_2,x_3)=\widetilde{f}_{b2}(x_2)\widetilde{f}_{b3}(x_3)$ 时，先移除它：
+$$
+q^{\setminus b}(x)
+=
+\widetilde{f}_{a1}(x_1)\widetilde{f}_{a2}(x_2)
+\widetilde{f}_{c2}(x_2)\widetilde{f}_{c4}(x_4),
+$$
+再乘回真实 factor：
+$$
+\widehat{p}(x)
+=
+q^{\setminus b}(x)f_b(x_2,x_3).
+$$
+因为近似是 fully factorized，moment matching 等价于取各变量边缘。会改变的只有 $x_2,x_3$ 相关因子：
+$$
+\widetilde{f}_{b2}(x_2)
+\propto
+\sum_{x_3} f_b(x_2,x_3),
+$$
+$$
+\widetilde{f}_{b3}(x_3)
+\propto
+\sum_{x_2}
+f_b(x_2,x_3)
+\widetilde{f}_{a2}(x_2)\widetilde{f}_{c2}(x_2).
+$$
+这些正是 belief propagation 中 factor-to-variable messages 的形式。一般 factor graph
+$$
+p(\theta)=\prod_i f_i(\theta_i)
+$$
+若用 fully factorized 近似
+$$
+q(\theta)\propto
+\prod_i\prod_k\widetilde{f}_{ik}(\theta_k),
+$$
+则更新某个 term 的一般形式为
+$$
+\widetilde{f}_{jl}(\theta_l)
+\propto
+\sum_{\theta_m\neq \theta_l\in \theta_j}
+f_j(\theta_j)
+\prod_k\prod_{m\neq l}\widetilde{f}_{km}(\theta_m).
+$$
+这就是 sum-product rule。因而，loopy belief propagation 可以看成 EP 在 fully factorized approximating family 下的特殊情形。
+
+:::: {.callout-important title="统一视角"}
+第 10 章最后把 variational message passing、loopy belief propagation 和 EP 放进同一张图里：它们可以看成在不同 approximating family 和不同 alpha divergence 下得到的 message passing algorithm。选择哪一种算法，本质上是在选择计算可处理性、support 覆盖、mode 选择和收敛性质之间的折中。
+::::
+
+## 思考题
+
+1. EP 的 cavity distribution 为什么要通过“除掉当前近似因子”得到？
+2. tilted distribution 的 moment matching 为什么会让近似更关注 posterior 高概率区域？
+3. 为什么 ADF 适合 online learning，但 batch data 下可能依赖样本顺序？
+4. 为什么 fully factorized EP 会退化为 sum-product 或 loopy belief propagation？
+
+# 小结
+
+第 10 章的核心不是记住若干孤立算法，而是理解近似推断的几个共同构件。
+
+1. **ELBO 与 KL divergence**：Variational inference 用 lower bound 把 posterior approximation 变成优化问题。
+2. **Factorization 与 conjugacy**：mean field 假设牺牲相关性换取可计算更新；共轭 exponential family 让更新保持闭式。
+3. **Bayesian complexity control**：Bayesian GMM 和 variational linear regression 都展示了 evidence/lower bound 如何自动惩罚模型复杂度。
+4. **Local bound**：当局部 likelihood 破坏共轭性时，可以用局部 variational parameter 构造可处理的 quadratic bound。
+5. **Moment matching 与 EP**：EP 使用相反方向 KL，在局部因子上下文中做 moment matching，可看成连接 approximate inference 与 belief propagation 的桥。
+
+:::: {.callout-warning title="本章最容易混淆的三组概念"}
+1. **Variational Bayes vs. EM**：EM 可看成一种特殊变分框架，其中参数后验退化为点估计；Variational Bayes 通常保持参数的不确定性。
+2. **KL(q || p) vs. KL(p || q)**：前者倾向 mode-seeking、低估 support；后者倾向 mass-covering、矩匹配，但可能平均多个 mode。
+3. **Global VI vs. Local variational methods**：前者直接近似整个 posterior；后者先替换某个难处理的局部函数，再把模型重新变成可处理形式。
+::::
+
+第 11 章会转向 sampling methods。与本章的确定性近似不同，采样方法把困难转移到随机样本的生成、混合和误差评估上。两类方法的优缺点互补：确定性方法通常更快、更结构化；采样方法通常更通用，并且在足够计算资源下更接近精确推断。
