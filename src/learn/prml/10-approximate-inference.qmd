@@ -46,15 +46,16 @@ $$
 第 10 章可以看成对第 8、9 章的延续。
 
 1. 第 8 章告诉我们概率模型可以被拆成图和因子。
-2. 第 9 章说明带隐变量模型可以通过 EM 交替优化。
-3. 第 10 章进一步问：如果 E step 或后验积分本身不可解，如何用一个可处理的近似后验替代它？
+2. 第 9 章说明带隐变量模型可以通过 EM
+   交替优化从而实现极大似然估计或极大后验估计。
+3. 第 10 章则聚焦于后验概率的估计，如果 后验积分本身不可解，如何用一个可处理的近似后验替代它？
 ::::
 
 # Variational Inference
 
 ## 核心问题
 
-Variational inference 的起点是把推断问题写成一个关于分布 $q(Z)$ 的优化问题。设模型给出联合分布 $p(X,Z)$，目标是近似后验 $p(Z\mid X)$ 并估计 evidence $p(X)$。对任意分布 $q(Z)$，有分解
+Variational inference 的出发点是把**推断问题写成一个关于分布 $q(Z)$ 的优化问题**。设模型给出联合分布 $p(X,Z)$，目标是近似后验 $p(Z\mid X)$ 并估计 evidence $p(X)$。对任意分布 $q(Z)$，有分解
 $$
 \ln p(X)=\mathcal{L}(q)+\operatorname{KL}(q\Vert p),
 $${#eq-prml10-elbo-decomposition}
@@ -72,13 +73,18 @@ $$
 $${#eq-prml10-kl-qp}
 因为 KL divergence 非负，所以 $\mathcal{L}(q)$ 是 $\ln p(X)$ 的 lower bound。这个 bound 现在通常也叫 ELBO。最大化 $\mathcal{L}(q)$ 等价于最小化 $\operatorname{KL}(q(Z)\Vert p(Z\mid X))$。
 
+@eq-prml10-elbo-decomposition 的类似物也出现在了 EM 算法的推导过程中。两者之间最大的区别在于模型参数 $\theta$ 消失了，其被融合到了隐变量 $Z$，从而期望得到它的后验分布，而不仅仅是一个点估计。
+
 如果允许 $q(Z)$ 是任意分布，最优解就是真实后验，KL 为 0，bound 等于 $\ln p(X)$。现实问题在于真实后验不可处理，所以我们人为限制 $q(Z)$ 的族，使它足够简单，能够计算期望、归一化和预测；同时又希望它足够灵活，尽可能贴近真实后验。
 
 :::: {.callout-important title="灵活的 q 不是过拟合"}
-prml 特别强调，限制 $q$ 的目的只是计算可处理性。只要仍然可计算，使用更丰富的 variational family 通常只会让近似更接近真实后验，不存在像监督学习里那种因分布族太灵活而“拟合噪声”的同类过拟合问题。
+prml 特别强调，限制 $q$ 的目的**只是计算可处理性**。只要仍然可计算，使用更丰富的 variational family 通常只会让近似更接近真实后验，不存在像监督学习里那种因分布族太灵活而“拟合噪声”的同类过拟合问题。
 ::::
 
-图 10.1 用第 4 章中一个非 Gaussian 分布做示意：Laplace approximation 围绕某个 mode 做局部二次近似，而 variational Gaussian approximation 是通过全局 KL 目标得到的。因此二者可能给出不同均值、方差和尾部行为。
+
+![Laplace approximation 和 Variational Inference 的比较](https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/laplace-vs-variational-inference-20260625-032545.png){#fig-prml10-laplace-vs-variational-inference}
+
+上图用一个非 Gaussian 分布做示意：Laplace approximation (红色) 围绕某个 mode 做局部二次近似，而 variational Gaussian approximation (绿色) 是通过全局 KL 目标得到的。因此二者可能给出不同均值、方差和尾部行为。
 
 ## Factorized Distributions
 
