@@ -1,0 +1,125 @@
+---
+title: "系列导读：纵向轨迹混合模型"
+subtitle: "Mixture-Model-Based Trajectory Clustering for Longitudinal Data"
+description: "从现实纵向随访问题出发，规划基于有限混合模型、潜类别和 LCMM 系列方法的轨迹聚类讲义。"
+draft: false
+aliases:
+  - 纵向轨迹混合模型
+  - trajectory mixture models
+  - model-based trajectory clustering
+tags:
+  - 纵向轨迹混合模型
+  - 轨迹聚类
+  - 潜类别模型
+  - LCMM
+date: 2026-06-24
+date-modified: last-modified
+order: 0
+bibliography: ../../../resources/bibliography/trajectory-mixture-models.bib
+reference-section-title: "参考文献"
+---
+
+# 背景介绍
+
+**纵向数据的难点常常不只是“平均趋势是什么”，而是“是否存在几类相当不同的变化过程”**。在医学随访中，研究者可能看到一部分患者症状快速缓解，另一部分长期波动，还有一部分逐渐恶化。比如，在认知老化研究中，同样的年龄跨度可能对应稳定、缓慢下降和快速下降等不同认知轨迹；在心理症状、慢病管理和治疗反应研究中，整体平均线也经常掩盖了高度异质的个体路径。针对这类问题，我们通常需要从普通 longitudinal model 进入 model-based trajectory clustering：**用概率模型描述整条轨迹的潜在类别** [@naginodgers2010clinical; @herle2020typical]。
+
+本系列所介绍的方法主要限定在基于 finite mixture models、latent classes 和 latent process mixed models 的方法家族。它的核心思想是：**总体中存在一个不可直接观测的离散类别变量，类别决定个体轨迹的条件分布，模型估计后，可以通过后验分类概率来确定个体属于哪个类别**。这个框架既包括 group-based trajectory modeling 和 LCGA，也包括包含随机效应的 LCMM/GMM、处理非正态观测尺度的 latent process LCMM、多 marker 的 multLCMM，以及把纵向过程和 time-to-event 结局联结起来的 JointLCMM/mpjLCMM [@proustlima2017lcmm; @proustlima2014jointreview]。
+
+注意，在本系列中，**不应把“类别”预设为真实存在的自然分型**。类别可能是有理论意义的典型轨迹，也可能只是连续异质性、测量尺度、模型设定、缺失机制或样本选择被离散化后的结果。后续每一种模型都会同时回答两件事：**它怎样把纵向数据写成概率模型，以及它允许我们怎样谨慎解释轨迹类别**。
+
+::: {.callout-note title="Key Idea：把轨迹聚类写成概率模型"}
+本系列所介绍方法的共同点：**先写出潜在类别下整条轨迹的条件分布，再用后验分类概率表达个体属于各类别的不确定性**。
+:::
+
+# 统一符号
+
+设研究中共有 $N$ 个个体，个体编号为 $i=1,\ldots,N$。个体 $i$ 有 $n_i$ 次纵向观测，观测编号为 $j=1,\ldots,n_i$，第 $j$ 次观测时间记为 $t_{ij}$，单一 marker 的观测值记为 $Y_{ij}$。整条纵向轨迹可以写作
+
+$$
+y_i = (Y_{i1}, \ldots, Y_{in_i})^\top .
+$$
+
+轨迹混合模型引入潜在类别变量 $C_i \in \{1,\ldots,G\}$，其中 $g=1,\ldots,G$ 表示类别编号，$G$ 是候选类别数。个体 $i$ 归属于类别 $g$ 的概率记为 $\pi_{ig}$。若类别成员概率依赖基线协变量 $X_{ci}$，则可以写成
+
+$$
+\pi_{ig} = P(C_i=g \mid X_{ci}; \gamma).
+$$
+
+个体轨迹的边际分布通常写作
+
+$$
+p(y_i \mid \theta)
+=
+\sum_{g=1}^{G}
+\pi_{ig} f_g(y_i \mid \theta_g).
+$$
+
+这里 $f_g(\cdot)$ 是类别 $g$ 下整条轨迹的条件分布，不同类型的方法中，$f_g$ 拥有不同的模型假设。比如，GBTM/LCGA 中，$f_g$ 通常由类别特异的平均轨迹和观测分布决定；而在LCMM/GMM 中，$f_g$ 还会对类别内随机效应积分。此外，针对不同的数据类型，$f_g$ 还可以对观测尺度进行变换，比如，对于连续 marker，$f_g$ 可以是正态分布；对于二分类 marker，$f_g$ 可以是二项分布；对于多分类 marker，$f_g$ 可以是多项分布。
+
+模型估计后，最常用的分类量是后验概率
+
+$$
+\tau_{ig}
+=
+P(C_i=g \mid y_i, X_{ci}; \hat\theta)
+=
+\frac{\hat\pi_{ig} f_g(y_i \mid \hat\theta_g)}
+{\sum_{\ell=1}^{G} \hat\pi_{i\ell} f_\ell(y_i \mid \hat\theta_\ell)} .
+$$
+
+当研究包含多个 marker 时，令 $m=1,\ldots,M$ 表示 marker 编号，观测值可写为 $Y_{ijm}$ 或在 marker-specific 时间上写为 $Y_{ijm}(t_{ijm})$，这在讨论 multLCMM 时会用到。
+
+若同时有 time-to-event 结局，则用 $T_i^\ast$ 表示真实事件时间，$\tilde T_i$ 表示观测到的随访时间，$\Delta_i$ 表示事件或删失指标。在 competing risks 中，还需要事件类型指标 $K_i$。
+
+# 先修知识
+
+读者最好能够熟悉四类基础：
+
+- 概率模型和 likelihood，
+- 有限混合模型与 EM 的基本直觉，
+- linear mixed-effects model 的固定效应、随机效应和边际似然，
+- R formula 或 SAS procedure 的基本阅读能力。
+
+一般有限混合模型背景可参考 McLachlan and Peel 的专著
+[@mclachlanpeel2000finite]。
+
+
+# 讲义目录
+
+1. [GBTM/LCGA：从有限混合到 group-based trajectory modeling](#sec-gbtm-lcga)
+2. [LCMM/GMM：类别内随机效应与 latent class mixed model](#sec-lcmm-gmm)
+3. [Latent Process LCMM：非正态和有界纵向结局](#sec-latent-process-lcmm)
+4. [MLCMM / multLCMM：多个 marker 与共同潜在过程](#sec-mlcmm-multlcmm)
+5. [JointLCMM / mpjLCMM：纵向轨迹类别与 time-to-event 结局](#sec-jointlcmm-mpjlcmm)
+6. [模型选择与统计指标：类别数、分类质量和解释边界](#sec-model-selection)
+7. [代码实现专题：R `lcmm` package 与 SAS PROC TRAJ](#sec-code-implementation)
+
+## GBTM/LCGA：从有限混合到 group-based trajectory modeling {#sec-gbtm-lcga}
+
+本章从最简单的潜在轨迹类别模型进入：GBTM/LCGA 把总体表示为若干 group-specific 轨迹的有限混合，通常用类别内无随机效应或极简随机结构来突出类别平均轨迹、观测分布、后验分类概率和 AvePP。读者会先看到 Nagin 的 group-based trajectory modeling 如何把发展轨迹写成 semiparametric mixture [@nagin1999developmental; @nagin2005group; @jones2001sas; @jones2007advances; @naginodgers2010clinical]。
+
+## LCMM/GMM：类别内随机效应与 latent class mixed model {#sec-lcmm-gmm}
+
+本章把模型从“类别解释主要异质性”推进到“类别间平均轨迹差异 + 类别内连续个体差异”：LCMM/GMM 在每个类别内加入 mixed-effects structure，使个体可以围绕所属类别的平均轨迹连续偏离。这里的核心不是多放几个随机效应，而是类别含义随之改变：类别不再承担所有异质性，随机效应和残差结构也参与解释个体差异 [@muthen1999finite; @proustlima2017lcmm]。
+
+## Latent Process LCMM：非正态和有界纵向结局 {#sec-latent-process-lcmm}
+
+本章处理观测尺度不适合直接放进高斯 mixed model 的情况，例如认知量表、症状评分、有界连续变量、偏态分数和有序等级结局。`lcmm()` 的 latent process model 通过 link functions 把观测值连接到潜在过程尺度，使读者能够区分“潜在健康或能力轨迹”与“量表观测轨迹”，并理解 linear、beta、spline 和 threshold links 分别适合什么问题 [@proustlima2017lcmm]。
+
+## MLCMM / multLCMM：多个 marker 与共同潜在过程 {#sec-mlcmm-multlcmm}
+
+本章讨论多个纵向 marker 共同测量同一个潜在过程的模型。multLCMM 的重点不是把多个结局简单拼成一组轨迹，而是区分 latent process trajectory、marker-specific measurement model、link functions 和 DIF，使读者能判断什么时候多个 marker 应该共同定义潜在过程，什么时候更适合使用 multi-trajectory GBTM 或分开建模 [@proustlima2017lcmm; @proustlima2014jointmultivariate]。
+
+## JointLCMM / mpjLCMM：纵向轨迹类别与 time-to-event 结局 {#sec-jointlcmm-mpjlcmm}
+
+本章把纵向轨迹和事件结局放入 joint latent class framework：同一个潜在类别 $C_i$ 同时影响纵向子模型和 hazard 子模型，从而连接症状、认知或生物标志物变化与死亡、疾病发生、复发、退出研究或 competing risks。读者会重点区分 joint latent class model 与 shared random effects joint model，并学习 dynamic prediction、EPOCE 和事件子模型解释时的边界 [@proustlima2014jointreview; @proustlima2017lcmm; @proustlima2014jointmultivariate]。
+
+## 模型选择与统计指标：类别数、分类质量和解释边界 {#sec-model-selection}
+
+本章集中处理所有方法都会遇到的判断问题：类别数如何选，BIC/ICL/AIC 如何读，posterior probabilities、AvePP 和 entropy 能说明什么，初始化、多起点搜索、局部最优、label switching 和收敛状态怎样影响结论。它会把统计指标与实证报告规范放在一起，提醒读者不要只凭轨迹图或单一信息准则宣布发现了稳定、真实、可行动的群体类别 [@herle2020typical; @naginodgers2010clinical]。
+
+## 代码实现专题：R `lcmm` package 与 SAS PROC TRAJ {#sec-code-implementation}
+
+本章单独整理软件实现，把方法讲解和代码教程分开：R 侧以 `lcmm` package 的 `hlme()`、`lcmm()`、`multlcmm()`、`Jointlcmm()` 和 `mpjlcmm()` 为主，SAS 侧以 PROC TRAJ 的 GBTM 生态为主。代码专题会强调模型公式、初值、多起点搜索、收敛诊断、预测和报告表的可复现流程，而不在前面的方法章节中穿插完整代码教程 [@jones2001sas; @jones2007advances; @proustlima2017lcmm]。
+
+

@@ -1,0 +1,370 @@
+---
+title: "模型选择、分类质量与报告规范"
+subtitle: "Class Enumeration, Posterior Classification, and Reporting"
+description: "整合 GBTM、LCMM、multLCMM 和 joint LCMM 系列模型的类别数选择、分类质量、初始化、局部最优、label switching、三阶段分析和报告规范。"
+draft: false
+aliases:
+  - LCMM模型选择
+  - 轨迹模型报告规范
+  - posterior classification
+tags:
+  - 纵向轨迹混合模型
+  - 模型选择
+  - 分类质量
+  - LCMM
+date: 2026-06-09
+date-modified: last-modified
+order: 9
+bibliography: ../../../resources/bibliography/trajectory-mixture-models.bib
+reference-section-title: "参考文献"
+---
+
+# 引言
+
+本篇是第一阶段总结篇。前面几篇分别讨论了 GBTM、`hlme()`、`lcmm()`、`multlcmm()` 和 `Jointlcmm()`。这些模型结构不同，但实践中都会遇到同一组问题：
+
+- 类别数怎么选？
+- 后验分类质量怎么报告？
+- 多起点和局部最优怎么处理？
+- 类别编号和类别命名如何保持可解释？
+- 能不能把 latent class 当作后续回归变量？
+- 报告时怎样避免把模型类别过度实体化？
+
+这些问题不只是技术细节。轨迹混合模型的诱惑在于它会给出清晰的类别名称和漂亮的轨迹图；风险也在这里：模型类别可能是真实异质性的近似，也可能是连续差异、分布误设、缺失机制或异常点的离散化结果。Herle et al. 对 longitudinal data 中 typical trajectories 的识别和解释边界有专门讨论，强调类别解释必须与模型假设、敏感性分析和理论背景一起报告 [@herle2020typical]。
+
+# 材料范围与证据地图
+
+| 来源 | 类型 | 本篇作用 | 限制 |
+|---|---|---|---|
+| `[用户旧笔记: GBTM]` | 用户提供材料 | 提供 BIC/AIC/LMR/BLRT/entropy、AvePP、类别比例、`summarytable()` 和 `postprob()` 示例方向 | 当前仓库未包含旧 Obsidian 原文和输出截图 |
+| `[用户旧笔记: LCMM]` | 用户提供材料 | 提供 `gridsearch()`、局部最优、后验概率、`predictY()`、随机效应解释 | 旧输出需要后续用实际数据复核 |
+| `[用户旧笔记: MultiLCMM]` | 用户提供材料 | 提供多变量模型的收敛、模型选择和解释挑战 | 本篇只作通用报告规范 |
+| Herle et al. (2020) | 实践综述 | 支持轨迹模型假设比较、类别解释谨慎性和敏感性分析 [@herle2020typical] | 不替代特定软件手册 |
+| Proust-Lima et al. (2017) | 官方方法论文 | 支持 `lcmm` 函数族的估计、分类和模型输出解释 [@proustlima2017lcmm] | 具体函数输出以安装版本为准 |
+| Lu longitudinal clustering review | 方法综述 | 提供纵向聚类方法和软件生态背景 [@lu2025clustering] | 出版元数据仍需人工复核 |
+
+::: {.callout-caution title="需人工复核"}
+用户图片目录当前为空，因此本篇没有迁移旧笔记中的 `summarytable()`、`postprob()`、`predictY()` 截图或表格输出。若后续补入实际输出，应把示例结果替换为真实数值并更新审计。
+:::
+
+# 类别数选择：class enumeration
+
+## 有限混合模型的比较对象
+
+类别数选择不是简单找一个“正确 $G$”。对每个候选类别数 $G=1,\ldots,G_{\max}$，研究者实际上在比较一组模型：
+
+$$
+\mathcal M_G:
+\quad
+p(y_i\mid\theta_G)
+=
+\sum_{g=1}^{G}
+\pi_{ig}f_g(y_i;\theta_g).
+$$
+
+如果改变了轨迹阶数、随机效应结构、link function、hazard 结构或 marker 集合，就不只是改变 $G$，而是在比较不同模型族。报告时必须说明每次比较中哪些结构固定、哪些结构改变。
+
+## 信息准则
+
+最常用的信息准则是 AIC 和 BIC：
+
+$$
+\mathrm{AIC}
+=
+-2\ell(\hat\theta)+2p,
+$$
+
+$$
+\mathrm{BIC}
+=
+-2\ell(\hat\theta)+p\log N.
+$$
+
+其中 $\ell(\hat\theta)$ 是最大化后的 log-likelihood，$p$ 是估计参数个数，$N$ 通常按个体数理解。BIC 对复杂度惩罚比 AIC 强，因此更倾向于选择较简单模型。
+
+有些工作还会报告 SABIC 或 ICL：
+
+$$
+\mathrm{SABIC}
+=
+-2\ell(\hat\theta)+p\log\left(\frac{N+2}{24}\right),
+$$
+
+ICL 可以理解为在 BIC 基础上进一步惩罚分类不确定性，因而更偏好分类清楚的模型。不同软件是否原生提供这些指标并不一致。
+
+| 指标 | 作用 | 注意事项 |
+|---|---|---|
+| AIC | 拟合与复杂度折中，惩罚较弱 | 常偏向更复杂模型 |
+| BIC | 惩罚较强，轨迹模型中常用 | 不能单独证明类别真实存在 |
+| SABIC | 样本量调整版本 | 软件可用性和定义需核对 |
+| ICL | 同时考虑拟合和分类清晰度 | 可能偏向类别更少但更清楚的模型 |
+| logLik | 纯拟合度 | 类别数增加通常会提高，不能单独使用 |
+
+::: {.callout-warning title="BIC 最低不等于最佳解释"}
+BIC 是模型比较工具，不是类别实体性检验。BIC 最低的模型仍可能有极小类别、后验分类差、轨迹不可解释、参数边界或收敛问题。
+:::
+
+# 分类质量
+
+## Posterior probabilities
+
+拟合后，每个个体属于类别 $g$ 的后验概率为：
+
+$$
+\hat p_{ig}
+=
+P(C_i=g\mid y_i,X_i,\hat\theta)
+=
+\frac{
+\hat\pi_{ig}f_g(y_i;\hat\theta_g)
+}{
+\sum_{\ell=1}^{G}
+\hat\pi_{i\ell}f_\ell(y_i;\hat\theta_\ell)
+}.
+$$
+
+most likely class 是：
+
+$$
+\hat C_i
+=
+\arg\max_g \hat p_{ig}.
+$$
+
+报告分类质量时，不应只报告 $\hat C_i$。至少要展示各类别的平均后验概率和类别比例。
+
+## AvePP
+
+对 most likely class 为 $g$ 的个体集合：
+
+$$
+\mathcal I_g=\{i:\hat C_i=g\},
+$$
+
+类别 $g$ 的 average posterior probability 为：
+
+$$
+\mathrm{AvePP}_g
+=
+\frac{1}{|\mathcal I_g|}
+\sum_{i\in\mathcal I_g}
+\hat p_{ig}.
+$$
+
+AvePP 越高，说明被分到类别 $g$ 的个体通常有较高后验支持。经验上常见 0.7 或 0.8 作为参考线，但不能当作硬阈值。
+
+## Entropy
+
+一个常见 entropy 指标可以写成：
+
+$$
+\mathrm{Entropy}
+=
+1+
+\frac{
+\sum_{i=1}^{N}
+\sum_{g=1}^{G}
+\hat p_{ig}\log(\hat p_{ig})
+}{
+N\log G
+}.
+$$
+
+若每个个体几乎都清楚属于某一类，entropy 接近 1；若后验概率分散，entropy 较低。它衡量分类清晰度，不是拟合优度本身。
+
+## Posterior classification table
+
+posterior classification table 通常按 most likely class 分组，计算每组个体对各潜在类别的平均后验概率。理想情形是对角线高、非对角线低。
+
+| most likely class | 平均 $p(C=1)$ | 平均 $p(C=2)$ | 平均 $p(C=3)$ | 解读 |
+|---|---:|---:|---:|---|
+| 1 | 高 | 低 | 低 | 类别 1 清楚 |
+| 2 | 低 | 高 | 低 | 类别 2 清楚 |
+| 3 | 低 | 中 | 中 | 类别 3 与其他类别重叠 |
+
+如果某一行非对角线很高，说明该 most likely class 与其他类别区分不清。后续把它当作硬标签会特别危险。
+
+# 类别比例与可解释性
+
+类别比例过小需要谨慎。小类别可能是真实罕见亚型，也可能是异常值、模型误设、过多类别或局部最优。
+
+判断小类别是否可报告，要结合：
+
+- 类别比例是否足以支持稳定估计。
+- 类别轨迹是否理论上有意义。
+- AvePP 是否高。
+- 多起点是否都得到该类别。
+- 改变 link、随机效应、轨迹阶数后该类别是否仍存在。
+- 该类别是否由极少数异常个体驱动。
+
+::: {.callout-important title="类别命名原则"}
+类别命名应来自轨迹形状和科学含义，而不是 class 编号。例如“稳定高水平”“快速下降”“低水平缓慢恢复”比“class 1”“class 2”更适合报告。
+:::
+
+# 初始化与局部最优
+
+混合模型 likelihood 多峰，初始化策略是报告规范的一部分。至少应说明：
+
+| 项目 | 报告内容 |
+|---|---|
+| 单类别初始模型 | 是否从 `ng = 1` 模型初始化 |
+| 多起点数量 | `gridsearch(rep = ...)` 或等价策略 |
+| 短迭代次数 | `maxiter` 如何设置 |
+| 最终优化 | 最优起点是否继续完整收敛 |
+| 局部最优 | 是否发现多个不同 log-likelihood |
+| 未收敛模型 | 哪些类别数或结构未收敛 |
+
+一个通用模板是：
+
+```r
+m1 <- hlme(
+  fixed = y ~ time + I(time^2),
+  random = ~ time,
+  subject = "ID",
+  ng = 1,
+  data = dat
+)
+
+m2 <- gridsearch(
+  rep = 100,
+  maxiter = 30,
+  minit = m1,
+  hlme(
+    fixed = y ~ time + I(time^2),
+    mixture = ~ time + I(time^2),
+    random = ~ time,
+    subject = "ID",
+    ng = 2,
+    data = dat
+  )
+)
+```
+
+如果 $G=2$、$G=3$、$G=4$ 都被比较，应对每个 $G$ 使用类似的多起点策略。否则模型比较可能只是“一个起点的 $G=3$”对“另一个起点的 $G=4$”，不公平也不稳定。
+
+# 收敛与数值诊断
+
+可靠模型应满足：
+
+1. 参数收敛。
+2. likelihood 收敛。
+3. second derivatives / Hessian 准则合理。
+4. 没有明显边界参数或不可解释方差。
+5. 多起点支持同一最优或非常接近的 log-likelihood。
+
+常见问题及处理：
+
+| 问题 | 可能原因 | 处理 |
+|---|---|---|
+| 达到最大迭代数 | 初始值差、模型过复杂 | 增加多起点、简化模型、重新缩放时间 |
+| Hessian 不合格 | 边界参数、类别重叠、过度复杂 | 检查方差、类别比例、link 参数 |
+| 极小类别 | 类别数过多、异常点 | 检查个体轨迹和敏感性分析 |
+| 不同起点不同解 | likelihood 多峰 | 报告最高 logLik，并说明稳定性 |
+| label switching | 类别编号互换 | 按轨迹形状重新命名 |
+
+# Label switching
+
+潜在类别编号没有自然顺序。若两个解只是类别 1 和类别 2 对调，模型实质相同。比较模型时要按轨迹特征对齐，而不是按编号对齐。
+
+例如：
+
+| 模型 A 编号 | 轨迹形状 | 模型 B 编号 | 是否对应 |
+|---|---|---|---|
+| class 1 | 稳定高水平 | class 3 | 是 |
+| class 2 | 快速下降 | class 1 | 是 |
+| class 3 | 低水平稳定 | class 2 | 是 |
+
+报告时应使用描述性名称，并在图表中按有意义的顺序排列，例如按基线水平、下降速度或事件风险排序。
+
+# 过度解释类别
+
+轨迹混合模型的类别至少有三种可能解释：
+
+1. 接近真实存在的亚型。
+2. 对连续异质性的离散近似。
+3. 对模型误设、非正态、缺失、边界效应或类内相关的补偿。
+
+Herle et al. 强调，研究者应比较不同建模策略并谨慎解释 typical trajectories [@herle2020typical]。在 LCMM 系列中，尤其要检查：
+
+- 加入随机效应后类别是否减少或改变。
+- 改变 link function 后类别是否稳定。
+- 改变轨迹阶数后类别是否稳定。
+- 加入重要协变量后类别是否稳定。
+- 多 marker 模型是否由某个 marker 主导。
+- joint model 中事件结局是否改变类别定义。
+
+::: {.callout-warning title="类别不是自动发现的自然类型"}
+latent class 是模型中的未观测随机变量。它可能帮助总结复杂异质性，但不能仅凭模型输出宣称发现了自然亚型。
+:::
+
+# 后续分析策略
+
+研究者常想把潜在类别和外部变量关联起来，例如“哪类人死亡风险更高？”或“类别是否预测后续功能？”常见策略如下。
+
+| 策略 | 做法 | 优点 | 主要风险 |
+|---|---|---|---|
+| 一阶段模型 | 把协变量或结局放入同一个 LCMM/joint model | 传播不确定性，目标一致 | 模型复杂，假设强 |
+| 二阶段硬分类 | 先取 most likely class，再做回归 | 简单，容易解释 | 忽略分类误差，低估不确定性 |
+| posterior probability weighting | 用后验概率作为权重或软分类 | 保留部分分类不确定性 | 仍是近似，依赖模型正确 |
+| 三阶段方法 | 先估计类别，再校正分类误差 | 更适合外部变量分析 | 实现复杂，软件支持不同 |
+| joint latent class model | 纵向轨迹和事件结局联合估计 | 适合 time-to-event 预测 | 解释仍非因果，计算复杂 |
+
+`lcmm` 生态中存在处理外部变量和分类不确定性的函数或 vignette，例如 `externVar` 相关工作流。使用时应核对目标问题：外部变量是预测类别、类别预测外部结局，还是要做动态预测。
+
+# 图表与报告规范
+
+一份可靠报告至少包括以下内容。
+
+| 报告项 | 最低要求 |
+|---|---|
+| 数据结构 | subjects、observations、时间范围、测量次数分布、缺失情况 |
+| 结局与预处理 | 量表范围、标准化/重缩放、link function、事件编码 |
+| 模型结构 | 轨迹函数、random effects、classmb、marker、hazard |
+| 类别数搜索 | 拟合的 $G$ 范围、固定和改变的模型结构 |
+| 初始化策略 | 单类别初始模型、多起点、短迭代和最终优化 |
+| 拟合指标 | logLik、参数数、AIC、BIC、可用时 SABIC/ICL |
+| 收敛诊断 | `conv`、`gconv`、Hessian、未收敛模型 |
+| 分类质量 | 类别比例、AvePP、entropy、posterior table |
+| 轨迹图 | 类别平均轨迹、置信区间、观测尺度/latent 尺度说明 |
+| 敏感性分析 | 类别数、link、随机效应、协变量、marker 或 hazard 的替代模型 |
+| 解释限制 | 分类不确定性、模型依赖、非因果解释、类别实体性限制 |
+
+轨迹图也有最低要求：
+
+- 明确横轴时间尺度和中心化方式。
+- 明确纵轴是 observed scale 还是 latent scale。
+- 标出类别比例。
+- 最好展示置信区间或预测不确定性。
+- 类别名称应描述轨迹，而不是使用编号。
+
+# 实践工作流
+
+一个稳妥的 LCMM 系列分析流程可以写成：
+
+1. 数据检查：时间分布、缺失、结局边界、异常值。
+2. 单类别模型：先拟合合理的 mixed model 或 latent process model。
+3. 类别数搜索：在固定模型结构下比较 $G=1,\ldots,G_{\max}$。
+4. 多起点估计：对每个 $G$ 使用相同级别的初始值搜索。
+5. 收敛筛选：排除未收敛、Hessian 不合格或明显边界的模型。
+6. 统计指标比较：查看 logLik、AIC、BIC、SABIC/ICL。
+7. 分类质量检查：AvePP、entropy、posterior table、类别比例。
+8. 轨迹解释：结合理论命名类别，检查图形是否可解释。
+9. 敏感性分析：改变 link、随机效应、轨迹阶数、协变量或 marker。
+10. 后续分析：避免无校正硬分类，必要时使用 joint model 或分类误差校正。
+
+# 小结
+
+模型选择和报告规范决定了轨迹混合模型是否可信。BIC、AIC 和 entropy 只是工具；真正的判断需要把拟合、分类质量、收敛、理论解释和敏感性分析放在一起。
+
+最重要的实践原则是：latent class 是模型推断结果，不是直接观测标签。任何使用类别进行解释、命名、预测或后续回归的分析，都必须交代分类不确定性和模型依赖。
+
+# 思考题
+
+1. 为什么 BIC 最低的模型仍可能不是最适合解释的模型？
+2. 如果某个类别只有 2% 样本但轨迹很独特，应保留还是合并？需要哪些证据？
+3. 什么时候应该把 latent class 当作后续分析的预测变量，什么时候应该改用 joint model？
+4. 如果改变 link function 后类别数从 4 类变成 2 类，这更可能说明什么？
+
+# 参考来源
+
+本篇综合用户旧笔记中的模型选择、分类质量和报告提醒，并结合 `lcmm` companion paper、轨迹模型解释综述和纵向聚类综述整理 [@proustlima2017lcmm; @herle2020typical; @lu2025clustering]。

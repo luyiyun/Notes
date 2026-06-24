@@ -33,3 +33,4 @@ _site/
 _extensions/
 resources/audits/
 .qsync-*.html
+resources/coverage

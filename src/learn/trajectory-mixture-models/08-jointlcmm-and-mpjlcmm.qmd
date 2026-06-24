@@ -1,0 +1,362 @@
+---
+title: "`Jointlcmm` 与 `mpjlcmm`：纵向轨迹 + 生存结局"
+subtitle: "Joint Latent Class Models for Longitudinal and Time-to-Event Data"
+description: "整理联合潜类别模型笔记，区分 Jointlcmm/jlcmm 与 mpjlcmm，说明纵向子模型、生存子模型、competing risks、dynamic prediction 和 EPOCE。"
+draft: false
+aliases:
+  - Jointlcmm
+  - jlcmm
+  - mpjlcmm
+  - Joint latent class model
+tags:
+  - 纵向轨迹混合模型
+  - Jointlcmm
+  - mpjlcmm
+  - 生存分析
+  - 联合模型
+date: 2026-06-09
+date-modified: last-modified
+order: 8
+bibliography: ../../../resources/bibliography/trajectory-mixture-models.bib
+reference-section-title: "参考文献"
+---
+
+# 引言
+
+前面的模型只处理纵向轨迹。很多研究还同时关心一个事件结局：死亡、痴呆发生、复发、住院、治疗失败或退出研究。纵向轨迹和事件风险之间可能有关。例如认知下降较快的人，后续痴呆或死亡风险可能更高；疾病活动度持续升高的人，复发风险可能更高。
+
+联合潜类别模型 (joint latent class model) 用同一个潜在类别 $C_i$ 同时连接两个过程：
+
+1. 纵向过程：个体随时间的 marker 或 latent process 如何变化。
+2. 事件过程：个体发生 time-to-event 结局的风险如何变化。
+
+`Jointlcmm()` 或 `jlcmm()` 处理单个纵向结局或 latent process 与 time-to-event 的联合模型；`mpjlcmm()` 进一步处理多个纵向 marker 或多个 longitudinal latent processes 与事件结局的联合模型。Proust-Lima et al. 对 joint latent class models 的方法背景有专门综述 [@proustlima2014jointreview]，`lcmm` companion paper 则把它放入 `lcmm` 函数族 [@proustlima2017lcmm]。
+
+# 材料范围与证据地图
+
+| 来源 | 类型 | 本篇作用 | 限制 |
+|---|---|---|---|
+| `[用户旧笔记: MultiLCMM]` | 用户提供材料 | 提供 `multlcmm` 与 `mpjlcmm` 容易混淆的提醒 | 当前仓库未包含旧 Obsidian 原文 |
+| `[用户旧笔记: LCMM]` | 用户提供材料 | 提供 LCMM 基础结构、类别成员模型、后验分类与预测背景 | 本篇只吸收与 joint model 相关的结构 |
+| Proust-Lima et al. (2014) | 方法综述 | 支持 joint latent class model 的关联机制、动态预测和解释边界 [@proustlima2014jointreview] | 不替代软件文档 |
+| Proust-Lima et al. (2017) | 官方方法论文 | 支持 `Jointlcmm`、`mpjlcmm` 在 `lcmm` 包中的位置 [@proustlima2017lcmm] | 具体参数以后续官方文档为准 |
+| `lcmm` 官方文档 | 官方实现资料 | 校准 `survival`、`hazard`、`hazardtype`、`dynpred()`、EPOCE 相关函数 | 文档会随包版本更新 |
+
+::: {.callout-caution title="需人工复核"}
+本篇未迁移旧笔记中的图或输出截图，因为 `assets/images/trajectory-mixture-models/` 为空。若后续补入 dynamic prediction 图、hazard 图或 EPOCE 输出，应补充具体图解。
+:::
+
+# 联合潜类别模型的基本思想
+
+## 共同潜在类别
+
+联合潜类别模型的关联机制是共同潜在类别：
+
+$$
+C_i\in\{1,\ldots,G\}.
+$$
+
+类别 $C_i$ 同时影响纵向轨迹和事件风险。给定类别后，纵向过程和事件过程常被假设条件独立：
+
+$$
+p(Y_i,T_i,\Delta_i\mid C_i=g,\theta)
+=
+p(Y_i\mid C_i=g,\theta_Y)
+p(T_i,\Delta_i\mid C_i=g,\theta_T).
+$$
+
+因此个体 likelihood 为：
+
+$$
+L_i(\theta)
+=
+\sum_{g=1}^{G}
+\pi_{ig}
+L_{Yi,g}(\theta_Y)
+L_{Ti,g}(\theta_T).
+$$
+
+这里 $\pi_{ig}$ 是类别成员概率，$L_{Yi,g}$ 是类别 $g$ 下纵向数据的 likelihood，$L_{Ti,g}$ 是类别 $g$ 下生存数据的 likelihood。
+
+::: {.callout-important title="关联机制"}
+joint latent class model 通过潜在类别连接纵向过程和事件过程。它不同于 shared random effects joint model，后者通常通过连续随机效应或当前纵向水平直接进入 hazard 来建立关联。
+:::
+
+## 解释含义
+
+如果类别 $g$ 同时具有“快速下降的纵向轨迹”和“较高事件风险”，模型说明这两者在同一个潜在类别中共现。它不自动说明轨迹变化因果导致事件，也不说明类别是真实生物亚型。解释仍然是模型依赖的关联。
+
+# 纵向子模型
+
+`Jointlcmm()` 的纵向部分可以继承 `hlme()` 或 `lcmm()` 的结构。
+
+## 高斯纵向结局
+
+若结局近似高斯，可以写：
+
+$$
+Y_{ij\mid C_i=g}
+=
+X_{L1i}(t_{ij})^\top\beta
++X_{L2i}(t_{ij})^\top\nu_g
++Z_i(t_{ij})^\top u_{ig}
++\epsilon_{ij}.
+$$
+
+这里 $\nu_g$ 定义类别特异平均轨迹，$u_{ig}$ 定义类别内随机效应。
+
+## 非高斯或 latent process 结局
+
+若结局有界、偏态或有序，可以沿用第 6 篇的 latent process：
+
+$$
+A_i(t)\mid C_i=g
+=
+X_{L1i}(t)^\top\beta
++X_{L2i}(t)^\top\nu_g
++Z_i(t)^\top u_{ig}
++w_i(t),
+$$
+
+观测值通过 link function 与 $A_i(t)$ 相连。
+
+## 多 marker 情形
+
+`mpjlcmm()` 可以把多个纵向 marker 或多个 longitudinal latent processes 放进 joint model。简化地说，第 7 篇的 `multlcmm()` 负责多个 marker 与 latent process 的关系；`mpjlcmm()` 进一步把这些 longitudinal processes 与事件风险联合起来。
+
+# 生存子模型
+
+设 $T_i$ 是事件时间，$\Delta_i$ 是事件指示。给定类别 $g$，hazard 可以写成：
+
+$$
+\lambda_i(t\mid C_i=g)
+=
+\lambda_{0g}(t)
+\exp(W_i^\top\alpha_g).
+$$
+
+其中：
+
+| 项 | 含义 |
+|---|---|
+| $\lambda_{0g}(t)$ | 类别 $g$ 的基线风险函数 |
+| $W_i$ | 生存子模型协变量 |
+| $\alpha_g$ | 协变量对事件风险的影响，可设置为共同或类别特异 |
+
+基线风险可以使用不同形式，例如 Weibull、piecewise constant 或 splines。类别对风险的影响可以体现在：
+
+- 类别特异 baseline hazard。
+- 类别特异协变量效应。
+- 类别成员概率与纵向轨迹共同决定事件风险预测。
+
+个体在类别 $g$ 下的生存 likelihood 常可写成：
+
+$$
+L_{Ti,g}
+=
+\left[
+\lambda_i(T_i\mid C_i=g)
+\right]^{\Delta_i}
+S_i(T_i\mid C_i=g),
+$$
+
+其中：
+
+$$
+S_i(t\mid C_i=g)
+=
+\exp\left[
+-\int_0^t
+\lambda_i(s\mid C_i=g)\,ds
+\right].
+$$
+
+# Competing risks
+
+如果有多个互斥事件原因，例如痴呆、死亡或其他退出原因，需要 cause-specific hazards。对原因 $r$：
+
+$$
+\lambda_{ir}(t\mid C_i=g)
+=
+\lambda_{0gr}(t)
+\exp(W_i^\top\alpha_{gr}).
+$$
+
+类别可以同时影响不同事件原因的风险。解释时必须区分：
+
+- 类别 $g$ 是否增加原因 1 的风险。
+- 类别 $g$ 是否增加原因 2 的风险。
+- 某个类别是否只是因为 competing event 更常见而改变目标事件的观察概率。
+
+::: {.callout-warning title="competing risks 的解释边界"}
+在 competing risks 中，某类目标事件发生率低，可能是目标事件风险低，也可能是其他事件先发生得更多。报告时应区分 cause-specific hazard、累积发生概率和事件原因。
+:::
+
+# Dynamic prediction
+
+joint latent class model 的重要用途之一是动态预测。给定个体到时间 $s$ 为止的纵向历史：
+
+$$
+\mathcal Y_i(s)=\{Y_i(t):t\le s\},
+$$
+
+且个体在 $s$ 时仍未发生事件，预测未来窗口 $(s,t]$ 内事件概率：
+
+$$
+P(T_i\le t\mid T_i>s,\mathcal Y_i(s),X_i).
+$$
+
+联合潜类别模型会先用已有纵向历史更新类别后验概率：
+
+$$
+P(C_i=g\mid T_i>s,\mathcal Y_i(s),X_i,\hat\theta),
+$$
+
+再把各类别下的未来事件风险加权：
+
+$$
+P(T_i\le t\mid T_i>s,\mathcal Y_i(s))
+=
+\sum_{g=1}^{G}
+P(C_i=g\mid T_i>s,\mathcal Y_i(s))
+P(T_i\le t\mid T_i>s,C_i=g).
+$$
+
+这就是“动态”的含义：随着新的纵向观测加入，个体的类别后验概率和未来事件风险预测都会更新。
+
+`lcmm` 工作流中，`dynpred()` 和相关绘图函数可用于动态预测。报告时要说明：
+
+- 预测起点 $s$。
+- 预测窗口 $(s,t]$。
+- 使用了哪些纵向历史。
+- 是否比较不同模型的预测准确性。
+
+# EPOCE 与预测准确性
+
+EPOCE 是 expected prognostic observed cross-entropy，用于评估 joint latent class model 的预测准确性。直觉上，它衡量模型给出的事件预测分布与实际观察事件过程之间的差距。
+
+若两个模型都能拟合纵向轨迹，EPOCE 可以帮助比较哪个模型在动态预测上更好。`Diffepoce` 类函数可用于比较两个模型的 EPOCE 差异。
+
+解释时要注意：
+
+- EPOCE 是预测指标，不是类别实体性的证明。
+- EPOCE 依赖预测时间点和预测窗口。
+- 预测表现更好不等于因果机制更正确。
+
+# R 应用流程
+
+下面是 `Jointlcmm()` 的结构蓝图。实际变量名、事件编码、初始值和 hazard 设置应以当前官方 vignette 与数据说明为准。
+
+```r
+library(lcmm)
+data(data_lcmm)
+
+m_joint <- Jointlcmm(
+  fixed = Ydep2 ~ Time + I(Time^2),
+  mixture = ~ Time + I(Time^2),
+  random = ~ Time,
+  subject = "ID",
+  ng = 2,
+  survival = Surv(Tevent, Event) ~ X1,
+  hazard = "Weibull",
+  hazardtype = "Specific",
+  data = data_lcmm,
+  B = NULL
+)
+```
+
+解释这段代码：
+
+| 参数 | 含义 |
+|---|---|
+| `fixed` | 纵向子模型固定效应 |
+| `mixture` | 类别特异纵向轨迹项 |
+| `random` | 类别内随机效应 |
+| `survival` | time-to-event 子模型 |
+| `hazard` | baseline hazard 形式 |
+| `hazardtype` | hazard 是否类别特异 |
+| `ng` | 潜在类别数 |
+| `B` | 初始值 |
+
+`mpjlcmm()` 的思想是把一个或多个 longitudinal submodels 与事件结局联合。例如纵向部分可能由 `hlme`、`lcmm` 或 `multlcmm` 定义，再作为 joint model 的 longitudinal components。具体语法应以官方 `mpjlcmm` 文档为准。
+
+::: {.callout-caution title="代码蓝图"}
+本篇代码用于说明模型结构，不是可直接复现实证结果的保证。联合模型尤其依赖事件编码、删失规则、时间尺度、hazard 设定和初始值。
+:::
+
+# `Jointlcmm` 与 `mpjlcmm` 的关系
+
+| 函数 | 纵向部分 | 生存部分 | 适用问题 |
+|---|---|---|---|
+| `Jointlcmm()` / `jlcmm()` | 一个 longitudinal outcome 或 latent process | 一个 time-to-event 结局，可含 competing risks | 单纵向过程与事件风险联合 |
+| `mpjlcmm()` | 多个 longitudinal markers 或多个 latent processes | time-to-event 结局，可含 competing risks | 多过程纵向数据与事件风险联合 |
+| `multlcmm()` | 多个 marker 共享 latent process | 无生存结局 | 只研究多 marker 纵向过程 |
+
+::: {.callout-important title="关键澄清"}
+`multlcmm` 不是 `mpjlcmm` 的同义词。`multlcmm` 处理多个纵向 marker；`mpjlcmm` 把多个纵向过程进一步联合 time-to-event 结局。
+:::
+
+# 类别不确定性与后续分析
+
+联合模型常被用来避免一个常见二阶段错误：先拟合轨迹模型，把 most likely class 当作真实标签，再做 Cox 回归。这种做法忽略分类不确定性，可能低估标准误并夸大类别差异。
+
+更稳妥的策略包括：
+
+| 策略 | 思路 | 优点 | 限制 |
+|---|---|---|---|
+| 一阶段 joint model | 同时估计纵向轨迹和事件风险 | 传播分类不确定性 | 模型复杂、假设强 |
+| posterior probability weighting | 用后验概率加权后续分析 | 比硬分类保留更多不确定性 | 仍依赖两阶段近似 |
+| 三阶段方法 | 先估计类别，再校正分类误差 | 适合某些后续变量分析 | 实现和假设需谨慎 |
+| 硬分类后回归 | 用 most likely class 做 Cox | 简单直观 | 忽略分类不确定性，不推荐作为唯一分析 |
+
+第 9 篇会进一步讨论 post-classification analyses 和报告规范。
+
+# 常见误区
+
+## 把 joint latent class model 当作因果模型
+
+类别和事件风险的关联不等于轨迹导致事件。潜在类别是模型推断变量，受到纵向模型、生存模型、缺失和删失机制影响。
+
+## 混淆 shared random effects joint model
+
+shared random effects 模型通常让纵向过程的当前水平、斜率或随机效应直接进入 hazard。joint latent class model 则通过离散类别建立关联。两者对“纵向-事件关联”的假设不同。
+
+## 忽略事件时间尺度
+
+生存子模型的时间尺度非常关键。年龄、随访时间、疾病持续时间可能给出不同解释。纵向时间和生存时间也需要一致或明确转换。
+
+## 只看纵向轨迹，不看 hazard
+
+联合模型的类别同时由纵向和事件信息支持。加入生存结局后，类别划分可能改变；这不是错误，而是说明事件过程也参与了类别定义。
+
+# 报告清单
+
+报告 joint latent class model 时，至少应说明：
+
+| 项目 | 最低要求 |
+|---|---|
+| 数据结构 | 个体数、纵向观测数、事件数、删失比例、随访时间 |
+| 纵向模型 | 时间函数、随机效应、link function、marker 数 |
+| 生存模型 | time scale、event coding、hazard 形式、competing risks |
+| 类别数搜索 | 拟合的 $G$ 范围、初始值、多起点、未收敛模型 |
+| 拟合指标 | logLik、AIC、BIC、收敛状态 |
+| 分类质量 | 类别比例、AvePP、posterior table |
+| 动态预测 | 预测时间点、窗口、EPOCE 或其他预测指标 |
+| 解释限制 | 分类不确定性、模型依赖、非因果解释 |
+
+# 小结
+
+`Jointlcmm()` 和 `mpjlcmm()` 把纵向轨迹模型推进到 time-to-event 结局。它们的核心不是“先聚类再做生存分析”，而是在一个共同潜在类别框架中联合估计纵向过程和事件风险。
+
+理解这类模型时，最重要的是分清三件事：纵向子模型如何定义轨迹，生存子模型如何定义风险，潜在类别如何连接二者。动态预测和 EPOCE 是 joint model 的重要优势，但它们评价的是预测表现，不是类别实体性或因果机制的证明。
+
+# 思考题
+
+1. 为什么潜在类别可以同时解释纵向轨迹和事件风险？这个假设何时合理？
+2. joint latent class model 与 shared random effects joint model 的关联假设有什么不同？
+3. 如果加入生存结局后类别划分改变，这说明了什么？
+4. 在 competing risks 情形中，为什么必须区分不同事件原因的 hazard？
+
+# 参考来源
+
+本篇依据用户旧笔记对 `multlcmm`/`mpjlcmm` 的区分提醒，结合 joint latent class model 综述与 `lcmm` companion paper 整理 [@proustlima2014jointreview; @proustlima2017lcmm]。

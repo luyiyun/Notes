@@ -1,0 +1,369 @@
+---
+title: "`multlcmm`/`mlcmm`：多个纵向指标共享潜在过程"
+subtitle: "Multivariate Latent Class Mixed Models"
+description: "以用户旧笔记 MultiLCMM模型.md 为主材料，整理多变量 LCMM 的潜在过程模型、测量模型、marker-specific link、DIF/contrast、似然积分和软件参数。"
+draft: false
+aliases:
+  - MultiLCMM
+  - multlcmm
+  - mlcmm
+  - multivariate LCMM
+tags:
+  - 纵向轨迹混合模型
+  - MultiLCMM
+  - multlcmm
+  - latent-process
+  - 多变量纵向数据
+date: 2026-06-09
+date-modified: last-modified
+order: 7
+bibliography: ../../../resources/bibliography/trajectory-mixture-models.bib
+reference-section-title: "参考文献"
+---
+
+# 引言
+
+很多纵向研究不是只测一个结局。认知老化研究可能同时记录 MMSE、IST、BVRT；心理健康研究可能同时记录抑郁、焦虑、睡眠；慢病研究可能同时记录多个生物标志物。一个自然问题是：这些 marker 是否共同反映某个不可直接观测的状态，并且这个状态是否存在不同发展轨迹？
+
+`multlcmm()` 或 `mlcmm()` 处理的正是这个问题。它把第 6 篇的 latent process 思想扩展到多个 marker：多个观测指标通过各自的测量模型和 link function 连接到同一个 underlying latent process。潜在类别描述的是这个共同 latent process 的轨迹类别，而不是任意单个 marker 的类别。
+
+# 材料范围与证据地图
+
+| 来源 | 类型 | 本篇作用 | 限制 |
+|---|---|---|---|
+| `[用户旧笔记: MultiLCMM]` | 用户提供材料 | 提供模型演进路径、潜在过程模型、测量模型、类别成员模型、似然积分和 `multlcmm()` 参数方向 | 当前仓库未包含旧 Obsidian 原文 |
+| `[用户旧笔记: LCMM]` | 用户提供材料 | 提供类别成员模型、mixed model、估计与分类不确定性背景 | 本篇只引用与多变量模型相关的部分 |
+| Proust-Lima et al. (2017) | 官方方法论文 | 支持 `multlcmm`/`mlcmm` 的模型族定位和估计方法 [@proustlima2017lcmm] | 本篇不复现全部软件示例 |
+| `lcmm` 官方 `multlcmm()` 文档 | 官方实现资料 | 校准 `fixed`、`mixture`、`random`、`subject`、`link`、`classmb`、`contrast` 等接口 | 参数名以后续安装版本为准 |
+| Lu longitudinal clustering review | 方法综述 | 提供多纵向特征聚类与软件生态背景 [@lu2025clustering] | 出版元数据仍需人工复核 |
+
+::: {.callout-caution title="需人工复核"}
+用户提到的图片目录当前为空，本篇未迁移原图。若旧笔记中有 `multlcmm` 输出、latent process 图或 marker link 图，应后续补入并更新覆盖审计。
+:::
+
+# 核心问题
+
+多变量纵向数据可以有几种不同处理方式：
+
+1. 对每个 marker 分别拟合一个单变量 LCMM。
+2. 把多个 marker 放进 multi-trajectory GBTM，直接寻找联合观测轨迹类别。
+3. 使用 `multlcmm()`，假设多个 marker 共同测量同一个 latent process。
+
+`multlcmm()` 对应第三种。它特别适合这样的科学问题：
+
+- 多个测验是否共同反映同一个潜在能力？
+- 不同 marker 的原始量表是否可以通过 link function 映射到同一个潜在尺度？
+- 人群是否存在不同的 latent process trajectories？
+- 某个 marker 是否存在系统性偏移或 differential item functioning (DIF)？
+
+::: {.callout-important title="共同 latent process 假设"}
+`multlcmm()` 的关键前提不是“有多个纵向结局”，而是“这些结局可以被看作同一个潜在过程的多个测量通道”。如果 marker 描述的是不同生物过程或不同理论构念，强行共享一个 latent process 可能会误导解释。
+:::
+
+# 三层模型结构
+
+用户旧笔记中的核心结构可以整理为三层：
+
+1. 潜在过程模型：共同 latent process 如何随时间变化。
+2. 测量模型：每个 marker 如何围绕 latent process 产生中间测量。
+3. link function：每个 marker 的观测量表如何连接到中间测量。
+
+再加上潜类别成员模型，完整结构就是多变量 LCMM。
+
+# 潜在过程模型
+
+给定类别 $g$，个体 $i$ 在时间 $t$ 的共同 latent process 写成：
+
+$$
+A_i(t)\mid C_i=g
+=
+\mathbf X_{L1i}(t)^\top\beta
++\mathbf X_{L2i}(t)^\top\nu_g
++\mathbf Z_i(t)^\top\mathbf u_{ig}
++w_i(t).
+$$
+
+其中：
+
+| 记号 | 含义 |
+|---|---|
+| $A_i(t)$ | 共同 latent process，例如认知能力或总体健康状态 |
+| $\beta$ | 所有类别共享的固定效应 |
+| $\nu_g$ | 类别 $g$ 的特异固定效应，定义类别平均 latent trajectory |
+| $\mathbf u_{ig}$ | 类别内随机效应，表示个体围绕类别平均轨迹的连续差异 |
+| $w_i(t)$ | 额外序列相关结构 |
+
+这层模型和第 6 篇的 `lcmm()` 很像。差别在于，第 6 篇只有一个观测结局，本篇有多个 marker 都要连接到同一个 $A_i(t)$。
+
+# 测量模型
+
+设第 $k$ 个 marker 在个体 $i$、时间 $t_{kij}$ 的中间连续测量为 $\tilde Y_{kij}$。一个常见写法是：
+
+$$
+\tilde Y_{kij}
+=
+A_i(t_{kij})
++\mathbf X_{\gamma i}(t_{kij})^\top\gamma_k
++b_{ki}
++\epsilon_{kij}.
+$$
+
+各项含义为：
+
+| 项 | 含义 | 解释 |
+|---|---|---|
+| $A_i(t_{kij})$ | 共同 latent process | 所有 marker 共享的潜在状态 |
+| $\mathbf X_{\gamma i}(t)^\top\gamma_k$ | marker-specific shift / DIF | 某些协变量是否让 marker $k$ 系统性偏高或偏低 |
+| $b_{ki}$ | marker-specific random intercept | 个体在某个 marker 上持续偏高或偏低 |
+| $\epsilon_{kij}$ | marker-specific measurement error | marker 的测量噪声 |
+
+这层模型说明：即使多个 marker 共同测量同一个 latent process，它们也可以有不同的平均水平、测量误差、随机偏移和协变量偏差。
+
+## DIF 与 contrast
+
+DIF (differential item functioning) 或 marker-specific contrast 指的是：在相同 latent process 水平下，不同群体或不同 marker 的观测表现可能系统性不同。例如教育水平可能影响某个认知测验的表现，即使真实认知状态相同。
+
+如果不建模这种偏差，latent process 轨迹可能把测量偏差误当成真实变化。`multlcmm()` 相关接口中的 `contrast` 思路，就是为了表达 marker-specific systematic shift，同时通过约束保证模型可识别。
+
+::: {.callout-warning title="容易混淆处"}
+marker-specific contrast 不是潜在类别差异。它位于测量层面，描述某个 marker 如何测量共同 latent process；潜在类别差异位于 latent process 层面，描述 $A_i(t)$ 的轨迹如何不同。
+:::
+
+# Marker-specific link functions
+
+观测值 $Y_{kij}$ 和中间测量 $\tilde Y_{kij}$ 之间通过 marker-specific link function：
+
+$$
+Y_{kij}
+=
+H_k(\tilde Y_{kij};\eta_k),
+$$
+
+或反向写作：
+
+$$
+H_k^{-1}(Y_{kij};\eta_k)
+=
+\tilde Y_{kij}.
+$$
+
+每个 marker 可以有不同 link：
+
+| marker 类型 | 可能 link | 解释 |
+|---|---|---|
+| 近似高斯连续测验 | linear | 原始分数近似等距，直接线性映射 |
+| 有界连续量表 | beta 或 splines | 处理边界、偏态和非线性 |
+| 有序等级 | thresholds | 用阈值把连续测量切成等级 |
+| 不同量纲 marker | marker-specific links | 先映射到共同 latent process 尺度 |
+
+这正是 `multlcmm()` 与“把多个变量简单标准化后合成总分”的区别：它把每个 marker 的测量关系作为模型的一部分估计，而不是预先假定所有 marker 都等权、等距、同误差。
+
+# 类别成员模型
+
+类别成员概率仍然可以由基线协变量解释：
+
+$$
+\pi_{ig}
+=
+P(C_i=g\mid \mathbf X_{ci})
+=
+\frac{
+\exp(\xi_{0g}+\mathbf X_{ci}^{\top}\xi_{1g})
+}{
+\sum_{\ell=1}^{G}
+\exp(\xi_{0\ell}+\mathbf X_{ci}^{\top}\xi_{1\ell})
+}.
+$$
+
+在 `multlcmm()` 中，这仍然对应 `classmb`。它回答的是：哪些基线特征让个体更可能属于某条 latent process trajectory？
+
+这和 marker-specific measurement covariates 不同。后者回答的是：在给定 latent process 水平下，某个 marker 的测量值是否存在系统性偏移？
+
+# 似然与估计
+
+对个体 $i$，所有 marker 的观测记作：
+
+$$
+\mathbf Y_i=\{Y_{kij}:k=1,\ldots,K;\ j=1,\ldots,n_{ik}\}.
+$$
+
+个体 likelihood 可以概念化写成：
+
+$$
+L_i(\theta)
+=
+\sum_{g=1}^{G}
+\pi_{ig}
+\int
+p(\mathbf Y_i\mid C_i=g,\mathbf u_{ig};\theta)
+p(\mathbf u_{ig})
+d\mathbf u_{ig}.
+$$
+
+如果模型还包含 marker-specific random effects $\mathbf b_i$，则积分可扩展为：
+
+$$
+L_i(\theta)
+=
+\sum_{g=1}^{G}
+\pi_{ig}
+\int\int
+p(\mathbf Y_i\mid C_i=g,\mathbf u_{ig},\mathbf b_i;\theta)
+p(\mathbf u_{ig})
+p(\mathbf b_i)
+d\mathbf u_{ig}
+d\mathbf b_i.
+$$
+
+多 marker 增加了两类难度：
+
+1. 数据层面：每个 marker 的测量时间、缺失模式、量表类型可能不同。
+2. 计算层面：随机效应维度、link 参数和类别参数都增加，likelihood 更复杂。
+
+`lcmm` 系列仍在 maximum likelihood 框架下估计，使用 modified Marquardt 类型算法 [@proustlima2017lcmm]。第 5 篇的初始值、多起点、Hessian 和收敛诊断在这里更重要。
+
+# R 应用流程
+
+下面是 `multlcmm()` 的教学蓝图。实际变量名、link 指定、预处理和初始值应以当前官方 vignette 为准。
+
+```r
+library(lcmm)
+data(paquid)
+
+paquid$age65 <- (paquid$age - 65) / 10
+
+m_multi_1 <- multlcmm(
+  MMSE + IST + BVRT ~ age65 + I(age65^2),
+  random = ~ age65,
+  subject = "ID",
+  ng = 1,
+  data = paquid,
+  link = c("linear", "linear", "linear")
+)
+```
+
+多类别版本增加 `mixture` 和 `ng`：
+
+```r
+m_multi_2 <- multlcmm(
+  MMSE + IST + BVRT ~ age65 + I(age65^2),
+  mixture = ~ age65 + I(age65^2),
+  random = ~ age65,
+  classmb = ~ CEP,
+  subject = "ID",
+  ng = 2,
+  data = paquid,
+  link = c("linear", "linear", "linear"),
+  B = m_multi_1
+)
+```
+
+解释这段代码时应注意：
+
+| 参数 | 含义 |
+|---|---|
+| `MMSE + IST + BVRT ~ ...` | 多个 marker 共同进入模型 |
+| `mixture` | latent process 的哪些时间效应允许类别特异 |
+| `random` | latent process 层面的个体随机效应 |
+| `classmb` | 类别成员模型 |
+| `link` | 每个 marker 的 link function |
+| `subject` | 个体 ID |
+| `B` | 初始值 |
+
+::: {.callout-caution title="代码需按实际数据校准"}
+不同版本 vignette 的变量预处理、缺失处理和 link 选择可能不同。正式复现实证结果前，应逐行核对官方示例和本地数据结构。
+:::
+
+# 输出解释
+
+`multlcmm()` 的输出至少要从四个层面读。
+
+## Latent process trajectories
+
+类别轨迹首先是共同 latent process 的轨迹。轨迹图如果画在 latent scale 上，不能直接说“MMSE 下降多少分”或“IST 上升多少分”。它表达的是共同潜在状态的变化。
+
+## Marker-specific links
+
+每个 marker 的 link function 说明该 marker 如何测量 latent process。若某个 marker 的 link 强非线性，说明原始量表和潜在尺度差异较大。报告时可以展示 link 图，并说明哪些分数区间被拉伸或压缩。
+
+## Measurement parameters
+
+marker-specific shift、contrast、random intercept 和误差项说明 marker 的测量特性。它们不是轨迹结果的附属细节，而是判断“多个 marker 是否真的共同测量一个过程”的关键。
+
+## Classification quality
+
+与单变量 LCMM 一样，要报告类别比例、AvePP、posterior classification table 和多起点收敛。多 marker 模型中，分类质量可能变好，因为信息更多；也可能变差，因为 marker 之间给出冲突信号。
+
+# 与 multi-trajectory GBTM 的区别
+
+| 问题 | multi-trajectory GBTM | `multlcmm()` |
+|---|---|---|
+| 类别定义 | 多个观测 marker 的联合轨迹模式 | 共同 latent process 的轨迹类别 |
+| marker 关系 | 给定类别后多个 marker 条件联合建模 | 多个 marker 是同一潜在过程的测量 |
+| 测量模型 | 通常较少强调量表测量结构 | 显式包含 link/measurement model |
+| 适用情境 | 多个结局共同定义 phenotype | 多个指标测量同一潜在构念 |
+| 主要风险 | 某个 marker 主导分类 | 共同 latent process 假设不成立 |
+
+例如，血压、血糖和 BMI 可能共同定义代谢风险表型，但不一定是同一个 latent process 的不同测量；MMSE、IST、BVRT 则更容易被解释为认知能力潜在过程的多个测量通道。
+
+# 模型诊断
+
+`multlcmm()` 诊断应包括：
+
+| 诊断 | 要问的问题 |
+|---|---|
+| marker 相关性 | 多个 marker 是否有足够共同信息支持 latent process？ |
+| link function | 各 marker 的 link 是否合理、单调、稳定？ |
+| measurement error | 是否某个 marker 噪声过大或系统偏移明显？ |
+| 类别数 | 类别是否在 latent process 层面可解释？ |
+| 收敛 | 多起点是否给出相同最优 logLik？ |
+| 分类质量 | AvePP、类别比例、posterior table 是否支持报告？ |
+| 敏感性分析 | 换 link、去掉某 marker、改变随机效应结构后结论是否稳定？ |
+
+::: {.callout-warning title="一个 marker 主导模型"}
+如果某个 marker 测量次数最多、方差最大或 link 设置最灵活，它可能主导类别划分。实践中应检查各 marker 的拟合贡献、预测图和敏感性分析，而不是只看总体 BIC。
+:::
+
+# 常见误区
+
+## 把多个单变量类别拼成多变量类别
+
+如果分别拟合 MMSE 类别、IST 类别、BVRT 类别，再把它们交叉组合，会产生很多类别组合，但这些组合不是同一个联合 likelihood 下估计出的 latent process 类别。
+
+## 把 marker-specific 参数解释成真实能力差异
+
+marker-specific shift 或 contrast 描述测量层面的偏差。它可能反映测试难度、量表单位、教育偏差或测量误差，不应直接解释为潜在能力轨迹差异。
+
+## 忽略共同潜在过程假设
+
+如果 marker 理论上不是同一个构念，`multlcmm()` 可能为了强行共享 latent process 而产生难解释的 link 或类别。此时应考虑 multi-trajectory GBTM、多过程模型或其他多变量方法。
+
+## 只报告 latent class，不报告 marker 拟合
+
+多变量模型的价值在于同时解释 latent process 和 measurement model。只报告类别名称而不报告各 marker 如何测量潜在过程，会丢掉模型最重要的一半。
+
+# 与第 8 篇的衔接
+
+`multlcmm()` 只处理纵向 marker。第 8 篇的 `mpjlcmm()` 会在纵向 latent processes 之外加入 time-to-event 结局。简化地说：
+
+- `multlcmm()`：多个 marker $\rightarrow$ 共同 latent process。
+- `mpjlcmm()`：一个或多个 latent processes $\rightarrow$ 再联合事件风险。
+
+这也澄清旧笔记中的一个易混点：`multlcmm` 和 `mpjlcmm` 不是同一层级的替代函数；后者是 joint latent class model 的多过程扩展。
+
+# 小结
+
+`multlcmm()` 的核心是“多个纵向指标共享潜在过程”。它比单变量 `lcmm()` 多了测量模型和 marker-specific links，也比 multi-trajectory GBTM 更强调测量结构和共同 latent construct。
+
+解释这类模型时要分清三层：latent process 轨迹、marker measurement model、observed scale link。类别属于 latent process 层；marker-specific 参数属于测量层；原始分数预测属于观测层。混淆这三层，是多变量 LCMM 最常见的解释错误。
+
+# 思考题
+
+1. 多个 marker 共享 latent process 的理论前提是什么？如何用数据诊断这个前提是否合理？
+2. marker-specific random intercept 和 latent process random effect 有什么区别？
+3. 如果一个 marker 与其他 marker 的轨迹信息明显冲突，应如何诊断和报告？
+4. 什么时候应使用 `multlcmm()`，什么时候应使用 multi-trajectory GBTM？
+
+# 参考来源
+
+本篇依据用户旧笔记中的 MultiLCMM 结构，结合 `lcmm` companion paper、官方函数文档和纵向聚类综述整理 [@proustlima2017lcmm; @lu2025clustering]。

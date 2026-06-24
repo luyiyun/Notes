@@ -1,0 +1,343 @@
+---
+title: "`lcmm`：非正态/有序结局与 latent process"
+subtitle: "Latent Process Mixed Models with Link Functions"
+description: "整理 lcmm 函数相关笔记，聚焦 latent process、非线性 link functions、非正态和有序纵向结局，以及与 hlme 的关系。"
+draft: false
+aliases:
+  - latent process mixed model
+  - lcmm function
+  - 非正态LCMM
+tags:
+  - 纵向轨迹混合模型
+  - LCMM
+  - latent-process
+  - link-functions
+date: 2026-06-09
+date-modified: last-modified
+order: 6
+bibliography: ../../../resources/bibliography/trajectory-mixture-models.bib
+reference-section-title: "参考文献"
+---
+
+# 引言
+
+`hlme()` 适用于高斯纵向结局。可是很多纵向数据并不适合直接放进线性高斯 mixed model：
+
+- 认知量表有上下界，早期可能有天花板效应。
+- 抑郁或症状评分偏态，低分堆积。
+- 自评健康、疼痛等级、功能等级是有序分类。
+- 同一潜在状态被粗糙量表测量，观测分数和真实变化之间可能是非线性关系。
+
+`lcmm()` 的核心思想是把两个尺度分开：
+
+1. **latent process scale**：不可直接观测的连续潜在过程在这里随时间变化。
+2. **observed outcome scale**：实际测到的量表分数、等级或有界变量在这里出现。
+
+这两个尺度通过 link function 连接。`lcmm` companion paper 把这类模型称为 latent process mixed models，并把它放在 `lcmm` 包处理 extended mixed models 的核心框架中 [@proustlima2017lcmm]。
+
+# 材料范围与证据地图
+
+| 来源 | 类型 | 本篇作用 | 限制 |
+|---|---|---|---|
+| `[用户旧笔记: LCMM]` | 用户提供材料 | 提供 LCMM 基本结构、类别成员模型、类别内 mixed model 与非正态扩展动机 | 当前仓库未包含旧 Obsidian 原文 |
+| `[用户旧笔记: MultiLCMM]` | 用户提供材料 | 提供 latent process 与 measurement/link model 的思想 | 多 marker 测量模型留到第 7 篇 |
+| Proust-Lima et al. (2017) | 官方方法论文 | 支持 `lcmm()` 的 latent process、link function 和估计方法 [@proustlima2017lcmm] | 本篇是学习笔记，不复现全部软件细节 |
+| `lcmm` 官方 `lcmm()` 文档 | 官方实现资料 | 校准 `link = "linear"`、`"beta"`、`"Splines"`、`"thresholds"`、`intnodes`、`epsY`、`cor` 等参数 | 参数名和默认值以后续安装版本为准 |
+
+::: {.callout-caution title="需人工复核"}
+本篇没有迁移图片或旧代码输出，因为 `assets/images/trajectory-mixture-models/` 为空。若补入官方 vignette 截图或旧笔记图，应重新检查 link function 图示和代码解释。
+:::
+
+# 为什么需要 latent process？
+
+## 观测分数不一定是模型的自然尺度
+
+假设研究认知老化，用 MMSE 表示认知能力。MMSE 的观测范围有限，且不同分数区间的含义并不一定等距。29 分到 30 分可能只是测量噪声或天花板效应，15 分到 16 分可能对应更明显的功能差异。
+
+如果直接写：
+
+$$
+Y_{ij}
+=
+X_i(t_{ij})^\top\beta
++Z_i(t_{ij})^\top u_i
++\epsilon_{ij},
+$$
+
+就是假设原始 MMSE 分数本身适合线性高斯模型。`lcmm()` 则改为假设背后有一个连续潜在过程 $A_i(t)$，观测分数只是它经过测量函数后的表现。
+
+## 两个尺度
+
+给定类别 $g$，潜在过程可以写成：
+
+$$
+A_i(t)\mid C_i=g
+=
+X_{L1i}(t)^\top\beta
++X_{L2i}(t)^\top\nu_g
++Z_i(t)^\top u_{ig}
++w_i(t).
+$$
+
+其中：
+
+| 项 | 含义 |
+|---|---|
+| $X_{L1i}(t)^\top\beta$ | 类别共享固定效应 |
+| $X_{L2i}(t)^\top\nu_g$ | 类别特异固定效应 |
+| $Z_i(t)^\top u_{ig}$ | 类别内随机效应 |
+| $w_i(t)$ | 额外时间相关结构，例如 Brownian motion 或 autoregressive process |
+
+观测值 $Y_{ij}$ 通过 link function 与潜在过程相连。为了写法统一，可以用一个单调函数 $H$ 表示：
+
+$$
+Y_{ij}
+=
+H(A_i(t_{ij})+\epsilon_{ij};\eta).
+$$
+
+也可以把反向 link 写成：
+
+$$
+H^{-1}(Y_{ij};\eta)
+=
+A_i(t_{ij})+\epsilon_{ij}.
+$$
+
+不同文献和软件说明会选择不同方向的记号；学习时关键是记住：模型在 latent process 尺度上建立 mixed model，再通过 link function 回到观测尺度。
+
+::: {.callout-important title="解释尺度"}
+`lcmm()` 中 longitudinal model 的系数首先属于 latent process scale。除非 link function 是 linear 且观测尺度近似等距，否则不能直接把系数解释成原始量表上的分数差。
+:::
+
+# Link functions
+
+`lcmm()` 的 link function 处理观测尺度和潜在尺度之间的关系。常见选择包括 linear、beta、splines 和 thresholds。
+
+## Linear link
+
+linear link 是最接近 `hlme()` 的情形。若观测尺度可以近似看作潜在尺度的线性变换，则：
+
+$$
+H^{-1}(Y_{ij})
+=
+a+bY_{ij}.
+$$
+
+这适合观测变量连续、近似高斯、边界效应不强的情形。此时 `lcmm()` 和 `hlme()` 在概念上非常接近；差别主要在于 `lcmm()` 明确放在 latent process 框架下。
+
+## Beta link
+
+beta link 用于有界连续结局。先把观测变量重缩放到 $(0,1)$：
+
+$$
+Y_{ij}^\ast
+=
+\frac{Y_{ij}-\min(Y)+\epsilon}{\max(Y)-\min(Y)+2\epsilon},
+$$
+
+其中 $\epsilon$ 对应软件中的 `epsY` 思路，用于避免精确落在 0 或 1。然后用 beta CDF 或相关参数化构造单调 link，把有界、偏态的观测分数映射到潜在尺度。
+
+直观上，beta link 允许原始量表两端被拉伸或压缩。例如在天花板附近，原始分数变化很小，但 latent process 可能仍有可区分差异。
+
+::: {.callout-warning title="容易混淆处"}
+beta link 不是“结局服从普通 beta 回归”这么简单。在 `lcmm()` 语境中，它是连接观测量表与 latent process 的参数化 link function。解释重点应放在尺度转换，而不是只说“换成 beta 分布”。
+:::
+
+## Splines link
+
+splines link 用 I-splines 或类似单调样条表示未知的非线性 link。它适合研究者不知道观测尺度和潜在尺度之间具体关系，但希望保持单调性：
+
+$$
+H^{-1}(Y;\eta)
+=
+\eta_0+\sum_{q=1}^{Q}\eta_q I_q(Y),
+$$
+
+其中 $I_q(Y)$ 是单调样条基函数。节点数量和节点位置决定 link function 的灵活度。常见设置会按等距或分位数选择节点，例如 `"5-quant-splines"` 这类语法。
+
+splines link 的优势是灵活；风险是参数更多、识别和收敛更难。如果样条参数接近边界，或 link function 出现不合理形状，需要重新检查节点设置、变量缩放和初始值。
+
+## Thresholds link
+
+thresholds link 用于有序分类或离散等级。假设背后存在连续潜在测量变量 $Y_{ij}^\ast$：
+
+$$
+Y_{ij}=m
+\quad\Longleftrightarrow\quad
+\tau_{m-1}<Y_{ij}^\ast\le \tau_m.
+$$
+
+阈值满足：
+
+$$
+-\infty=\tau_0<\tau_1<\cdots<\tau_M=\infty.
+$$
+
+潜在过程决定 $Y_{ij}^\ast$ 的位置，阈值决定观测等级。这里的阈值不是轨迹类别，也不是潜在类别；它们只是把连续潜在测量切成有序等级。
+
+# 识别约束
+
+latent process 不可直接观测，因此模型必须固定位置和尺度。否则，如果把 latent process 乘以某个常数，再相应改变 link function，可能得到同样的观测分布。
+
+常见识别思路包括：
+
+- 固定 latent process 的截距或均值位置。
+- 固定 latent process 的残差尺度或某个方差参数。
+- 对 link function 参数施加单调性和边界约束。
+- 在类别模型中选择参考类别。
+
+解释 `lcmm()` 结果时要记住：latent process 尺度是模型识别出来的工作尺度，不是天然有单位的真实量尺。它有助于比较趋势、类别和协变量关联，但原始量表上的预测仍需要通过 link function 转回 observed scale。
+
+# 与 `hlme()` 的关系
+
+| 问题 | `hlme()` | `lcmm()` |
+|---|---|---|
+| 结局类型 | 高斯连续纵向结局 | 连续高斯、非高斯、有界、有序等 |
+| 模型尺度 | 观测尺度 | latent process scale + observed scale |
+| link function | 隐含 linear | 显式指定 `link` |
+| 主要输出解释 | 原始结局均值轨迹 | latent process 轨迹与观测尺度预测 |
+| 适用风险 | 非正态或边界时可能误设 | link 选择、识别和收敛更复杂 |
+
+如果观测变量近似高斯且没有明显边界，`hlme()` 通常更简单。若观测变量有明显量表问题，直接用 `hlme()` 可能导致类别数替代 link function 的角色，产生不必要或难解释的类别。
+
+# R 应用流程
+
+下面是教学蓝图，用来说明同一纵向结构如何搭配不同 link function。实际运行时应以当前 `lcmm` 官方数据和 vignette 为准。
+
+```r
+library(lcmm)
+data(data_lcmm)
+
+m_linear <- lcmm(
+  Ydep2 ~ Time + I(Time^2),
+  random = ~ Time,
+  subject = "ID",
+  ng = 1,
+  data = data_lcmm,
+  link = "linear"
+)
+
+m_spline <- lcmm(
+  Ydep2 ~ Time + I(Time^2),
+  random = ~ Time,
+  subject = "ID",
+  ng = 1,
+  data = data_lcmm,
+  link = "5-quant-splines"
+)
+```
+
+多类别模型则增加 `mixture`、`classmb` 和 `ng`：
+
+```r
+m2_spline <- lcmm(
+  Ydep2 ~ Time + I(Time^2),
+  mixture = ~ Time + I(Time^2),
+  random = ~ Time,
+  classmb = ~ X1,
+  subject = "ID",
+  ng = 2,
+  data = data_lcmm,
+  link = "5-quant-splines",
+  B = m_spline
+)
+```
+
+## `predictlink()`
+
+`predictlink()` 用于查看估计出的 link function。它回答的问题是：观测分数和 latent process 尺度之间的映射是什么样的？
+
+解释时应关注：
+
+- link 是否大致线性。
+- 量表两端是否被明显压缩或拉伸。
+- 是否出现不符合单调直觉的数值异常。
+- 不同模型的 link 是否导致结论差异。
+
+## `predictY()` 与 `predictL()`
+
+`predictY()` 通常用于在观测尺度上预测结局轨迹。它回答：模型认为原始量表分数如何随时间变化？
+
+`predictL()` 则用于 latent process 尺度上的预测。它回答：潜在过程本身如何随时间变化？
+
+这两个预测可能给出不同直觉。例如 latent process 可能持续下降，但观测尺度由于下界或上界压缩，看起来变化变慢。报告时最好说明使用的是哪个尺度。
+
+# 相关结构：`cor`
+
+`lcmm()` 还允许在潜在过程层面加入额外相关结构，例如 Brownian motion 或 autoregressive process。可以概念化为：
+
+$$
+A_i(t)
+=
+X_i(t)^\top\beta_g
++Z_i(t)^\top u_i
++w_i(t),
+$$
+
+其中 $w_i(t)$ 捕捉随机效应之外的时间相关。若纵向观测很密集，或残差相关明显，仅用随机截距/斜率可能不够。
+
+不过，加入相关结构会增加计算和识别难度。实践上应先建立简单模型，再根据残差、理论和拟合诊断决定是否增加 `cor`。
+
+# 模型选择与诊断
+
+`lcmm()` 的模型选择不仅包括类别数，还包括 link function：
+
+| 选择 | 问题 | 诊断 |
+|---|---|---|
+| `linear` vs `beta` | 有界变量是否需要非线性边界处理？ | link 图、预测是否超界、残差形态 |
+| `Splines` 节点数 | link 是否需要灵活非线性？ | BIC、收敛、link 平滑性 |
+| `thresholds` | 结局是否应视为有序等级？ | 等级数、每级样本量、阈值稳定性 |
+| 类别数 `ng` | 是否存在多个 latent process 轨迹？ | BIC/AIC、类别比例、AvePP、轨迹解释 |
+| 随机效应结构 | 类内连续异质性如何表达？ | 方差协方差、收敛、模型比较 |
+
+::: {.callout-warning title="不要只用 BIC 选择 link"}
+BIC 可以帮助比较模型，但 link function 还必须符合测量学和科学问题。一个更灵活的 splines link 可能改善拟合，却让潜在尺度解释变得不稳定；一个简单 linear link 可能可解释，却无法处理边界效应。
+:::
+
+# 常见误区
+
+## 把 latent scale 系数当成原始分数差异
+
+如果模型使用 beta、splines 或 thresholds link，固定效应和类别轨迹首先存在于 latent scale。要解释原始分数，需要使用预测函数转回 observed scale。
+
+## 把 thresholds 当成潜在类别
+
+有序结局中的阈值只是观测等级切分点。潜在类别 $C_i$ 描述的是轨迹模式；阈值 $\tau_m$ 描述的是潜在测量变量如何变成观测等级。
+
+## 认为更灵活的 link 总是更好
+
+link function 越灵活，越可能出现收敛困难、边界参数和过拟合。对于样本量不大或等级较少的数据，过度灵活的 link 可能没有足够信息支持。
+
+## 忽略变量预处理
+
+有界变量的最小值、最大值、重缩放和 `epsY` 会影响 link 估计。不同预处理可能改变 latent scale 的形状和解释，因此应在报告中说明。
+
+# 与第 7 篇的衔接
+
+本篇讨论一个纵向结局如何通过 link function 连接 latent process。第 7 篇 `multlcmm()` 会把这个思想扩展到多个 marker：
+
+$$
+Y_{kij}
+=
+H_k(\tilde Y_{kij};\eta_k),
+$$
+
+其中每个 marker $k$ 可以有自己的 link function，但它们共同测量同一个 latent process。也就是说，本篇是“一个观测通道”的 latent process model；第 7 篇是“多个观测通道”的 latent process model。
+
+# 小结
+
+`lcmm()` 的关键贡献是把纵向 mixed model 放在 latent process 尺度上，再用 link function 解释观测量表。这个框架特别适合非正态、有界、有序或测量尺度非线性的纵向结局。
+
+理解 `lcmm()` 时要始终区分三个对象：latent process 的轨迹、link function 的形状、observed outcome 的预测。只有把这三者分开，才能避免把量表非线性误解释为潜在类别差异。
+
+# 思考题
+
+1. 为什么有界量表直接当作高斯变量可能导致类别数选择偏差？
+2. link function 的形状是否应该作为模型选择的一部分？为什么不能只看类别数？
+3. 当 latent process 尺度和 observed scale 的轨迹视觉结论不一致时，应如何报告？
+4. 如果有序结局的某些等级样本很少，thresholds link 可能遇到什么问题？
+
+# 参考来源
+
+本篇依据用户旧笔记中的 LCMM 与 latent process 思路，结合 `lcmm` companion paper 和官方函数文档整理 [@proustlima2017lcmm]。

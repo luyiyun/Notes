@@ -1,0 +1,459 @@
+---
+title: "`hlme`：从 GBTM 到 LCMM/GMM"
+subtitle: "Latent Class Linear Mixed Models"
+description: "以用户旧笔记 LCMM模型.md 为主材料，整理 hlme/LCMM/GMM 的随机效应、类别成员模型、边际似然、后验分类和 R 应用流程。"
+draft: false
+aliases:
+  - LCMM
+  - GMM
+  - hlme
+  - Growth Mixture Model
+tags:
+  - 纵向轨迹混合模型
+  - LCMM
+  - hlme
+  - 增长混合模型
+  - 随机效应
+date: 2026-06-09
+date-modified: last-modified
+order: 4
+bibliography: ../../../resources/bibliography/trajectory-mixture-models.bib
+reference-section-title: "参考文献"
+---
+
+# 引言
+
+GBTM/LCGA 把人群异质性主要压缩成离散类别：给定类别后，个体围绕类别平均轨迹的偏离通常只通过残差表达。`hlme()` 拟合的 latent class linear mixed model 则多了一层结构：同一类别内部仍然允许个体有随机截距、随机斜率等连续差异。
+
+因此，`hlme()` 可以看作从 GBTM 走向 growth mixture model (GMM) 或 LCMM 的入口。它回答的问题不再只是“总体能否分成几条典型轨迹”，还包括：
+
+1. 不同类别的平均轨迹是否不同？
+2. 同一类别内部个体是否仍有连续变异？
+3. 基线协变量是否解释类别归属概率？
+4. 后验分类是否足够清楚，可以支持报告和后续分析？
+
+`lcmm` companion paper 把 `hlme()` 定位为 latent class linear mixed model / heterogeneous linear mixed model 的实现，并说明整个包使用 maximum likelihood 与 modified Marquardt 类型算法估计 [@proustlima2017lcmm]。本篇先聚焦高斯纵向结局；非正态、有界或有序结局留到第 6 篇 `lcmm()`。
+
+# 材料范围与证据地图
+
+| 来源 | 类型 | 本篇作用 | 限制 |
+|---|---|---|---|
+| `[用户旧笔记: LCMM]` | 用户提供材料 | 提供 LCMM 总体框架、类别成员模型、类别内混合效应模型、边际正态似然、`paquid` 示例和输出解释方向 | 当前仓库未包含旧 Obsidian 原文，只能以现有草稿和系列审计为锚点 |
+| Muthen and Shedden (1999) | 方法背景 | 提供 finite mixture with mixture outcomes 的 EM 背景 [@muthen1999finite] | 本篇只用作混合模型估计直觉，不把 `hlme()` 说成纯 EM |
+| Proust-Lima et al. (2017) | 官方方法论文 | 校准 `lcmm` 函数族、`hlme()` 角色、最大似然和 Marquardt 估计 [@proustlima2017lcmm] | 具体参数名以后续官方文档版本为准 |
+| `lcmm` 官方 `hlme()` 文档 | 官方实现资料 | 校准 `fixed`、`mixture`、`random`、`classmb`、`ng`、`nwg`、`idiag` 等接口 | 文档可能随包版本更新 |
+| Herle et al. (2020) | 实践综述 | 提醒 GBTM/LCGA/GMM 的假设和解释风险 [@herle2020typical] | 不是 `lcmm` 专用教程 |
+
+::: {.callout-caution title="需人工复核"}
+用户提供的图片目录当前为空，因此本篇没有迁移旧笔记截图或软件输出图片。若后续补入 `summary()`、`postprob()` 或轨迹图截图，应把对应解释补入本篇并更新覆盖审计。
+:::
+
+# 从 GBTM 到 LCMM：新增了什么？
+
+## GBTM/LCGA 的简化
+
+在基础 GBTM/LCGA 中，给定类别 $g$ 后，连续结局可以写成：
+
+$$
+Y_{ij}\mid C_i=g
+=
+X_i(t_{ij})^\top\beta_g+\epsilon_{ij},
+\qquad
+\epsilon_{ij}\sim\mathcal N(0,\sigma_g^2).
+$$
+
+类别内部没有随机截距或随机斜率。若两个个体属于同一类，它们共享同一条类别平均轨迹，只是每次观测有残差波动。
+
+## `hlme()` 的新增层次
+
+`hlme()` 给类别内部加入随机效应。给定类别 $g$，可以写：
+
+$$
+Y_{ij\mid C_i=g}
+=
+X_{L1i}(t_{ij})^\top\beta
++X_{L2i}(t_{ij})^\top\nu_g
++Z_i(t_{ij})^\top u_{ig}
++\epsilon_{ij}.
+$$
+
+其中：
+
+| 部分 | 含义 | `hlme()` 参数 |
+|---|---|---|
+| $X_{L1i}(t)^\top\beta$ | 所有类别共享的固定效应 | `fixed` 中未放入 `mixture` 的项 |
+| $X_{L2i}(t)^\top\nu_g$ | 类别特异固定效应，定义不同平均轨迹 | `mixture` |
+| $Z_i(t)^\top u_{ig}$ | 类别内个体随机效应 | `random` |
+| $\epsilon_{ij}$ | 残差或测量误差 | residual error |
+| $P(C_i=g\mid X_{ci})$ | 类别成员概率 | `classmb` |
+
+随机效应通常假设为正态：
+
+$$
+u_{ig}\sim \mathcal N(0,B_g).
+$$
+
+如果各类别共享随机效应协方差矩阵，则 $B_g=B$；如果允许类别间随机效应方差按比例变化，可以使用类似 `nwg = TRUE` 的结构，让不同类别有不同随机效应尺度。
+
+::: {.callout-important title="LCMM 与 GBTM 的最小差异"}
+教学上最直观的分界是 `random`。GBTM/LCGA 主要用离散类别解释个体差异；`hlme()`/GMM 同时用离散类别和类别内随机效应解释差异。前者更简洁，后者更能表达“同一类内部仍然有连续差异”。
+:::
+
+# 类别成员模型
+
+`hlme()` 中的类别成员模型仍然是多项逻辑回归。令 $X_{ci}$ 为基线协变量，类别概率为：
+
+$$
+\pi_{ig}
+=
+P(C_i=g\mid X_{ci})
+=
+\frac{
+\exp(\zeta_{0g}+X_{ci}^{\top}\zeta_{1g})
+}{
+\sum_{\ell=1}^{G}
+\exp(\zeta_{0\ell}+X_{ci}^{\top}\zeta_{1\ell})
+}.
+$$
+
+为识别，通常设置参考类别 $G$：
+
+$$
+\zeta_{0G}=0,
+\qquad
+\zeta_{1G}=\mathbf 0.
+$$
+
+于是相对于参考类别：
+
+$$
+\log\frac{\pi_{ig}}{\pi_{iG}}
+=
+\zeta_{0g}+X_{ci}^{\top}\zeta_{1g}.
+$$
+
+在 `hlme()` 中，这部分由 `classmb = ~ ...` 指定。它解释的是“谁更可能属于哪一个潜在类别”，不是“协变量如何改变给定类别内的纵向均值”。如果一个协变量既可能影响类别归属，也可能影响类别内水平，需要分别考虑是否放进 `classmb` 与 `fixed`。
+
+# 类别内线性混合模型
+
+## 固定效应与类别特异效应
+
+假设时间变量为 $\mathrm{age65}=(\mathrm{age}-65)/10$。一个二次轨迹模型可以写成：
+
+$$
+Y_{ij\mid C_i=g}
+=
+(\beta_0+\nu_{0g})
++(\beta_1+\nu_{1g})\mathrm{age65}_{ij}
++(\beta_2+\nu_{2g})\mathrm{age65}_{ij}^2
++Z_i(t_{ij})^\top u_{ig}
++\epsilon_{ij}.
+$$
+
+这里 $\beta$ 是共同部分，$\nu_g$ 是类别偏移。若 `mixture = ~ age65 + I(age65^2)`，则线性和二次时间趋势可以随类别不同；若 `mixture = ~ age65`，则只允许线性斜率类别特异，二次项共享。
+
+::: {.callout-warning title="容易混淆处"}
+`fixed` 定义纵向模型里有哪些候选固定效应；`mixture` 指定这些固定效应中哪些允许类别特异。通常 `mixture` 中的变量也应出现在 `fixed` 中，否则模型语义会很难解释。
+:::
+
+## 随机效应
+
+若设置：
+
+```r
+random = ~ age65
+```
+
+则个体可以有随机截距和随机年龄斜率：
+
+$$
+Z_i(t_{ij})^\top u_{ig}
+=
+b_{0ig}+b_{1ig}\mathrm{age65}_{ij}.
+$$
+
+随机效应协方差矩阵为：
+
+$$
+B_g
+=
+\begin{pmatrix}
+\sigma_{b0,g}^{2} & \sigma_{b01,g}\\
+\sigma_{b01,g} & \sigma_{b1,g}^{2}
+\end{pmatrix}.
+$$
+
+这个矩阵表达同一类别中个体之间的连续差异：有些人整体水平更高，有些人下降更快，有些人的初始水平和下降速度相关。
+
+如果随机效应方差很大，类别平均轨迹就不应该被解释成类别内所有个体的典型路径。它只是类别条件平均，类别内部仍然有宽广的个体分布。
+
+# 边际正态似然
+
+`hlme()` 的 likelihood 需要把随机效应积分掉。对个体 $i$，给定类别 $g$ 后，把重复测量写成向量：
+
+$$
+y_i=(Y_{i1},\ldots,Y_{in_i})^\top.
+$$
+
+若纵向模型是线性高斯 mixed model，则：
+
+$$
+y_i\mid C_i=g,u_{ig}
+\sim
+\mathcal N(X_{ig}\beta_g+Z_i u_{ig},\sigma^2 I_{n_i}),
+$$
+
+$$
+u_{ig}\sim\mathcal N(0,B_g).
+$$
+
+对 $u_{ig}$ 积分后：
+
+$$
+y_i\mid C_i=g
+\sim
+\mathcal N(X_{ig}\beta_g,V_{ig}),
+$$
+
+其中：
+
+$$
+V_{ig}
+=
+Z_iB_gZ_i^\top+\sigma^2 I_{n_i}.
+$$
+
+类别条件密度为：
+
+$$
+f_g(y_i;\theta_g)
+=
+(2\pi)^{-n_i/2}
+|V_{ig}|^{-1/2}
+\exp\left[
+-\frac{1}{2}
+(y_i-X_{ig}\beta_g)^\top
+V_{ig}^{-1}
+(y_i-X_{ig}\beta_g)
+\right].
+$$
+
+边际个体 likelihood 是类别混合：
+
+$$
+L_i(\theta)
+=
+\sum_{g=1}^{G}
+\pi_{ig} f_g(y_i;\theta_g).
+$$
+
+总 log-likelihood 为：
+
+$$
+\ell(\theta)
+=
+\sum_{i=1}^{N}
+\log L_i(\theta)
+=
+\sum_{i=1}^{N}
+\log
+\left[
+\sum_{g=1}^{G}
+\pi_{ig} f_g(y_i;\theta_g)
+\right].
+$$
+
+这条公式解释了为什么 LCMM/GMM 比普通 mixed model 难估计：随机效应积分带来 $f_g$，潜在类别求和又包在对数里面。第 5 篇会专门讨论 EM 直觉、梯度和 Marquardt 实现。
+
+# 后验分类概率
+
+拟合完成后，个体 $i$ 属于类别 $g$ 的后验概率为：
+
+$$
+\hat p_{ig}
+=
+P(C_i=g\mid y_i,X_i,\hat\theta)
+=
+\frac{
+\hat\pi_{ig} f_g(y_i;\hat\theta_g)
+}{
+\sum_{\ell=1}^{G}
+\hat\pi_{i\ell}f_\ell(y_i;\hat\theta_\ell)
+}.
+$$
+
+most likely class 是：
+
+$$
+\hat C_i=\arg\max_g\hat p_{ig}.
+$$
+
+但是 $\hat C_i$ 不是观测到的真实类别。`postprob()` 或类似输出通常要关注：
+
+1. 每个 most likely class 的人数和比例。
+2. 各类别的平均后验概率。
+3. posterior classification table 的对角线是否高。
+4. 有多少个体最大后验概率低于 0.7 或 0.8。
+
+::: {.callout-warning title="硬分类风险"}
+在 `hlme()` 中，随机效应已经允许类别内连续差异；如果再把 most likely class 当作真实标签，后续回归会同时忽略随机效应不确定性和类别分类不确定性。报告时至少应说明后验概率分布。
+:::
+
+# R 应用流程：`paquid` 蓝图
+
+下面的代码是教学蓝图，展示 `hlme()` 的常见工作流。实际变量名、预处理和初始值应以当前 `lcmm` 官方 vignette 和数据版本为准。
+
+```r
+library(lcmm)
+data(paquid)
+
+paquid$age65 <- (paquid$age - 65) / 10
+paquid$normMMSE <- normMMSE(paquid$MMSE)
+
+m1 <- hlme(
+  fixed = normMMSE ~ poly(age65, degree = 2, raw = TRUE) + CEP,
+  random = ~ poly(age65, degree = 2, raw = TRUE),
+  subject = "ID",
+  ng = 1,
+  data = paquid
+)
+
+m2 <- hlme(
+  fixed = normMMSE ~ poly(age65, degree = 2, raw = TRUE) + CEP,
+  mixture = ~ poly(age65, degree = 2, raw = TRUE),
+  random = ~ poly(age65, degree = 2, raw = TRUE),
+  classmb = ~ CEP,
+  subject = "ID",
+  ng = 2,
+  data = paquid,
+  B = m1
+)
+```
+
+这段代码可以拆成几个解释点：
+
+| 代码部分 | 作用 | 解释 |
+|---|---|---|
+| `normMMSE <- normMMSE(MMSE)` | 量表标准化/正态化 | 让 MMSE 更接近高斯 longitudinal outcome |
+| `age65 <- (age - 65) / 10` | 时间中心化与缩放 | 截距对应 65 岁，每单位约 10 年 |
+| `ng = 1` | 单类别模型 | 作为普通 mixed model 和多类别初始值 |
+| `fixed` | 总体纵向结构 | 定义模型包含哪些固定效应 |
+| `mixture` | 类别特异固定效应 | 指定哪些时间项随类别变化 |
+| `random` | 个体随机效应 | 指定类别内连续异质性 |
+| `classmb` | 类别成员模型 | 指定哪些协变量解释类别概率 |
+| `B = m1` | 初始值 | 用单类别模型初始化多类别模型 |
+
+## 多起点搜索
+
+混合模型 likelihood 往往多峰。实际工作中，不应只依赖一个初始值。`lcmm` 工作流常用 `gridsearch()` 从多个随机起点运行短迭代，再把较好的起点继续优化：
+
+```r
+m2_grid <- gridsearch(
+  rep = 50,
+  maxiter = 30,
+  minit = m1,
+  hlme(
+    fixed = normMMSE ~ poly(age65, degree = 2, raw = TRUE) + CEP,
+    mixture = ~ poly(age65, degree = 2, raw = TRUE),
+    random = ~ poly(age65, degree = 2, raw = TRUE),
+    classmb = ~ CEP,
+    subject = "ID",
+    ng = 2,
+    data = paquid
+  )
+)
+```
+
+报告时应写清楚 `rep`、`maxiter`、初始模型、最终 log-likelihood，以及是否存在未收敛或收敛到较差局部极值的模型。
+
+# 输出解释框架
+
+`summary(m2)` 一类输出可以按四块阅读。
+
+## 模型与数据摘要
+
+首先检查 subjects、observations、latent classes、parameters 和 log-likelihood。这里要确认：
+
+- 个体数和观测数是否符合数据预处理后的样本。
+- `ng` 是否为计划中的类别数。
+- 参数数量是否随类别数、随机效应和 `classmb` 合理增加。
+- log-likelihood 是否可与其他模型比较。
+
+## 收敛诊断
+
+`lcmm` 输出通常包含迭代次数和收敛状态。三类收敛准则尤其重要：
+
+1. 参数变化是否足够小。
+2. log-likelihood 变化是否足够小。
+3. second derivatives / Hessian 相关准则是否满足。
+
+若模型停止但 Hessian 不合格，参数标准误、置信区间和 Wald 检验可能不可靠。第 5 篇会详细解释 `conv`、`gconv` 和 Marquardt 诊断。
+
+## Class-membership model
+
+类别成员模型输出的是相对于参考类别的 log-odds。若 `classmb = ~ CEP`，则某个系数 $\hat\zeta$ 可以转成 odds ratio：
+
+$$
+\mathrm{OR}=\exp(\hat\zeta).
+$$
+
+但解释必须加上“相对于参考类别”和“在模型定义的潜在类别中”。不能说“CEP 导致某类轨迹”，只能说在该模型下 CEP 与更高或更低的类别成员概率相关。
+
+## Longitudinal model
+
+纵向部分要分别看：
+
+- 哪些时间项类别特异。
+- 类别平均轨迹在观测时间范围内如何变化。
+- `fixed` 中的协变量是否仍有类别内关联。
+- 随机效应方差协方差是否很大。
+- 残差标准误是否合理。
+
+如果类别平均轨迹差异很小，但随机效应方差巨大，模型更像是在描述连续异质性，而不是清晰亚型。反过来，如果随机效应很小、类别轨迹差异明显，它更接近 GBTM/LCGA 的解释。
+
+# 与其他模型的边界
+
+| 模型 | 关键假设 | 何时适合 |
+|---|---|---|
+| GBTM/LCGA | 类别内无随机效应 | 想得到简洁典型轨迹，且类内连续异质性不强 |
+| `hlme()`/GMM | 类别内有随机效应，高斯纵向结局 | 连续结局近似高斯，且同类内部仍有个体差异 |
+| `lcmm()` | latent process + link function | 结局非高斯、有界、有序或观测尺度不线性 |
+| `multlcmm()` | 多 marker 共享 latent process | 多个纵向指标共同测量一个潜在状态 |
+| `Jointlcmm()` | 纵向轨迹 + 生存结局 | 轨迹过程与 time-to-event 结局需要联合建模 |
+
+这个边界表提示了一个实践原则：不要把所有问题都交给 `hlme()`。若结局分布明显不合适，加入随机效应不能自动修复 link function 或量表边界问题；若有多个 marker，单个 `hlme()` 也不能表达共同潜在过程。
+
+# 注意事项与常见误区
+
+## `CEP` 进入不同位置，含义不同
+
+如果 `CEP` 出现在 `fixed` 中，它解释给定类别和随机效应结构后的纵向结局差异；如果出现在 `classmb` 中，它解释类别归属概率差异。两者不能合并成一句话。
+
+## 类别编号没有自然意义
+
+`class1`、`class2` 的编号由估计结果决定，可能发生 label switching。报告时应按轨迹形状重命名，例如“稳定高水平”“快速下降”“低水平缓慢下降”。
+
+## BIC 不能单独决定报告模型
+
+类别数选择应结合 BIC/AIC、类别比例、后验分类质量、轨迹可解释性、收敛状态和理论问题。一个 BIC 最低但有 1% 极小类别的模型，可能只是异常点或模型误设的结果。
+
+## 随机效应越大，类别越不一定清晰
+
+LCMM/GMM 的优势是允许类内差异，但这也意味着类别平均轨迹只是条件平均。如果类内随机斜率很大，同一类别内部可能包含多种实际路径。
+
+# 小结
+
+`hlme()` 是从 GBTM/LCGA 走向 LCMM/GMM 的关键一步。它保留潜在类别结构，同时引入类别内随机效应，让模型能够把异质性拆成“类间平均轨迹差异”和“类内连续个体差异”两层。
+
+从公式上看，核心变化是类别条件密度 $f_g(y_i;\theta_g)$ 从简单条件独立观测分布变成 mixed model 的边际正态密度。从实践上看，核心变化是报告时必须同时解释类别轨迹、随机效应、后验分类和收敛诊断。
+
+# 思考题
+
+1. LCMM 中随机效应越强，潜在类别解释是否越弱？有没有例外？
+2. 如果两个类别的平均轨迹很像，但随机效应方差不同，应不应该保留两个类别？
+3. 同一个协变量放进 `fixed`、`mixture` 和 `classmb` 时，分别回答什么问题？
+4. 为什么 `ng = 1` 模型通常是多类别模型的重要初始化来源？
+
+# 参考来源
+
+本篇依据用户旧笔记中的 LCMM 框架，结合 `lcmm` companion paper、finite mixture 估计背景和轨迹模型解释综述整理 [@proustlima2017lcmm; @muthen1999finite; @herle2020typical]。

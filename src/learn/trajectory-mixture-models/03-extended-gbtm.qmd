@@ -1,0 +1,405 @@
+---
+title: "扩展 GBTM：非高斯结局、多轨迹与协变量"
+subtitle: "Outcome Distributions, Multi-Trajectory Models, and Class-Membership Covariates"
+description: "基于用户旧笔记 GBTM.md 中的连接函数、协变量和模型选择内容，整理扩展 GBTM 的系统学习笔记。"
+draft: false
+aliases:
+  - 扩展GBTM
+  - Multi-trajectory GBTM
+  - GBTM with covariates
+tags:
+  - 纵向轨迹混合模型
+  - GBTM
+  - 多轨迹模型
+  - 潜类别模型
+date: 2026-06-09
+date-modified: last-modified
+order: 3
+bibliography: ../../../resources/bibliography/trajectory-mixture-models.bib
+reference-section-title: "参考文献"
+---
+
+# 引言
+
+上一篇 [GBTM/LCGA](02-gbtm-and-lcga.qmd) 把模型放在最简洁的情形中：一个纵向结局、类别内没有随机效应、给定类别后用一条类别平均轨迹解释重复测量。本篇讨论 GBTM 的三个常见扩展方向：
+
+1. 观测结局不一定是高斯连续变量。
+2. 潜在类别比例可以由基线协变量解释。
+3. 多个纵向结局可以联合定义同一个潜在轨迹类别。
+
+这些扩展都没有改变 GBTM 的核心：总体分布仍然是若干类别条件轨迹分布的有限混合：
+
+$$
+p(\mathbf y_i \mid \theta)
+=
+\sum_{k=1}^{K}
+\pi_{ik}
+p_k(\mathbf y_i \mid \theta_k).
+$$
+
+真正变化的是 $p_k(\mathbf y_i \mid \theta_k)$ 的观测分布、$\pi_{ik}$ 的类别成员机制，或者 $\mathbf y_i$ 是否包含多个 marker。换句话说，扩展 GBTM 不是“换一个聚类算法”，而是在同一个潜类别轨迹框架里调整数据生成机制。
+
+# 材料范围与证据地图
+
+| 来源 | 类型 | 本篇作用 | 限制 |
+|---|---|---|---|
+| `[用户旧笔记: GBTM]` | 用户提供材料 | 提供正态、二元、泊松、ZIP、删失正态、有界结局、类别成员协变量和模型选择指标的结构 | 当前仓库未包含旧 Obsidian 原文，只能以现有草稿中的摘录和系列审计为锚点 |
+| Nagin group-based modeling 文献 | 方法原始来源 | 支持 GBTM 作为 semi-parametric group-based approach 的基本解释 [@nagin1999developmental; @nagin2005group] | 不同软件实现的默认分布和诊断指标不完全一致 |
+| Nagin et al. (2018) | 方法扩展论文 | 支持 group-based multi-trajectory modeling 的联合轨迹思想 [@nagin2018multi] | 公式在本篇中作教学化改写 |
+| Elmer et al. (2018) | 应用方法论文 | 支持 beta distribution 用于有界连续结局的 GBTM [@elmer2018beta] | 本篇只解释建模动机，不复现实证结果 |
+| `lcmm`/相关软件文档 | 官方实现资料 | 校准 `classmb`、后验分类和信息准则等软件语义 [@proustlima2017lcmm] | `lcmm` 不是传统 GBTM 的唯一实现，`proc traj`、Mplus、Stata 插件等也有不同功能 |
+| Lu longitudinal clustering review | 方法综述 | 给出纵向聚类软件生态背景 [@lu2025clustering] | 出版元数据仍需人工复核 |
+
+::: {.callout-caution title="需人工复核"}
+用户提到的 `assets/images/trajectory-mixture-models/` 当前为空目录，因此本篇没有迁移图片、OCR 或截图内容。若后续补入旧笔记图片，应重新核对本篇的“用户材料覆盖情况”。
+:::
+
+# 统一模型骨架
+
+对个体 $i$，令 $C_i \in \{1,\ldots,K\}$ 表示潜在类别。给定类别 $k$ 后，GBTM 通常假设重复测量在类别平均轨迹和观测分布给定后条件独立：
+
+$$
+p_k(\mathbf y_i \mid \theta_k)
+=
+\prod_{j=1}^{n_i}
+p(y_{ij} \mid t_{ij}, C_i=k, \theta_k).
+$$
+
+类别 $k$ 的线性预测子可以写成：
+
+$$
+\eta_{ij}^{k}
+=
+\beta_{0k}
++ \beta_{1k} t_{ij}
++ \beta_{2k} t_{ij}^{2}
++ \cdots
++ \beta_{pk} t_{ij}^{p}.
+$$
+
+这里 $\eta_{ij}^{k}$ 不一定等于观测均值本身。它可以通过不同 link function 连接到均值、概率、强度或某个有界尺度参数。扩展 GBTM 的第一步，就是分清楚三个层次：
+
+| 层次 | 符号 | 问题 |
+|---|---|---|
+| 类别结构 | $C_i$、$\pi_{ik}$ | 个体更可能属于哪条轨迹？ |
+| 轨迹线性预测子 | $\eta_{ij}^{k}$ | 类别 $k$ 的时间趋势如何变化？ |
+| 观测分布 | $p(y_{ij}\mid\eta_{ij}^{k})$ | 给定轨迹后，实际观测值怎样围绕轨迹产生？ |
+
+::: {.callout-important title="核心区分"}
+改变观测分布或 link function，不等于改变潜在类别的定义。潜在类别仍由整条轨迹的概率模式定义；改变的是每个时间点的观测值如何从类别轨迹中生成。
+:::
+
+# 结局分布的扩展
+
+## 连续高斯结局
+
+最简单的版本是假设：
+
+$$
+Y_{ij}\mid C_i=k
+\sim
+\mathcal N(\mu_{ij}^{k}, \sigma_k^2),
+\qquad
+\mu_{ij}^{k}=\eta_{ij}^{k}.
+$$
+
+这适合近似连续、残差大致对称、量表边界不强的结局。若变量是 MMSE、抑郁量表、生活质量量表这类有上下界的分数，直接套用高斯模型可能会出现两个问题：预测均值超出合法范围，以及残差分布被边界压缩。此时应考虑删失正态、beta link、splines link 或 `lcmm()` 的 latent process 框架，而不是简单增加类别数来吸收边界效应。
+
+## 二元结局
+
+当 $Y_{ij}\in\{0,1\}$，例如是否出现症状、是否犯罪、是否服药，可以使用 Bernoulli 分布：
+
+$$
+Y_{ij}\mid C_i=k
+\sim
+\mathrm{Bernoulli}(p_{ij}^{k}),
+$$
+
+并用 logit link 描述类别特异概率轨迹：
+
+$$
+\mathrm{logit}(p_{ij}^{k})
+=
+\log\frac{p_{ij}^{k}}{1-p_{ij}^{k}}
+=
+\eta_{ij}^{k}.
+$$
+
+解释时要回到概率尺度。$\eta_{ij}^{k}$ 每增加 1，odds 乘以 $e$；但概率变化幅度取决于当前位置。例如从 0.1 到 0.2 与从 0.8 到 0.9 在 logit 尺度上的意义并不相同。
+
+## 计数结局
+
+当结局是事件次数，可以使用 Poisson 分布：
+
+$$
+Y_{ij}\mid C_i=k
+\sim
+\mathrm{Poisson}(\lambda_{ij}^{k}),
+\qquad
+\log \lambda_{ij}^{k}=\eta_{ij}^{k}.
+$$
+
+这时轨迹描述的是事件强度或期望次数的变化。Poisson 模型隐含均值等于方差：
+
+$$
+E(Y_{ij}\mid C_i=k)
+=
+\mathrm{Var}(Y_{ij}\mid C_i=k)
+=
+\lambda_{ij}^{k}.
+$$
+
+如果实际数据过度离散，或存在大量结构性零值，简单 Poisson 可能会把过度离散误解释为更多潜在类别。
+
+## 零膨胀计数
+
+在发展犯罪、症状发作、医疗使用次数等数据中，很多个体在某些时间点为 0。若这些 0 不只是 Poisson 随机波动，而是来自“结构性不会发生事件”的状态，可以考虑 zero-inflated Poisson (ZIP)：
+
+$$
+P(Y_{ij}=0\mid C_i=k)
+=
+\omega_{ij}^{k}
++(1-\omega_{ij}^{k})\exp(-\lambda_{ij}^{k}),
+$$
+
+$$
+P(Y_{ij}=y\mid C_i=k)
+=
+(1-\omega_{ij}^{k})
+\frac{(\lambda_{ij}^{k})^y\exp(-\lambda_{ij}^{k})}{y!},
+\qquad y=1,2,\ldots
+$$
+
+其中 $\omega_{ij}^{k}$ 是结构性零值概率，$\lambda_{ij}^{k}$ 是非结构性零值部分的 Poisson 强度。ZIP 版本往往需要更多参数，因此要特别关注收敛、类别比例和参数可解释性。
+
+## 删失、有界与 beta 结局
+
+当结局是有上下界的连续比例或量表分数，例如 $0$ 到 $1$ 的比例、0 到 30 的认知分数、0 到 100 的功能评分，高斯模型可能不合适。Elmer et al. 讨论了在 group-based trajectory models 中使用 beta distribution 的思路，用 beta 分布表达有界、偏态、异方差的连续结局 [@elmer2018beta]。
+
+若把观测值重缩放为 $Y_{ij}^\ast\in(0,1)$，可以写：
+
+$$
+Y_{ij}^\ast\mid C_i=k
+\sim
+\mathrm{Beta}(\alpha_{ij}^{k}, \delta_{ij}^{k}).
+$$
+
+一种常见参数化是用均值 $\mu_{ij}^{k}$ 与精度 $\phi_k$：
+
+$$
+\alpha_{ij}^{k}=\mu_{ij}^{k}\phi_k,
+\qquad
+\delta_{ij}^{k}=(1-\mu_{ij}^{k})\phi_k,
+\qquad
+\mathrm{logit}(\mu_{ij}^{k})=\eta_{ij}^{k}.
+$$
+
+这里 $\mu_{ij}^{k}$ 是类别 $k$ 在时间 $t_{ij}$ 的条件均值，$\phi_k$ 控制分布集中程度。$\phi_k$ 越大，观测值越集中在均值附近；$\phi_k$ 越小，分布越分散。
+
+::: {.callout-warning title="容易混淆处"}
+有界连续变量不一定都要用 beta GBTM。如果边界只是量表设计但数据远离边界，高斯近似可能足够；如果大量观测恰好等于边界，普通 beta 分布又不能直接处理 0 或 1，需要零一膨胀、删失建模或合适的重缩放策略。
+:::
+
+# 类别成员协变量
+
+## 从固定类别比例到个体化类别概率
+
+无协变量时，类别比例是固定的：
+
+$$
+P(C_i=k)=\pi_k,
+\qquad
+\sum_{k=1}^{K}\pi_k=1.
+$$
+
+若研究者关心基线特征是否与轨迹类别相关，可以把 $\pi_k$ 扩展为多项逻辑回归：
+
+$$
+\pi_{ik}
+=
+P(C_i = k \mid z_i)
+=
+\frac{
+\exp(\gamma_{0k}+z_i^\top\gamma_k)
+}{
+\sum_{\ell=1}^{K}
+\exp(\gamma_{0\ell}+z_i^\top\gamma_\ell)
+}.
+$$
+
+为保证识别，通常选择一个参考类别，例如令 $\gamma_{0K}=0$ 且 $\gamma_K=\mathbf 0$。于是相对于参考类别 $K$：
+
+$$
+\log
+\frac{P(C_i=k\mid z_i)}{P(C_i=K\mid z_i)}
+=
+\gamma_{0k}+z_i^\top\gamma_k.
+$$
+
+这条公式回答的是：在纵向轨迹信息进入模型之前，基线协变量如何改变个体属于不同潜在类别的先验概率。
+
+## `classmb` 的解释边界
+
+在 `lcmm` 函数族中，类别成员协变量通常通过 `classmb` 指定。它和纵向子模型中的协变量不是同一件事：
+
+| 放置位置 | 统计含义 | 解释问题 |
+|---|---|---|
+| `classmb = ~ z` | $z$ 进入类别成员模型 | 哪些基线特征让个体更可能属于某类？ |
+| `fixed = y ~ z + time` | $z$ 进入纵向均值结构 | 在所有类别或总体平均上，$z$ 与结局水平/变化有关吗？ |
+| `mixture = ~ time` | 时间效应类别特异 | 各类别的轨迹形状是否不同？ |
+
+如果同一个协变量同时进入 `classmb` 和 longitudinal model，它同时回答两个问题：它是否改变类别成员概率，以及在给定类别后是否仍与结局水平有关。解释时不能把两者混成一句“这个变量影响轨迹”。
+
+::: {.callout-important title="协变量会改变类别定义"}
+加入 class-membership covariates 后，模型会在类别划分和协变量关联之间共同优化。含协变量模型与不含协变量模型的类别未必一一对应，因此比较类别名称、比例和轨迹形状时要重新检查，而不能机械沿用旧模型的类别编号。
+:::
+
+# 多轨迹 GBTM
+
+## 从单一轨迹到联合轨迹
+
+如果同一个个体有多个纵向结局，例如认知分数、抑郁评分和身体功能，单独为每个结局拟合 GBTM 会得到多个分类结果。问题是：这些分类未必一致，也无法直接回答“哪些人呈现共同的多维发展模式”。
+
+Group-based multi-trajectory modeling 的思想是让同一个潜在类别 $C_i$ 同时定义多个结局的轨迹 [@nagin2018multi]。设第 $m$ 个 marker 的纵向向量为 $\mathbf y_{im}$，个体完整数据为：
+
+$$
+\mathbf y_i
+=
+(\mathbf y_{i1},\ldots,\mathbf y_{iM}).
+$$
+
+在给定类别 $k$ 后，可以写成：
+
+$$
+p(\mathbf y_i\mid C_i=k,\theta_k)
+=
+\prod_{m=1}^{M}
+p_{km}(\mathbf y_{im}\mid \theta_{km}),
+$$
+
+于是边际 likelihood 为：
+
+$$
+p(\mathbf y_i\mid\theta)
+=
+\sum_{k=1}^{K}
+\pi_k
+\prod_{m=1}^{M}
+p_{km}(\mathbf y_{im}\mid \theta_{km}).
+$$
+
+同一个类别 $k$ 现在是一组轨迹的组合，而不是某一个 marker 的轨迹。例如一个类别可以被描述为“认知缓慢下降 + 抑郁稳定低 + 身体功能快速下降”。
+
+## 多轨迹模型和多个单变量模型的区别
+
+| 做法 | 类别含义 | 优点 | 风险 |
+|---|---|---|---|
+| 分别拟合每个 marker 的 GBTM | 每个 marker 各有自己的类别 | 简单，便于单指标解释 | 类别交叉后组合过多，忽略 marker 间共同模式 |
+| multi-trajectory GBTM | 一个类别同时包含多个 marker 轨迹 | 直接得到联合 phenotype | 若某个 marker 主导 likelihood，类别可能主要反映该 marker |
+| `multlcmm` | 多 marker 共同测量同一个 latent process | 显式建模测量尺度和共同潜在过程 | 需要“共同潜在过程”假设，计算更复杂 |
+
+multi-trajectory GBTM 和 `multlcmm` 都处理多个纵向指标，但统计假设不同。前者直接把多个观测轨迹联合分组；后者认为多个 marker 是同一个潜在过程的测量通道，并通过 marker-specific link functions 连接观测值。
+
+::: {.callout-note title="与 multlcmm 的区别"}
+multi-trajectory GBTM 的类别是多个观测结局轨迹的联合模式；`multlcmm` 的类别是共同 latent process 的类别，观测 marker 还要经过测量模型或 link function。若多个 marker 不测量同一个潜在状态，multi-trajectory GBTM 可能更自然；若多个 marker 是同一潜在能力或症状维度的测量，`multlcmm` 更有结构性。
+:::
+
+# 模型选择与诊断
+
+扩展 GBTM 的模型选择比基础模型更容易误判，因为分布设定、类别数、协变量和多轨迹结构会互相补偿。常用指标包括：
+
+$$
+\mathrm{BIC}
+=
+-2\ell(\hat\theta)+p\log N,
+$$
+
+$$
+\mathrm{AIC}
+=
+-2\ell(\hat\theta)+2p.
+$$
+
+其中 $\ell(\hat\theta)$ 是最大化后的 log-likelihood，$p$ 是自由参数个数，$N$ 通常按个体数而不是观测总数理解。BIC 惩罚复杂度较强，AIC 惩罚较弱；二者都不能单独证明类别具有实体意义。
+
+分类质量通常通过 posterior class-membership probabilities 检查：
+
+$$
+\hat p_{ik}
+=
+P(C_i=k\mid \mathbf y_i,\hat\theta)
+=
+\frac{
+\hat\pi_{ik}p_k(\mathbf y_i\mid\hat\theta_k)
+}{
+\sum_{\ell=1}^{K}
+\hat\pi_{i\ell}p_\ell(\mathbf y_i\mid\hat\theta_\ell)
+}.
+$$
+
+AvePP、entropy、posterior classification table 和类别比例都应一起看。一个模型即使 BIC 较低，也可能因为类别极小、后验概率重叠、参数在边界上或轨迹没有实质解释价值而不适合报告。
+
+| 检查项 | 要问的问题 | 可能的处理 |
+|---|---|---|
+| 结局分布 | 残差、边界、零值、过度离散是否合理？ | 换分布或 link，而不是盲目加类别 |
+| 类别数 | BIC/AIC 是否改善？类别是否可解释？ | 比较 $K=1,\ldots,K_{\max}$，报告未收敛模型 |
+| 分类质量 | AvePP 是否足够高？类别间是否重叠？ | 报告 posterior table，避免硬分类过度解释 |
+| 类别比例 | 是否出现 1%-2% 的极小类别？ | 检查是否局部最优、异常点或模型误设 |
+| 协变量 | `classmb` 是否改变类别结构？ | 重新命名类别，避免和无协变量模型直接对齐 |
+| 多轨迹 | 是否某个 marker 主导分类？ | 标准化、检查各 marker 的拟合与解释贡献 |
+
+::: {.callout-warning title="LMR-aLRT 与 BLRT 的软件边界"}
+用户旧笔记中提到 LMR-aLRT 和 BLRT。它们常见于 Mplus 等 latent class/growth mixture 工作流，但 `lcmm` 官方输出通常以 logLik、AIC、BIC、后验分类和收敛诊断为主。本系列后续报告规范会把这些检验标为“视软件而定”，不把它们写成 `lcmm` 的默认输出。
+:::
+
+# 应用例子：如何选择扩展方向
+
+假设研究者分析 65 岁以上人群的认知量表，观测到三个现象：
+
+1. MMSE 有明显上界，很多人在早期接近满分。
+2. 部分个体随访时间较短且缺失与健康状态有关。
+3. 教育水平可能影响个体属于不同下降轨迹的概率。
+
+一个稳妥的建模顺序是：
+
+1. 先用基础高斯 GBTM/LCGA 建立类别数和轨迹形状的直觉。
+2. 检查边界效应和残差，若高斯假设明显不合适，考虑有界分布、link function 或第 6 篇的 `lcmm()` latent process 模型。
+3. 再加入教育水平作为 `classmb`，比较类别轨迹是否仍稳定。
+4. 若还有其他认知 marker，例如 IST、BVRT，再判断它们是要做 multi-trajectory GBTM，还是第 7 篇所说的共同 latent process。
+
+这个顺序的好处是每次只改变一个主要建模假设。若同时改变分布、类别数、协变量和多 marker 结构，很难判断结果变化来自哪里。
+
+# 注意事项与常见误区
+
+## 不要用类别数补偿分布误设
+
+如果数据有强偏态、过多零值或边界堆积，增加类别数可能会提高 likelihood，但得到的类别可能只是分布误设的补丁。此时更应该检查观测分布和 link function。
+
+## 不要把 class-membership effect 解释成纵向因果效应
+
+`classmb` 中的协变量解释的是类别成员概率差异，不是“协变量导致某条轨迹”。尤其在观测研究中，类别本身也是模型推断的结果，不能自动成为因果中介或真实亚型。
+
+## 不要把联合类别拆回单个 marker 类别
+
+multi-trajectory GBTM 的类别是联合模式。若类别 1 在 marker A 上下降、marker B 上稳定，它不是“marker A 的下降类”，而是“A 下降 + B 稳定”的联合类别。
+
+## 不要忽略未收敛模型
+
+扩展模型更容易出现局部最优、边界参数和 Hessian 问题。报告时应说明尝试过哪些类别数、哪些模型未收敛、采用什么初始值策略。
+
+# 小结
+
+扩展 GBTM 的核心不是把模型变复杂，而是让概率模型更贴近数据结构。非高斯结局要求重新思考观测分布；类别成员协变量要求区分类别归属机制和纵向均值结构；多轨迹模型要求把类别解释为多个 marker 的联合模式。
+
+本篇与后续三篇的关系可以这样理解：扩展 GBTM 仍主要保留“类别内无随机效应”的简化；第 4 篇 `hlme`/LCMM 会加入类别内随机效应；第 6 篇 `lcmm` 会把观测尺度和潜在过程尺度分开；第 7 篇 `multlcmm` 会用测量模型处理多个 marker 与共同 latent process 的关系。
+
+# 思考题
+
+1. 如果同一指标既有强偏态又有天花板效应，应优先改变观测分布、link function，还是增加类别数？为什么？
+2. 在 class-membership model 中加入协变量后，类别是否还能与不含协变量的模型直接比较？
+3. 多轨迹模型得到的类别，是“任一 marker 的类别”，还是“多个 marker 的联合类别”？
+4. 如果两个 marker 的单变量 GBTM 类别不一致，什么时候应该接受这种不一致，什么时候应该拟合联合模型？
+
+# 参考来源
+
+本篇主要依据用户旧笔记中的 GBTM 扩展框架，并结合 GBTM 原始文献、multi-trajectory GBTM、beta GBTM、`lcmm` companion paper 与纵向聚类综述进行解释性整理 [@nagin1999developmental; @nagin2005group; @nagin2018multi; @elmer2018beta; @proustlima2017lcmm; @herle2020typical; @lu2025clustering]。

@@ -1,0 +1,507 @@
+---
+title: "LCMM 系列的估计：EM 直觉与 Marquardt 实现"
+subtitle: "From Complete-Data Likelihood to Modified Marquardt-Levenberg"
+description: "吸收用户旧笔记 LCMM模型.md 中的 EM、Newton-Raphson、梯度、Hessian 和 Levenberg-Marquardt 推导，并校准 lcmm 包的实际估计方法。"
+draft: false
+aliases:
+  - LCMM估计
+  - Marquardt algorithm
+  - EM for LCMM
+tags:
+  - 纵向轨迹混合模型
+  - LCMM
+  - EM算法
+  - Marquardt
+  - 最大似然
+date: 2026-06-09
+date-modified: last-modified
+order: 5
+bibliography: ../../../resources/bibliography/trajectory-mixture-models.bib
+reference-section-title: "参考文献"
+---
+
+# 引言
+
+LCMM 系列模型的估计困难来自两个同时存在的不可观测结构：
+
+1. 潜在类别 $C_i$ 不可观测。
+2. 类别内随机效应 $u_i$ 不可观测。
+
+如果类别和随机效应都已知，纵向子模型、类别成员模型和随机效应结构会容易很多；但实际中它们只能从数据中推断。用户旧笔记把估计思路分成两条线：
+
+- **EM algorithm 直觉**：把类别归属看作 missing data，解释 posterior class-membership probabilities、complete-data likelihood 和 soft classification。
+- **Newton/Marquardt 直接优化**：直接最大化观测数据 likelihood，解释梯度、Hessian、收敛准则和软件实现。
+
+这两条线都值得保留，但必须分清楚用途。EM 是理解混合模型的好入口；`lcmm` 包的实际估计则是 maximum likelihood 与 modified Marquardt-Levenberg algorithm，而不是纯 EM [@proustlima2017lcmm]。
+
+# 材料范围与证据地图
+
+| 来源 | 类型 | 本篇作用 | 限制 |
+|---|---|---|---|
+| `[用户旧笔记: LCMM]` | 用户提供材料 | 提供 EM 推导、后验概率、Q 函数、Newton 梯度、Hessian 和 Levenberg-Marquardt 思路 | 当前仓库未包含旧 Obsidian 原文；矩阵求导以现有草稿为基础重构 |
+| Muthen and Shedden (1999) | 方法背景 | 支持 finite mixture with mixture outcomes 的 EM 估计框架 [@muthen1999finite] | 不是 `lcmm` 软件实现说明 |
+| Proust-Lima et al. (2017) | 官方方法论文 | 校准 `lcmm` 使用 modified Marquardt algorithm、严格收敛准则和最大似然实现 [@proustlima2017lcmm] | 本篇不复现包内部参数变换细节 |
+| `lcmm` 官方文档 | 官方实现资料 | 校准 `conv`、`gconv`、`B`、`gridsearch()`、`random()` 等实践语义 | 具体输出字段可能随版本更新 |
+
+::: {.callout-caution title="需人工复核"}
+旧笔记中关于随机效应协方差矩阵和 Hessian 的推导具有教学价值，但 `lcmm` 内部会使用约束、参数变换和 Cholesky 类参数化来保证方差协方差结构合法。本篇的矩阵导数是概念推导，不应逐字当作包内部源码公式。
+:::
+
+# 观测数据似然
+
+设个体 $i$ 的纵向观测为 $y_i$，潜在类别为 $C_i\in\{1,\ldots,G\}$。类别成员概率是：
+
+$$
+\pi_{ig}(\zeta)
+=
+P(C_i=g\mid X_{ci};\zeta).
+$$
+
+给定类别 $g$ 后，纵向数据的边际密度为 $f_g(y_i;\theta_g)$。在 `hlme()` 的高斯 mixed model 情形下，它来自对随机效应积分后的多元正态密度；在 `lcmm()`、`multlcmm()` 或 joint model 中，它还可能包含 link function、多个 marker、事件结局和数值积分。
+
+个体 likelihood 为：
+
+$$
+L_i(\theta)
+=
+\sum_{g=1}^{G}
+\pi_{ig}(\zeta)f_g(y_i;\theta_g).
+$$
+
+总 log-likelihood 为：
+
+$$
+\ell(\theta)
+=
+\sum_{i=1}^{N}
+\log
+\left[
+\sum_{g=1}^{G}
+\pi_{ig}(\zeta)f_g(y_i;\theta_g)
+\right].
+$$
+
+难点在于 $\log$ 里面有类别求和。这个结构让参数之间强耦合，也让 likelihood 容易多峰。混合模型中的局部最优、label switching、边界解和 Hessian 不稳定，都与这个结构有关。
+
+# Complete-data likelihood 与 EM 直觉
+
+## 引入类别指示变量
+
+定义类别指示变量：
+
+$$
+Z_{ig}
+=
+\begin{cases}
+1, & C_i=g,\\
+0, & C_i\ne g.
+\end{cases}
+$$
+
+如果 $Z_{ig}$ 可观测，complete-data log-likelihood 可以写成：
+
+$$
+\ell_c(\theta)
+=
+\sum_{i=1}^{N}
+\sum_{g=1}^{G}
+Z_{ig}
+\left[
+\log \pi_{ig}(\zeta)
++\log f_g(y_i;\theta_g)
+\right].
+$$
+
+这条式子非常重要，因为它把两部分拆开：
+
+- $\log \pi_{ig}(\zeta)$：类别成员模型。
+- $\log f_g(y_i;\theta_g)$：给定类别后的纵向模型。
+
+如果类别真的已知，估计就接近“分类后的多组模型”；但类别未知，所以 EM 用后验概率替代未知的 $Z_{ig}$。
+
+## E step：计算 posterior responsibility
+
+在第 $t$ 次迭代，给定当前参数 $\theta^{(t)}$，E step 计算：
+
+$$
+\tau_{ig}^{(t)}
+=
+E(Z_{ig}\mid y_i,\theta^{(t)})
+=
+P(C_i=g\mid y_i,\theta^{(t)}).
+$$
+
+根据 Bayes 公式：
+
+$$
+\tau_{ig}^{(t)}
+=
+\frac{
+\pi_{ig}(\zeta^{(t)})
+f_g(y_i;\theta_g^{(t)})
+}{
+\sum_{\ell=1}^{G}
+\pi_{i\ell}(\zeta^{(t)})
+f_\ell(y_i;\theta_\ell^{(t)})
+}.
+$$
+
+这正是拟合后 posterior class-membership probabilities 的迭代版本。它说明后验分类不是附属产物，而是混合模型估计结构的核心。
+
+## M step：最大化 Q 函数
+
+EM 的 Q 函数为：
+
+$$
+Q(\theta\mid\theta^{(t)})
+=
+E_{\theta^{(t)}}[\ell_c(\theta)\mid y]
+$$
+
+$$
+=
+\sum_{i=1}^{N}
+\sum_{g=1}^{G}
+\tau_{ig}^{(t)}
+\log \pi_{ig}(\zeta)
++
+\sum_{i=1}^{N}
+\sum_{g=1}^{G}
+\tau_{ig}^{(t)}
+\log f_g(y_i;\theta_g).
+$$
+
+因此 M step 可以被理解为：
+
+| 参数块 | EM 直觉 | 解释 |
+|---|---|---|
+| 类别比例或 `classmb` 参数 $\zeta$ | 加权多项逻辑回归 | 每个人对每个类别贡献一个软权重 $\tau_{ig}$ |
+| 纵向固定效应 $\theta_g$ | 加权纵向模型 | 个体对类别 $g$ 的贡献由后验概率加权 |
+| 随机效应方差/协方差 | 加权方差结构估计 | 实际常需要数值优化和参数变换 |
+
+::: {.callout-note title="EM 的教学价值"}
+即使软件不使用纯 EM，EM 仍然解释了三个关键概念：posterior probabilities 为什么出现、soft classification 为什么比硬分类自然、类别成员模型和纵向模型为什么在估计中相互影响。
+:::
+
+# 直接最大化与梯度直觉
+
+`lcmm` 的实际估计是直接最大化观测 log-likelihood。虽然不显式运行纯 EM，梯度中仍然会出现后验概率。
+
+## 类别成员参数的梯度
+
+对多项逻辑类别成员模型，若第 $G$ 类为参考类，则：
+
+$$
+\pi_{ig}
+=
+\frac{
+\exp(X_{ci}^\top\zeta_g)
+}{
+1+\sum_{h=1}^{G-1}\exp(X_{ci}^\top\zeta_h)
+},
+\qquad
+g=1,\ldots,G-1.
+$$
+
+对 $\zeta_g$ 的梯度可写成：
+
+$$
+\frac{\partial\ell(\theta)}{\partial\zeta_g}
+=
+\sum_{i=1}^{N}
+(\tau_{ig}-\pi_{ig})X_{ci}.
+$$
+
+这和普通多项逻辑回归的“观测类别 - 预测概率”形式相似，只是观测类别被后验概率 $\tau_{ig}$ 替代。直观地说，如果个体 $i$ 的数据强烈支持类别 $g$，但当前先验概率 $\pi_{ig}$ 较低，梯度会推动类别成员模型提高该个体属于类别 $g$ 的概率。
+
+## 类别内参数的梯度
+
+若 $\phi_g$ 是类别 $g$ 的纵向模型参数，例如固定效应、残差方差或随机效应参数，则：
+
+$$
+\frac{\partial\ell(\theta)}{\partial\phi_g}
+=
+\sum_{i=1}^{N}
+\tau_{ig}
+\frac{\partial \log f_g(y_i;\theta_g)}{\partial\phi_g}.
+$$
+
+这说明直接最大化时，后验概率仍然扮演软权重。EM 和 Newton/Marquardt 在计算方式上不同，但它们共享同一个概率结构。
+
+# 高斯 mixed model 分量的导数蓝图
+
+为了理解 `hlme()` 情形，考虑：
+
+$$
+y_i\mid C_i=g
+\sim
+\mathcal N(\mu_{ig},V_{ig}),
+\qquad
+\mu_{ig}=X_{ig}\beta_g,
+$$
+
+$$
+V_{ig}=Z_iB_gZ_i^\top+\sigma_g^2I_{n_i}.
+$$
+
+类别条件 log-density 为：
+
+$$
+\log f_g(y_i;\theta_g)
+=
+-\frac{n_i}{2}\log(2\pi)
+-\frac{1}{2}\log|V_{ig}|
+-\frac{1}{2}e_{ig}^\top V_{ig}^{-1}e_{ig},
+$$
+
+其中：
+
+$$
+e_{ig}=y_i-X_{ig}\beta_g.
+$$
+
+## 固定效应梯度
+
+对 $\beta_g$：
+
+$$
+\frac{\partial \ell(\theta)}{\partial\beta_g}
+=
+\sum_{i=1}^{N}
+\tau_{ig}
+X_{ig}^\top V_{ig}^{-1}
+(y_i-X_{ig}\beta_g).
+$$
+
+这与普通广义最小二乘的梯度类似，只是每个个体对类别 $g$ 的贡献乘以 $\tau_{ig}$。
+
+## 残差方差梯度
+
+若 $V_{ig}$ 中残差方差为 $\sigma_g^2I$，则：
+
+$$
+\frac{\partial \ell(\theta)}{\partial\sigma_g^2}
+=
+\sum_{i=1}^{N}
+\frac{\tau_{ig}}{2}
+\left[
+e_{ig}^\top V_{ig}^{-2}e_{ig}
+-\mathrm{tr}(V_{ig}^{-1})
+\right].
+$$
+
+这条式子体现了方差参数估计的两个力量：
+
+- $e_{ig}^\top V_{ig}^{-2}e_{ig}$：残差越大，倾向于增大方差。
+- $\mathrm{tr}(V_{ig}^{-1})$：方差太大也会受到 log determinant 惩罚。
+
+## 随机效应协方差的梯度
+
+若考虑 $B_g$ 中某个参数 $a$，可以使用矩阵微分形式：
+
+$$
+\frac{\partial \log f_g(y_i)}{\partial a}
+=
+\frac{1}{2}
+\left[
+e_{ig}^\top V_{ig}^{-1}
+\frac{\partial V_{ig}}{\partial a}
+V_{ig}^{-1}e_{ig}
+-
+\mathrm{tr}
+\left(
+V_{ig}^{-1}
+\frac{\partial V_{ig}}{\partial a}
+\right)
+\right].
+$$
+
+因此：
+
+$$
+\frac{\partial \ell(\theta)}{\partial a}
+=
+\sum_{i=1}^{N}
+\tau_{ig}
+\frac{\partial \log f_g(y_i)}{\partial a}.
+$$
+
+::: {.callout-caution title="教学简化"}
+上式把 $B_g$ 当成可直接微分的协方差矩阵来说明逻辑。实际软件通常优化无约束参数，再通过变换保证 $B_g$ 正定；因此实现层面的导数与这里的教学导数不会逐项相同。
+:::
+
+# Newton-Raphson 与 Marquardt
+
+## Newton-Raphson
+
+若目标是最大化 $\ell(\theta)$，Newton-Raphson 使用梯度 $s(\theta)=\nabla\ell(\theta)$ 和 Hessian $H(\theta)=\nabla^2\ell(\theta)$：
+
+$$
+\theta^{(t+1)}
+=
+\theta^{(t)}
+-
+\left[
+H(\theta^{(t)})
+\right]^{-1}
+s(\theta^{(t)}).
+$$
+
+在最大值附近，Hessian 应该是负定的。若 $H$ 负定且数值稳定，Newton 步通常收敛很快。但混合模型中常见三个问题：
+
+1. likelihood 多峰，远离最优点时 Newton 方向可能不稳定。
+2. 参数之间强相关，Hessian 条件数可能很差。
+3. 方差、类别比例或 spline 参数接近边界时，二阶导数可能不可靠。
+
+## Levenberg-Marquardt / modified Marquardt 直觉
+
+Marquardt 思路是在 Newton 步和梯度方向之间折中。一个简化写法是把 Hessian 调整为：
+
+$$
+H_\lambda
+=
+H-\lambda D,
+$$
+
+其中 $D$ 常取与 Hessian 对角线相关的矩阵，$\lambda$ 是阻尼参数。若 Newton 步表现良好，$\lambda$ 可以较小；若 Hessian 不稳定或步长导致 likelihood 下降，增加 $\lambda$ 会让更新更保守。
+
+`lcmm` companion paper 说明包采用 modified Marquardt algorithm，并使用严格的收敛准则 [@proustlima2017lcmm]。实际实现比上面的教学公式复杂，但核心目的相同：在保持二阶方法效率的同时，提高混合模型优化的稳定性。
+
+# 收敛诊断
+
+`lcmm` 系列输出中，收敛不能只看“程序停了”。至少要检查：
+
+| 诊断 | 含义 | 问题信号 |
+|---|---|---|
+| 参数变化 | 相邻迭代参数是否稳定 | 参数仍在明显移动 |
+| likelihood 变化 | 目标函数是否稳定 | logLik 仍在上升或震荡 |
+| second derivatives | Hessian 是否支持局部最大值和标准误 | Hessian 非负定、无法求逆、边界参数 |
+| 迭代次数 | 是否达到最大迭代限制 | `maxiter` 用尽但未满足准则 |
+| 初始值敏感性 | 多起点是否收敛到同一 logLik | 多个不同局部最优 |
+
+常见 `conv` 状态可按概念理解：
+
+- `conv = 1`：通常表示满足收敛准则。
+- `conv = 2`：常见于达到最大迭代数或未完全满足准则，需要谨慎。
+- `conv = 3` 或其他非理想状态：可能与 Hessian、边界参数或数值问题有关，需要阅读具体输出和文档。
+
+::: {.callout-warning title="不要只看 log-likelihood"}
+一个模型可能有较高 log-likelihood，但 Hessian 不合格、类别极小或后验分类很差。此时参数标准误、类别解释和模型比较都可能不稳。
+:::
+
+# 初始化与局部最优
+
+混合模型 likelihood 往往多峰。`lcmm` 工作流中常见初始化策略包括：
+
+## 从单类别模型开始
+
+先拟合 `ng = 1` 模型：
+
+```r
+m1 <- hlme(
+  fixed = y ~ time + I(time^2),
+  random = ~ time,
+  subject = "ID",
+  ng = 1,
+  data = dat
+)
+```
+
+再把它作为多类别模型的初始值：
+
+```r
+m2 <- hlme(
+  fixed = y ~ time + I(time^2),
+  mixture = ~ time + I(time^2),
+  random = ~ time,
+  subject = "ID",
+  ng = 2,
+  data = dat,
+  B = m1
+)
+```
+
+## 使用随机初始值和 `gridsearch()`
+
+为了降低局部最优风险，可以多次扰动初始值：
+
+```r
+m2_grid <- gridsearch(
+  rep = 100,
+  maxiter = 30,
+  minit = m1,
+  hlme(
+    fixed = y ~ time + I(time^2),
+    mixture = ~ time + I(time^2),
+    random = ~ time,
+    subject = "ID",
+    ng = 2,
+    data = dat
+  )
+)
+```
+
+这类流程的思想是：先用多个起点跑短迭代，挑出较好的起点，再完整优化。报告中应说明起点数量、短迭代次数、最终是否复现同一最优 log-likelihood。
+
+## Label switching
+
+如果两个解只是类别编号互换，它们的 log-likelihood 和模型实质相同。这不是估计失败，而是潜在类别模型的固有对称性。解决方式是在报告时按轨迹形状重新命名类别，而不是依赖 class 1、class 2。
+
+# 边界、识别与数值问题
+
+LCMM 系列常见数值问题包括：
+
+| 问题 | 可能表现 | 解释 |
+|---|---|---|
+| 极小类别 | 某类别比例接近 0 | 可能是过多类别、异常点或局部最优 |
+| 完美分类 | posterior probability 接近 0/1 | Hessian 可能不稳定，标准误可能很大 |
+| 方差接近 0 | 随机效应或残差方差在边界 | 模型结构可能过度复杂 |
+| spline 参数边界 | link function 过于灵活或节点不合适 | 第 6 篇 `lcmm()` 特别需要注意 |
+| 多 marker 高维积分 | `multlcmm` 或 `mpjlcmm` 收敛慢 | 参数多、随机效应维度高 |
+| 生存子模型复杂 | joint model hazard 不稳定 | 事件数不足或 hazard 结构过细 |
+
+遇到这些问题时，通常不应直接增加 `maxiter` 了事。更重要的是检查模型结构、时间函数、初始值、变量缩放、类别数和数据支持。
+
+# EM 与 Marquardt 的对照
+
+| 角度 | EM 直觉 | Marquardt/直接最大化 |
+|---|---|---|
+| 目标函数 | 通过 Q 函数间接提高观测 likelihood | 直接最大化观测 log-likelihood |
+| 类别处理 | E step 显式计算后验责任度 | 后验概率隐含在梯度中 |
+| 优点 | 稳定、解释清楚、适合教学 | 收敛快，适合复杂参数和约束 |
+| 缺点 | 可能慢，M step 对复杂模型不易闭式 | 对初始值、Hessian 和边界敏感 |
+| 在本系列中的作用 | 理解 posterior probabilities 和 soft classification | 理解 `lcmm` 输出、收敛诊断和实践估计 |
+
+::: {.callout-important title="本篇的核心结论"}
+EM 和 Marquardt 不是互相否定的两套概念。EM 解释混合模型为什么产生后验分类概率；Marquardt 解释 `lcmm` 软件如何实际寻找最大似然估计。
+:::
+
+# 小结
+
+LCMM 系列的估计可以从一个公式出发：
+
+$$
+\ell(\theta)
+=
+\sum_{i=1}^{N}
+\log
+\left[
+\sum_{g=1}^{G}
+\pi_{ig}f_g(y_i;\theta_g)
+\right].
+$$
+
+EM 把不可观测类别显式化，用后验概率作为 soft weights；直接最大化则把同样的后验概率嵌入梯度和 Hessian 中。`lcmm` 包采用 modified Marquardt 类型算法，是为了在复杂混合模型中兼顾二阶优化效率和数值稳定。
+
+实践中，估计不只是“跑出结果”。可靠的 LCMM 报告需要同时说明初始值、多起点搜索、收敛状态、Hessian/second derivatives、类别比例、后验分类质量和模型可解释性。
+
+# 思考题
+
+1. 为什么 EM 中 M step 看起来可以分块，而 Newton/Marquardt 的 Hessian 通常不是块对角？
+2. 如果两个初始值收敛到不同 log-likelihood，应如何判断哪个结果可以报告？
+3. 为什么 Hessian 的负定性会成为最大似然收敛诊断的一部分？
+4. 如果模型 BIC 更低但 `conv` 状态不理想，应如何在报告中处理？
+
+# 参考来源
+
+本篇依据用户旧笔记中的 LCMM 估计推导，结合 finite mixture EM 背景与 `lcmm` companion paper 的实现说明整理 [@muthen1999finite; @proustlima2017lcmm]。
