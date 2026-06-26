@@ -1,26 +1,1172 @@
 [
   {
-    "objectID": "src/learn/prml/index.html",
-    "href": "src/learn/prml/index.html",
-    "title": "PRML",
+    "objectID": "src/learn/trajectory-mixture-models/08-model-selection-classification-and-reporting.html",
+    "href": "src/learn/trajectory-mixture-models/08-model-selection-classification-and-reporting.html",
+    "title": "模型选择、分类质量与报告规范",
     "section": "",
-    "text": "这里收录 C. M. Bishop 的 Pattern Recognition and Machine Learning 专题学习笔记。当前迁移范围包括第 6 章核方法、第 7 章稀疏核机器、第 8 章图模型与第 9 章混合模型和 EM。",
+    "text": "本篇是第一阶段总结篇。前面几篇分别讨论了 GBTM、hlme()、lcmm()、multlcmm() 和 Jointlcmm()。这些模型结构不同，但实践中都会遇到同一组问题：\n\n类别数怎么选？\n后验分类质量怎么报告？\n多起点和局部最优怎么处理？\n类别编号和类别命名如何保持可解释？\n能不能把 latent class 当作后续回归变量？\n报告时怎样避免把模型类别过度实体化？\n\n这些问题不只是技术细节。轨迹混合模型的诱惑在于它会给出清晰的类别名称和漂亮的轨迹图；风险也在这里：模型类别可能是真实异质性的近似，也可能是连续差异、分布误设、缺失机制或异常点的离散化结果。Herle et al. 对 longitudinal data 中 typical trajectories 的识别和解释边界有专门讨论，强调类别解释必须与模型假设、敏感性分析和理论背景一起报告 (Herle 等 2020年)。",
     "crumbs": [
       "首页",
       "专题学习",
-      "PRML"
+      "Trajectory Mixture Models",
+      "模型选择、分类质量与报告规范"
     ]
   },
   {
-    "objectID": "src/learn/prml/index.html#笔记目录",
-    "href": "src/learn/prml/index.html#笔记目录",
-    "title": "PRML",
-    "section": "笔记目录",
-    "text": "笔记目录\n下面的目录由 Quarto 自动生成，并按照每篇笔记 YAML 中的 order 字段排序。\n\n\n\n\n\n\n标题\n\n\n\ntags\n\n\n\n日期\n\n\n\n\n\n\n\n\n核方法\n\n\nPRML, 机器学习, 核方法, 高斯过程\n\n\n2026年4月23日\n\n\n\n\n\n\n稀疏核机器\n\n\nPRML, 机器学习, 核方法, SVM, RVM\n\n\n2026年4月30日\n\n\n\n\n\n\n图模型\n\n\nPRML, 机器学习, 概率图模型, 贝叶斯网络, 马尔可夫随机场, 信念传播\n\n\n2026年5月21日\n\n\n\n\n\n\n混合模型与 EM\n\n\nPRML, 机器学习, 无监督学习, 混合模型, EM算法\n\n\n2026年5月31日\n\n\n\n\n\n\n无匹配项",
+    "objectID": "src/learn/trajectory-mixture-models/08-model-selection-classification-and-reporting.html#有限混合模型的比较对象",
+    "href": "src/learn/trajectory-mixture-models/08-model-selection-classification-and-reporting.html#有限混合模型的比较对象",
+    "title": "模型选择、分类质量与报告规范",
+    "section": "有限混合模型的比较对象",
+    "text": "有限混合模型的比较对象\n类别数选择不是简单找一个“正确 \\(G\\)”。对每个候选类别数 \\(G=1,\\ldots,G_{\\max}\\)，研究者实际上在比较一组模型：\n\\[\n\\mathcal M_G:\n\\quad\np(y_i\\mid\\theta_G)\n=\n\\sum_{g=1}^{G}\n\\pi_{ig}f_g(y_i;\\theta_g).\n\\]\n如果改变了轨迹阶数、随机效应结构、link function、hazard 结构或 marker 集合，就不只是改变 \\(G\\)，而是在比较不同模型族。报告时必须说明每次比较中哪些结构固定、哪些结构改变。",
     "crumbs": [
       "首页",
       "专题学习",
-      "PRML"
+      "Trajectory Mixture Models",
+      "模型选择、分类质量与报告规范"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/08-model-selection-classification-and-reporting.html#信息准则",
+    "href": "src/learn/trajectory-mixture-models/08-model-selection-classification-and-reporting.html#信息准则",
+    "title": "模型选择、分类质量与报告规范",
+    "section": "信息准则",
+    "text": "信息准则\n最常用的信息准则是 AIC 和 BIC：\n\\[\n\\mathrm{AIC}\n=\n-2\\ell(\\hat\\theta)+2p,\n\\]\n\\[\n\\mathrm{BIC}\n=\n-2\\ell(\\hat\\theta)+p\\log N.\n\\]\n其中 \\(\\ell(\\hat\\theta)\\) 是最大化后的 log-likelihood，\\(p\\) 是估计参数个数，\\(N\\) 通常按个体数理解。BIC 对复杂度惩罚比 AIC 强，因此更倾向于选择较简单模型。\n有些工作还会报告 SABIC 或 ICL：\n\\[\n\\mathrm{SABIC}\n=\n-2\\ell(\\hat\\theta)+p\\log\\left(\\frac{N+2}{24}\\right),\n\\]\nICL 可以理解为在 BIC 基础上进一步惩罚分类不确定性，因而更偏好分类清楚的模型。不同软件是否原生提供这些指标并不一致。\n\n\n\n指标\n作用\n注意事项\n\n\n\n\nAIC\n拟合与复杂度折中，惩罚较弱\n常偏向更复杂模型\n\n\nBIC\n惩罚较强，轨迹模型中常用\n不能单独证明类别真实存在\n\n\nSABIC\n样本量调整版本\n软件可用性和定义需核对\n\n\nICL\n同时考虑拟合和分类清晰度\n可能偏向类别更少但更清楚的模型\n\n\nlogLik\n纯拟合度\n类别数增加通常会提高，不能单独使用\n\n\n\n\n\n\n\n\n\n警告BIC 最低不等于最佳解释\n\n\n\nBIC 是模型比较工具，不是类别实体性检验。BIC 最低的模型仍可能有极小类别、后验分类差、轨迹不可解释、参数边界或收敛问题。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "模型选择、分类质量与报告规范"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/08-model-selection-classification-and-reporting.html#posterior-probabilities",
+    "href": "src/learn/trajectory-mixture-models/08-model-selection-classification-and-reporting.html#posterior-probabilities",
+    "title": "模型选择、分类质量与报告规范",
+    "section": "Posterior probabilities",
+    "text": "Posterior probabilities\n拟合后，每个个体属于类别 \\(g\\) 的后验概率为：\n\\[\n\\hat p_{ig}\n=\nP(C_i=g\\mid y_i,X_i,\\hat\\theta)\n=\n\\frac{\n\\hat\\pi_{ig}f_g(y_i;\\hat\\theta_g)\n}{\n\\sum_{\\ell=1}^{G}\n\\hat\\pi_{i\\ell}f_\\ell(y_i;\\hat\\theta_\\ell)\n}.\n\\]\nmost likely class 是：\n\\[\n\\hat C_i\n=\n\\arg\\max_g \\hat p_{ig}.\n\\]\n报告分类质量时，不应只报告 \\(\\hat C_i\\)。至少要展示各类别的平均后验概率和类别比例。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "模型选择、分类质量与报告规范"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/08-model-selection-classification-and-reporting.html#avepp",
+    "href": "src/learn/trajectory-mixture-models/08-model-selection-classification-and-reporting.html#avepp",
+    "title": "模型选择、分类质量与报告规范",
+    "section": "AvePP",
+    "text": "AvePP\n对 most likely class 为 \\(g\\) 的个体集合：\n\\[\n\\mathcal I_g=\\{i:\\hat C_i=g\\},\n\\]\n类别 \\(g\\) 的 average posterior probability 为：\n\\[\n\\mathrm{AvePP}_g\n=\n\\frac{1}{|\\mathcal I_g|}\n\\sum_{i\\in\\mathcal I_g}\n\\hat p_{ig}.\n\\]\nAvePP 越高，说明被分到类别 \\(g\\) 的个体通常有较高后验支持。经验上常见 0.7 或 0.8 作为参考线，但不能当作硬阈值。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "模型选择、分类质量与报告规范"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/08-model-selection-classification-and-reporting.html#entropy",
+    "href": "src/learn/trajectory-mixture-models/08-model-selection-classification-and-reporting.html#entropy",
+    "title": "模型选择、分类质量与报告规范",
+    "section": "Entropy",
+    "text": "Entropy\n一个常见 entropy 指标可以写成：\n\\[\n\\mathrm{Entropy}\n=\n1+\n\\frac{\n\\sum_{i=1}^{N}\n\\sum_{g=1}^{G}\n\\hat p_{ig}\\log(\\hat p_{ig})\n}{\nN\\log G\n}.\n\\]\n若每个个体几乎都清楚属于某一类，entropy 接近 1；若后验概率分散，entropy 较低。它衡量分类清晰度，不是拟合优度本身。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "模型选择、分类质量与报告规范"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/08-model-selection-classification-and-reporting.html#posterior-classification-table",
+    "href": "src/learn/trajectory-mixture-models/08-model-selection-classification-and-reporting.html#posterior-classification-table",
+    "title": "模型选择、分类质量与报告规范",
+    "section": "Posterior classification table",
+    "text": "Posterior classification table\nposterior classification table 通常按 most likely class 分组，计算每组个体对各潜在类别的平均后验概率。理想情形是对角线高、非对角线低。\n\n\n\n\n\n\n\n\n\n\nmost likely class\n平均 \\(p(C=1)\\)\n平均 \\(p(C=2)\\)\n平均 \\(p(C=3)\\)\n解读\n\n\n\n\n1\n高\n低\n低\n类别 1 清楚\n\n\n2\n低\n高\n低\n类别 2 清楚\n\n\n3\n低\n中\n中\n类别 3 与其他类别重叠\n\n\n\n如果某一行非对角线很高，说明该 most likely class 与其他类别区分不清。后续把它当作硬标签会特别危险。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "模型选择、分类质量与报告规范"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/06-multlcmm-multivariate-longitudinal-markers.html",
+    "href": "src/learn/trajectory-mixture-models/06-multlcmm-multivariate-longitudinal-markers.html",
+    "title": "multlcmm/mlcmm：多个纵向指标共享潜在过程",
+    "section": "",
+    "text": "很多纵向研究不是只测一个结局。认知老化研究可能同时记录 MMSE、IST、BVRT；心理健康研究可能同时记录抑郁、焦虑、睡眠；慢病研究可能同时记录多个生物标志物。一个自然问题是：这些 marker 是否共同反映某个不可直接观测的状态，并且这个状态是否存在不同发展轨迹？\nmultlcmm() 或 mlcmm() 处理的正是这个问题。它把第 5 篇的 latent process 思想扩展到多个 marker：多个观测指标通过各自的测量模型和 link function 连接到同一个 underlying latent process。潜在类别描述的是这个共同 latent process 的轨迹类别，而不是任意单个 marker 的类别。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`multlcmm`/`mlcmm`：多个纵向指标共享潜在过程"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/06-multlcmm-multivariate-longitudinal-markers.html#dif-与-contrast",
+    "href": "src/learn/trajectory-mixture-models/06-multlcmm-multivariate-longitudinal-markers.html#dif-与-contrast",
+    "title": "multlcmm/mlcmm：多个纵向指标共享潜在过程",
+    "section": "DIF 与 contrast",
+    "text": "DIF 与 contrast\nDIF (differential item functioning) 或 marker-specific contrast 指的是：在相同 latent process 水平下，不同群体或不同 marker 的观测表现可能系统性不同。例如教育水平可能影响某个认知测验的表现，即使真实认知状态相同。\n如果不建模这种偏差，latent process 轨迹可能把测量偏差误当成真实变化。multlcmm() 相关接口中的 contrast 思路，就是为了表达 marker-specific systematic shift，同时通过约束保证模型可识别。\n\n\n\n\n\n\n警告容易混淆处\n\n\n\nmarker-specific contrast 不是潜在类别差异。它位于测量层面，描述某个 marker 如何测量共同 latent process；潜在类别差异位于 latent process 层面，描述 \\(A_i(t)\\) 的轨迹如何不同。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`multlcmm`/`mlcmm`：多个纵向指标共享潜在过程"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/06-multlcmm-multivariate-longitudinal-markers.html#latent-process-trajectories",
+    "href": "src/learn/trajectory-mixture-models/06-multlcmm-multivariate-longitudinal-markers.html#latent-process-trajectories",
+    "title": "multlcmm/mlcmm：多个纵向指标共享潜在过程",
+    "section": "Latent process trajectories",
+    "text": "Latent process trajectories\n类别轨迹首先是共同 latent process 的轨迹。轨迹图如果画在 latent scale 上，不能直接说“MMSE 下降多少分”或“IST 上升多少分”。它表达的是共同潜在状态的变化。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`multlcmm`/`mlcmm`：多个纵向指标共享潜在过程"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/06-multlcmm-multivariate-longitudinal-markers.html#marker-specific-links",
+    "href": "src/learn/trajectory-mixture-models/06-multlcmm-multivariate-longitudinal-markers.html#marker-specific-links",
+    "title": "multlcmm/mlcmm：多个纵向指标共享潜在过程",
+    "section": "Marker-specific links",
+    "text": "Marker-specific links\n每个 marker 的 link function 说明该 marker 如何测量 latent process。若某个 marker 的 link 强非线性，说明原始量表和潜在尺度差异较大。报告时可以展示 link 图，并说明哪些分数区间被拉伸或压缩。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`multlcmm`/`mlcmm`：多个纵向指标共享潜在过程"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/06-multlcmm-multivariate-longitudinal-markers.html#measurement-parameters",
+    "href": "src/learn/trajectory-mixture-models/06-multlcmm-multivariate-longitudinal-markers.html#measurement-parameters",
+    "title": "multlcmm/mlcmm：多个纵向指标共享潜在过程",
+    "section": "Measurement parameters",
+    "text": "Measurement parameters\nmarker-specific shift、contrast、random intercept 和误差项说明 marker 的测量特性。它们不是轨迹结果的附属细节，而是判断“多个 marker 是否真的共同测量一个过程”的关键。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`multlcmm`/`mlcmm`：多个纵向指标共享潜在过程"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/06-multlcmm-multivariate-longitudinal-markers.html#classification-quality",
+    "href": "src/learn/trajectory-mixture-models/06-multlcmm-multivariate-longitudinal-markers.html#classification-quality",
+    "title": "multlcmm/mlcmm：多个纵向指标共享潜在过程",
+    "section": "Classification quality",
+    "text": "Classification quality\n与单变量 LCMM 一样，要报告类别比例、AvePP、posterior classification table 和多起点收敛。多 marker 模型中，分类质量可能变好，因为信息更多；也可能变差，因为 marker 之间给出冲突信号。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`multlcmm`/`mlcmm`：多个纵向指标共享潜在过程"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/06-multlcmm-multivariate-longitudinal-markers.html#把多个单变量类别拼成多变量类别",
+    "href": "src/learn/trajectory-mixture-models/06-multlcmm-multivariate-longitudinal-markers.html#把多个单变量类别拼成多变量类别",
+    "title": "multlcmm/mlcmm：多个纵向指标共享潜在过程",
+    "section": "把多个单变量类别拼成多变量类别",
+    "text": "把多个单变量类别拼成多变量类别\n如果分别拟合 MMSE 类别、IST 类别、BVRT 类别，再把它们交叉组合，会产生很多类别组合，但这些组合不是同一个联合 likelihood 下估计出的 latent process 类别。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`multlcmm`/`mlcmm`：多个纵向指标共享潜在过程"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/06-multlcmm-multivariate-longitudinal-markers.html#把-marker-specific-参数解释成真实能力差异",
+    "href": "src/learn/trajectory-mixture-models/06-multlcmm-multivariate-longitudinal-markers.html#把-marker-specific-参数解释成真实能力差异",
+    "title": "multlcmm/mlcmm：多个纵向指标共享潜在过程",
+    "section": "把 marker-specific 参数解释成真实能力差异",
+    "text": "把 marker-specific 参数解释成真实能力差异\nmarker-specific shift 或 contrast 描述测量层面的偏差。它可能反映测试难度、量表单位、教育偏差或测量误差，不应直接解释为潜在能力轨迹差异。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`multlcmm`/`mlcmm`：多个纵向指标共享潜在过程"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/06-multlcmm-multivariate-longitudinal-markers.html#忽略共同潜在过程假设",
+    "href": "src/learn/trajectory-mixture-models/06-multlcmm-multivariate-longitudinal-markers.html#忽略共同潜在过程假设",
+    "title": "multlcmm/mlcmm：多个纵向指标共享潜在过程",
+    "section": "忽略共同潜在过程假设",
+    "text": "忽略共同潜在过程假设\n如果 marker 理论上不是同一个构念，multlcmm() 可能为了强行共享 latent process 而产生难解释的 link 或类别。此时应考虑 multi-trajectory GBTM、多过程模型或其他多变量方法。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`multlcmm`/`mlcmm`：多个纵向指标共享潜在过程"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/06-multlcmm-multivariate-longitudinal-markers.html#只报告-latent-class不报告-marker-拟合",
+    "href": "src/learn/trajectory-mixture-models/06-multlcmm-multivariate-longitudinal-markers.html#只报告-latent-class不报告-marker-拟合",
+    "title": "multlcmm/mlcmm：多个纵向指标共享潜在过程",
+    "section": "只报告 latent class，不报告 marker 拟合",
+    "text": "只报告 latent class，不报告 marker 拟合\n多变量模型的价值在于同时解释 latent process 和 measurement model。只报告类别名称而不报告各 marker 如何测量潜在过程，会丢掉模型最重要的一半。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`multlcmm`/`mlcmm`：多个纵向指标共享潜在过程"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/04-estimation-for-lcmm-family.html",
+    "href": "src/learn/trajectory-mixture-models/04-estimation-for-lcmm-family.html",
+    "title": "LCMM 系列的估计：EM 直觉与 Marquardt 实现",
+    "section": "",
+    "text": "LCMM 系列模型的估计困难来自两个同时存在的不可观测结构：\n\n潜在类别 \\(C_i\\) 不可观测。\n类别内随机效应 \\(u_i\\) 不可观测。\n\n如果类别和随机效应都已知，纵向子模型、类别成员模型和随机效应结构会容易很多；但实际中它们只能从数据中推断。用户旧笔记把估计思路分成两条线：\n\nEM algorithm 直觉：把类别归属看作 missing data，解释 posterior class-membership probabilities、complete-data likelihood 和 soft classification。\nNewton/Marquardt 直接优化：直接最大化观测数据 likelihood，解释梯度、Hessian、收敛准则和软件实现。\n\n这两条线都值得保留，但必须分清楚用途。EM 是理解混合模型的好入口；lcmm 包的实际估计则是 maximum likelihood 与 modified Marquardt-Levenberg algorithm，而不是纯 EM (Proust-Lima 等 2017年)。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "LCMM 系列的估计：EM 直觉与 Marquardt 实现"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/04-estimation-for-lcmm-family.html#引入类别指示变量",
+    "href": "src/learn/trajectory-mixture-models/04-estimation-for-lcmm-family.html#引入类别指示变量",
+    "title": "LCMM 系列的估计：EM 直觉与 Marquardt 实现",
+    "section": "引入类别指示变量",
+    "text": "引入类别指示变量\n定义类别指示变量：\n\\[\nZ_{ig}\n=\n\\begin{cases}\n1, & C_i=g,\\\\\n0, & C_i\\ne g.\n\\end{cases}\n\\]\n如果 \\(Z_{ig}\\) 可观测，complete-data log-likelihood 可以写成：\n\\[\n\\ell_c(\\theta)\n=\n\\sum_{i=1}^{N}\n\\sum_{g=1}^{G}\nZ_{ig}\n\\left[\n\\log \\pi_{ig}(\\zeta)\n+\\log f_g(y_i;\\theta_g)\n\\right].\n\\]\n这条式子非常重要，因为它把两部分拆开：\n\n\\(\\log \\pi_{ig}(\\zeta)\\)：类别成员模型。\n\\(\\log f_g(y_i;\\theta_g)\\)：给定类别后的纵向模型。\n\n如果类别真的已知，估计就接近“分类后的多组模型”；但类别未知，所以 EM 用后验概率替代未知的 \\(Z_{ig}\\)。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "LCMM 系列的估计：EM 直觉与 Marquardt 实现"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/04-estimation-for-lcmm-family.html#e-step计算-posterior-responsibility",
+    "href": "src/learn/trajectory-mixture-models/04-estimation-for-lcmm-family.html#e-step计算-posterior-responsibility",
+    "title": "LCMM 系列的估计：EM 直觉与 Marquardt 实现",
+    "section": "E step：计算 posterior responsibility",
+    "text": "E step：计算 posterior responsibility\n在第 \\(t\\) 次迭代，给定当前参数 \\(\\theta^{(t)}\\)，E step 计算：\n\\[\n\\tau_{ig}^{(t)}\n=\nE(Z_{ig}\\mid y_i,\\theta^{(t)})\n=\nP(C_i=g\\mid y_i,\\theta^{(t)}).\n\\]\n根据 Bayes 公式：\n\\[\n\\tau_{ig}^{(t)}\n=\n\\frac{\n\\pi_{ig}(\\zeta^{(t)})\nf_g(y_i;\\theta_g^{(t)})\n}{\n\\sum_{\\ell=1}^{G}\n\\pi_{i\\ell}(\\zeta^{(t)})\nf_\\ell(y_i;\\theta_\\ell^{(t)})\n}.\n\\]\n这正是拟合后 posterior class-membership probabilities 的迭代版本。它说明后验分类不是附属产物，而是混合模型估计结构的核心。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "LCMM 系列的估计：EM 直觉与 Marquardt 实现"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/04-estimation-for-lcmm-family.html#m-step最大化-q-函数",
+    "href": "src/learn/trajectory-mixture-models/04-estimation-for-lcmm-family.html#m-step最大化-q-函数",
+    "title": "LCMM 系列的估计：EM 直觉与 Marquardt 实现",
+    "section": "M step：最大化 Q 函数",
+    "text": "M step：最大化 Q 函数\nEM 的 Q 函数为：\n\\[\nQ(\\theta\\mid\\theta^{(t)})\n=\nE_{\\theta^{(t)}}[\\ell_c(\\theta)\\mid y]\n\\]\n\\[\n=\n\\sum_{i=1}^{N}\n\\sum_{g=1}^{G}\n\\tau_{ig}^{(t)}\n\\log \\pi_{ig}(\\zeta)\n+\n\\sum_{i=1}^{N}\n\\sum_{g=1}^{G}\n\\tau_{ig}^{(t)}\n\\log f_g(y_i;\\theta_g).\n\\]\n因此 M step 可以被理解为：\n\n\n\n\n\n\n\n\n参数块\nEM 直觉\n解释\n\n\n\n\n类别比例或 classmb 参数 \\(\\zeta\\)\n加权多项逻辑回归\n每个人对每个类别贡献一个软权重 \\(\\tau_{ig}\\)\n\n\n纵向固定效应 \\(\\theta_g\\)\n加权纵向模型\n个体对类别 \\(g\\) 的贡献由后验概率加权\n\n\n随机效应方差/协方差\n加权方差结构估计\n实际常需要数值优化和参数变换\n\n\n\n\n\n\n\n\n\n注记EM 的教学价值\n\n\n\n即使软件不使用纯 EM，EM 仍然解释了三个关键概念：posterior probabilities 为什么出现、soft classification 为什么比硬分类自然、类别成员模型和纵向模型为什么在估计中相互影响。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "LCMM 系列的估计：EM 直觉与 Marquardt 实现"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/04-estimation-for-lcmm-family.html#类别成员参数的梯度",
+    "href": "src/learn/trajectory-mixture-models/04-estimation-for-lcmm-family.html#类别成员参数的梯度",
+    "title": "LCMM 系列的估计：EM 直觉与 Marquardt 实现",
+    "section": "类别成员参数的梯度",
+    "text": "类别成员参数的梯度\n对多项逻辑类别成员模型，若第 \\(G\\) 类为参考类，则：\n\\[\n\\pi_{ig}\n=\n\\frac{\n\\exp(X_{ci}^\\top\\zeta_g)\n}{\n1+\\sum_{h=1}^{G-1}\\exp(X_{ci}^\\top\\zeta_h)\n},\n\\qquad\ng=1,\\ldots,G-1.\n\\]\n对 \\(\\zeta_g\\) 的梯度可写成：\n\\[\n\\frac{\\partial\\ell(\\theta)}{\\partial\\zeta_g}\n=\n\\sum_{i=1}^{N}\n(\\tau_{ig}-\\pi_{ig})X_{ci}.\n\\]\n这和普通多项逻辑回归的“观测类别 - 预测概率”形式相似，只是观测类别被后验概率 \\(\\tau_{ig}\\) 替代。直观地说，如果个体 \\(i\\) 的数据强烈支持类别 \\(g\\)，但当前先验概率 \\(\\pi_{ig}\\) 较低，梯度会推动类别成员模型提高该个体属于类别 \\(g\\) 的概率。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "LCMM 系列的估计：EM 直觉与 Marquardt 实现"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/04-estimation-for-lcmm-family.html#类别内参数的梯度",
+    "href": "src/learn/trajectory-mixture-models/04-estimation-for-lcmm-family.html#类别内参数的梯度",
+    "title": "LCMM 系列的估计：EM 直觉与 Marquardt 实现",
+    "section": "类别内参数的梯度",
+    "text": "类别内参数的梯度\n若 \\(\\phi_g\\) 是类别 \\(g\\) 的纵向模型参数，例如固定效应、残差方差或随机效应参数，则：\n\\[\n\\frac{\\partial\\ell(\\theta)}{\\partial\\phi_g}\n=\n\\sum_{i=1}^{N}\n\\tau_{ig}\n\\frac{\\partial \\log f_g(y_i;\\theta_g)}{\\partial\\phi_g}.\n\\]\n这说明直接最大化时，后验概率仍然扮演软权重。EM 和 Newton/Marquardt 在计算方式上不同，但它们共享同一个概率结构。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "LCMM 系列的估计：EM 直觉与 Marquardt 实现"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/04-estimation-for-lcmm-family.html#固定效应梯度",
+    "href": "src/learn/trajectory-mixture-models/04-estimation-for-lcmm-family.html#固定效应梯度",
+    "title": "LCMM 系列的估计：EM 直觉与 Marquardt 实现",
+    "section": "固定效应梯度",
+    "text": "固定效应梯度\n对 \\(\\beta_g\\)：\n\\[\n\\frac{\\partial \\ell(\\theta)}{\\partial\\beta_g}\n=\n\\sum_{i=1}^{N}\n\\tau_{ig}\nX_{ig}^\\top V_{ig}^{-1}\n(y_i-X_{ig}\\beta_g).\n\\]\n这与普通广义最小二乘的梯度类似，只是每个个体对类别 \\(g\\) 的贡献乘以 \\(\\tau_{ig}\\)。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "LCMM 系列的估计：EM 直觉与 Marquardt 实现"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/04-estimation-for-lcmm-family.html#残差方差梯度",
+    "href": "src/learn/trajectory-mixture-models/04-estimation-for-lcmm-family.html#残差方差梯度",
+    "title": "LCMM 系列的估计：EM 直觉与 Marquardt 实现",
+    "section": "残差方差梯度",
+    "text": "残差方差梯度\n若 \\(V_{ig}\\) 中残差方差为 \\(\\sigma_g^2I\\)，则：\n\\[\n\\frac{\\partial \\ell(\\theta)}{\\partial\\sigma_g^2}\n=\n\\sum_{i=1}^{N}\n\\frac{\\tau_{ig}}{2}\n\\left[\ne_{ig}^\\top V_{ig}^{-2}e_{ig}\n-\\mathrm{tr}(V_{ig}^{-1})\n\\right].\n\\]\n这条式子体现了方差参数估计的两个力量：\n\n\\(e_{ig}^\\top V_{ig}^{-2}e_{ig}\\)：残差越大，倾向于增大方差。\n\\(\\mathrm{tr}(V_{ig}^{-1})\\)：方差太大也会受到 log determinant 惩罚。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "LCMM 系列的估计：EM 直觉与 Marquardt 实现"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/04-estimation-for-lcmm-family.html#随机效应协方差的梯度",
+    "href": "src/learn/trajectory-mixture-models/04-estimation-for-lcmm-family.html#随机效应协方差的梯度",
+    "title": "LCMM 系列的估计：EM 直觉与 Marquardt 实现",
+    "section": "随机效应协方差的梯度",
+    "text": "随机效应协方差的梯度\n若考虑 \\(B_g\\) 中某个参数 \\(a\\)，可以使用矩阵微分形式：\n\\[\n\\frac{\\partial \\log f_g(y_i)}{\\partial a}\n=\n\\frac{1}{2}\n\\left[\ne_{ig}^\\top V_{ig}^{-1}\n\\frac{\\partial V_{ig}}{\\partial a}\nV_{ig}^{-1}e_{ig}\n-\n\\mathrm{tr}\n\\left(\nV_{ig}^{-1}\n\\frac{\\partial V_{ig}}{\\partial a}\n\\right)\n\\right].\n\\]\n因此：\n\\[\n\\frac{\\partial \\ell(\\theta)}{\\partial a}\n=\n\\sum_{i=1}^{N}\n\\tau_{ig}\n\\frac{\\partial \\log f_g(y_i)}{\\partial a}.\n\\]\n\n\n\n\n\n\n注意教学简化\n\n\n\n上式把 \\(B_g\\) 当成可直接微分的协方差矩阵来说明逻辑。实际软件通常优化无约束参数，再通过变换保证 \\(B_g\\) 正定；因此实现层面的导数与这里的教学导数不会逐项相同。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "LCMM 系列的估计：EM 直觉与 Marquardt 实现"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/04-estimation-for-lcmm-family.html#newton-raphson",
+    "href": "src/learn/trajectory-mixture-models/04-estimation-for-lcmm-family.html#newton-raphson",
+    "title": "LCMM 系列的估计：EM 直觉与 Marquardt 实现",
+    "section": "Newton-Raphson",
+    "text": "Newton-Raphson\n若目标是最大化 \\(\\ell(\\theta)\\)，Newton-Raphson 使用梯度 \\(s(\\theta)=\\nabla\\ell(\\theta)\\) 和 Hessian \\(H(\\theta)=\\nabla^2\\ell(\\theta)\\)：\n\\[\n\\theta^{(t+1)}\n=\n\\theta^{(t)}\n-\n\\left[\nH(\\theta^{(t)})\n\\right]^{-1}\ns(\\theta^{(t)}).\n\\]\n在最大值附近，Hessian 应该是负定的。若 \\(H\\) 负定且数值稳定，Newton 步通常收敛很快。但混合模型中常见三个问题：\n\nlikelihood 多峰，远离最优点时 Newton 方向可能不稳定。\n参数之间强相关，Hessian 条件数可能很差。\n方差、类别比例或 spline 参数接近边界时，二阶导数可能不可靠。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "LCMM 系列的估计：EM 直觉与 Marquardt 实现"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/04-estimation-for-lcmm-family.html#levenberg-marquardt-modified-marquardt-直觉",
+    "href": "src/learn/trajectory-mixture-models/04-estimation-for-lcmm-family.html#levenberg-marquardt-modified-marquardt-直觉",
+    "title": "LCMM 系列的估计：EM 直觉与 Marquardt 实现",
+    "section": "Levenberg-Marquardt / modified Marquardt 直觉",
+    "text": "Levenberg-Marquardt / modified Marquardt 直觉\nMarquardt 思路是在 Newton 步和梯度方向之间折中。一个简化写法是把 Hessian 调整为：\n\\[\nH_\\lambda\n=\nH-\\lambda D,\n\\]\n其中 \\(D\\) 常取与 Hessian 对角线相关的矩阵，\\(\\lambda\\) 是阻尼参数。若 Newton 步表现良好，\\(\\lambda\\) 可以较小；若 Hessian 不稳定或步长导致 likelihood 下降，增加 \\(\\lambda\\) 会让更新更保守。\nlcmm companion paper 说明包采用 modified Marquardt algorithm，并使用严格的收敛准则 (Proust-Lima 等 2017年)。实际实现比上面的教学公式复杂，但核心目的相同：在保持二阶方法效率的同时，提高混合模型优化的稳定性。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "LCMM 系列的估计：EM 直觉与 Marquardt 实现"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/04-estimation-for-lcmm-family.html#从单类别模型开始",
+    "href": "src/learn/trajectory-mixture-models/04-estimation-for-lcmm-family.html#从单类别模型开始",
+    "title": "LCMM 系列的估计：EM 直觉与 Marquardt 实现",
+    "section": "从单类别模型开始",
+    "text": "从单类别模型开始\n先拟合 ng = 1 模型：\nm1 &lt;- hlme(\n  fixed = y ~ time + I(time^2),\n  random = ~ time,\n  subject = \"ID\",\n  ng = 1,\n  data = dat\n)\n再把它作为多类别模型的初始值：\nm2 &lt;- hlme(\n  fixed = y ~ time + I(time^2),\n  mixture = ~ time + I(time^2),\n  random = ~ time,\n  subject = \"ID\",\n  ng = 2,\n  data = dat,\n  B = m1\n)",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "LCMM 系列的估计：EM 直觉与 Marquardt 实现"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/04-estimation-for-lcmm-family.html#使用随机初始值和-gridsearch",
+    "href": "src/learn/trajectory-mixture-models/04-estimation-for-lcmm-family.html#使用随机初始值和-gridsearch",
+    "title": "LCMM 系列的估计：EM 直觉与 Marquardt 实现",
+    "section": "使用随机初始值和 gridsearch()",
+    "text": "使用随机初始值和 gridsearch()\n为了降低局部最优风险，可以多次扰动初始值：\nm2_grid &lt;- gridsearch(\n  rep = 100,\n  maxiter = 30,\n  minit = m1,\n  hlme(\n    fixed = y ~ time + I(time^2),\n    mixture = ~ time + I(time^2),\n    random = ~ time,\n    subject = \"ID\",\n    ng = 2,\n    data = dat\n  )\n)\n这类流程的思想是：先用多个起点跑短迭代，挑出较好的起点，再完整优化。报告中应说明起点数量、短迭代次数、最终是否复现同一最优 log-likelihood。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "LCMM 系列的估计：EM 直觉与 Marquardt 实现"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/04-estimation-for-lcmm-family.html#label-switching",
+    "href": "src/learn/trajectory-mixture-models/04-estimation-for-lcmm-family.html#label-switching",
+    "title": "LCMM 系列的估计：EM 直觉与 Marquardt 实现",
+    "section": "Label switching",
+    "text": "Label switching\n如果两个解只是类别编号互换，它们的 log-likelihood 和模型实质相同。这不是估计失败，而是潜在类别模型的固有对称性。解决方式是在报告时按轨迹形状重新命名类别，而不是依赖 class 1、class 2。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "LCMM 系列的估计：EM 直觉与 Marquardt 实现"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/02-extended-gbtm.html",
+    "href": "src/learn/trajectory-mixture-models/02-extended-gbtm.html",
+    "title": "扩展 GBTM：非高斯结局、多轨迹与协变量",
+    "section": "",
+    "text": "上一篇 GBTM 把模型放在最简洁的情形中：一个纵向结局、类别内没有随机效应、给定类别后用一条类别平均轨迹解释重复测量。本篇讨论 GBTM 的三个常见扩展方向：\n\n观测结局不一定是高斯连续变量。\n潜在类别比例可以由基线协变量解释。\n多个纵向结局可以联合定义同一个潜在轨迹类别。\n\n这些扩展都没有改变 GBTM 的核心：总体分布仍然是若干类别条件轨迹分布的有限混合：\n\\[\np(\\mathbf y_i \\mid \\theta)\n=\n\\sum_{k=1}^{K}\n\\pi_{ik}\np_k(\\mathbf y_i \\mid \\theta_k).\n\\]\n真正变化的是 \\(p_k(\\mathbf y_i \\mid \\theta_k)\\) 的观测分布、\\(\\pi_{ik}\\) 的类别成员机制，或者 \\(\\mathbf y_i\\) 是否包含多个 marker。换句话说，扩展 GBTM 不是“换一个聚类算法”，而是在同一个潜类别轨迹框架里调整数据生成机制。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "扩展 GBTM：非高斯结局、多轨迹与协变量"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/02-extended-gbtm.html#连续高斯结局",
+    "href": "src/learn/trajectory-mixture-models/02-extended-gbtm.html#连续高斯结局",
+    "title": "扩展 GBTM：非高斯结局、多轨迹与协变量",
+    "section": "连续高斯结局",
+    "text": "连续高斯结局\n最简单的版本是假设：\n\\[\nY_{ij}\\mid C_i=k\n\\sim\n\\mathcal N(\\mu_{ij}^{k}, \\sigma_k^2),\n\\qquad\n\\mu_{ij}^{k}=\\eta_{ij}^{k}.\n\\]\n这适合近似连续、残差大致对称、量表边界不强的结局。若变量是 MMSE、抑郁量表、生活质量量表这类有上下界的分数，直接套用高斯模型可能会出现两个问题：预测均值超出合法范围，以及残差分布被边界压缩。此时应考虑删失正态、beta link、splines link 或 lcmm() 的 latent process 框架，而不是简单增加类别数来吸收边界效应。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "扩展 GBTM：非高斯结局、多轨迹与协变量"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/02-extended-gbtm.html#二元结局",
+    "href": "src/learn/trajectory-mixture-models/02-extended-gbtm.html#二元结局",
+    "title": "扩展 GBTM：非高斯结局、多轨迹与协变量",
+    "section": "二元结局",
+    "text": "二元结局\n当 \\(Y_{ij}\\in\\{0,1\\}\\)，例如是否出现症状、是否犯罪、是否服药，可以使用 Bernoulli 分布：\n\\[\nY_{ij}\\mid C_i=k\n\\sim\n\\mathrm{Bernoulli}(p_{ij}^{k}),\n\\]\n并用 logit link 描述类别特异概率轨迹：\n\\[\n\\mathrm{logit}(p_{ij}^{k})\n=\n\\log\\frac{p_{ij}^{k}}{1-p_{ij}^{k}}\n=\n\\eta_{ij}^{k}.\n\\]\n解释时要回到概率尺度。\\(\\eta_{ij}^{k}\\) 每增加 1，odds 乘以 \\(e\\)；但概率变化幅度取决于当前位置。例如从 0.1 到 0.2 与从 0.8 到 0.9 在 logit 尺度上的意义并不相同。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "扩展 GBTM：非高斯结局、多轨迹与协变量"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/02-extended-gbtm.html#计数结局",
+    "href": "src/learn/trajectory-mixture-models/02-extended-gbtm.html#计数结局",
+    "title": "扩展 GBTM：非高斯结局、多轨迹与协变量",
+    "section": "计数结局",
+    "text": "计数结局\n当结局是事件次数，可以使用 Poisson 分布：\n\\[\nY_{ij}\\mid C_i=k\n\\sim\n\\mathrm{Poisson}(\\lambda_{ij}^{k}),\n\\qquad\n\\log \\lambda_{ij}^{k}=\\eta_{ij}^{k}.\n\\]\n这时轨迹描述的是事件强度或期望次数的变化。Poisson 模型隐含均值等于方差：\n\\[\nE(Y_{ij}\\mid C_i=k)\n=\n\\mathrm{Var}(Y_{ij}\\mid C_i=k)\n=\n\\lambda_{ij}^{k}.\n\\]\n如果实际数据过度离散，或存在大量结构性零值，简单 Poisson 可能会把过度离散误解释为更多潜在类别。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "扩展 GBTM：非高斯结局、多轨迹与协变量"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/02-extended-gbtm.html#零膨胀计数",
+    "href": "src/learn/trajectory-mixture-models/02-extended-gbtm.html#零膨胀计数",
+    "title": "扩展 GBTM：非高斯结局、多轨迹与协变量",
+    "section": "零膨胀计数",
+    "text": "零膨胀计数\n在发展犯罪、症状发作、医疗使用次数等数据中，很多个体在某些时间点为 0。若这些 0 不只是 Poisson 随机波动，而是来自“结构性不会发生事件”的状态，可以考虑 zero-inflated Poisson (ZIP)：\n\\[\nP(Y_{ij}=0\\mid C_i=k)\n=\n\\omega_{ij}^{k}\n+(1-\\omega_{ij}^{k})\\exp(-\\lambda_{ij}^{k}),\n\\]\n\\[\nP(Y_{ij}=y\\mid C_i=k)\n=\n(1-\\omega_{ij}^{k})\n\\frac{(\\lambda_{ij}^{k})^y\\exp(-\\lambda_{ij}^{k})}{y!},\n\\qquad y=1,2,\\ldots\n\\]\n其中 \\(\\omega_{ij}^{k}\\) 是结构性零值概率，\\(\\lambda_{ij}^{k}\\) 是非结构性零值部分的 Poisson 强度。ZIP 版本往往需要更多参数，因此要特别关注收敛、类别比例和参数可解释性。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "扩展 GBTM：非高斯结局、多轨迹与协变量"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/02-extended-gbtm.html#删失有界与-beta-结局",
+    "href": "src/learn/trajectory-mixture-models/02-extended-gbtm.html#删失有界与-beta-结局",
+    "title": "扩展 GBTM：非高斯结局、多轨迹与协变量",
+    "section": "删失、有界与 beta 结局",
+    "text": "删失、有界与 beta 结局\n当结局是有上下界的连续比例或量表分数，例如 \\(0\\) 到 \\(1\\) 的比例、0 到 30 的认知分数、0 到 100 的功能评分，高斯模型可能不合适。Elmer et al. 讨论了在 group-based trajectory models 中使用 beta distribution 的思路，用 beta 分布表达有界、偏态、异方差的连续结局 (Elmer 等 2018年)。\n若把观测值重缩放为 \\(Y_{ij}^\\ast\\in(0,1)\\)，可以写：\n\\[\nY_{ij}^\\ast\\mid C_i=k\n\\sim\n\\mathrm{Beta}(\\alpha_{ij}^{k}, \\delta_{ij}^{k}).\n\\]\n一种常见参数化是用均值 \\(\\mu_{ij}^{k}\\) 与精度 \\(\\phi_k\\)：\n\\[\n\\alpha_{ij}^{k}=\\mu_{ij}^{k}\\phi_k,\n\\qquad\n\\delta_{ij}^{k}=(1-\\mu_{ij}^{k})\\phi_k,\n\\qquad\n\\mathrm{logit}(\\mu_{ij}^{k})=\\eta_{ij}^{k}.\n\\]\n这里 \\(\\mu_{ij}^{k}\\) 是类别 \\(k\\) 在时间 \\(t_{ij}\\) 的条件均值，\\(\\phi_k\\) 控制分布集中程度。\\(\\phi_k\\) 越大，观测值越集中在均值附近；\\(\\phi_k\\) 越小，分布越分散。\n\n\n\n\n\n\n警告容易混淆处\n\n\n\n有界连续变量不一定都要用 beta GBTM。如果边界只是量表设计但数据远离边界，高斯近似可能足够；如果大量观测恰好等于边界，普通 beta 分布又不能直接处理 0 或 1，需要零一膨胀、删失建模或合适的重缩放策略。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "扩展 GBTM：非高斯结局、多轨迹与协变量"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/02-extended-gbtm.html#从固定类别比例到个体化类别概率",
+    "href": "src/learn/trajectory-mixture-models/02-extended-gbtm.html#从固定类别比例到个体化类别概率",
+    "title": "扩展 GBTM：非高斯结局、多轨迹与协变量",
+    "section": "从固定类别比例到个体化类别概率",
+    "text": "从固定类别比例到个体化类别概率\n无协变量时，类别比例是固定的：\n\\[\nP(C_i=k)=\\pi_k,\n\\qquad\n\\sum_{k=1}^{K}\\pi_k=1.\n\\]\n若研究者关心基线特征是否与轨迹类别相关，可以把 \\(\\pi_k\\) 扩展为多项逻辑回归：\n\\[\n\\pi_{ik}\n=\nP(C_i = k \\mid z_i)\n=\n\\frac{\n\\exp(\\gamma_{0k}+z_i^\\top\\gamma_k)\n}{\n\\sum_{\\ell=1}^{K}\n\\exp(\\gamma_{0\\ell}+z_i^\\top\\gamma_\\ell)\n}.\n\\]\n为保证识别，通常选择一个参考类别，例如令 \\(\\gamma_{0K}=0\\) 且 \\(\\gamma_K=\\mathbf 0\\)。于是相对于参考类别 \\(K\\)：\n\\[\n\\log\n\\frac{P(C_i=k\\mid z_i)}{P(C_i=K\\mid z_i)}\n=\n\\gamma_{0k}+z_i^\\top\\gamma_k.\n\\]\n这条公式回答的是：在纵向轨迹信息进入模型之前，基线协变量如何改变个体属于不同潜在类别的先验概率。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "扩展 GBTM：非高斯结局、多轨迹与协变量"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/02-extended-gbtm.html#classmb-的解释边界",
+    "href": "src/learn/trajectory-mixture-models/02-extended-gbtm.html#classmb-的解释边界",
+    "title": "扩展 GBTM：非高斯结局、多轨迹与协变量",
+    "section": "classmb 的解释边界",
+    "text": "classmb 的解释边界\n在 lcmm 函数族中，类别成员协变量通常通过 classmb 指定。它和纵向子模型中的协变量不是同一件事：\n\n\n\n\n\n\n\n\n放置位置\n统计含义\n解释问题\n\n\n\n\nclassmb = ~ z\n\\(z\\) 进入类别成员模型\n哪些基线特征让个体更可能属于某类？\n\n\nfixed = y ~ z + time\n\\(z\\) 进入纵向均值结构\n在所有类别或总体平均上，\\(z\\) 与结局水平/变化有关吗？\n\n\nmixture = ~ time\n时间效应类别特异\n各类别的轨迹形状是否不同？\n\n\n\n如果同一个协变量同时进入 classmb 和 longitudinal model，它同时回答两个问题：它是否改变类别成员概率，以及在给定类别后是否仍与结局水平有关。解释时不能把两者混成一句“这个变量影响轨迹”。\n\n\n\n\n\n\n重要协变量会改变类别定义\n\n\n\n加入 class-membership covariates 后，模型会在类别划分和协变量关联之间共同优化。含协变量模型与不含协变量模型的类别未必一一对应，因此比较类别名称、比例和轨迹形状时要重新检查，而不能机械沿用旧模型的类别编号。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "扩展 GBTM：非高斯结局、多轨迹与协变量"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/02-extended-gbtm.html#从单一轨迹到联合轨迹",
+    "href": "src/learn/trajectory-mixture-models/02-extended-gbtm.html#从单一轨迹到联合轨迹",
+    "title": "扩展 GBTM：非高斯结局、多轨迹与协变量",
+    "section": "从单一轨迹到联合轨迹",
+    "text": "从单一轨迹到联合轨迹\n如果同一个个体有多个纵向结局，例如认知分数、抑郁评分和身体功能，单独为每个结局拟合 GBTM 会得到多个分类结果。问题是：这些分类未必一致，也无法直接回答“哪些人呈现共同的多维发展模式”。\nGroup-based multi-trajectory modeling 的思想是让同一个潜在类别 \\(C_i\\) 同时定义多个结局的轨迹 (Nagin 等 2018年)。设第 \\(m\\) 个 marker 的纵向向量为 \\(\\mathbf y_{im}\\)，个体完整数据为：\n\\[\n\\mathbf y_i\n=\n(\\mathbf y_{i1},\\ldots,\\mathbf y_{iM}).\n\\]\n在给定类别 \\(k\\) 后，可以写成：\n\\[\np(\\mathbf y_i\\mid C_i=k,\\theta_k)\n=\n\\prod_{m=1}^{M}\np_{km}(\\mathbf y_{im}\\mid \\theta_{km}),\n\\]\n于是边际 likelihood 为：\n\\[\np(\\mathbf y_i\\mid\\theta)\n=\n\\sum_{k=1}^{K}\n\\pi_k\n\\prod_{m=1}^{M}\np_{km}(\\mathbf y_{im}\\mid \\theta_{km}).\n\\]\n同一个类别 \\(k\\) 现在是一组轨迹的组合，而不是某一个 marker 的轨迹。例如一个类别可以被描述为“认知缓慢下降 + 抑郁稳定低 + 身体功能快速下降”。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "扩展 GBTM：非高斯结局、多轨迹与协变量"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/02-extended-gbtm.html#多轨迹模型和多个单变量模型的区别",
+    "href": "src/learn/trajectory-mixture-models/02-extended-gbtm.html#多轨迹模型和多个单变量模型的区别",
+    "title": "扩展 GBTM：非高斯结局、多轨迹与协变量",
+    "section": "多轨迹模型和多个单变量模型的区别",
+    "text": "多轨迹模型和多个单变量模型的区别\n\n\n\n\n\n\n\n\n\n做法\n类别含义\n优点\n风险\n\n\n\n\n分别拟合每个 marker 的 GBTM\n每个 marker 各有自己的类别\n简单，便于单指标解释\n类别交叉后组合过多，忽略 marker 间共同模式\n\n\nmulti-trajectory GBTM\n一个类别同时包含多个 marker 轨迹\n直接得到联合 phenotype\n若某个 marker 主导 likelihood，类别可能主要反映该 marker\n\n\nmultlcmm\n多 marker 共同测量同一个 latent process\n显式建模测量尺度和共同潜在过程\n需要“共同潜在过程”假设，计算更复杂\n\n\n\nmulti-trajectory GBTM 和 multlcmm 都处理多个纵向指标，但统计假设不同。前者直接把多个观测轨迹联合分组；后者认为多个 marker 是同一个潜在过程的测量通道，并通过 marker-specific link functions 连接观测值。\n\n\n\n\n\n\n注记与 multlcmm 的区别\n\n\n\nmulti-trajectory GBTM 的类别是多个观测结局轨迹的联合模式；multlcmm 的类别是共同 latent process 的类别，观测 marker 还要经过测量模型或 link function。若多个 marker 不测量同一个潜在状态，multi-trajectory GBTM 可能更自然；若多个 marker 是同一潜在能力或症状维度的测量，multlcmm 更有结构性。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "扩展 GBTM：非高斯结局、多轨迹与协变量"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/02-extended-gbtm.html#不要用类别数补偿分布误设",
+    "href": "src/learn/trajectory-mixture-models/02-extended-gbtm.html#不要用类别数补偿分布误设",
+    "title": "扩展 GBTM：非高斯结局、多轨迹与协变量",
+    "section": "不要用类别数补偿分布误设",
+    "text": "不要用类别数补偿分布误设\n如果数据有强偏态、过多零值或边界堆积，增加类别数可能会提高 likelihood，但得到的类别可能只是分布误设的补丁。此时更应该检查观测分布和 link function。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "扩展 GBTM：非高斯结局、多轨迹与协变量"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/02-extended-gbtm.html#不要把-class-membership-effect-解释成纵向因果效应",
+    "href": "src/learn/trajectory-mixture-models/02-extended-gbtm.html#不要把-class-membership-effect-解释成纵向因果效应",
+    "title": "扩展 GBTM：非高斯结局、多轨迹与协变量",
+    "section": "不要把 class-membership effect 解释成纵向因果效应",
+    "text": "不要把 class-membership effect 解释成纵向因果效应\nclassmb 中的协变量解释的是类别成员概率差异，不是“协变量导致某条轨迹”。尤其在观测研究中，类别本身也是模型推断的结果，不能自动成为因果中介或真实亚型。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "扩展 GBTM：非高斯结局、多轨迹与协变量"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/02-extended-gbtm.html#不要把联合类别拆回单个-marker-类别",
+    "href": "src/learn/trajectory-mixture-models/02-extended-gbtm.html#不要把联合类别拆回单个-marker-类别",
+    "title": "扩展 GBTM：非高斯结局、多轨迹与协变量",
+    "section": "不要把联合类别拆回单个 marker 类别",
+    "text": "不要把联合类别拆回单个 marker 类别\nmulti-trajectory GBTM 的类别是联合模式。若类别 1 在 marker A 上下降、marker B 上稳定，它不是“marker A 的下降类”，而是“A 下降 + B 稳定”的联合类别。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "扩展 GBTM：非高斯结局、多轨迹与协变量"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/02-extended-gbtm.html#不要忽略未收敛模型",
+    "href": "src/learn/trajectory-mixture-models/02-extended-gbtm.html#不要忽略未收敛模型",
+    "title": "扩展 GBTM：非高斯结局、多轨迹与协变量",
+    "section": "不要忽略未收敛模型",
+    "text": "不要忽略未收敛模型\n扩展模型更容易出现局部最优、边界参数和 Hessian 问题。报告时应说明尝试过哪些类别数、哪些模型未收敛、采用什么初始值策略。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "扩展 GBTM：非高斯结局、多轨迹与协变量"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/00-series-index.html",
+    "href": "src/learn/trajectory-mixture-models/00-series-index.html",
+    "title": "系列导读：纵向轨迹混合模型",
+    "section": "",
+    "text": "纵向数据的难点常常不只是“平均趋势是什么”，而是“是否存在几类相当不同的变化过程”。在医学随访中，研究者可能看到一部分患者症状快速缓解，另一部分长期波动，还有一部分逐渐恶化。比如，在认知老化研究中，同样的年龄跨度可能对应稳定、缓慢下降和快速下降等不同认知轨迹；在心理症状、慢病管理和治疗反应研究中，整体平均线也经常掩盖了高度异质的个体路径。针对这类问题，我们通常需要从普通 longitudinal model 进入 model-based trajectory clustering：用概率模型描述整条轨迹的潜在类别 (Nagin 和 Odgers 2010年; Herle 等 2020年)。\n本系列所介绍的方法主要限定在基于 finite mixture models、latent classes 和 latent process mixed models 的方法家族。它的核心思想是：总体中存在一个不可直接观测的离散类别变量，类别决定个体轨迹的条件分布，模型估计后，可以通过后验分类概率来确定个体属于哪个类别。这个框架既包括 group-based trajectory modeling 和 LCGA，也包括包含随机效应的 LCMM/GMM、处理非正态观测尺度的 latent process LCMM、多 marker 的 multLCMM，以及把纵向过程和 time-to-event 结局联结起来的 JointLCMM/mpjLCMM (Proust-Lima 等 2017年; Proust-Lima, Sène, 等 2014年)。\n注意，在本系列中，不应把“类别”预设为真实存在的自然分型。类别可能是有理论意义的典型轨迹，也可能只是连续异质性、测量尺度、模型设定、缺失机制或样本选择被离散化后的结果。后续每一种模型都会同时回答两件事：它怎样把纵向数据写成概率模型，以及它允许我们怎样谨慎解释轨迹类别。\n\n\n\n\n\n\n注记Key Idea：把轨迹聚类写成概率模型\n\n\n\n本系列所介绍方法的共同点：先写出潜在类别下整条轨迹的条件分布，再用后验分类概率表达个体属于各类别的不确定性。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "系列导读：纵向轨迹混合模型"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/00-series-index.html#sec-gbtm",
+    "href": "src/learn/trajectory-mixture-models/00-series-index.html#sec-gbtm",
+    "title": "系列导读：纵向轨迹混合模型",
+    "section": "GBTM：从有限混合到 group-based trajectory modeling",
+    "text": "GBTM：从有限混合到 group-based trajectory modeling\n本章从最简单的潜在轨迹类别模型进入：GBTM 把总体表示为若干 group-specific 轨迹的有限混合，通常用类别内无随机效应或极简随机结构来突出类别平均轨迹、观测分布、后验分类概率和 AvePP。LCGA 在本系列中视为同一模型族的另一命名传统，而不是一个单独并列的方法。读者会先看到 Nagin 的 group-based trajectory modeling 如何把发展轨迹写成 semiparametric mixture，并理解 EM 与 modified Marquardt 这两类估计思想的关系 (Nagin 1999年, 2005年; Jones 等 2001年; Jones 和 Nagin 2007年; Nagin 和 Odgers 2010年; Proust-Lima 等 2017年)。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "系列导读：纵向轨迹混合模型"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/00-series-index.html#sec-extended-gbtm",
+    "href": "src/learn/trajectory-mixture-models/00-series-index.html#sec-extended-gbtm",
+    "title": "系列导读：纵向轨迹混合模型",
+    "section": "扩展 GBTM：非高斯结局、多轨迹与协变量",
+    "text": "扩展 GBTM：非高斯结局、多轨迹与协变量\n本章在基础 GBTM 上改变观测分布、类别成员机制和纵向结局结构。它讨论二元、计数、零膨胀、有界连续等结局，解释类别成员协变量如何进入多项逻辑模型，并说明 multi-trajectory GBTM 如何用同一个潜在类别组织多个观测 marker 的联合轨迹 (Nagin 等 2018年; Elmer 等 2018年)。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "系列导读：纵向轨迹混合模型"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/00-series-index.html#sec-lcmm-gmm",
+    "href": "src/learn/trajectory-mixture-models/00-series-index.html#sec-lcmm-gmm",
+    "title": "系列导读：纵向轨迹混合模型",
+    "section": "LCMM/GMM：类别内随机效应与 latent class mixed model",
+    "text": "LCMM/GMM：类别内随机效应与 latent class mixed model\n本章把模型从“类别解释主要异质性”推进到“类别间平均轨迹差异 + 类别内连续个体差异”：LCMM/GMM 在每个类别内加入 mixed-effects structure，使个体可以围绕所属类别的平均轨迹连续偏离。这里的核心不是多放几个随机效应，而是类别含义随之改变：类别不再承担所有异质性，随机效应和残差结构也参与解释个体差异 (Muthén 和 Shedden 1999年; Proust-Lima 等 2017年)。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "系列导读：纵向轨迹混合模型"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/00-series-index.html#sec-estimation",
+    "href": "src/learn/trajectory-mixture-models/00-series-index.html#sec-estimation",
+    "title": "系列导读：纵向轨迹混合模型",
+    "section": "LCMM 系列估计：EM 直觉与 modified Marquardt",
+    "text": "LCMM 系列估计：EM 直觉与 modified Marquardt\n本章集中讨论估计问题：潜在类别和随机效应都不可观测时，likelihood 为什么困难，EM 如何通过 posterior responsibility 解释 soft classification，梯度、Hessian、Newton-Raphson 和 modified Marquardt 又如何支持直接最大似然优化。它也会整理局部最优、多起点、Hessian、边界参数和收敛诊断的解释 (Muthén 和 Shedden 1999年; Proust-Lima 等 2017年)。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "系列导读：纵向轨迹混合模型"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/00-series-index.html#sec-latent-process-lcmm",
+    "href": "src/learn/trajectory-mixture-models/00-series-index.html#sec-latent-process-lcmm",
+    "title": "系列导读：纵向轨迹混合模型",
+    "section": "Latent Process LCMM：非正态和有界纵向结局",
+    "text": "Latent Process LCMM：非正态和有界纵向结局\n本章处理观测尺度不适合直接放进高斯 mixed model 的情况，例如认知量表、症状评分、有界连续变量、偏态分数和有序等级结局。lcmm() 的 latent process model 通过 link functions 把观测值连接到潜在过程尺度，使读者能够区分“潜在健康或能力轨迹”与“量表观测轨迹”，并理解 linear、beta、spline 和 threshold links 分别适合什么问题 (Proust-Lima 等 2017年)。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "系列导读：纵向轨迹混合模型"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/00-series-index.html#sec-mlcmm-multlcmm",
+    "href": "src/learn/trajectory-mixture-models/00-series-index.html#sec-mlcmm-multlcmm",
+    "title": "系列导读：纵向轨迹混合模型",
+    "section": "MLCMM / multLCMM：多个 marker 与共同潜在过程",
+    "text": "MLCMM / multLCMM：多个 marker 与共同潜在过程\n本章讨论多个纵向 marker 共同测量同一个潜在过程的模型。multLCMM 的重点不是把多个结局简单拼成一组轨迹，而是区分 latent process trajectory、marker-specific measurement model、link functions 和 DIF，使读者能判断什么时候多个 marker 应该共同定义潜在过程，什么时候更适合使用 multi-trajectory GBTM 或分开建模 (Proust-Lima 等 2017年; Proust-Lima, Dartigues, 等 2014年)。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "系列导读：纵向轨迹混合模型"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/00-series-index.html#sec-jointlcmm-mpjlcmm",
+    "href": "src/learn/trajectory-mixture-models/00-series-index.html#sec-jointlcmm-mpjlcmm",
+    "title": "系列导读：纵向轨迹混合模型",
+    "section": "JointLCMM / mpjLCMM：纵向轨迹类别与 time-to-event 结局",
+    "text": "JointLCMM / mpjLCMM：纵向轨迹类别与 time-to-event 结局\n本章把纵向轨迹和事件结局放入 joint latent class framework：同一个潜在类别 \\(C_i\\) 同时影响纵向子模型和 hazard 子模型，从而连接症状、认知或生物标志物变化与死亡、疾病发生、复发、退出研究或 competing risks。读者会重点区分 joint latent class model 与 shared random effects joint model，并学习 dynamic prediction、EPOCE 和事件子模型解释时的边界 (Proust-Lima, Sène, 等 2014年; Proust-Lima 等 2017年; Proust-Lima, Dartigues, 等 2014年)。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "系列导读：纵向轨迹混合模型"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/00-series-index.html#sec-model-selection",
+    "href": "src/learn/trajectory-mixture-models/00-series-index.html#sec-model-selection",
+    "title": "系列导读：纵向轨迹混合模型",
+    "section": "模型选择与统计指标：类别数、分类质量和解释边界",
+    "text": "模型选择与统计指标：类别数、分类质量和解释边界\n本章集中处理所有方法都会遇到的判断问题：类别数如何选，BIC/ICL/AIC 如何读，posterior probabilities、AvePP 和 entropy 能说明什么，初始化、多起点搜索、局部最优、label switching 和收敛状态怎样影响结论。它会把统计指标与实证报告规范放在一起，提醒读者不要只凭轨迹图或单一信息准则宣布发现了稳定、真实、可行动的群体类别 (Herle 等 2020年; Nagin 和 Odgers 2010年)。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "系列导读：纵向轨迹混合模型"
+    ]
+  },
+  {
+    "objectID": "src/learn/prml/10-approximate-inference.html",
+    "href": "src/learn/prml/10-approximate-inference.html",
+    "title": "近似推断",
+    "section": "",
+    "text": "在现实场景中，特别是包含复杂概率模型的场景，最直接也最麻烦的问题：我们通常真正需要的不是联合分布本身，而是给定观测数据 \\(X\\) 之后潜变量或参数 \\(Z\\) 的后验分布 \\[\np(Z\\mid X),\n\\] 以及关于这个后验分布的各种期望。第 9 章的 EM 算法已经给出一个典型例子：E step 需要对 complete-data log likelihood 在潜变量后验下取期望。如果这个后验分布不能精确求出，或者期望不能解析计算，那么 EM、预测、模型比较和贝叶斯参数学习都会卡住。\n这种困难有两个常见来源。\n\n对连续变量来说，积分可能没有闭式解，并且维度太高时数值积分也不可行。\n对离散变量来说，原则上可以对所有 hidden configurations 求和，但状态数常常随潜变量数量指数增长。\n\n所以，实际上，稍微复杂一点的场景下，后验分布的精确求解一般是不可行的。因此，近似推断方法应运而生。近似推断方法大致分成两类：\n\n\n\n\n\n\n\n\n类型\n代表方法\n基本特征\n\n\n\n\n随机近似\nMarkov chain Monte Carlo 等采样方法\n理论上给无限计算时间可以逼近精确答案，但有限时间下有采样误差，且独立性与收敛性不易判断\n\n\n确定性近似\nLaplace approximation、variational inference、expectation propagation\n用解析可处理的分布族或局部 bound 替代真实后验，通常更适合大规模问题，但一般不可能给出精确结果\n\n\n\n前面第 4 章已经见过 Laplace approximation，它在后验众数附近做局部 Gaussian 近似。在本章中，我们将学习另外两种近似方法：variational inference 和 expectation propagation (EP)。\n\n\n\n\n\n\n注记本章的主线\n\n\n\n第 10 章可以看成对第 8、9 章的延续。\n\n第 8 章告诉我们概率模型可以被拆成图和因子。\n第 9 章说明带隐变量模型可以通过 EM 交替优化从而实现极大似然估计或极大后验估计。\n第 10 章则聚焦于后验概率的估计，如果 后验积分本身不可解，如何用一个可处理的近似后验替代它？",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "PRML",
+      "近似推断"
+    ]
+  },
+  {
+    "objectID": "src/learn/prml/10-approximate-inference.html#核心问题",
+    "href": "src/learn/prml/10-approximate-inference.html#核心问题",
+    "title": "近似推断",
+    "section": "核心问题",
+    "text": "核心问题\nVariational inference 的出发点是把推断问题写成一个关于分布 \\(q(Z)\\) 的优化问题。设模型给出联合分布 \\(p(X,Z)\\)，目标是近似后验 \\(p(Z\\mid X)\\) 并估计 evidence \\(p(X)\\)。对任意分布 \\(q(Z)\\)，有分解 \\[\n\\ln p(X)=\\mathcal{L}(q)+\\operatorname{KL}(q\\Vert p),\n\\tag{1}\\] 其中 \\[\n\\mathcal{L}(q)\n=\n\\int q(Z)\\ln\\frac{p(X,Z)}{q(Z)}\\,dZ,\n\\tag{2}\\] 而 \\[\n\\operatorname{KL}(q\\Vert p)\n=\n\\int q(Z)\\ln\\frac{q(Z)}{p(Z\\mid X)}\\,dZ.\n\\tag{3}\\] 因为 KL divergence 非负，所以 \\(\\mathcal{L}(q)\\) 是 \\(\\ln p(X)\\) 的 lower bound。这个 bound 现在通常也叫 ELBO。最大化 \\(\\mathcal{L}(q)\\) 等价于最小化 \\(\\operatorname{KL}(q(Z)\\Vert p(Z\\mid X))\\)。\n式 1 的类似物也出现在了 EM 算法的推导过程中。两者之间最大的区别在于模型参数 \\(\\theta\\) 消失了，其被融合到了隐变量 \\(Z\\)，从而期望得到它的后验分布，而不仅仅是一个点估计。\n如果允许 \\(q(Z)\\) 是任意分布，最优解就是真实后验，KL 为 0，bound 等于 \\(\\ln p(X)\\)。现实问题在于真实后验不可处理，所以我们人为限制 \\(q(Z)\\) 的族，使它足够简单，能够计算期望、归一化和预测；同时又希望它足够灵活，尽可能贴近真实后验。比如，我们可以将 \\(q(Z)\\) 限制在某个分布族\\(q(Z|\\omega)\\)中，其完全由一组参数 \\(\\omega\\) 定义。这样，优化问题就变成了求解 \\(\\omega\\) 的优化问题。\n\n\n\n\n\n\n重要灵活的 q 不是过拟合\n\n\n\nprml 特别强调，限制 \\(q\\) 的目的只是计算可处理性。只要仍然可计算，使用更丰富的 variational family 通常只会让近似更接近真实后验，不存在像监督学习里那种因分布族太灵活而“拟合噪声”的同类过拟合问题。\n\n\n\n\n\n\n\n\n图 1 Laplace approximation 和 Variational Inference 的比较\n\n\n\n上图用一个非 Gaussian 分布做示意：Laplace approximation (红色) 围绕某个 mode 做局部二次近似，而 variational Gaussian approximation (绿色) 是通过全局 KL 目标得到的。因此二者可能给出不同均值、方差和尾部行为。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "PRML",
+      "近似推断"
+    ]
+  },
+  {
+    "objectID": "src/learn/prml/10-approximate-inference.html#factorized-distributions",
+    "href": "src/learn/prml/10-approximate-inference.html#factorized-distributions",
+    "title": "近似推断",
+    "section": "Factorized Distributions",
+    "text": "Factorized Distributions\n最常用的限制方式，是把潜变量分成互不重叠的若干组 \\[\nZ=\\{Z_1,\\dots,Z_M\\},\n\\] 并假设近似后验可以分解为 \\[\nq(Z)=\\prod_{i=1}^M q_i(Z_i).\n\\tag{4}\\] 这就是 平均场近似（mean field approximation）。注意，这里只假设因子化，不预先规定每个 \\(q_i\\) 的函数形式。\n把 式 4 代入 ELBO，并只保留和某个因子 \\(q_j(Z_j)\\) 有关的项，可得 \\[\n\\mathcal{L}(q)\n=\n\\int q_j(Z_j)\\ln \\widetilde{p}(X,Z_j)\\,dZ_j\n-\n\\int q_j(Z_j)\\ln q_j(Z_j)\\,dZ_j\n+ \\text{const},\n\\] 其中 \\[\n\\ln \\widetilde{p}(X,Z_j)\n=\n\\mathbb{E}_{i\\neq j}[\\ln p(X,Z)] + \\text{const}.\n\\] 因此，在其它因子固定时，最优因子满足 \\[\n\\ln q_j^\\star(Z_j)\n=\n\\mathbb{E}_{i\\neq j}[\\ln p(X,Z)] + \\text{const}.\n\\tag{5}\\]\n式 5 是 mean field variational inference 的核心公式。它说：要更新 \\(Z_j\\) 的变分因子，只需拿联合分布的 log，在其它变量的当前变分分布下取期望，再把结果指数化并归一化。\n实际算法就是 coordinate ascent：\n\n初始化所有因子 \\(q_i(Z_i)\\)。\n依次用 式 5 更新每个因子。\n重复直到 lower bound 或因子参数收敛。\n\n每次更新都会使 bound 不下降，但由于整体问题一般不是凸的，最终仍可能依赖初始化。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "PRML",
+      "近似推断"
+    ]
+  },
+  {
+    "objectID": "src/learn/prml/10-approximate-inference.html#factorized-approximation-的性质",
+    "href": "src/learn/prml/10-approximate-inference.html#factorized-approximation-的性质",
+    "title": "近似推断",
+    "section": "Factorized Approximation 的性质",
+    "text": "Factorized Approximation 的性质\n为了理解 factorization 会带来什么偏差，我们来考察一个二维相关 Gaussian \\[\np(z)=\\mathcal{N}(z\\mid \\mu,\\Lambda^{-1}),\n\\qquad\nz=(z_1,z_2),\n\\] 其中 \\[\n\\mu=\n\\begin{pmatrix}\n\\mu_1\\\\\n\\mu_2\n\\end{pmatrix},\n\\qquad\n\\Lambda=\n\\begin{pmatrix}\n\\Lambda_{11} & \\Lambda_{12}\\\\\n\\Lambda_{21} & \\Lambda_{22}\n\\end{pmatrix}.\n\\] 若用 \\(q(z)=q_1(z_1)q_2(z_2)\\) 近似，根据 式 5 可推出 \\[\nq_1^\\star(z_1)\n=\n\\mathcal{N}(z_1\\mid m_1,\\Lambda_{11}^{-1}),\n\\qquad\nm_1=\\mu_1-\\Lambda_{11}^{-1}\\Lambda_{12}(\\mathbb{E}[z_2]-\\mu_2),\n\\] 以及对称的 \\[\nq_2^\\star(z_2)\n=\n\\mathcal{N}(z_2\\mid m_2,\\Lambda_{22}^{-1}),\n\\qquad\nm_2=\\mu_2-\\Lambda_{22}^{-1}\\Lambda_{21}(\\mathbb{E}[z_1]-\\mu_1).\n\\] 在这个简单例子中，固定点会给出正确的均值 \\(\\mathbb{E}[z_1]=\\mu_1\\)、\\(\\mathbb{E}[z_2]=\\mu_2\\)，但方差被压得过小。下图左侧展示了这一点：\\(\\operatorname{KL}(q\\Vert p)\\) 的 mean field 近似倾向于避开真实分布概率很低的区域，因此常常低估后验不确定性。\n\n\n\n\n\n\n图 2 Gaussian 的平均场近似\n\n\n\n如果反过来最小化 \\(\\operatorname{KL}(p\\Vert q)\\)，那么最优 factor 是真实分布的边缘： \\[\nq_j^\\star(Z_j)=p(Z_j).\n\\] 对 Gaussian 来说，这会匹配均值和边缘方差，却会在真实联合分布概率很低的区域放置较多质量。\n\n\n\n\n\n\n警告KL 方向很重要\n\n\n\n最小化 \\(\\operatorname{KL}(q\\Vert p)\\) 时，若 \\(q\\) 在 \\(p\\) 近似为 0 的区域放质量，会受到很大惩罚，因此它常表现为 zero-forcing、mode-seeking，并可能低估 support。\n最小化 \\(\\operatorname{KL}(p\\Vert q)\\) 时，若 \\(p\\) 有质量而 \\(q\\) 没覆盖，会受到惩罚，因此它常表现为 zero-avoiding、mass-covering，并可能过度覆盖 support。\n\n\n\n\n\n\n\n\n图 3 双峰 Gaussian 的平均场近似\n\n\n\n这里我们用双峰分布说明这种差异。若用单个 Gaussian 近似多峰后验，\\(\\operatorname{KL}(q\\Vert p)\\) 可能选择其中一个 mode；\\(\\operatorname{KL}(p\\Vert q)\\) 则倾向于横跨多个 mode。对 mixture model 来说，后者可能把两个好的参数解平均成一个并不好的参数解。\n\n\n\n\n\n\n注记alpha divergence\n\n\n\n这些 KL divergence 还可以放进 alpha divergence 家族： \\[\nD_\\alpha(p\\Vert q)\n=\n\\frac{4}{1-\\alpha^2}\n\\left[\n1-\\int p(x)^{(1+\\alpha)/2}q(x)^{(1-\\alpha)/2}\\,dx\n\\right].\n\\] 当 \\(\\alpha\\to 1\\) 时对应 \\(\\operatorname{KL}(p\\Vert q)\\)；当 \\(\\alpha\\to -1\\) 时对应 \\(\\operatorname{KL}(q\\Vert p)\\)；当 \\(\\alpha=0\\) 时得到与 Hellinger distance 相关的对称 divergence。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "PRML",
+      "近似推断"
+    ]
+  },
+  {
+    "objectID": "src/learn/prml/10-approximate-inference.html#example-the-univariate-gaussian",
+    "href": "src/learn/prml/10-approximate-inference.html#example-the-univariate-gaussian",
+    "title": "近似推断",
+    "section": "Example: The Univariate Gaussian",
+    "text": "Example: The Univariate Gaussian\n我们使用一维 Gaussian 的均值与 precision 推断来演示 factorized variational update。数据 \\[\nD=\\{x_1,\\dots,x_N\\}\n\\] 来自 Gaussian，似然为 \\[\np(D\\mid \\mu,\\tau)\n=\n\\left(\\frac{\\tau}{2\\pi}\\right)^{N/2}\n\\exp\\left\\{\n-\\frac{\\tau}{2}\\sum_{n=1}^N(x_n-\\mu)^2\n\\right\\}.\n\\] 共轭先验取为 \\[\np(\\mu\\mid \\tau)\n=\n\\mathcal{N}\\left(\\mu\\mid \\mu_0,(\\lambda_0\\tau)^{-1}\\right),\n\\qquad\np(\\tau)=\\operatorname{Gam}(\\tau\\mid a_0,b_0).\n\\] 我们知道真实后验是 Gaussian-Gamma，不满足 \\(q_\\mu(\\mu)q_\\tau(\\tau)\\) 的独立分解。为了演示，我们人为使用 \\[\nq(\\mu,\\tau)=q_\\mu(\\mu)q_\\tau(\\tau).\n\\]\n对 \\(q_\\mu\\) 使用 mean field 更新，得到 \\[\n\\ln q_\\mu^\\star(\\mu)\n=\n-\\frac{\\mathbb{E}[\\tau]}{2}\n\\left[\n\\lambda_0(\\mu-\\mu_0)^2+\n\\sum_{n=1}^N(x_n-\\mu)^2\n\\right]+\n\\text{const},\n\\] 因此 \\[\nq_\\mu^\\star(\\mu)\n=\n\\mathcal{N}(\\mu\\mid \\mu_N,\\lambda_N^{-1}),\n\\] 其中 \\[\n\\mu_N\n=\n\\frac{\\lambda_0\\mu_0+N\\bar{x}}{\\lambda_0+N},\n\\qquad\n\\lambda_N=(\\lambda_0+N)\\mathbb{E}[\\tau].\n\\]\n对 \\(q_\\tau\\)，得到 Gamma 分布 \\[\nq_\\tau^\\star(\\tau)\n=\n\\operatorname{Gam}(\\tau\\mid a_N,b_N),\n\\] 其中 \\[\na_N=a_0+\\frac{N}{2},\n\\qquad\nb_N=b_0+\\frac{1}{2}\n\\mathbb{E}_{\\mu}\n\\left[\n\\sum_{n=1}^N(x_n-\\mu)^2+\\lambda_0(\\mu-\\mu_0)^2\n\\right].\n\\] 两个因子彼此耦合，因此通常交替更新。下图展示了从初始 factorized posterior，到先更新 \\(q_\\mu\\)、再更新 \\(q_\\tau\\)，最后收敛到最优 factorized approximation 的过程。\n\n\n\n\n\n\n图 4 Variational Inference 过程\n\n\n\n若取宽泛的非信息先验 \\(\\mu_0=a_0=b_0=\\lambda_0=0\\)，可推出 \\[\n\\frac{1}{\\mathbb{E}[\\tau]}\n=\n\\frac{1}{N-1}\\sum_{n=1}^N(x_n-\\bar{x})^2.\n\\] 右侧正是无偏样本方差估计。这个例子说明，虽然我们使用了 factorized 近似，贝叶斯处理仍然保留了对参数不确定性的修正，而不是退化为最大似然的有偏方差估计。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "PRML",
+      "近似推断"
+    ]
+  },
+  {
+    "objectID": "src/learn/prml/10-approximate-inference.html#model-comparison",
+    "href": "src/learn/prml/10-approximate-inference.html#model-comparison",
+    "title": "近似推断",
+    "section": "Model Comparison",
+    "text": "Model Comparison\n变分推断也可用于模型比较。设候选模型用 \\(m\\) 标记，并有先验概率 \\(p(m)\\)。因为不同模型可能有不同 latent structure 和维度，不能简单写成 \\(q(Z)q(m)\\)，而应写成 \\[\nq(Z,m)=q(Z\\mid m)q(m).\n\\] 对每个模型分别优化 \\(q(Z\\mid m)\\) 后，模型 posterior 的近似满足 \\[\nq(m)\\propto p(m)\\exp\\{\\mathcal{L}_m\\}.\n\\] 这里 \\(\\mathcal{L}_m\\) 是模型 \\(m\\) 的 variational lower bound。直观上，\\(\\mathcal{L}_m\\) 近似 \\(\\ln p(X\\mid m)\\)，因此自动包含数据拟合与模型复杂度的权衡。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "PRML",
+      "近似推断"
+    ]
+  },
+  {
+    "objectID": "src/learn/prml/10-approximate-inference.html#思考题",
+    "href": "src/learn/prml/10-approximate-inference.html#思考题",
+    "title": "近似推断",
+    "section": "思考题",
+    "text": "思考题\n\n为什么最大化 ELBO 等价于最小化 \\(\\operatorname{KL}(q\\Vert p)\\)？\n在多峰后验中，为什么 \\(\\operatorname{KL}(q\\Vert p)\\) 可能只选择一个 mode？\nmean field approximation 低估 posterior variance 的根源是什么？\n在模型比较中，为什么必须使用 \\(q(Z\\mid m)q(m)\\) 而不是普通的 \\(q(Z)q(m)\\)？",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "PRML",
+      "近似推断"
+    ]
+  },
+  {
+    "objectID": "src/learn/prml/10-approximate-inference.html#核心问题-1",
+    "href": "src/learn/prml/10-approximate-inference.html#核心问题-1",
+    "title": "近似推断",
+    "section": "核心问题",
+    "text": "核心问题\n第 9 章用最大似然和 EM 估计 Gaussian mixture model (GMM)，但最大似然有两个严重问题：\n\nGaussian component 可能 collapse 到单个数据点，导致 likelihood singularity。\ncomponent 数 \\(K\\) 增大时 likelihood 通常不下降，因此不能直接用于选择 \\(K\\)。\n\n本节把 GMM 改写为 fully Bayesian model。对 mixing coefficients、均值和 precision 都放置先验，并对所有未知量做后验近似。这不仅保留了 EM 式的可计算更新，还自然引入 complexity penalty。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "PRML",
+      "近似推断"
+    ]
+  },
+  {
+    "objectID": "src/learn/prml/10-approximate-inference.html#模型与先验",
+    "href": "src/learn/prml/10-approximate-inference.html#模型与先验",
+    "title": "近似推断",
+    "section": "模型与先验",
+    "text": "模型与先验\n对每个观测 \\(x_n\\)，引入 1-of-\\(K\\) 潜变量 \\(z_n\\)。给定 mixing coefficients \\(\\pi\\)， \\[\np(Z\\mid \\pi)\n=\n\\prod_{n=1}^N\\prod_{k=1}^K \\pi_k^{z_{nk}}.\n\\] 给定 component 参数 \\(\\mu=\\{\\mu_k\\}\\) 与 precision matrices \\(\\Lambda=\\{\\Lambda_k\\}\\)， \\[\np(X\\mid Z,\\mu,\\Lambda)\n=\n\\prod_{n=1}^N\\prod_{k=1}^K\n\\mathcal{N}(x_n\\mid \\mu_k,\\Lambda_k^{-1})^{z_{nk}}.\n\\]\n为保持共轭性，取 Dirichlet prior \\[\np(\\pi)=\\operatorname{Dir}(\\pi\\mid \\alpha_0),\n\\] 并对每个 Gaussian component 取 Gaussian-Wishart prior \\[\np(\\mu,\\Lambda)\n=\n\\prod_{k=1}^K\n\\mathcal{N}(\\mu_k\\mid m_0,(\\beta_0\\Lambda_k)^{-1})\n\\mathcal{W}(\\Lambda_k\\mid W_0,\\nu_0).\n\\]\n下图用 DAG 表示这个 Bayesian mixture。Plate 内的 \\(z_n,x_n\\) 随数据量增长，通常称为 latent variables；plate 外的 \\(\\pi,\\mu,\\Lambda\\) 数量固定，通常称为 parameters。但从图模型角度看，它们都只是随机变量。\n\n\n\n\n\n\n图 5 DAG 图示 Bayesian Mixture Model\n\n\n\n联合分布为 \\[\np(X,Z,\\pi,\\mu,\\Lambda)\n=\np(X\\mid Z,\\mu,\\Lambda)p(Z\\mid \\pi)p(\\pi)p(\\mu\\mid \\Lambda)p(\\Lambda).\n\\tag{6}\\]",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "PRML",
+      "近似推断"
+    ]
+  },
+  {
+    "objectID": "src/learn/prml/10-approximate-inference.html#variational-distribution",
+    "href": "src/learn/prml/10-approximate-inference.html#variational-distribution",
+    "title": "近似推断",
+    "section": "Variational Distribution",
+    "text": "Variational Distribution\n变分处理只显式假设 \\[\nq(Z,\\pi,\\mu,\\Lambda)=q(Z)q(\\pi,\\mu,\\Lambda).\n\\] 其它因子化结构将从优化中自动诱导出来。\n对 \\(q(Z)\\)，根据 mean field 更新式有 \\[\n\\ln q^\\star(Z)\n=\n\\mathbb{E}_{\\pi,\\mu,\\Lambda}\n[\\ln p(X,Z,\\pi,\\mu,\\Lambda)]\n+\\text{const}.\n\\] 只保留和 \\(Z\\) 相关的项，可写成 \\[\n\\ln q^\\star(Z)\n=\n\\sum_{n=1}^N\\sum_{k=1}^K z_{nk}\\ln \\rho_{nk}\n+\\text{const},\n\\] 其中 \\[\n\\ln \\rho_{nk}\n=\n\\mathbb{E}[\\ln \\pi_k]\n+\\frac{1}{2}\\mathbb{E}[\\ln|\\Lambda_k|]\n-\\frac{D}{2}\\ln(2\\pi)\n-\\frac{1}{2}\n\\mathbb{E}_{\\mu_k,\\Lambda_k}\n\\left[\n(x_n-\\mu_k)^T\\Lambda_k(x_n-\\mu_k)\n\\right].\n\\] 归一化后得到 \\[\nq^\\star(Z)\n=\n\\prod_{n=1}^N\\prod_{k=1}^K r_{nk}^{z_{nk}},\n\\qquad\nr_{nk}=\\frac{\\rho_{nk}}{\\sum_j \\rho_{nj}}.\n\\] 因此 \\[\n\\mathbb{E}[z_{nk}]=r_{nk},\n\\] 这些 \\(r_{nk}\\) 仍然扮演 responsibilities 的角色。\n给定 responsibilities，定义加权统计量 \\[\nN_k=\\sum_{n=1}^N r_{nk},\n\\qquad\n\\bar{x}_k=\\frac{1}{N_k}\\sum_{n=1}^N r_{nk}x_n,\n\\] 以及 \\[\nS_k\n=\n\\frac{1}{N_k}\n\\sum_{n=1}^N r_{nk}(x_n-\\bar{x}_k)(x_n-\\bar{x}_k)^T.\n\\]\n对参数部分，优化自动给出 \\[\nq(\\pi,\\mu,\\Lambda)\n=\nq(\\pi)\\prod_{k=1}^K q(\\mu_k,\\Lambda_k).\n\\] 其中 \\[\nq^\\star(\\pi)=\\operatorname{Dir}(\\pi\\mid \\alpha),\n\\qquad\n\\alpha_k=\\alpha_0+N_k,\n\\] 而 \\[\nq^\\star(\\mu_k,\\Lambda_k)\n=\n\\mathcal{N}(\\mu_k\\mid m_k,(\\beta_k\\Lambda_k)^{-1})\n\\mathcal{W}(\\Lambda_k\\mid W_k,\\nu_k),\n\\] 参数更新为 \\[\n\\beta_k=\\beta_0+N_k,\n\\qquad\nm_k=\\frac{\\beta_0m_0+N_k\\bar{x}_k}{\\beta_k},\n\\] \\[\nW_k^{-1}\n=\nW_0^{-1}\n+N_kS_k\n+\\frac{\\beta_0N_k}{\\beta_0+N_k}\n(\\bar{x}_k-m_0)(\\bar{x}_k-m_0)^T,\n\\] 以及 \\[\n\\nu_k=\\nu_0+N_k.\n\\]\n为了更新 responsibilities，需要以下期望： \\[\n\\mathbb{E}_{\\mu_k,\\Lambda_k}\n\\left[\n(x_n-\\mu_k)^T\\Lambda_k(x_n-\\mu_k)\n\\right]\n=\n\\frac{D}{\\beta_k}\n+\\nu_k(x_n-m_k)^TW_k(x_n-m_k),\n\\] \\[\n\\ln \\widetilde{\\Lambda}_k\n\\equiv\n\\mathbb{E}[\\ln|\\Lambda_k|]\n=\n\\sum_{i=1}^D\n\\psi\\left(\\frac{\\nu_k+1-i}{2}\\right)\n+D\\ln 2+\\ln|W_k|,\n\\] \\[\n\\ln \\widetilde{\\pi}_k\n\\equiv\n\\mathbb{E}[\\ln\\pi_k]\n=\n\\psi(\\alpha_k)-\\psi(\\widehat{\\alpha}),\n\\qquad\n\\widehat{\\alpha}=\\sum_k\\alpha_k.\n\\] 于是 \\[\nr_{nk}\n\\propto\n\\widetilde{\\pi}_k\\widetilde{\\Lambda}_k^{1/2}\n\\exp\\left\\{\n-\\frac{D}{2\\beta_k}\n-\\frac{\\nu_k}{2}(x_n-m_k)^TW_k(x_n-m_k)\n\\right\\}.\n\\tag{7}\\]\n式 7 和最大似然 EM 中的 \\[\nr_{nk}\n\\propto\n\\pi_k|\\Lambda_k|^{1/2}\n\\exp\\left\\{\n-\\frac{1}{2}(x_n-\\mu_k)^T\\Lambda_k(x_n-\\mu_k)\n\\right\\}\n\\] 非常相似。差别是这里使用的是参数后验下的期望，而不是点估计。\n\n\n\n\n\n\n注记变分 E/M 步\n\n\n\nBayesian GMM 的变分更新仍可看成 E/M 交替：\n\n变分 E step：用当前参数后验计算 \\(\\widetilde{\\pi}_k\\)、\\(\\widetilde{\\Lambda}_k\\) 和 quadratic expectation，从而更新 \\(r_{nk}\\)。\n变分 M step：固定 responsibilities，更新 \\(q(\\pi)\\) 和各个 \\(q(\\mu_k,\\Lambda_k)\\)。\n\n由于共轭先验，最优变分因子和联合分布中的对应因子保持同一函数族。\n\n\n\n\n\n\n\n\n图 6 Variational Mixture Model 收敛过程\n\n\n\n上图把这个算法应用到 Old Faithful 数据，并从 \\(K=6\\) 个 component 开始。收敛后，只有少数 component 的 expected mixing coefficient 明显高于 prior 水平。若某个 component 几乎不负责解释数据，则 \\(N_k\\simeq 0\\)，参数后验退回先验，且 \\[\n\\mathbb{E}[\\pi_k]\n=\n\\frac{\\alpha_k}{\\widehat{\\alpha}}\n=\n\\frac{\\alpha_0+N_k}{K\\alpha_0+N}.\n\\] 当 \\(\\alpha_0\\) 很小且 \\(N_k\\simeq0\\) 时，该 component 实际上被剪掉。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "PRML",
+      "近似推断"
+    ]
+  },
+  {
+    "objectID": "src/learn/prml/10-approximate-inference.html#variational-lower-bound",
+    "href": "src/learn/prml/10-approximate-inference.html#variational-lower-bound",
+    "title": "近似推断",
+    "section": "Variational Lower Bound",
+    "text": "Variational Lower Bound\n对 Bayesian GMM，ELBO 可写成 \\[\n\\begin{aligned}\n\\mathcal{L}\n&=\n\\mathbb{E}[\\ln p(X,Z,\\pi,\\mu,\\Lambda)]\n-\\mathbb{E}[\\ln q(Z,\\pi,\\mu,\\Lambda)]\\\\\n&=\n\\mathbb{E}[\\ln p(X\\mid Z,\\mu,\\Lambda)]\n+\\mathbb{E}[\\ln p(Z\\mid \\pi)]\n+\\mathbb{E}[\\ln p(\\pi)]\n+\\mathbb{E}[\\ln p(\\mu,\\Lambda)]\\\\\n&\\quad\n-\\mathbb{E}[\\ln q(Z)]\n-\\mathbb{E}[\\ln q(\\pi)]\n-\\mathbb{E}[\\ln q(\\mu,\\Lambda)].\n\\end{aligned}\n\\tag{8}\\]\n这里计算这个ELBO的主要用途有三点：监控收敛、检查推导、检查代码实现。每次坐标更新后，\\(\\mathcal{L}\\) 不应下降。\n最重要的两项是 \\[\n\\mathbb{E}[\\ln p(X\\mid Z,\\mu,\\Lambda)]\n=\n\\frac{1}{2}\\sum_{k=1}^K N_k\n\\left\\{\n\\ln\\widetilde{\\Lambda}_k\n-\\frac{D}{\\beta_k}\n-\\nu_k\\operatorname{Tr}(S_kW_k)\n-\\nu_k(\\bar{x}_k-m_k)^TW_k(\\bar{x}_k-m_k)\n-D\\ln(2\\pi)\n\\right\\},\n\\] 以及 \\[\n\\mathbb{E}[\\ln p(Z\\mid \\pi)]\n=\n\\sum_{n=1}^N\\sum_{k=1}^K r_{nk}\\ln\\widetilde{\\pi}_k.\n\\] 其余项分别来自 Dirichlet prior、Gaussian-Wishart prior 和三个变分因子的负熵。它们对实现很重要，因为如果某个符号、normalizer 或 digamma 项写错，ELBO 的单调性往往会立刻暴露问题。\n更完整地说，Dirichlet 相关项为 \\[\n\\mathbb{E}[\\ln p(\\pi)]\n=\n\\ln C(\\alpha_0)\n+(\\alpha_0-1)\\sum_{k=1}^K\\ln\\widetilde{\\pi}_k,\n\\] 以及 \\[\n\\mathbb{E}[\\ln q(\\pi)]\n=\n\\ln C(\\alpha)\n+\\sum_{k=1}^K(\\alpha_k-1)\\ln\\widetilde{\\pi}_k.\n\\] Gaussian-Wishart prior 项为 \\[\n\\begin{aligned}\n\\mathbb{E}[\\ln p(\\mu,\\Lambda)]\n&=\n\\frac{1}{2}\\sum_{k=1}^K\n\\left\\{\nD\\ln\\frac{\\beta_0}{2\\pi}\n+\\ln\\widetilde{\\Lambda}_k\n-\\frac{D\\beta_0}{\\beta_k}\n-\\beta_0\\nu_k(m_k-m_0)^TW_k(m_k-m_0)\n\\right\\}\\\\\n&\\quad\n+K\\ln B(W_0,\\nu_0)\n+\\frac{\\nu_0-D-1}{2}\\sum_{k=1}^K\\ln\\widetilde{\\Lambda}_k\n-\\frac{1}{2}\\sum_{k=1}^K\\nu_k\\operatorname{Tr}(W_0^{-1}W_k).\n\\end{aligned}\n\\] 变分因子自身的负熵项包括 \\[\n\\mathbb{E}[\\ln q(Z)]\n=\n\\sum_{n=1}^N\\sum_{k=1}^K r_{nk}\\ln r_{nk},\n\\] 和 \\[\n\\mathbb{E}[\\ln q(\\mu,\\Lambda)]\n=\n\\sum_{k=1}^K\n\\left\\{\n\\frac{1}{2}\\ln\\widetilde{\\Lambda}_k\n+\\frac{D}{2}\\ln\\frac{\\beta_k}{2\\pi}\n-\\frac{D}{2}\n-H[q(\\Lambda_k)]\n\\right\\}.\n\\] 这里 \\(C(\\cdot)\\) 是 Dirichlet normalizer，\\(B(\\cdot,\\cdot)\\) 与 \\(H[q(\\Lambda_k)]\\) 分别是 Wishart normalizer 和 Wishart entropy。\n\n\n\n\n\n\n警告不要只看 responsibility 更新\n\n\n\nBayesian GMM 看起来和 EM 很像，但 ELBO 的存在改变了调试方式。最大似然 EM 监控 log likelihood，variational Bayes 应监控 lower bound；如果只看 responsibilities 或聚类图，可能无法发现 normalizer 或 entropy 项的错误。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "PRML",
+      "近似推断"
+    ]
+  },
+  {
+    "objectID": "src/learn/prml/10-approximate-inference.html#predictive-density",
+    "href": "src/learn/prml/10-approximate-inference.html#predictive-density",
+    "title": "近似推断",
+    "section": "Predictive Density",
+    "text": "Predictive Density\n给定新观测 \\(\\widehat{x}\\)，预测密度为 \\[\np(\\widehat{x}\\mid X)\n=\n\\sum_{\\widehat{z}}\n\\int p(\\widehat{x}\\mid \\widehat{z},\\mu,\\Lambda)\np(\\widehat{z}\\mid \\pi)\np(\\pi,\\mu,\\Lambda\\mid X)\\,d\\pi\\,d\\mu\\,d\\Lambda.\n\\] 用变分后验替代真实后验后，积分可解析得到 Student’s t mixture： \\[\np(\\widehat{x}\\mid X)\n=\n\\frac{1}{\\widehat{\\alpha}}\n\\sum_{k=1}^K\n\\alpha_k\\,\n\\operatorname{St}\\left(\n\\widehat{x}\\mid m_k,L_k,\\nu_k+1-D\n\\right),\n\\] 其中 \\[\nL_k\n=\n\\frac{(\\nu_k+1-D)\\beta_k}{1+\\beta_k}W_k.\n\\] 当 \\(N\\) 很大时，各 component 的参数后验变尖，Student’s t mixture 会退化为普通 Gaussian mixture。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "PRML",
+      "近似推断"
+    ]
+  },
+  {
+    "objectID": "src/learn/prml/10-approximate-inference.html#determining-the-number-of-components",
+    "href": "src/learn/prml/10-approximate-inference.html#determining-the-number-of-components",
+    "title": "近似推断",
+    "section": "Determining the Number of Components",
+    "text": "Determining the Number of Components\nBayesian GMM 可以通过 lower bound 比较不同 \\(K\\)。不过 mixture model 有 label switching symmetry：若有 \\(K\\) 个 component，同一个观测分布对应 \\(K!\\) 个等价参数标号。最大似然只找到其中一个 mode，所以这不是问题；但 Bayesian evidence 要对所有参数值积分，必须考虑这些等价 modes。\n由于 \\(\\operatorname{KL}(q\\Vert p)\\) 的变分近似通常只覆盖某一个 mode，比较不同 \\(K\\) 时 Bishop 建议给 lower bound 加上近似修正项 \\[\n\\ln K!.\n\\] 下图展示了 Old Faithful 数据上 corrected lower bound 随 \\(K\\) 的变化，在 \\(K=2\\) 达到峰值。这个现象和最大似然形成对比：最大似然 likelihood 通常随 \\(K\\) 增大而不下降，因此不能直接选择模型复杂度。\n\n\n\n\n\n\n图 7 lower bound 随 K 的变化图\n\n\n\n另一种确定 \\(K\\) 的方式是不对 \\(\\pi\\) 保持完整后验，而把 mixing coefficients 当成点估计，通过最大化 lower bound 更新 \\[\n\\pi_k=\\frac{1}{N}\\sum_{n=1}^N r_{nk}.\n\\] 贡献不足的 component 会被推到 \\(\\pi_k=0\\)，相当于通过 automatic relevance determination 从一个较大的初始 \\(K\\) 中剪掉冗余 component。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "PRML",
+      "近似推断"
+    ]
+  },
+  {
+    "objectID": "src/learn/prml/10-approximate-inference.html#induced-factorizations",
+    "href": "src/learn/prml/10-approximate-inference.html#induced-factorizations",
+    "title": "近似推断",
+    "section": "Induced Factorizations",
+    "text": "Induced Factorizations\n变分推断中有一类容易忽略的现象：我们显式假设一个 factorization，但最优解可能进一步自动分解。Bishop 称之为 induced factorizations。\n设潜变量被划分为 \\(A,B,C\\)，并显式假设 \\[\nq(A,B,C)=q(A,B)q(C).\n\\] 根据 mean field 更新， \\[\n\\ln q^\\star(A,B)\n=\n\\mathbb{E}_C[\\ln p(A,B\\mid X,C)] + \\text{const}.\n\\] 因此 \\(q^\\star(A,B)\\) 会进一步分解为 \\(q^\\star(A)q^\\star(B)\\) 当且仅当 \\[\nA\\perp\\!\\!\\!\\perp B\\mid X,C.\n\\] 这可以用第 8 章的 d-separation 规则在图上判断。\n在 Bayesian GMM 中，虽然一开始只假设 \\(q(Z)q(\\pi,\\mu,\\Lambda)\\)，优化后会诱导出 \\[\nq(\\pi,\\mu,\\Lambda)=q(\\pi)\\prod_k q(\\mu_k,\\Lambda_k),\n\\] 以及 \\[\nq(Z)=\\prod_n q(z_n).\n\\] 数值实现时必须利用这些结构。若最优 precision matrix 天然是 block diagonal 或 diagonal，却仍维护完整矩阵，会浪费大量计算和存储。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "PRML",
+      "近似推断"
+    ]
+  },
+  {
+    "objectID": "src/learn/prml/10-approximate-inference.html#思考题-1",
+    "href": "src/learn/prml/10-approximate-inference.html#思考题-1",
+    "title": "近似推断",
+    "section": "思考题",
+    "text": "思考题\n\nBayesian GMM 为什么不会出现最大似然 GMM 中 Gaussian component collapse 的 singularity？\n在 \\(K\\) 很大时，为什么 Dirichlet prior 的 \\(\\alpha_0\\) 会影响 component 是否被剪掉？\n为什么 label switching 对单个 \\(K\\) 的预测影响不大，却会影响不同 \\(K\\) 的 evidence 比较？\ninduced factorization 为什么是图结构与变分假设共同作用的结果？",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "PRML",
+      "近似推断"
+    ]
+  },
+  {
+    "objectID": "src/learn/prml/10-approximate-inference.html#问题背景",
+    "href": "src/learn/prml/10-approximate-inference.html#问题背景",
+    "title": "近似推断",
+    "section": "问题背景",
+    "text": "问题背景\n第 3 章的 Bayesian linear regression 在 evidence framework 中对超参数 \\(\\alpha,\\beta\\) 做 point estimate。本节改用 fully Bayesian 思路，把 \\(\\alpha\\) 也当作随机变量并放置先验。为了简化，暂时假设噪声 precision \\(\\beta\\) 已知。\n模型为 \\[\np(t\\mid w)\n=\n\\prod_{n=1}^N\n\\mathcal{N}(t_n\\mid w^T\\phi_n,\\beta^{-1}),\n\\] \\[\np(w\\mid \\alpha)\n=\n\\mathcal{N}(w\\mid 0,\\alpha^{-1}I),\n\\qquad\np(\\alpha)=\\operatorname{Gam}(\\alpha\\mid a_0,b_0).\n\\] 联合分布为 \\[\np(t,w,\\alpha)=p(t\\mid w)p(w\\mid \\alpha)p(\\alpha),\n\\] 下图给出相应的 plate model。\n\n\n\n\n\n\n图 8 Bayesian Linear Regression 证据框架模型",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "PRML",
+      "近似推断"
+    ]
+  },
+  {
+    "objectID": "src/learn/prml/10-approximate-inference.html#variational-distribution-1",
+    "href": "src/learn/prml/10-approximate-inference.html#variational-distribution-1",
+    "title": "近似推断",
+    "section": "Variational Distribution",
+    "text": "Variational Distribution\n采用 factorization \\[\nq(w,\\alpha)=q(w)q(\\alpha).\n\\] 对 \\(\\alpha\\)，只保留相关项： \\[\n\\ln q^\\star(\\alpha)\n=\n\\ln p(\\alpha)+\\mathbb{E}_w[\\ln p(w\\mid \\alpha)]\n+\\text{const}.\n\\] 因此 \\[\nq^\\star(\\alpha)=\\operatorname{Gam}(\\alpha\\mid a_N,b_N),\n\\] 其中 \\[\na_N=a_0+\\frac{M}{2},\n\\qquad\nb_N=b_0+\\frac{1}{2}\\mathbb{E}[w^Tw].\n\\]\n对 \\(w\\)，得到 quadratic log density： \\[\n\\ln q^\\star(w)\n=\n-\\frac{1}{2}w^T\n\\left(\n\\mathbb{E}[\\alpha]I+\\beta\\Phi^T\\Phi\n\\right)w\n+\\beta w^T\\Phi^Tt\n+\\text{const}.\n\\] 因此 \\[\nq^\\star(w)=\\mathcal{N}(w\\mid m_N,S_N),\n\\] 其中 \\[\nm_N=\\beta S_N\\Phi^Tt,\n\\qquad\nS_N=\n\\left(\n\\mathbb{E}[\\alpha]I+\\beta\\Phi^T\\Phi\n\\right)^{-1}.\n\\] 所需矩为 \\[\n\\mathbb{E}[\\alpha]=\\frac{a_N}{b_N},\n\\qquad\n\\mathbb{E}[ww^T]=m_Nm_N^T+S_N,\n\\] 以及 \\[\n\\mathbb{E}[w^Tw]=m_N^Tm_N+\\operatorname{Tr}(S_N).\n\\]\n当 \\(a_0=b_0=0\\) 时， \\[\n\\mathbb{E}[\\alpha]\n=\n\\frac{M}{m_N^Tm_N+\\operatorname{Tr}(S_N)}.\n\\] 这与第 9 章 evidence framework 中 EM 更新 \\(\\alpha\\) 的形式一致，只是 point estimate 被 \\(\\mathbb{E}[\\alpha]\\) 替代。对这个特别简单的模型，variational treatment 与 evidence framework 给出相同实质结果。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "PRML",
+      "近似推断"
+    ]
+  },
+  {
+    "objectID": "src/learn/prml/10-approximate-inference.html#predictive-distribution",
+    "href": "src/learn/prml/10-approximate-inference.html#predictive-distribution",
+    "title": "近似推断",
+    "section": "Predictive Distribution",
+    "text": "Predictive Distribution\n新输入 \\(x\\) 的预测分布为 \\[\n\\begin{aligned}\np(t\\mid x,\\mathbf{t})\n&\\simeq\n\\int\n\\mathcal{N}(t\\mid w^T\\phi(x),\\beta^{-1})\nq(w)\\,dw\\\\\n&=\n\\mathcal{N}\\left(t\\mid m_N^T\\phi(x),\\sigma^2(x)\\right),\n\\end{aligned}\n\\] 其中 \\[\n\\sigma^2(x)=\\frac{1}{\\beta}+\\phi(x)^TS_N\\phi(x).\n\\] 第一项是观测噪声，第二项是参数不确定性传到预测上的方差。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "PRML",
+      "近似推断"
+    ]
+  },
+  {
+    "objectID": "src/learn/prml/10-approximate-inference.html#lower-bound",
+    "href": "src/learn/prml/10-approximate-inference.html#lower-bound",
+    "title": "近似推断",
+    "section": "Lower Bound",
+    "text": "Lower Bound\n线性回归的 ELBO 可分解为 \\[\n\\begin{aligned}\n\\mathcal{L}(q)\n&=\n\\mathbb{E}_w[\\ln p(t\\mid w)]\n+\\mathbb{E}_{w,\\alpha}[\\ln p(w\\mid \\alpha)]\n+\\mathbb{E}_{\\alpha}[\\ln p(\\alpha)]\\\\\n&\\quad\n-\\mathbb{E}_w[\\ln q(w)]\n-\\mathbb{E}_{\\alpha}[\\ln q(\\alpha)].\n\\end{aligned}\n\\] Bishop 给出闭式展开，用来比较 polynomial order。图 10.9 中，数据来自三阶多项式，lower bound 在 \\(M=3\\) 达到峰值；最大似然则会偏好越来越高阶的模型，因为 residual error 会随复杂度增加而下降。\n这些项展开为 \\[\n\\begin{aligned}\n\\mathbb{E}_w[\\ln p(t\\mid w)]\n&=\n\\frac{N}{2}\\ln\\frac{\\beta}{2\\pi}\n-\\frac{\\beta}{2}t^Tt\n+\\beta m_N^T\\Phi^Tt\\\\\n&\\quad\n-\\frac{\\beta}{2}\n\\operatorname{Tr}\n\\left[\n\\Phi^T\\Phi(m_Nm_N^T+S_N)\n\\right],\n\\end{aligned}\n\\] \\[\n\\mathbb{E}_{w,\\alpha}[\\ln p(w\\mid \\alpha)]\n=\n-\\frac{M}{2}\\ln(2\\pi)\n+\\frac{M}{2}\\{\\psi(a_N)-\\ln b_N\\}\n-\\frac{a_N}{2b_N}\n\\{m_N^Tm_N+\\operatorname{Tr}(S_N)\\},\n\\] \\[\n\\mathbb{E}_{\\alpha}[\\ln p(\\alpha)]\n=\na_0\\ln b_0-\\ln\\Gamma(a_0)\n+(a_0-1)\\{\\psi(a_N)-\\ln b_N\\}\n-b_0\\frac{a_N}{b_N},\n\\] \\[\n-\\mathbb{E}_w[\\ln q(w)]\n=\n\\frac{1}{2}\\ln|S_N|\n+\\frac{M}{2}\\{1+\\ln(2\\pi)\\},\n\\] 以及 \\[\n-\\mathbb{E}_{\\alpha}[\\ln q(\\alpha)]\n=\n\\ln\\Gamma(a_N)\n-(a_N-1)\\psi(a_N)\n-\\ln b_N\n+a_N.\n\\]\n\n\n\n\n\n\n重要模型选择的本质差异\n\n\n\nMaximum likelihood 比较的是拟合误差，很容易偏向复杂模型。Variational lower bound 近似的是 log evidence，因此包含 Occam factor，能惩罚不必要的参数空间体积。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "PRML",
+      "近似推断"
+    ]
+  },
+  {
+    "objectID": "src/learn/prml/10-approximate-inference.html#思考题-2",
+    "href": "src/learn/prml/10-approximate-inference.html#思考题-2",
+    "title": "近似推断",
+    "section": "思考题",
+    "text": "思考题\n\n为什么在线性回归例子中，变分解和 evidence framework 几乎重合？\n\\(\\operatorname{Tr}(S_N)\\) 在 \\(\\mathbb{E}[w^Tw]\\) 中代表什么不确定性？\n为什么 lower bound 可以用于 polynomial order selection？",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "PRML",
+      "近似推断"
+    ]
+  },
+  {
+    "objectID": "src/learn/prml/10-approximate-inference.html#从具体模型到通用形式",
+    "href": "src/learn/prml/10-approximate-inference.html#从具体模型到通用形式",
+    "title": "近似推断",
+    "section": "从具体模型到通用形式",
+    "text": "从具体模型到通用形式\n前面两个例子都依赖共轭结构。第 10.4 节把这种结构抽象成 exponential family。设独立同分布数据 \\(X=\\{x_n\\}\\) 及对应 latent variables \\(Z=\\{z_n\\}\\) 的 complete-data likelihood 为 \\[\np(X,Z\\mid \\eta)\n=\n\\prod_{n=1}^N\nh(x_n,z_n)g(\\eta)\n\\exp\\{\\eta^Tu(x_n,z_n)\\},\n\\] 并给自然参数 \\(\\eta\\) 放置共轭先验 \\[\np(\\eta\\mid \\nu_0,\\chi_0)\n=\nf(\\nu_0,\\chi_0)g(\\eta)^{\\nu_0}\n\\exp\\{\\eta^T\\chi_0\\}.\n\\] 使用 \\[\nq(Z,\\eta)=q(Z)q(\\eta)\n\\] 时，mean field 更新给出 \\[\n\\ln q^\\star(Z)\n=\n\\mathbb{E}_{\\eta}[\\ln p(X,Z\\mid \\eta)]\n+\\text{const}.\n\\] 由于 likelihood 对 \\(n\\) 分解，诱导出 \\[\nq^\\star(Z)=\\prod_n q^\\star(z_n),\n\\] 并且 \\[\nq^\\star(z_n)\n=\nh(x_n,z_n)g(\\mathbb{E}[\\eta])\n\\exp\\{\\mathbb{E}[\\eta]^Tu(x_n,z_n)\\}.\n\\]\n参数后验仍落在共轭族内： \\[\nq^\\star(\\eta)\n=\nf(\\nu_N,\\chi_N)g(\\eta)^{\\nu_N}\n\\exp\\{\\eta^T\\chi_N\\},\n\\] 其中 \\[\n\\nu_N=\\nu_0+N,\n\\qquad\n\\chi_N=\\chi_0+\\sum_{n=1}^N\n\\mathbb{E}_{z_n}[u(x_n,z_n)].\n\\]\n因此共轭 exponential family 下的变分推断有统一的两步结构：用 latent posterior 计算 expected sufficient statistics，再用 parameter posterior 的 expected natural parameters 更新 latent posterior。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "PRML",
+      "近似推断"
+    ]
+  },
+  {
+    "objectID": "src/learn/prml/10-approximate-inference.html#variational-message-passing",
+    "href": "src/learn/prml/10-approximate-inference.html#variational-message-passing",
+    "title": "近似推断",
+    "section": "Variational Message Passing",
+    "text": "Variational Message Passing\n若模型由 directed graph 表示，则联合分布分解为 \\[\np(x)=\\prod_i p(x_i\\mid \\operatorname{pa}_i).\n\\] 设变分分布完全按节点分解 \\[\nq(x)=\\prod_i q_i(x_i),\n\\] 则节点 \\(x_j\\) 的更新为 \\[\n\\ln q_j^\\star(x_j)\n=\n\\mathbb{E}_{i\\neq j}\n\\left[\n\\sum_i\\ln p(x_i\\mid \\operatorname{pa}_i)\n\\right]\n+\\text{const}.\n\\] 只有两类项会真正依赖 \\(x_j\\)：节点自己的条件分布 \\(p(x_j\\mid \\operatorname{pa}_j)\\)，以及所有把 \\(x_j\\) 当作 parent 的 child conditional distributions。因此更新 \\(q_j\\) 只需要 \\(x_j\\) 的 Markov blanket。\n在 conjugate-exponential graph 中，这个局部更新可以写成 message passing。一个节点收到来自 parents、children 和 co-parents 的消息后，即可更新自己的变分因子。这样的 variational message passing 适合构建通用推断软件，因为算法只需要局部因子形式，而不必为每个大模型手写全局更新。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "PRML",
+      "近似推断"
+    ]
+  },
+  {
+    "objectID": "src/learn/prml/10-approximate-inference.html#思考题-3",
+    "href": "src/learn/prml/10-approximate-inference.html#思考题-3",
+    "title": "近似推断",
+    "section": "思考题",
+    "text": "思考题\n\n为什么 complete-data likelihood 在 exponential family 内，会让变分更新保持共轭形式？\ninduced factorization 为什么在 i.i.d. latent variables 中自然出现？\nvariational message passing 和第 8 章 sum-product 的共同点与区别是什么？",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "PRML",
+      "近似推断"
+    ]
+  },
+  {
+    "objectID": "src/learn/prml/10-approximate-inference.html#核心问题-2",
+    "href": "src/learn/prml/10-approximate-inference.html#核心问题-2",
+    "title": "近似推断",
+    "section": "核心问题",
+    "text": "核心问题\n前面的 variational inference 是 global method：直接近似整个 posterior。Local variational methods 则从模型中的某个局部因子入手，用一个可处理的 bound 替换难处理的函数。例如 logistic regression 中的 sigmoid likelihood 破坏了 Gaussian 共轭性，但如果能把 sigmoid 下界写成 exponential quadratic form，就能恢复 Gaussian 后验近似。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "PRML",
+      "近似推断"
+    ]
+  },
+  {
+    "objectID": "src/learn/prml/10-approximate-inference.html#convex-duality-与局部-bound",
+    "href": "src/learn/prml/10-approximate-inference.html#convex-duality-与局部-bound",
+    "title": "近似推断",
+    "section": "Convex Duality 与局部 Bound",
+    "text": "Convex Duality 与局部 Bound\n若 \\(f(x)\\) 是 convex function，则任意切线都是它的 lower bound。以 \\[\nf(x)=\\exp(-x)\n\\] 为例，在 \\(x=\\xi\\) 处的一阶 Taylor 展开为 \\[\ny(x)=f(\\xi)+f'(\\xi)(x-\\xi),\n\\] 并满足 \\(y(x)\\le f(x)\\)，等号在 \\(x=\\xi\\) 处成立。图 10.10 展示了不同切线给出的 lower bounds。\n更一般地，convex duality 给出 \\[\nf(x)=\\max_{\\lambda}\\{\\lambda x-g(\\lambda)\\},\n\\] 其中 dual function 为 \\[\ng(\\lambda)=\\max_x\\{\\lambda x-f(x)\\}.\n\\] 对 concave function，则相应地有 upper bound： \\[\nf(x)=\\min_{\\lambda}\\{\\lambda x-g(\\lambda)\\}.\n\\] 图 10.11 用几何方式解释了 dual function 的含义：给定斜率 \\(\\lambda\\) 后，最佳线性 bound 的截距由函数曲线与直线之间的最小垂直距离决定。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "PRML",
+      "近似推断"
+    ]
+  },
+  {
+    "objectID": "src/learn/prml/10-approximate-inference.html#logistic-sigmoid-的-bound",
+    "href": "src/learn/prml/10-approximate-inference.html#logistic-sigmoid-的-bound",
+    "title": "近似推断",
+    "section": "Logistic Sigmoid 的 Bound",
+    "text": "Logistic Sigmoid 的 Bound\nlogistic sigmoid 为 \\[\n\\sigma(x)=\\frac{1}{1+\\exp(-x)}.\n\\] 它本身既非 convex 也非 concave，但 \\(\\ln\\sigma(x)\\) 是 concave。因此可以得到指数形式的 upper bound： \\[\n\\sigma(x)\\le \\exp\\{\\lambda x-g(\\lambda)\\}.\n\\] 这里 \\(g(\\lambda)\\) 与 binary entropy 有关。图 10.12 左图展示了这种 exponential upper bound。\n对 Bayesian logistic regression 更有用的是 Gaussian 形式的 lower bound。通过把 \\[\n\\ln\\sigma(x)\n=\n\\frac{x}{2}-\\ln\\left(\\exp(x/2)+\\exp(-x/2)\\right)\n\\] 改写，并把后一项看成 \\(x^2\\) 的函数，可得 Jaakkola-Jordan bound： \\[\n\\sigma(x)\n\\ge\n\\sigma(\\xi)\n\\exp\\left\\{\n\\frac{x-\\xi}{2}\n-\\lambda(\\xi)(x^2-\\xi^2)\n\\right\\},\n\\tag{9}\\] 其中按照 PRML 在 logistic regression 部分使用的记号， \\[\n\\lambda(\\xi)\n=\n\\frac{1}{2\\xi}\\left[\\sigma(\\xi)-\\frac{1}{2}\\right].\n\\] 这个 bound 在 \\(x=\\xi\\) 与 \\(x=-\\xi\\) 处取等号。图 10.12 右图展示了其形状：它是 sigmoid 的下界，同时指数内部是 \\(x\\) 的二次函数，因此和 Gaussian prior 相乘后仍可解析归一化。\n\n\n\n\n\n\n警告容易混淆处\n\n\n\n不同教材对 \\(\\lambda(\\xi)\\) 的符号可能采用不同约定。这里采用 PRML 在公式 (10.149)-(10.150) 的 logistic regression 记号，使 lower bound 写成 式 9。\n\n\n若要计算 \\[\nI=\\int \\sigma(a)p(a)\\,da,\n\\] 其中 \\(p(a)\\) 是 Gaussian，则可用 式 9 得到 \\[\nI\\ge \\int f(a,\\xi)p(a)\\,da=F(\\xi),\n\\] 再选择 \\(\\xi^\\star\\) 最大化 \\(F(\\xi)\\)。该 bound 对单个 \\(a\\) 可精确贴合，但积分时 \\(\\xi^\\star\\) 是对 \\(p(a)\\) 下所有可能 \\(a\\) 的折中。\nBishop 也指出，这个 sigmoid lower bound 不能直接推广到 multiclass softmax。多分类 local variational bound 需要额外构造，且文中提到的某些 softmax Gaussian bound 缺少严格证明。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "PRML",
+      "近似推断"
+    ]
+  },
+  {
+    "objectID": "src/learn/prml/10-approximate-inference.html#思考题-4",
+    "href": "src/learn/prml/10-approximate-inference.html#思考题-4",
+    "title": "近似推断",
+    "section": "思考题",
+    "text": "思考题\n\n为什么 local bound 可以让非共轭 likelihood 重新变得可处理？\nlogistic sigmoid 的 lower bound 为什么要写成 exponential quadratic？\n如果一个 bound 对每个点都能调到精确，为什么积分后的最优 bound 仍然可能不精确？",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "PRML",
+      "近似推断"
+    ]
+  },
+  {
+    "objectID": "src/learn/prml/10-approximate-inference.html#variational-posterior-distribution",
+    "href": "src/learn/prml/10-approximate-inference.html#variational-posterior-distribution",
+    "title": "近似推断",
+    "section": "Variational Posterior Distribution",
+    "text": "Variational Posterior Distribution\n第 4 章用 Laplace approximation 近似 Bayesian logistic regression。第 10.6 节则用 local variational bound。二者都会得到 Gaussian posterior approximation，但变分方法优化的是一个严格的 model evidence lower bound，并且通常比 Laplace 更灵活。\n二分类 logistic regression 中，令 \\[\na=w^T\\phi,\n\\] 则 \\[\np(t\\mid w)\n=\n\\sigma(a)^t(1-\\sigma(a))^{1-t}\n=\n\\exp(at)\\sigma(-a).\n\\] 对每个训练样本引入局部变分参数 \\(\\xi_n\\)，使用 sigmoid lower bound，可得到 \\[\np(t,w)=p(t\\mid w)p(w)\\ge h(w,\\xi)p(w),\n\\] 其中 \\[\nh(w,\\xi)\n=\n\\prod_{n=1}^N\n\\sigma(\\xi_n)\n\\exp\\left\\{\nw^T\\phi_n t_n\n-\\frac{w^T\\phi_n+\\xi_n}{2}\n-\\lambda(\\xi_n)\n\\left([w^T\\phi_n]^2-\\xi_n^2\\right)\n\\right\\}.\n\\] 取 Gaussian prior \\[\np(w)=\\mathcal{N}(w\\mid m_0,S_0),\n\\] 则 bound 的 log 对 \\(w\\) 是二次函数： \\[\n-\\frac{1}{2}(w-m_0)^TS_0^{-1}(w-m_0)\n+\\sum_{n=1}^N\n\\left\\{\nw^T\\phi_n(t_n-\\frac{1}{2})\n-\\lambda(\\xi_n)w^T\\phi_n\\phi_n^Tw\n\\right\\}\n+\\text{const}.\n\\] 因此变分后验为 \\[\nq(w)=\\mathcal{N}(w\\mid m_N,S_N),\n\\] 其中 \\[\nm_N\n=\nS_N\n\\left(\nS_0^{-1}m_0\n+\\sum_{n=1}^N(t_n-\\frac{1}{2})\\phi_n\n\\right),\n\\] \\[\nS_N^{-1}\n=\nS_0^{-1}\n+2\\sum_{n=1}^N\n\\lambda(\\xi_n)\\phi_n\\phi_n^T.\n\\]\n图 10.13 展示了线性可分数据上的 Bayesian logistic regression：左图的 predictive contours 在远离数据处向外展开，反映分类不确定性增加；右图展示从 posterior 中抽取多个 \\(w\\) 后得到的不同 decision boundaries。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "PRML",
+      "近似推断"
+    ]
+  },
+  {
+    "objectID": "src/learn/prml/10-approximate-inference.html#optimizing-the-variational-parameters",
+    "href": "src/learn/prml/10-approximate-inference.html#optimizing-the-variational-parameters",
+    "title": "近似推断",
+    "section": "Optimizing the Variational Parameters",
+    "text": "Optimizing the Variational Parameters\n局部参数 \\(\\{\\xi_n\\}\\) 通过最大化 marginal likelihood lower bound 来确定： \\[\n\\ln p(t)\n=\n\\ln\\int p(t\\mid w)p(w)\\,dw\n\\ge\n\\ln\\int h(w,\\xi)p(w)\\,dw\n=\n\\mathcal{L}(\\xi).\n\\] 可以把 \\(w\\) 当 latent variable，用 EM 推导更新。给定旧的 \\(\\xi\\)，E step 计算 Gaussian posterior \\(q(w)\\)；M step 最大化 \\[\nQ(\\xi,\\xi^{\\text{old}})\n=\n\\mathbb{E}[\\ln h(w,\\xi)p(w)].\n\\] 对每个 \\(\\xi_n\\) 求导后得到 \\[\n(\\xi_n^{\\text{new}})^2\n=\n\\phi_n^T\\mathbb{E}[ww^T]\\phi_n\n=\n\\phi_n^T(S_N+m_Nm_N^T)\\phi_n.\n\\tag{10}\\]\n积分也可直接解析完成，得到 PRML 公式 (10.164) 的 lower bound： \\[\n\\mathcal{L}(\\xi)\n=\n\\frac{1}{2}\\ln\\frac{|S_N|}{|S_0|}\n-\\frac{1}{2}m_N^TS_N^{-1}m_N\n+\\frac{1}{2}m_0^TS_0^{-1}m_0\n+\\sum_{n=1}^N\n\\left\\{\n\\ln\\sigma(\\xi_n)\n-\\frac{1}{2}\\xi_n\n-\\lambda(\\xi_n)\\xi_n^2\n\\right\\}.\n\\] 这个 bound 可用于收敛判断。通常只需少数轮更新即可收敛。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "PRML",
+      "近似推断"
+    ]
+  },
+  {
+    "objectID": "src/learn/prml/10-approximate-inference.html#inference-of-hyperparameters",
+    "href": "src/learn/prml/10-approximate-inference.html#inference-of-hyperparameters",
+    "title": "近似推断",
+    "section": "Inference of Hyperparameters",
+    "text": "Inference of Hyperparameters\n如果 prior precision \\(\\alpha\\) 也未知，可取 \\[\np(w\\mid \\alpha)=\\mathcal{N}(w\\mid 0,\\alpha^{-1}I),\n\\qquad\np(\\alpha)=\\operatorname{Gam}(\\alpha\\mid a_0,b_0).\n\\] 此时需要把 global variational approximation 和 local variational bound 结合起来。先有 \\[\n\\ln p(t)=\\mathcal{L}(q)+\\operatorname{KL}(q\\Vert p),\n\\] 但由于 likelihood 仍不可处理，再用 local bound 得到更低的 bound \\[\n\\ln p(t)\\ge \\mathcal{L}(q)\\ge \\widetilde{\\mathcal{L}}(q,\\xi).\n\\] 假设 \\[\nq(w,\\alpha)=q(w)q(\\alpha),\n\\] 则更新为 \\[\nq(w)=\\mathcal{N}(w\\mid \\mu_N,\\Sigma_N),\n\\] 其中 \\[\n\\Sigma_N^{-1}\\mu_N\n=\n\\sum_{n=1}^N(t_n-\\frac{1}{2})\\phi_n,\n\\] \\[\n\\Sigma_N^{-1}\n=\n\\mathbb{E}[\\alpha]I\n+2\\sum_{n=1}^N\\lambda(\\xi_n)\\phi_n\\phi_n^T.\n\\] 超参数后验为 \\[\nq(\\alpha)=\\operatorname{Gam}(\\alpha\\mid a_N,b_N),\n\\] 其中 \\[\na_N=a_0+\\frac{M}{2},\n\\qquad\nb_N=b_0+\\frac{1}{2}\\mathbb{E}[w^Tw].\n\\] 局部参数仍满足 \\[\n(\\xi_n^{\\text{new}})^2\n=\n\\phi_n^T(\\Sigma_N+\\mu_N\\mu_N^T)\\phi_n.\n\\] 所需矩为 \\[\n\\mathbb{E}[\\alpha]=\\frac{a_N}{b_N},\n\\qquad\n\\mathbb{E}[w^Tw]\n=\n\\operatorname{Tr}(\\Sigma_N)+\\mu_N^T\\mu_N.\n\\] 因此完整算法在 \\(q(w)\\)、\\(q(\\alpha)\\) 和 \\(\\xi\\) 三者之间循环更新。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "PRML",
+      "近似推断"
+    ]
+  },
+  {
+    "objectID": "src/learn/prml/10-approximate-inference.html#思考题-5",
+    "href": "src/learn/prml/10-approximate-inference.html#思考题-5",
+    "title": "近似推断",
+    "section": "思考题",
+    "text": "思考题\n\n为什么 sigmoid lower bound 让 Bayesian logistic regression 的 posterior 近似重新变成 Gaussian？\n\\(\\xi_n\\) 更新式中的 \\(\\phi_n^T(S_N+m_Nm_N^T)\\phi_n\\) 可以如何解释？\n和 Laplace approximation 相比，variational logistic regression 的目标函数更明确在哪里？\n为什么该 bound 不能直接处理 softmax 多分类？",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "PRML",
+      "近似推断"
+    ]
+  },
+  {
+    "objectID": "src/learn/prml/10-approximate-inference.html#核心问题-3",
+    "href": "src/learn/prml/10-approximate-inference.html#核心问题-3",
+    "title": "近似推断",
+    "section": "核心问题",
+    "text": "核心问题\nExpectation propagation (EP) 也是确定性近似推断，但它和 variational Bayes 的关键区别在于 KL 方向。Variational Bayes 主要最小化 \\[\n\\operatorname{KL}(q\\Vert p),\n\\] 而 EP 的局部步骤基于 \\[\n\\operatorname{KL}(p\\Vert q).\n\\] 因此 EP 更接近 moment matching，通常覆盖 posterior mass 更充分，但在多峰问题中也可能平均多个不兼容的 modes。\n设要在 exponential family 内用 \\[\nq(z)=h(z)g(\\eta)\\exp\\{\\eta^Tu(z)\\}\n\\] 近似固定分布 \\(p(z)\\)。最小化 \\(\\operatorname{KL}(p\\Vert q)\\) 对 \\(\\eta\\) 求导，得到 \\[\n\\mathbb{E}_{q(z)}[u(z)]\n=\n\\mathbb{E}_{p(z)}[u(z)].\n\\] 也就是说，最优 exponential-family 近似通过匹配 sufficient statistics 得到。若 \\(q\\) 是 Gaussian，这就是匹配均值和协方差。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "PRML",
+      "近似推断"
+    ]
+  },
+  {
+    "objectID": "src/learn/prml/10-approximate-inference.html#ep-algorithm",
+    "href": "src/learn/prml/10-approximate-inference.html#ep-algorithm",
+    "title": "近似推断",
+    "section": "EP Algorithm",
+    "text": "EP Algorithm\n很多模型的 joint distribution 可以写成因子乘积 \\[\np(D,\\theta)=\\prod_i f_i(\\theta).\n\\] 对应 posterior 为 \\[\np(\\theta\\mid D)\n=\n\\frac{1}{p(D)}\\prod_i f_i(\\theta),\n\\qquad\np(D)=\\int\\prod_i f_i(\\theta)\\,d\\theta.\n\\] EP 用一组近似因子替代真实因子： \\[\nq(\\theta)\n=\n\\frac{1}{Z}\\prod_i\\widetilde{f}_i(\\theta),\n\\] 其中 \\(\\widetilde{f}_i\\) 受限于某个 exponential family，使整体 \\(q\\) 可处理。\n若要更新第 \\(j\\) 个因子，EP 执行以下步骤：\n\n从当前 posterior approximation 中除去该近似因子，得到 cavity distribution \\[\nq^{\\setminus j}(\\theta)\n=\n\\frac{q(\\theta)}{\\widetilde{f}_j(\\theta)}.\n\\]\n把真实因子乘回 cavity，得到 tilted distribution \\[\n\\frac{1}{Z_j}f_j(\\theta)q^{\\setminus j}(\\theta),\n\\qquad\nZ_j=\\int f_j(\\theta)q^{\\setminus j}(\\theta)\\,d\\theta.\n\\]\n在 exponential family 中找新的 \\(q^{\\text{new}}(\\theta)\\)，使它和 tilted distribution 匹配 sufficient statistics。\n用 \\[\n\\widetilde{f}_j(\\theta)\n=\nZ_j\\frac{q^{\\text{new}}(\\theta)}{q^{\\setminus j}(\\theta)}\n\\] 存储更新后的局部近似因子。\n\n图 10.14 回到前面 Figure 4.14/10.1 的非 Gaussian 例子，比较 Laplace、variational 和 EP Gaussian approximations。EP 因为使用 \\(\\operatorname{KL}(p\\Vert q)\\)，通常比 \\(\\operatorname{KL}(q\\Vert p)\\) 的 variational approximation 更宽。\nBishop 总结的 EP 过程是：初始化所有近似因子，反复选择一个因子、除去它、乘回真实因子、做 moment matching、再把更新后的 factor 存回。最后用近似因子替换真实因子来估计 posterior 和 evidence： \\[\np(D)\\simeq \\int\\prod_i\\widetilde{f}_i(\\theta)\\,d\\theta.\n\\]\n\n\n\n\n\n\n警告EP 的收敛性\n\n\n\nVariational Bayes 每步都不降低 ELBO。EP 则不同：普通 EP 迭代不保证收敛，也不保证某个能量函数每步下降。若它收敛，收敛点可解释为某个 EP energy 的 stationary point；若直接优化该能量，可以保证收敛，但算法通常更慢、更复杂。\n\n\nAssumed density filtering (ADF) 是 EP 的特殊情形：只对因子做一次顺序更新，不回头重用数据。这适合 online learning，但在 batch data 上会依赖数据顺序。EP 的多轮 pass 正是为了消除这种任意顺序带来的弱点。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "PRML",
+      "近似推断"
+    ]
+  },
+  {
+    "objectID": "src/learn/prml/10-approximate-inference.html#example-the-clutter-problem",
+    "href": "src/learn/prml/10-approximate-inference.html#example-the-clutter-problem",
+    "title": "近似推断",
+    "section": "Example: The Clutter Problem",
+    "text": "Example: The Clutter Problem\n图 10.15 展示 clutter problem：观测点来自目标 Gaussian 和背景 clutter Gaussian 的混合，目标是推断目标 Gaussian 的均值 \\(\\theta\\)。模型为 \\[\np(x\\mid \\theta)\n=\n(1-w)\\mathcal{N}(x\\mid \\theta,I)\n+w\\mathcal{N}(x\\mid 0,aI),\n\\] 其中 \\(w\\) 是已知 clutter 比例。先验为 \\[\np(\\theta)=\\mathcal{N}(\\theta\\mid 0,bI).\n\\] 对 \\(N\\) 个观测， \\[\np(D,\\theta)=p(\\theta)\\prod_{n=1}^N p(x_n\\mid \\theta).\n\\] 由于每个 observation 的 likelihood 是二项 mixture，精确 posterior 是 \\(2^N\\) 个 Gaussian 的 mixture，中等规模 \\(N\\) 下就不可处理。\nEP 取 spherical Gaussian approximation \\[\nq(\\theta)=\\mathcal{N}(\\theta\\mid m,vI),\n\\] 并把每个 likelihood factor 近似为 exponential-quadratic form \\[\n\\widetilde{f}_n(\\theta)\n=\ns_n\\mathcal{N}(\\theta\\mid m_n,v_nI).\n\\] 这里 \\(\\mathcal{N}\\) 只是记号便利，\\(v_n\\) 甚至可以为负；只要最终整体 \\(q(\\theta)\\) 的方差为正，就不一定有问题。\n删除第 \\(n\\) 个近似因子得到 cavity distribution，其 mean 和 inverse variance 满足 \\[\nm^{\\setminus n}\n=\nm+v^{\\setminus n}v_n^{-1}(m-m_n),\n\\qquad\n(v^{\\setminus n})^{-1}\n=\nv^{-1}-v_n^{-1}.\n\\] normalizer 为 \\[\nZ_n\n=\n(1-w)\\mathcal{N}(x_n\\mid m^{\\setminus n},(v^{\\setminus n}+1)I)\n+w\\mathcal{N}(x_n\\mid 0,aI).\n\\] tilted distribution 的 matched mean 和 variance 可写成 \\[\nm\n=\nm^{\\setminus n}\n+\\rho_n\n\\frac{v^{\\setminus n}}{v^{\\setminus n}+1}\n(x_n-m^{\\setminus n}),\n\\] \\[\nv\n=\nv^{\\setminus n}\n-\\rho_n\\frac{(v^{\\setminus n})^2}{v^{\\setminus n}+1}\n+\\rho_n(1-\\rho_n)\n\\frac{(v^{\\setminus n})^2\\|x_n-m^{\\setminus n}\\|^2}\n{D(v^{\\setminus n}+1)^2}.\n\\] 其中 \\[\n\\rho_n\n=\n\\frac{(1-w)\\mathcal{N}(x_n\\mid m^{\\setminus n},(v^{\\setminus n}+1)I)}\n{Z_n}\n\\] 表示当前上下文下第 \\(n\\) 个点不是 clutter 的概率。\n完成所有 factor refinement 后，clutter problem 的 evidence approximation 可写为 \\[\np(D)\n\\simeq\n(2\\pi v)^{D/2}\\exp(B/2)\n\\prod_{n=1}^N\n\\left\\{\ns_n(2\\pi v_n)^{-D/2}\n\\right\\},\n\\] 其中 \\[\nB\n=\n\\frac{m^Tm}{v}\n-\\sum_{n=1}^N\\frac{m_n^Tm_n}{v_n}.\n\\] 这里 \\(m,v\\) 是最终 Gaussian approximation \\(q(\\theta)\\) 的参数。\n图 10.16 展示了单个 factor 的近似：真实 \\(f_n(\\theta)\\)、当前 cavity \\(q^{\\setminus n}\\) 和近似 factor \\(\\widetilde{f}_n\\)。关键点是，近似因子不试图在全局逼近 \\(f_n\\)，而是在 cavity 所强调的 \\(\\theta\\) 区域中逼近它。图 10.17 比较 EP、variational Bayes 和 Laplace approximation 在 clutter problem 上对 posterior mean 与 evidence 的误差，EP 在该例中表现更好。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "PRML",
+      "近似推断"
+    ]
+  },
+  {
+    "objectID": "src/learn/prml/10-approximate-inference.html#expectation-propagation-on-graphs",
+    "href": "src/learn/prml/10-approximate-inference.html#expectation-propagation-on-graphs",
+    "title": "近似推断",
+    "section": "Expectation Propagation on Graphs",
+    "text": "Expectation Propagation on Graphs\nEP 可以推广到 factor graph。若 \\[\np(x)=f_a(x_1,x_2)f_b(x_2,x_3)f_c(x_2,x_4),\n\\] 并要求近似因子进一步分解为单变量因子，例如 \\[\nq(x)\n\\propto\n\\widetilde{f}_{a1}(x_1)\\widetilde{f}_{a2}(x_2)\n\\widetilde{f}_{b2}(x_2)\\widetilde{f}_{b3}(x_3)\n\\widetilde{f}_{c2}(x_2)\\widetilde{f}_{c4}(x_4),\n\\] 则更新 \\(\\widetilde{f}_b(x_2,x_3)=\\widetilde{f}_{b2}(x_2)\\widetilde{f}_{b3}(x_3)\\) 时，先移除它： \\[\nq^{\\setminus b}(x)\n=\n\\widetilde{f}_{a1}(x_1)\\widetilde{f}_{a2}(x_2)\n\\widetilde{f}_{c2}(x_2)\\widetilde{f}_{c4}(x_4),\n\\] 再乘回真实 factor： \\[\n\\widehat{p}(x)\n=\nq^{\\setminus b}(x)f_b(x_2,x_3).\n\\] 因为近似是 fully factorized，moment matching 等价于取各变量边缘。会改变的只有 \\(x_2,x_3\\) 相关因子： \\[\n\\widetilde{f}_{b2}(x_2)\n\\propto\n\\sum_{x_3} f_b(x_2,x_3),\n\\] \\[\n\\widetilde{f}_{b3}(x_3)\n\\propto\n\\sum_{x_2}\nf_b(x_2,x_3)\n\\widetilde{f}_{a2}(x_2)\\widetilde{f}_{c2}(x_2).\n\\] 这些正是 belief propagation 中 factor-to-variable messages 的形式。一般 factor graph \\[\np(\\theta)=\\prod_i f_i(\\theta_i)\n\\] 若用 fully factorized 近似 \\[\nq(\\theta)\\propto\n\\prod_i\\prod_k\\widetilde{f}_{ik}(\\theta_k),\n\\] 则更新某个 term 的一般形式为 \\[\n\\widetilde{f}_{jl}(\\theta_l)\n\\propto\n\\sum_{\\theta_m\\neq \\theta_l\\in \\theta_j}\nf_j(\\theta_j)\n\\prod_k\\prod_{m\\neq l}\\widetilde{f}_{km}(\\theta_m).\n\\] 这就是 sum-product rule。因而，loopy belief propagation 可以看成 EP 在 fully factorized approximating family 下的特殊情形。\n\n\n\n\n\n\n重要统一视角\n\n\n\n第 10 章最后把 variational message passing、loopy belief propagation 和 EP 放进同一张图里：它们可以看成在不同 approximating family 和不同 alpha divergence 下得到的 message passing algorithm。选择哪一种算法，本质上是在选择计算可处理性、support 覆盖、mode 选择和收敛性质之间的折中。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "PRML",
+      "近似推断"
+    ]
+  },
+  {
+    "objectID": "src/learn/prml/10-approximate-inference.html#思考题-6",
+    "href": "src/learn/prml/10-approximate-inference.html#思考题-6",
+    "title": "近似推断",
+    "section": "思考题",
+    "text": "思考题\n\nEP 的 cavity distribution 为什么要通过“除掉当前近似因子”得到？\ntilted distribution 的 moment matching 为什么会让近似更关注 posterior 高概率区域？\n为什么 ADF 适合 online learning，但 batch data 下可能依赖样本顺序？\n为什么 fully factorized EP 会退化为 sum-product 或 loopy belief propagation？",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "PRML",
+      "近似推断"
     ]
   },
   {
@@ -2417,7 +3563,7 @@
     "href": "src/learn/index.html",
     "title": "专题学习",
     "section": "",
-    "text": "这里收录从 Obsidian vault 迁移出来、已经适合公开浏览的专题学习笔记。每个专题都有自己的入口页，后续新增专题时，只要在 src/learn/ 下创建专题目录和 index.qmd，这里会自动出现对应入口。",
+    "text": "这里收录从 Obsidian vault 迁移出来、已经适合公开浏览的专题学习笔记。多数专题使用目录内的 index.qmd 作为入口；少数课程式系列会直接链接到编号导读页。",
     "crumbs": [
       "首页",
       "专题学习"
@@ -2428,7 +3574,7 @@
     "href": "src/learn/index.html#已整理专题",
     "title": "专题学习",
     "section": "已整理专题",
-    "text": "已整理专题\n\n\n\n\n\n\n标题\n\n\n\n描述\n\n\n\n\n\n\n\n\nPRML\n\n\nBishop《Pattern Recognition and Machine Learning》学习笔记。\n\n\n\n\n\n\n高等概率论\n\n\n测度论视角下的概率论专题笔记。\n\n\n\n\n\n\n无匹配项",
+    "text": "已整理专题\n\n纵向轨迹混合模型：从现实纵向随访问题出发，介绍基于有限混合模型、潜类别和 LCMM 系列方法的轨迹聚类讲义。\n\n\n\n\n\n\n\n标题\n\n\n\n描述\n\n\n\n\n\n\n\n\nPRML\n\n\nBishop《Pattern Recognition and Machine Learning》学习笔记。\n\n\n\n\n\n\n高等概率论\n\n\n测度论视角下的概率论专题笔记。\n\n\n\n\n\n\n无匹配项",
     "crumbs": [
       "首页",
       "专题学习"
@@ -2439,7 +3585,7 @@
     "href": "src/learn/index.html#后续迁移方向",
     "title": "专题学习",
     "section": "后续迁移方向",
-    "text": "后续迁移方向\n后续可以继续迁移贝叶斯统计与变分推断、生存分析、强化学习、纵向数据分析、LLM、评价指标等专题。\n目前这个分区只链接已经整理过的公开专题学习笔记。",
+    "text": "后续迁移方向\n后续可以继续迁移贝叶斯统计与变分推断、生存分析、强化学习、LLM、评价指标等专题。\n目前这个分区只链接已经整理过的公开专题学习笔记。",
     "crumbs": [
       "首页",
       "专题学习"
@@ -3353,6 +4499,693 @@
       "专题学习",
       "PRML",
       "混合模型与 EM"
+    ]
+  },
+  {
+    "objectID": "src/learn/prml/index.html",
+    "href": "src/learn/prml/index.html",
+    "title": "PRML",
+    "section": "",
+    "text": "这里收录 C. M. Bishop 的 Pattern Recognition and Machine Learning 专题学习笔记。当前迁移范围包括第 6 章核方法、第 7 章稀疏核机器、第 8 章图模型、第 9 章混合模型和 EM，以及第 10 章近似推断。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "PRML"
+    ]
+  },
+  {
+    "objectID": "src/learn/prml/index.html#笔记目录",
+    "href": "src/learn/prml/index.html#笔记目录",
+    "title": "PRML",
+    "section": "笔记目录",
+    "text": "笔记目录\n下面的目录由 Quarto 自动生成，并按照每篇笔记 YAML 中的 order 字段排序。\n\n\n\n\n\n\n标题\n\n\n\ntags\n\n\n\n日期\n\n\n\n\n\n\n\n\n核方法\n\n\nPRML, 机器学习, 核方法, 高斯过程\n\n\n2026年4月23日\n\n\n\n\n\n\n稀疏核机器\n\n\nPRML, 机器学习, 核方法, SVM, RVM\n\n\n2026年4月30日\n\n\n\n\n\n\n图模型\n\n\nPRML, 机器学习, 概率图模型, 贝叶斯网络, 马尔可夫随机场, 信念传播\n\n\n2026年5月21日\n\n\n\n\n\n\n混合模型与 EM\n\n\nPRML, 机器学习, 无监督学习, 混合模型, EM算法\n\n\n2026年5月31日\n\n\n\n\n\n\n近似推断\n\n\nPRML, 机器学习, 近似推断, 变分推断, 贝叶斯推断\n\n\n2026年6月6日\n\n\n\n\n\n\n无匹配项",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "PRML"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/01-gbtm.html",
+    "href": "src/learn/trajectory-mixture-models/01-gbtm.html",
+    "title": "GBTM",
+    "section": "",
+    "text": "纵向数据中的异质性常常不是“所有人围绕同一条平均曲线波动”这么简单。儿童行为发展、认知老化、慢病症状、治疗反应或社会行为变化，都可能呈现若干种可辨认的典型路径：有人长期稳定，有人逐渐下降，有人快速改善，也有人先升后降。若只报告总体平均轨迹，这些差异会被压缩成一条可能并不代表任何人的曲线。\nGBTM 的出发点是把这种异质性写成概率模型。沿用系列导读：纵向轨迹混合模型 中的统一符号，个体轨迹的边际分布写为若干潜在类别条件分布的混合：\n\\[\np(y_i \\mid \\theta)\n=\n\\sum_{g=1}^{G}\n\\pi_{ig} f_g(y_i \\mid \\theta_g).\n\\]\n这里真正需要展开的是 \\(f_g(y_i \\mid \\theta_g)\\)：给定个体属于类别 \\(g\\) 后，整条纵向轨迹如何产生？GBTM 与其他模型的区别，主要就在于此。GBTM 模型非常适合作为轨迹混合模型的起点，因为它把类别条件轨迹模型保持在最简单的形态：类别解释主要轨迹差异，类别内部通常不再引入个体随机效应。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "GBTM"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/01-gbtm.html#类别特异轨迹预测函数",
+    "href": "src/learn/trajectory-mixture-models/01-gbtm.html#类别特异轨迹预测函数",
+    "title": "GBTM",
+    "section": "类别特异轨迹预测函数",
+    "text": "类别特异轨迹预测函数\n轨迹预测函数 \\(\\eta_g(t;\\beta_g)\\) 可以使用时间多项式，也可以使用分段函数、样条函数或其他事先指定的时间基函数。最常见的写法是：\n\\[\n\\eta_g(t_{ij};\\beta_g)\n=\n\\beta_{0g}\n+ \\beta_{1g} t_{ij}\n+ \\beta_{2g} t_{ij}^{2}\n+ \\cdots\n+ \\beta_{pg} t_{ij}^{p}.\n\\]\n这里 \\(\\beta_{0g}\\) 对应类别 \\(g\\) 在参考时间点的水平，\\(\\beta_{1g}\\) 表示线性变化趋势，\\(\\beta_{2g}\\) 表示弯曲方向和加速或减速，高阶项表达更复杂的轨迹形状。时间变量常需要中心化和缩放，例如把年龄写成 \\((\\mathrm{age}-65)/10\\)，让截距和斜率有清楚解释，也减少高阶项造成的数值不稳定。\n但是，\\(\\eta_g\\) 不一定等于观测均值本身。它可能通过 link function 连接到均值、概率、强度或其他分布参数。例如二元结局中，\\(\\eta_g\\) 常是 log-odds；计数结局中，\\(\\eta_g\\) 常是 log intensity。区分“轨迹预测子”和“观测尺度上的均值”是理解扩展 GBTM 的第一步。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "GBTM"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/01-gbtm.html#条件独立",
+    "href": "src/learn/trajectory-mixture-models/01-gbtm.html#条件独立",
+    "title": "GBTM",
+    "section": "条件独立",
+    "text": "条件独立\n式 1 中的乘积形式隐含了 GBTM 的关键简化：给定潜在类别和类别轨迹后，重复测量之间的剩余依赖不再通过随机截距、随机斜率等类别内随机效应建模。\n这不是说纵向观测在边际上独立。边际相关性仍然可以由共同的潜在类别诱导出来：同一个人属于某一类别后，多次观测都围绕该类别轨迹变化，因此重复测量在总体层面仍有关联。GBTM 的假设是，一旦类别和类别轨迹给定，剩余相关结构足够简单，可以交给观测分布和残差处理。\n这个假设决定了 GBTM 的解释方式。若同一类别内部仍存在明显连续差异，例如有些人始终高于类别轨迹、有些人始终低于类别轨迹，GBTM 倾向于用额外类别去近似这种连续变异。后续 LCMM/GMM 正是通过类别内随机效应来放松这一点。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "GBTM"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/01-gbtm.html#类别条件-likelihood",
+    "href": "src/learn/trajectory-mixture-models/01-gbtm.html#类别条件-likelihood",
+    "title": "GBTM",
+    "section": "类别条件 likelihood",
+    "text": "类别条件 likelihood\n在一般形式下，个体 \\(i\\) 对类别 \\(g\\) 的支持来自整条轨迹的条件 likelihood：\n\\[\nL_{ig}(\\theta_g)\n=\nf_g(y_i\\mid\\theta_g)\n=\n\\prod_{j=1}^{n_i}\np\\{Y_{ij}\\mid \\eta_g(t_{ij};\\beta_g),\\phi_g\\}.\n\\]\n一个类别要得到较高后验支持，不只是某个时间点接近该类轨迹，而是整条观测序列在该类条件模型下都比较可能。因此，GBTM 的分类不是单点分类，也不是简单按斜率排序；它依赖完整纵向 likelihood。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "GBTM"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/01-gbtm.html#连续近似高斯结局",
+    "href": "src/learn/trajectory-mixture-models/01-gbtm.html#连续近似高斯结局",
+    "title": "GBTM",
+    "section": "连续近似高斯结局",
+    "text": "连续近似高斯结局\n若结局近似连续、残差大致对称、边界效应不强，可以使用高斯观测模型：\n\\[\nY_{ij}\\mid C_i=g\n\\sim\n\\mathcal N(\\mu_{ij}^{g},\\sigma_g^2),\n\\]\n并令\n\\[\n\\mu_{ij}^{g}\n=\n\\eta_g(t_{ij};\\beta_g).\n\\]\n此时类别条件 likelihood 为：\n\\[\nf_g(y_i\\mid\\theta_g)\n=\n\\prod_{j=1}^{n_i}\n\\frac{1}{\\sqrt{2\\pi\\sigma_g^2}}\n\\exp\\left[\n-\\frac{(Y_{ij}-\\mu_{ij}^{g})^2}{2\\sigma_g^2}\n\\right].\n\\]\n高斯版本最容易讲清楚类别平均轨迹，但也最容易被滥用。若结局有明显天花板、地板、偏态或大量边界值，正态残差可能把测量尺度问题误转化为额外类别。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "GBTM"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/01-gbtm.html#二元结局",
+    "href": "src/learn/trajectory-mixture-models/01-gbtm.html#二元结局",
+    "title": "GBTM",
+    "section": "二元结局",
+    "text": "二元结局\n若 \\(Y_{ij}\\in\\{0,1\\}\\)，例如某症状是否出现、某行为是否发生，可以使用 Bernoulli 分布：\n\\[\nY_{ij}\\mid C_i=g\n\\sim\n\\mathrm{Bernoulli}(p_{ij}^{g}),\n\\]\n并通过 logit link 连接轨迹预测子：\n\\[\n\\log\\frac{p_{ij}^{g}}{1-p_{ij}^{g}}\n=\n\\eta_g(t_{ij};\\beta_g).\n\\]\n这时类别轨迹描述的是事件发生概率随时间的变化。解释时应回到概率尺度，而不是只看 logit 尺度上的多项式曲线。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "GBTM"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/01-gbtm.html#计数结局",
+    "href": "src/learn/trajectory-mixture-models/01-gbtm.html#计数结局",
+    "title": "GBTM",
+    "section": "计数结局",
+    "text": "计数结局\n若结局是事件次数，可以使用 Poisson 分布：\n\\[\nY_{ij}\\mid C_i=g\n\\sim\n\\mathrm{Poisson}(\\lambda_{ij}^{g}),\n\\qquad\n\\log \\lambda_{ij}^{g}\n=\n\\eta_g(t_{ij};\\beta_g).\n\\]\n此时类别轨迹描述的是事件强度或期望次数。Poisson 模型隐含均值等于方差；若实际数据有过度离散或大量结构性零值，就需要考虑负二项、零膨胀或其他扩展，而不是只通过增加类别数来吸收分布不匹配。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "GBTM"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/01-gbtm.html#有界或偏态连续结局",
+    "href": "src/learn/trajectory-mixture-models/01-gbtm.html#有界或偏态连续结局",
+    "title": "GBTM",
+    "section": "有界或偏态连续结局",
+    "text": "有界或偏态连续结局\n若结局是有界连续分数、比例或强偏态量表，高斯版本可能不合适。可以考虑 beta 分布、删失分布、变换尺度。Elmer et al. 讨论了 beta distribution 在 group-based trajectory models 中处理有界连续结局的思路 (Elmer 等 2018年)。\n这些扩展提醒我们：GBTM 的核心不是某一种分布，而是“给定类别后如何写整条轨迹的条件分布”。观测分布一旦不合适，类别形状和类别数都可能被扭曲。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "GBTM"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/01-gbtm.html#em-算法",
+    "href": "src/learn/trajectory-mixture-models/01-gbtm.html#em-算法",
+    "title": "GBTM",
+    "section": "EM 算法",
+    "text": "EM 算法\n引入类别指示变量：\n\\[\nZ_{ig}\n=\n\\begin{cases}\n1, & C_i=g,\\\\\n0, & C_i\\ne g.\n\\end{cases}\n\\]\n若 \\(Z_{ig}\\) 可观测，complete-data log likelihood 为：\n\\[\n\\ell_c(\\theta)\n=\n\\sum_{i=1}^{N}\n\\sum_{g=1}^{G}\nZ_{ig}\n\\left[\n\\log \\pi_{ig}\n+ \\log f_g(y_i\\mid\\theta_g)\n\\right].\n\\]\nEM 的 E step 用当前参数下的 posterior responsibility 替代未知类别指示变量：\n\\[\n\\tau_{ig}^{(r)}\n=\nE(Z_{ig}\\mid y_i,\\theta^{(r)})\n=\n\\frac{\n\\pi_{ig}^{(r)} f_g(y_i\\mid\\theta_g^{(r)})\n}{\n\\sum_{\\ell=1}^{G}\n\\pi_{i\\ell}^{(r)} f_\\ell(y_i\\mid\\theta_\\ell^{(r)})\n}.\n\\]\nM step 最大化期望 complete-data log likelihood：\n\\[\nQ(\\theta\\mid\\theta^{(r)})\n=\n\\sum_{i=1}^{N}\n\\sum_{g=1}^{G}\n\\tau_{ig}^{(r)}\n\\left[\n\\log \\pi_{ig}\n+ \\log f_g(y_i\\mid\\theta_g)\n\\right].\n\\]\n若没有类别成员协变量，类别比例更新为：\n\\[\n\\pi_g^{(r+1)}\n=\n\\frac{1}{N}\n\\sum_{i=1}^{N}\n\\tau_{ig}^{(r)}.\n\\]\n这说明类别比例是 soft count。轨迹参数的更新则取决于 \\(f_g\\) 的具体观测分布：高斯版本可理解为加权回归，二元版本可理解为加权 logistic model，计数版本可理解为加权 count model。一般地，个体对类别 \\(g\\) 参数更新的贡献由 \\(\\tau_{ig}^{(r)}\\) 加权。\nEM 的优势是概率含义清楚，能够自然解释后验分类、soft assignment 和 complete-data likelihood。它的限制是收敛可能较慢，而且复杂观测分布或约束参数下，M step 未必有简单闭式解。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "GBTM"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/01-gbtm.html#newton-raphson-与-modified-marquardt",
+    "href": "src/learn/trajectory-mixture-models/01-gbtm.html#newton-raphson-与-modified-marquardt",
+    "title": "GBTM",
+    "section": "Newton-Raphson 与 modified Marquardt",
+    "text": "Newton-Raphson 与 modified Marquardt\n另一类方法直接最大化观测数据 log-likelihood。记 score vector 为\n\\[\nU(\\theta)\n=\n\\frac{\\partial \\ell(\\theta)}{\\partial \\theta},\n\\]\nHessian matrix 为\n\\[\nH(\\theta)\n=\n\\frac{\\partial^2 \\ell(\\theta)}\n{\\partial \\theta \\partial \\theta^\\top}.\n\\]\nNewton-Raphson 使用二阶近似更新参数：\n\\[\n\\theta^{(r+1)}\n=\n\\theta^{(r)}\n-\nH(\\theta^{(r)})^{-1}U(\\theta^{(r)}).\n\\]\n在最大值附近，如果 Hessian 稳定且负定，Newton 更新通常比 EM 更快。但混合模型的 likelihood 常常多峰，参数可能接近边界，Hessian 也可能病态，因此纯 Newton 更新可能过大或方向不稳定。\nLevenberg-Marquardt 或 modified Marquardt 方法在 Newton 更新中加入阻尼，使更新在二阶 Newton step 和更保守的梯度式 step 之间调节。一个教学化写法是：\n\\[\n\\theta^{(r+1)}\n=\n\\theta^{(r)}\n-\n\\left[\nH(\\theta^{(r)})-\\lambda^{(r)}D^{(r)}\n\\right]^{-1}\nU(\\theta^{(r)}),\n\\]\n其中 \\(\\lambda^{(r)}\\) 是阻尼参数，\\(D^{(r)}\\) 是与曲率尺度相关的矩阵。阻尼项的作用是：当 Newton 方向可靠时，更新接近二阶方法；当曲率不稳定或步长过大时，更新变得更保守。\nlcmm 方法论文说明该系列模型使用 maximum likelihood framework 下的 modified Marquardt-Levenberg algorithm，并结合参数稳定、likelihood 稳定和导数相关准则判断收敛 (Proust-Lima 等 2017年)。这说明 EM 可以作为理解潜类别模型的基本语言，但实际最大似然估计并不必然等同于纯 EM。\n\n\n\n\n\n\n\n\n\n方法\n主要对象\n优点\n需要注意\n\n\n\n\nEM 算法\nposterior responsibility 与 \\(Q\\) 函数\n解释清楚，soft classification 自然\n可能收敛较慢，复杂 M step 需数值优化\n\n\nNewton-Raphson\nscore 与 Hessian\n利用曲率信息，局部收敛快\n对初值、Hessian 和边界参数敏感\n\n\nmodified Marquardt\n阻尼后的二阶更新\n在效率和稳定性之间折中\n仍需检查局部最优和收敛诊断",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "GBTM"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/01-gbtm.html#优势",
+    "href": "src/learn/trajectory-mixture-models/01-gbtm.html#优势",
+    "title": "GBTM",
+    "section": "优势",
+    "text": "优势\nGBTM 的主要优势是结构清楚。每个类别对应一条典型轨迹，后验概率给出个体属于各类别的不确定性，模型结果容易转化为轨迹图、类别比例和分类质量指标。对于探索性描述、临床或社会科学中的 typology 构建，以及需要向非技术读者解释纵向异质性的场景，这种简洁性很有吸引力。\n它的另一个优势是教学价值高。GBTM 保留了有限混合模型的核心：潜在类别、类别条件分布、后验概率和类别数选择，同时避免一开始就引入随机效应积分、link function、多个 marker 或 survival 子模型。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "GBTM"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/01-gbtm.html#适用条件",
+    "href": "src/learn/trajectory-mixture-models/01-gbtm.html#适用条件",
+    "title": "GBTM",
+    "section": "适用条件",
+    "text": "适用条件\nGBTM 更适合用作初始模型或描述性模型，尤其是在研究问题本身关心若干条典型轨迹时。若类别内连续异质性不强，观测分布与数据尺度大致匹配，轨迹形状稳定且类别比例合理，GBTM 可以给出清楚的分类和解释。\n若研究重点是“同一类别内部仍有多大个体差异”，或数据明显呈现连续谱而不是离散分组，则 LCMM/GMM 可能更合适。若结局有明显边界、偏态或有序等级结构，则需要考虑扩展 GBTM 或 latent process LCMM，而不是简单套用高斯版本。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "GBTM"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/01-gbtm.html#注意事项",
+    "href": "src/learn/trajectory-mixture-models/01-gbtm.html#注意事项",
+    "title": "GBTM",
+    "section": "注意事项",
+    "text": "注意事项\nGBTM 类别不应被过快解释为真实存在、边界清晰的自然亚型。更稳妥的说法是：在当前类别条件模型、当前类别数和当前数据下，轨迹可以被概括为若干类典型模式。若要把类别解释为实质亚群，需要理论支持、外部验证、敏感性分析和稳定复现。\n报告时至少应说明类别数选择依据、类别比例、后验分类质量、轨迹形状、收敛状态、初始值敏感性和观测分布设定。若后续分析使用 most likely class，还应说明分类不确定性如何处理。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "GBTM"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/01-gbtm.html#解释边界",
+    "href": "src/learn/trajectory-mixture-models/01-gbtm.html#解释边界",
+    "title": "GBTM",
+    "section": "解释边界",
+    "text": "解释边界\nGBTM 的类别可以有不同解释层次：\n\n\n\n\n\n\n\n\n\n解释方式\n含义\n何时较合理\n风险\n\n\n\n\n实体亚群\n类别近似真实发展机制或 phenotype\n有理论支持、外部验证和稳定复现\n证据不足时过度本体化\n\n\n离散近似\n类别是对连续异质性的有限混合近似\n主要目标是描述和预测异质性\n类别数与模型设定相关\n\n\n模型补偿\n类别吸收遗漏随机效应、非正态或缺失机制\n诊断提示模型误设\n类别可能是统计伪影\n\n\n\nHerle et al. 强调，typical trajectories 的解释必须回到模型假设、数据结构和研究问题 (Herle 等 2020年)。对 GBTM 尤其如此，因为类别内没有随机效应，模型更容易把连续差异切成离散类别。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "GBTM"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/03-hlme-growth-mixture-models.html",
+    "href": "src/learn/trajectory-mixture-models/03-hlme-growth-mixture-models.html",
+    "title": "hlme：从 GBTM 到 LCMM/GMM",
+    "section": "",
+    "text": "GBTM/LCGA 把人群异质性主要压缩成离散类别：给定类别后，个体围绕类别平均轨迹的偏离通常只通过残差表达。hlme() 拟合的 latent class linear mixed model 则多了一层结构：同一类别内部仍然允许个体有随机截距、随机斜率等连续差异。\n因此，hlme() 可以看作从 GBTM 走向 growth mixture model (GMM) 或 LCMM 的入口。它回答的问题不再只是“总体能否分成几条典型轨迹”，还包括：\n\n不同类别的平均轨迹是否不同？\n同一类别内部个体是否仍有连续变异？\n基线协变量是否解释类别归属概率？\n后验分类是否足够清楚，可以支持报告和后续分析？\n\nlcmm companion paper 把 hlme() 定位为 latent class linear mixed model / heterogeneous linear mixed model 的实现，并说明整个包使用 maximum likelihood 与 modified Marquardt 类型算法估计 (Proust-Lima 等 2017年)。本篇先聚焦高斯纵向结局；非正态、有界或有序结局留到第 5 篇 lcmm()。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`hlme`：从 GBTM 到 LCMM/GMM"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/03-hlme-growth-mixture-models.html#gbtmlcga-的简化",
+    "href": "src/learn/trajectory-mixture-models/03-hlme-growth-mixture-models.html#gbtmlcga-的简化",
+    "title": "hlme：从 GBTM 到 LCMM/GMM",
+    "section": "GBTM/LCGA 的简化",
+    "text": "GBTM/LCGA 的简化\n在基础 GBTM/LCGA 中，给定类别 \\(g\\) 后，连续结局可以写成：\n\\[\nY_{ij}\\mid C_i=g\n=\nX_i(t_{ij})^\\top\\beta_g+\\epsilon_{ij},\n\\qquad\n\\epsilon_{ij}\\sim\\mathcal N(0,\\sigma_g^2).\n\\]\n类别内部没有随机截距或随机斜率。若两个个体属于同一类，它们共享同一条类别平均轨迹，只是每次观测有残差波动。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`hlme`：从 GBTM 到 LCMM/GMM"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/03-hlme-growth-mixture-models.html#hlme-的新增层次",
+    "href": "src/learn/trajectory-mixture-models/03-hlme-growth-mixture-models.html#hlme-的新增层次",
+    "title": "hlme：从 GBTM 到 LCMM/GMM",
+    "section": "hlme() 的新增层次",
+    "text": "hlme() 的新增层次\nhlme() 给类别内部加入随机效应。给定类别 \\(g\\)，可以写：\n\\[\nY_{ij\\mid C_i=g}\n=\nX_{L1i}(t_{ij})^\\top\\beta\n+X_{L2i}(t_{ij})^\\top\\nu_g\n+Z_i(t_{ij})^\\top u_{ig}\n+\\epsilon_{ij}.\n\\]\n其中：\n\n\n\n\n\n\n\n\n部分\n含义\nhlme() 参数\n\n\n\n\n\\(X_{L1i}(t)^\\top\\beta\\)\n所有类别共享的固定效应\nfixed 中未放入 mixture 的项\n\n\n\\(X_{L2i}(t)^\\top\\nu_g\\)\n类别特异固定效应，定义不同平均轨迹\nmixture\n\n\n\\(Z_i(t)^\\top u_{ig}\\)\n类别内个体随机效应\nrandom\n\n\n\\(\\epsilon_{ij}\\)\n残差或测量误差\nresidual error\n\n\n\\(P(C_i=g\\mid X_{ci})\\)\n类别成员概率\nclassmb\n\n\n\n随机效应通常假设为正态：\n\\[\nu_{ig}\\sim \\mathcal N(0,B_g).\n\\]\n如果各类别共享随机效应协方差矩阵，则 \\(B_g=B\\)；如果允许类别间随机效应方差按比例变化，可以使用类似 nwg = TRUE 的结构，让不同类别有不同随机效应尺度。\n\n\n\n\n\n\n重要LCMM 与 GBTM 的最小差异\n\n\n\n教学上最直观的分界是 random。GBTM/LCGA 主要用离散类别解释个体差异；hlme()/GMM 同时用离散类别和类别内随机效应解释差异。前者更简洁，后者更能表达“同一类内部仍然有连续差异”。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`hlme`：从 GBTM 到 LCMM/GMM"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/03-hlme-growth-mixture-models.html#固定效应与类别特异效应",
+    "href": "src/learn/trajectory-mixture-models/03-hlme-growth-mixture-models.html#固定效应与类别特异效应",
+    "title": "hlme：从 GBTM 到 LCMM/GMM",
+    "section": "固定效应与类别特异效应",
+    "text": "固定效应与类别特异效应\n假设时间变量为 \\(\\mathrm{age65}=(\\mathrm{age}-65)/10\\)。一个二次轨迹模型可以写成：\n\\[\nY_{ij\\mid C_i=g}\n=\n(\\beta_0+\\nu_{0g})\n+(\\beta_1+\\nu_{1g})\\mathrm{age65}_{ij}\n+(\\beta_2+\\nu_{2g})\\mathrm{age65}_{ij}^2\n+Z_i(t_{ij})^\\top u_{ig}\n+\\epsilon_{ij}.\n\\]\n这里 \\(\\beta\\) 是共同部分，\\(\\nu_g\\) 是类别偏移。若 mixture = ~ age65 + I(age65^2)，则线性和二次时间趋势可以随类别不同；若 mixture = ~ age65，则只允许线性斜率类别特异，二次项共享。\n\n\n\n\n\n\n警告容易混淆处\n\n\n\nfixed 定义纵向模型里有哪些候选固定效应；mixture 指定这些固定效应中哪些允许类别特异。通常 mixture 中的变量也应出现在 fixed 中，否则模型语义会很难解释。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`hlme`：从 GBTM 到 LCMM/GMM"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/03-hlme-growth-mixture-models.html#随机效应",
+    "href": "src/learn/trajectory-mixture-models/03-hlme-growth-mixture-models.html#随机效应",
+    "title": "hlme：从 GBTM 到 LCMM/GMM",
+    "section": "随机效应",
+    "text": "随机效应\n若设置：\nrandom = ~ age65\n则个体可以有随机截距和随机年龄斜率：\n\\[\nZ_i(t_{ij})^\\top u_{ig}\n=\nb_{0ig}+b_{1ig}\\mathrm{age65}_{ij}.\n\\]\n随机效应协方差矩阵为：\n\\[\nB_g\n=\n\\begin{pmatrix}\n\\sigma_{b0,g}^{2} & \\sigma_{b01,g}\\\\\n\\sigma_{b01,g} & \\sigma_{b1,g}^{2}\n\\end{pmatrix}.\n\\]\n这个矩阵表达同一类别中个体之间的连续差异：有些人整体水平更高，有些人下降更快，有些人的初始水平和下降速度相关。\n如果随机效应方差很大，类别平均轨迹就不应该被解释成类别内所有个体的典型路径。它只是类别条件平均，类别内部仍然有宽广的个体分布。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`hlme`：从 GBTM 到 LCMM/GMM"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/03-hlme-growth-mixture-models.html#多起点搜索",
+    "href": "src/learn/trajectory-mixture-models/03-hlme-growth-mixture-models.html#多起点搜索",
+    "title": "hlme：从 GBTM 到 LCMM/GMM",
+    "section": "多起点搜索",
+    "text": "多起点搜索\n混合模型 likelihood 往往多峰。实际工作中，不应只依赖一个初始值。lcmm 工作流常用 gridsearch() 从多个随机起点运行短迭代，再把较好的起点继续优化：\nm2_grid &lt;- gridsearch(\n  rep = 50,\n  maxiter = 30,\n  minit = m1,\n  hlme(\n    fixed = normMMSE ~ poly(age65, degree = 2, raw = TRUE) + CEP,\n    mixture = ~ poly(age65, degree = 2, raw = TRUE),\n    random = ~ poly(age65, degree = 2, raw = TRUE),\n    classmb = ~ CEP,\n    subject = \"ID\",\n    ng = 2,\n    data = paquid\n  )\n)\n报告时应写清楚 rep、maxiter、初始模型、最终 log-likelihood，以及是否存在未收敛或收敛到较差局部极值的模型。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`hlme`：从 GBTM 到 LCMM/GMM"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/03-hlme-growth-mixture-models.html#模型与数据摘要",
+    "href": "src/learn/trajectory-mixture-models/03-hlme-growth-mixture-models.html#模型与数据摘要",
+    "title": "hlme：从 GBTM 到 LCMM/GMM",
+    "section": "模型与数据摘要",
+    "text": "模型与数据摘要\n首先检查 subjects、observations、latent classes、parameters 和 log-likelihood。这里要确认：\n\n个体数和观测数是否符合数据预处理后的样本。\nng 是否为计划中的类别数。\n参数数量是否随类别数、随机效应和 classmb 合理增加。\nlog-likelihood 是否可与其他模型比较。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`hlme`：从 GBTM 到 LCMM/GMM"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/03-hlme-growth-mixture-models.html#收敛诊断",
+    "href": "src/learn/trajectory-mixture-models/03-hlme-growth-mixture-models.html#收敛诊断",
+    "title": "hlme：从 GBTM 到 LCMM/GMM",
+    "section": "收敛诊断",
+    "text": "收敛诊断\nlcmm 输出通常包含迭代次数和收敛状态。三类收敛准则尤其重要：\n\n参数变化是否足够小。\nlog-likelihood 变化是否足够小。\nsecond derivatives / Hessian 相关准则是否满足。\n\n若模型停止但 Hessian 不合格，参数标准误、置信区间和 Wald 检验可能不可靠。第 4 篇会详细解释 conv、gconv 和 Marquardt 诊断。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`hlme`：从 GBTM 到 LCMM/GMM"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/03-hlme-growth-mixture-models.html#class-membership-model",
+    "href": "src/learn/trajectory-mixture-models/03-hlme-growth-mixture-models.html#class-membership-model",
+    "title": "hlme：从 GBTM 到 LCMM/GMM",
+    "section": "Class-membership model",
+    "text": "Class-membership model\n类别成员模型输出的是相对于参考类别的 log-odds。若 classmb = ~ CEP，则某个系数 \\(\\hat\\zeta\\) 可以转成 odds ratio：\n\\[\n\\mathrm{OR}=\\exp(\\hat\\zeta).\n\\]\n但解释必须加上“相对于参考类别”和“在模型定义的潜在类别中”。不能说“CEP 导致某类轨迹”，只能说在该模型下 CEP 与更高或更低的类别成员概率相关。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`hlme`：从 GBTM 到 LCMM/GMM"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/03-hlme-growth-mixture-models.html#longitudinal-model",
+    "href": "src/learn/trajectory-mixture-models/03-hlme-growth-mixture-models.html#longitudinal-model",
+    "title": "hlme：从 GBTM 到 LCMM/GMM",
+    "section": "Longitudinal model",
+    "text": "Longitudinal model\n纵向部分要分别看：\n\n哪些时间项类别特异。\n类别平均轨迹在观测时间范围内如何变化。\nfixed 中的协变量是否仍有类别内关联。\n随机效应方差协方差是否很大。\n残差标准误是否合理。\n\n如果类别平均轨迹差异很小，但随机效应方差巨大，模型更像是在描述连续异质性，而不是清晰亚型。反过来，如果随机效应很小、类别轨迹差异明显，它更接近 GBTM/LCGA 的解释。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`hlme`：从 GBTM 到 LCMM/GMM"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/03-hlme-growth-mixture-models.html#cep-进入不同位置含义不同",
+    "href": "src/learn/trajectory-mixture-models/03-hlme-growth-mixture-models.html#cep-进入不同位置含义不同",
+    "title": "hlme：从 GBTM 到 LCMM/GMM",
+    "section": "CEP 进入不同位置，含义不同",
+    "text": "CEP 进入不同位置，含义不同\n如果 CEP 出现在 fixed 中，它解释给定类别和随机效应结构后的纵向结局差异；如果出现在 classmb 中，它解释类别归属概率差异。两者不能合并成一句话。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`hlme`：从 GBTM 到 LCMM/GMM"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/03-hlme-growth-mixture-models.html#类别编号没有自然意义",
+    "href": "src/learn/trajectory-mixture-models/03-hlme-growth-mixture-models.html#类别编号没有自然意义",
+    "title": "hlme：从 GBTM 到 LCMM/GMM",
+    "section": "类别编号没有自然意义",
+    "text": "类别编号没有自然意义\nclass1、class2 的编号由估计结果决定，可能发生 label switching。报告时应按轨迹形状重命名，例如“稳定高水平”“快速下降”“低水平缓慢下降”。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`hlme`：从 GBTM 到 LCMM/GMM"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/03-hlme-growth-mixture-models.html#bic-不能单独决定报告模型",
+    "href": "src/learn/trajectory-mixture-models/03-hlme-growth-mixture-models.html#bic-不能单独决定报告模型",
+    "title": "hlme：从 GBTM 到 LCMM/GMM",
+    "section": "BIC 不能单独决定报告模型",
+    "text": "BIC 不能单独决定报告模型\n类别数选择应结合 BIC/AIC、类别比例、后验分类质量、轨迹可解释性、收敛状态和理论问题。一个 BIC 最低但有 1% 极小类别的模型，可能只是异常点或模型误设的结果。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`hlme`：从 GBTM 到 LCMM/GMM"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/03-hlme-growth-mixture-models.html#随机效应越大类别越不一定清晰",
+    "href": "src/learn/trajectory-mixture-models/03-hlme-growth-mixture-models.html#随机效应越大类别越不一定清晰",
+    "title": "hlme：从 GBTM 到 LCMM/GMM",
+    "section": "随机效应越大，类别越不一定清晰",
+    "text": "随机效应越大，类别越不一定清晰\nLCMM/GMM 的优势是允许类内差异，但这也意味着类别平均轨迹只是条件平均。如果类内随机斜率很大，同一类别内部可能包含多种实际路径。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`hlme`：从 GBTM 到 LCMM/GMM"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/05-lcmm-latent-process-models.html",
+    "href": "src/learn/trajectory-mixture-models/05-lcmm-latent-process-models.html",
+    "title": "lcmm：非正态/有序结局与 latent process",
+    "section": "",
+    "text": "hlme() 适用于高斯纵向结局。可是很多纵向数据并不适合直接放进线性高斯 mixed model：\n\n认知量表有上下界，早期可能有天花板效应。\n抑郁或症状评分偏态，低分堆积。\n自评健康、疼痛等级、功能等级是有序分类。\n同一潜在状态被粗糙量表测量，观测分数和真实变化之间可能是非线性关系。\n\nlcmm() 的核心思想是把两个尺度分开：\n\nlatent process scale：不可直接观测的连续潜在过程在这里随时间变化。\nobserved outcome scale：实际测到的量表分数、等级或有界变量在这里出现。\n\n这两个尺度通过 link function 连接。lcmm companion paper 把这类模型称为 latent process mixed models，并把它放在 lcmm 包处理 extended mixed models 的核心框架中 (Proust-Lima 等 2017年)。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`lcmm`：非正态/有序结局与 latent process"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/05-lcmm-latent-process-models.html#观测分数不一定是模型的自然尺度",
+    "href": "src/learn/trajectory-mixture-models/05-lcmm-latent-process-models.html#观测分数不一定是模型的自然尺度",
+    "title": "lcmm：非正态/有序结局与 latent process",
+    "section": "观测分数不一定是模型的自然尺度",
+    "text": "观测分数不一定是模型的自然尺度\n假设研究认知老化，用 MMSE 表示认知能力。MMSE 的观测范围有限，且不同分数区间的含义并不一定等距。29 分到 30 分可能只是测量噪声或天花板效应，15 分到 16 分可能对应更明显的功能差异。\n如果直接写：\n\\[\nY_{ij}\n=\nX_i(t_{ij})^\\top\\beta\n+Z_i(t_{ij})^\\top u_i\n+\\epsilon_{ij},\n\\]\n就是假设原始 MMSE 分数本身适合线性高斯模型。lcmm() 则改为假设背后有一个连续潜在过程 \\(A_i(t)\\)，观测分数只是它经过测量函数后的表现。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`lcmm`：非正态/有序结局与 latent process"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/05-lcmm-latent-process-models.html#两个尺度",
+    "href": "src/learn/trajectory-mixture-models/05-lcmm-latent-process-models.html#两个尺度",
+    "title": "lcmm：非正态/有序结局与 latent process",
+    "section": "两个尺度",
+    "text": "两个尺度\n给定类别 \\(g\\)，潜在过程可以写成：\n\\[\nA_i(t)\\mid C_i=g\n=\nX_{L1i}(t)^\\top\\beta\n+X_{L2i}(t)^\\top\\nu_g\n+Z_i(t)^\\top u_{ig}\n+w_i(t).\n\\]\n其中：\n\n\n\n\n\n\n\n项\n含义\n\n\n\n\n\\(X_{L1i}(t)^\\top\\beta\\)\n类别共享固定效应\n\n\n\\(X_{L2i}(t)^\\top\\nu_g\\)\n类别特异固定效应\n\n\n\\(Z_i(t)^\\top u_{ig}\\)\n类别内随机效应\n\n\n\\(w_i(t)\\)\n额外时间相关结构，例如 Brownian motion 或 autoregressive process\n\n\n\n观测值 \\(Y_{ij}\\) 通过 link function 与潜在过程相连。为了写法统一，可以用一个单调函数 \\(H\\) 表示：\n\\[\nY_{ij}\n=\nH(A_i(t_{ij})+\\epsilon_{ij};\\eta).\n\\]\n也可以把反向 link 写成：\n\\[\nH^{-1}(Y_{ij};\\eta)\n=\nA_i(t_{ij})+\\epsilon_{ij}.\n\\]\n不同文献和软件说明会选择不同方向的记号；学习时关键是记住：模型在 latent process 尺度上建立 mixed model，再通过 link function 回到观测尺度。\n\n\n\n\n\n\n重要解释尺度\n\n\n\nlcmm() 中 longitudinal model 的系数首先属于 latent process scale。除非 link function 是 linear 且观测尺度近似等距，否则不能直接把系数解释成原始量表上的分数差。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`lcmm`：非正态/有序结局与 latent process"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/05-lcmm-latent-process-models.html#linear-link",
+    "href": "src/learn/trajectory-mixture-models/05-lcmm-latent-process-models.html#linear-link",
+    "title": "lcmm：非正态/有序结局与 latent process",
+    "section": "Linear link",
+    "text": "Linear link\nlinear link 是最接近 hlme() 的情形。若观测尺度可以近似看作潜在尺度的线性变换，则：\n\\[\nH^{-1}(Y_{ij})\n=\na+bY_{ij}.\n\\]\n这适合观测变量连续、近似高斯、边界效应不强的情形。此时 lcmm() 和 hlme() 在概念上非常接近；差别主要在于 lcmm() 明确放在 latent process 框架下。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`lcmm`：非正态/有序结局与 latent process"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/05-lcmm-latent-process-models.html#beta-link",
+    "href": "src/learn/trajectory-mixture-models/05-lcmm-latent-process-models.html#beta-link",
+    "title": "lcmm：非正态/有序结局与 latent process",
+    "section": "Beta link",
+    "text": "Beta link\nbeta link 用于有界连续结局。先把观测变量重缩放到 \\((0,1)\\)：\n\\[\nY_{ij}^\\ast\n=\n\\frac{Y_{ij}-\\min(Y)+\\epsilon}{\\max(Y)-\\min(Y)+2\\epsilon},\n\\]\n其中 \\(\\epsilon\\) 对应软件中的 epsY 思路，用于避免精确落在 0 或 1。然后用 beta CDF 或相关参数化构造单调 link，把有界、偏态的观测分数映射到潜在尺度。\n直观上，beta link 允许原始量表两端被拉伸或压缩。例如在天花板附近，原始分数变化很小，但 latent process 可能仍有可区分差异。\n\n\n\n\n\n\n警告容易混淆处\n\n\n\nbeta link 不是“结局服从普通 beta 回归”这么简单。在 lcmm() 语境中，它是连接观测量表与 latent process 的参数化 link function。解释重点应放在尺度转换，而不是只说“换成 beta 分布”。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`lcmm`：非正态/有序结局与 latent process"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/05-lcmm-latent-process-models.html#splines-link",
+    "href": "src/learn/trajectory-mixture-models/05-lcmm-latent-process-models.html#splines-link",
+    "title": "lcmm：非正态/有序结局与 latent process",
+    "section": "Splines link",
+    "text": "Splines link\nsplines link 用 I-splines 或类似单调样条表示未知的非线性 link。它适合研究者不知道观测尺度和潜在尺度之间具体关系，但希望保持单调性：\n\\[\nH^{-1}(Y;\\eta)\n=\n\\eta_0+\\sum_{q=1}^{Q}\\eta_q I_q(Y),\n\\]\n其中 \\(I_q(Y)\\) 是单调样条基函数。节点数量和节点位置决定 link function 的灵活度。常见设置会按等距或分位数选择节点，例如 \"5-quant-splines\" 这类语法。\nsplines link 的优势是灵活；风险是参数更多、识别和收敛更难。如果样条参数接近边界，或 link function 出现不合理形状，需要重新检查节点设置、变量缩放和初始值。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`lcmm`：非正态/有序结局与 latent process"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/05-lcmm-latent-process-models.html#thresholds-link",
+    "href": "src/learn/trajectory-mixture-models/05-lcmm-latent-process-models.html#thresholds-link",
+    "title": "lcmm：非正态/有序结局与 latent process",
+    "section": "Thresholds link",
+    "text": "Thresholds link\nthresholds link 用于有序分类或离散等级。假设背后存在连续潜在测量变量 \\(Y_{ij}^\\ast\\)：\n\\[\nY_{ij}=m\n\\quad\\Longleftrightarrow\\quad\n\\tau_{m-1}&lt;Y_{ij}^\\ast\\le \\tau_m.\n\\]\n阈值满足：\n\\[\n-\\infty=\\tau_0&lt;\\tau_1&lt;\\cdots&lt;\\tau_M=\\infty.\n\\]\n潜在过程决定 \\(Y_{ij}^\\ast\\) 的位置，阈值决定观测等级。这里的阈值不是轨迹类别，也不是潜在类别；它们只是把连续潜在测量切成有序等级。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`lcmm`：非正态/有序结局与 latent process"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/05-lcmm-latent-process-models.html#predictlink",
+    "href": "src/learn/trajectory-mixture-models/05-lcmm-latent-process-models.html#predictlink",
+    "title": "lcmm：非正态/有序结局与 latent process",
+    "section": "predictlink()",
+    "text": "predictlink()\npredictlink() 用于查看估计出的 link function。它回答的问题是：观测分数和 latent process 尺度之间的映射是什么样的？\n解释时应关注：\n\nlink 是否大致线性。\n量表两端是否被明显压缩或拉伸。\n是否出现不符合单调直觉的数值异常。\n不同模型的 link 是否导致结论差异。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`lcmm`：非正态/有序结局与 latent process"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/05-lcmm-latent-process-models.html#predicty-与-predictl",
+    "href": "src/learn/trajectory-mixture-models/05-lcmm-latent-process-models.html#predicty-与-predictl",
+    "title": "lcmm：非正态/有序结局与 latent process",
+    "section": "predictY() 与 predictL()",
+    "text": "predictY() 与 predictL()\npredictY() 通常用于在观测尺度上预测结局轨迹。它回答：模型认为原始量表分数如何随时间变化？\npredictL() 则用于 latent process 尺度上的预测。它回答：潜在过程本身如何随时间变化？\n这两个预测可能给出不同直觉。例如 latent process 可能持续下降，但观测尺度由于下界或上界压缩，看起来变化变慢。报告时最好说明使用的是哪个尺度。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`lcmm`：非正态/有序结局与 latent process"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/05-lcmm-latent-process-models.html#把-latent-scale-系数当成原始分数差异",
+    "href": "src/learn/trajectory-mixture-models/05-lcmm-latent-process-models.html#把-latent-scale-系数当成原始分数差异",
+    "title": "lcmm：非正态/有序结局与 latent process",
+    "section": "把 latent scale 系数当成原始分数差异",
+    "text": "把 latent scale 系数当成原始分数差异\n如果模型使用 beta、splines 或 thresholds link，固定效应和类别轨迹首先存在于 latent scale。要解释原始分数，需要使用预测函数转回 observed scale。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`lcmm`：非正态/有序结局与 latent process"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/05-lcmm-latent-process-models.html#把-thresholds-当成潜在类别",
+    "href": "src/learn/trajectory-mixture-models/05-lcmm-latent-process-models.html#把-thresholds-当成潜在类别",
+    "title": "lcmm：非正态/有序结局与 latent process",
+    "section": "把 thresholds 当成潜在类别",
+    "text": "把 thresholds 当成潜在类别\n有序结局中的阈值只是观测等级切分点。潜在类别 \\(C_i\\) 描述的是轨迹模式；阈值 \\(\\tau_m\\) 描述的是潜在测量变量如何变成观测等级。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`lcmm`：非正态/有序结局与 latent process"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/05-lcmm-latent-process-models.html#认为更灵活的-link-总是更好",
+    "href": "src/learn/trajectory-mixture-models/05-lcmm-latent-process-models.html#认为更灵活的-link-总是更好",
+    "title": "lcmm：非正态/有序结局与 latent process",
+    "section": "认为更灵活的 link 总是更好",
+    "text": "认为更灵活的 link 总是更好\nlink function 越灵活，越可能出现收敛困难、边界参数和过拟合。对于样本量不大或等级较少的数据，过度灵活的 link 可能没有足够信息支持。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`lcmm`：非正态/有序结局与 latent process"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/05-lcmm-latent-process-models.html#忽略变量预处理",
+    "href": "src/learn/trajectory-mixture-models/05-lcmm-latent-process-models.html#忽略变量预处理",
+    "title": "lcmm：非正态/有序结局与 latent process",
+    "section": "忽略变量预处理",
+    "text": "忽略变量预处理\n有界变量的最小值、最大值、重缩放和 epsY 会影响 link 估计。不同预处理可能改变 latent scale 的形状和解释，因此应在报告中说明。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`lcmm`：非正态/有序结局与 latent process"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/07-jointlcmm-and-mpjlcmm.html",
+    "href": "src/learn/trajectory-mixture-models/07-jointlcmm-and-mpjlcmm.html",
+    "title": "Jointlcmm 与 mpjlcmm：纵向轨迹 + 生存结局",
+    "section": "",
+    "text": "前面的模型只处理纵向轨迹。很多研究还同时关心一个事件结局：死亡、痴呆发生、复发、住院、治疗失败或退出研究。纵向轨迹和事件风险之间可能有关。例如认知下降较快的人，后续痴呆或死亡风险可能更高；疾病活动度持续升高的人，复发风险可能更高。\n联合潜类别模型 (joint latent class model) 用同一个潜在类别 \\(C_i\\) 同时连接两个过程：\n\n纵向过程：个体随时间的 marker 或 latent process 如何变化。\n事件过程：个体发生 time-to-event 结局的风险如何变化。\n\nJointlcmm() 或 jlcmm() 处理单个纵向结局或 latent process 与 time-to-event 的联合模型；mpjlcmm() 进一步处理多个纵向 marker 或多个 longitudinal latent processes 与事件结局的联合模型。Proust-Lima et al. 对 joint latent class models 的方法背景有专门综述 (Proust-Lima 等 2014年)，lcmm companion paper 则把它放入 lcmm 函数族 (Proust-Lima 等 2017年)。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`Jointlcmm` 与 `mpjlcmm`：纵向轨迹 + 生存结局"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/07-jointlcmm-and-mpjlcmm.html#共同潜在类别",
+    "href": "src/learn/trajectory-mixture-models/07-jointlcmm-and-mpjlcmm.html#共同潜在类别",
+    "title": "Jointlcmm 与 mpjlcmm：纵向轨迹 + 生存结局",
+    "section": "共同潜在类别",
+    "text": "共同潜在类别\n联合潜类别模型的关联机制是共同潜在类别：\n\\[\nC_i\\in\\{1,\\ldots,G\\}.\n\\]\n类别 \\(C_i\\) 同时影响纵向轨迹和事件风险。给定类别后，纵向过程和事件过程常被假设条件独立：\n\\[\np(Y_i,T_i,\\Delta_i\\mid C_i=g,\\theta)\n=\np(Y_i\\mid C_i=g,\\theta_Y)\np(T_i,\\Delta_i\\mid C_i=g,\\theta_T).\n\\]\n因此个体 likelihood 为：\n\\[\nL_i(\\theta)\n=\n\\sum_{g=1}^{G}\n\\pi_{ig}\nL_{Yi,g}(\\theta_Y)\nL_{Ti,g}(\\theta_T).\n\\]\n这里 \\(\\pi_{ig}\\) 是类别成员概率，\\(L_{Yi,g}\\) 是类别 \\(g\\) 下纵向数据的 likelihood，\\(L_{Ti,g}\\) 是类别 \\(g\\) 下生存数据的 likelihood。\n\n\n\n\n\n\n重要关联机制\n\n\n\njoint latent class model 通过潜在类别连接纵向过程和事件过程。它不同于 shared random effects joint model，后者通常通过连续随机效应或当前纵向水平直接进入 hazard 来建立关联。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`Jointlcmm` 与 `mpjlcmm`：纵向轨迹 + 生存结局"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/07-jointlcmm-and-mpjlcmm.html#解释含义",
+    "href": "src/learn/trajectory-mixture-models/07-jointlcmm-and-mpjlcmm.html#解释含义",
+    "title": "Jointlcmm 与 mpjlcmm：纵向轨迹 + 生存结局",
+    "section": "解释含义",
+    "text": "解释含义\n如果类别 \\(g\\) 同时具有“快速下降的纵向轨迹”和“较高事件风险”，模型说明这两者在同一个潜在类别中共现。它不自动说明轨迹变化因果导致事件，也不说明类别是真实生物亚型。解释仍然是模型依赖的关联。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`Jointlcmm` 与 `mpjlcmm`：纵向轨迹 + 生存结局"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/07-jointlcmm-and-mpjlcmm.html#高斯纵向结局",
+    "href": "src/learn/trajectory-mixture-models/07-jointlcmm-and-mpjlcmm.html#高斯纵向结局",
+    "title": "Jointlcmm 与 mpjlcmm：纵向轨迹 + 生存结局",
+    "section": "高斯纵向结局",
+    "text": "高斯纵向结局\n若结局近似高斯，可以写：\n\\[\nY_{ij\\mid C_i=g}\n=\nX_{L1i}(t_{ij})^\\top\\beta\n+X_{L2i}(t_{ij})^\\top\\nu_g\n+Z_i(t_{ij})^\\top u_{ig}\n+\\epsilon_{ij}.\n\\]\n这里 \\(\\nu_g\\) 定义类别特异平均轨迹，\\(u_{ig}\\) 定义类别内随机效应。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`Jointlcmm` 与 `mpjlcmm`：纵向轨迹 + 生存结局"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/07-jointlcmm-and-mpjlcmm.html#非高斯或-latent-process-结局",
+    "href": "src/learn/trajectory-mixture-models/07-jointlcmm-and-mpjlcmm.html#非高斯或-latent-process-结局",
+    "title": "Jointlcmm 与 mpjlcmm：纵向轨迹 + 生存结局",
+    "section": "非高斯或 latent process 结局",
+    "text": "非高斯或 latent process 结局\n若结局有界、偏态或有序，可以沿用第 5 篇的 latent process：\n\\[\nA_i(t)\\mid C_i=g\n=\nX_{L1i}(t)^\\top\\beta\n+X_{L2i}(t)^\\top\\nu_g\n+Z_i(t)^\\top u_{ig}\n+w_i(t),\n\\]\n观测值通过 link function 与 \\(A_i(t)\\) 相连。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`Jointlcmm` 与 `mpjlcmm`：纵向轨迹 + 生存结局"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/07-jointlcmm-and-mpjlcmm.html#多-marker-情形",
+    "href": "src/learn/trajectory-mixture-models/07-jointlcmm-and-mpjlcmm.html#多-marker-情形",
+    "title": "Jointlcmm 与 mpjlcmm：纵向轨迹 + 生存结局",
+    "section": "多 marker 情形",
+    "text": "多 marker 情形\nmpjlcmm() 可以把多个纵向 marker 或多个 longitudinal latent processes 放进 joint model。简化地说，第 6 篇的 multlcmm() 负责多个 marker 与 latent process 的关系；mpjlcmm() 进一步把这些 longitudinal processes 与事件风险联合起来。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`Jointlcmm` 与 `mpjlcmm`：纵向轨迹 + 生存结局"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/07-jointlcmm-and-mpjlcmm.html#把-joint-latent-class-model-当作因果模型",
+    "href": "src/learn/trajectory-mixture-models/07-jointlcmm-and-mpjlcmm.html#把-joint-latent-class-model-当作因果模型",
+    "title": "Jointlcmm 与 mpjlcmm：纵向轨迹 + 生存结局",
+    "section": "把 joint latent class model 当作因果模型",
+    "text": "把 joint latent class model 当作因果模型\n类别和事件风险的关联不等于轨迹导致事件。潜在类别是模型推断变量，受到纵向模型、生存模型、缺失和删失机制影响。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`Jointlcmm` 与 `mpjlcmm`：纵向轨迹 + 生存结局"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/07-jointlcmm-and-mpjlcmm.html#混淆-shared-random-effects-joint-model",
+    "href": "src/learn/trajectory-mixture-models/07-jointlcmm-and-mpjlcmm.html#混淆-shared-random-effects-joint-model",
+    "title": "Jointlcmm 与 mpjlcmm：纵向轨迹 + 生存结局",
+    "section": "混淆 shared random effects joint model",
+    "text": "混淆 shared random effects joint model\nshared random effects 模型通常让纵向过程的当前水平、斜率或随机效应直接进入 hazard。joint latent class model 则通过离散类别建立关联。两者对“纵向-事件关联”的假设不同。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`Jointlcmm` 与 `mpjlcmm`：纵向轨迹 + 生存结局"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/07-jointlcmm-and-mpjlcmm.html#忽略事件时间尺度",
+    "href": "src/learn/trajectory-mixture-models/07-jointlcmm-and-mpjlcmm.html#忽略事件时间尺度",
+    "title": "Jointlcmm 与 mpjlcmm：纵向轨迹 + 生存结局",
+    "section": "忽略事件时间尺度",
+    "text": "忽略事件时间尺度\n生存子模型的时间尺度非常关键。年龄、随访时间、疾病持续时间可能给出不同解释。纵向时间和生存时间也需要一致或明确转换。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`Jointlcmm` 与 `mpjlcmm`：纵向轨迹 + 生存结局"
+    ]
+  },
+  {
+    "objectID": "src/learn/trajectory-mixture-models/07-jointlcmm-and-mpjlcmm.html#只看纵向轨迹不看-hazard",
+    "href": "src/learn/trajectory-mixture-models/07-jointlcmm-and-mpjlcmm.html#只看纵向轨迹不看-hazard",
+    "title": "Jointlcmm 与 mpjlcmm：纵向轨迹 + 生存结局",
+    "section": "只看纵向轨迹，不看 hazard",
+    "text": "只看纵向轨迹，不看 hazard\n联合模型的类别同时由纵向和事件信息支持。加入生存结局后，类别划分可能改变；这不是错误，而是说明事件过程也参与了类别定义。",
+    "crumbs": [
+      "首页",
+      "专题学习",
+      "Trajectory Mixture Models",
+      "`Jointlcmm` 与 `mpjlcmm`：纵向轨迹 + 生存结局"
     ]
   }
 ]

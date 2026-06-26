@@ -44,7 +44,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-9bf5887a14e445753812c846e9fa6a9b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-26e9ded75cdb1fe644a41939c9b4c060.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -379,6 +379,77 @@ window.Quarto = {
  <span class="menu-text">混合模型与 EM</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../src/learn/prml/10-approximate-inference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">近似推断</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Trajectory Mixture Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../src/learn/trajectory-mixture-models/00-series-index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">系列导读：纵向轨迹混合模型</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../src/learn/trajectory-mixture-models/01-gbtm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">GBTM</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../src/learn/trajectory-mixture-models/02-extended-gbtm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">扩展 GBTM：非高斯结局、多轨迹与协变量</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../src/learn/trajectory-mixture-models/03-hlme-growth-mixture-models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><code>hlme</code>：从 GBTM 到 LCMM/GMM</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../src/learn/trajectory-mixture-models/04-estimation-for-lcmm-family.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">LCMM 系列的估计：EM 直觉与 Marquardt 实现</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../src/learn/trajectory-mixture-models/05-lcmm-latent-process-models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><code>lcmm</code>：非正态/有序结局与 latent process</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../src/learn/trajectory-mixture-models/06-multlcmm-multivariate-longitudinal-markers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><code>multlcmm</code>/<code>mlcmm</code>：多个纵向指标共享潜在过程</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../src/learn/trajectory-mixture-models/07-jointlcmm-and-mpjlcmm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><code>Jointlcmm</code> 与 <code>mpjlcmm</code>：纵向轨迹 + 生存结局</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../src/learn/trajectory-mixture-models/08-model-selection-classification-and-reporting.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">模型选择、分类质量与报告规范</span></a>
+  </div>
+</li>
       </ul>
   </li>
       </ul>
@@ -431,9 +502,12 @@ window.Quarto = {
 </header>
 
 
-<p>这里收录从 Obsidian vault 迁移出来、已经适合公开浏览的专题学习笔记。每个专题都有自己的入口页，后续新增专题时，只要在 <code>src/learn/</code> 下创建专题目录和 <code>index.qmd</code>，这里会自动出现对应入口。</p>
+<p>这里收录从 Obsidian vault 迁移出来、已经适合公开浏览的专题学习笔记。多数专题使用目录内的 <code>index.qmd</code> 作为入口；少数课程式系列会直接链接到编号导读页。</p>
 <section id="已整理专题" class="level2">
 <h2 class="anchored" data-anchor-id="已整理专题">已整理专题</h2>
+<ul>
+<li><a href="../../src/learn/trajectory-mixture-models/00-series-index.html">纵向轨迹混合模型</a>：从现实纵向随访问题出发，介绍基于有限混合模型、潜类别和 LCMM 系列方法的轨迹聚类讲义。</li>
+</ul>
 <div id="listing-listing" class="quarto-listing quarto-listing-container-table">
 <table class="quarto-listing-table table">
 <thead>
@@ -451,7 +525,7 @@ window.Quarto = {
 </thead>
 <tbody class="list">
 
-<tr data-index="0" data-listing-file-modified-sort="1780541992647" data-listing-reading-time-sort="1" data-listing-word-count-sort="26" data-listing-title-sort="PRML" data-listing-filename-sort="index.qmd">
+<tr data-index="0" data-listing-file-modified-sort="1782441034507" data-listing-reading-time-sort="1" data-listing-word-count-sort="28" data-listing-title-sort="PRML" data-listing-filename-sort="index.qmd">
 <td>
 <a href="../../src/learn/prml/index.html" class="title listing-title">PRML</a>
 </td>
@@ -461,7 +535,7 @@ window.Quarto = {
 
 </tr>
 
-<tr data-index="1" data-listing-file-modified-sort="1780541992645" data-listing-reading-time-sort="1" data-listing-word-count-sort="17" data-listing-title-sort="高等概率论" data-listing-filename-sort="index.qmd">
+<tr data-index="1" data-listing-file-modified-sort="1782441034505" data-listing-reading-time-sort="1" data-listing-word-count-sort="17" data-listing-title-sort="高等概率论" data-listing-filename-sort="index.qmd">
 <td>
 <a href="../../src/learn/advanced-probability/index.html" class="title listing-title">高等概率论</a>
 </td>
@@ -478,7 +552,7 @@ window.Quarto = {
 </section>
 <section id="后续迁移方向" class="level2">
 <h2 class="anchored" data-anchor-id="后续迁移方向">后续迁移方向</h2>
-<p>后续可以继续迁移贝叶斯统计与变分推断、生存分析、强化学习、纵向数据分析、LLM、评价指标等专题。</p>
+<p>后续可以继续迁移贝叶斯统计与变分推断、生存分析、强化学习、LLM、评价指标等专题。</p>
 <p>目前这个分区只链接已经整理过的公开专题学习笔记。</p>
 
 

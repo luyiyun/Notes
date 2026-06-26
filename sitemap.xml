@@ -1,115 +1,155 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://luyiyun.github.io/Notes/src/learn/prml/index.html</loc>
-    <lastmod>2026-06-04T02:59:52.647Z</lastmod>
+    <loc>https://luyiyun.github.io/Notes/src/learn/trajectory-mixture-models/08-model-selection-classification-and-reporting.html</loc>
+    <lastmod>2026-06-26T02:30:34.509Z</lastmod>
+  </url>
+  <url>
+    <loc>https://luyiyun.github.io/Notes/src/learn/trajectory-mixture-models/06-multlcmm-multivariate-longitudinal-markers.html</loc>
+    <lastmod>2026-06-26T02:30:34.508Z</lastmod>
+  </url>
+  <url>
+    <loc>https://luyiyun.github.io/Notes/src/learn/trajectory-mixture-models/04-estimation-for-lcmm-family.html</loc>
+    <lastmod>2026-06-26T02:30:34.508Z</lastmod>
+  </url>
+  <url>
+    <loc>https://luyiyun.github.io/Notes/src/learn/trajectory-mixture-models/02-extended-gbtm.html</loc>
+    <lastmod>2026-06-26T02:30:34.508Z</lastmod>
+  </url>
+  <url>
+    <loc>https://luyiyun.github.io/Notes/src/learn/trajectory-mixture-models/00-series-index.html</loc>
+    <lastmod>2026-06-26T02:30:34.508Z</lastmod>
+  </url>
+  <url>
+    <loc>https://luyiyun.github.io/Notes/src/learn/prml/10-approximate-inference.html</loc>
+    <lastmod>2026-06-26T02:30:34.507Z</lastmod>
   </url>
   <url>
     <loc>https://luyiyun.github.io/Notes/src/learn/prml/08-graphical-models.html</loc>
-    <lastmod>2026-06-04T02:59:52.647Z</lastmod>
+    <lastmod>2026-06-26T02:30:34.507Z</lastmod>
   </url>
   <url>
     <loc>https://luyiyun.github.io/Notes/src/learn/prml/06-kernel-methods.html</loc>
-    <lastmod>2026-06-04T02:59:52.645Z</lastmod>
+    <lastmod>2026-06-26T02:30:34.506Z</lastmod>
   </url>
   <url>
     <loc>https://luyiyun.github.io/Notes/src/learn/advanced-probability/19-convergence-theory.html</loc>
-    <lastmod>2026-06-04T02:59:52.645Z</lastmod>
+    <lastmod>2026-06-26T02:30:34.505Z</lastmod>
   </url>
   <url>
     <loc>https://luyiyun.github.io/Notes/src/learn/advanced-probability/17-statistical-distributions-and-density-functions.html</loc>
-    <lastmod>2026-06-04T02:59:52.644Z</lastmod>
+    <lastmod>2026-06-26T02:30:34.505Z</lastmod>
   </url>
   <url>
     <loc>https://luyiyun.github.io/Notes/src/learn/advanced-probability/15-independence-and-conditional-expectation.html</loc>
-    <lastmod>2026-06-04T02:59:52.643Z</lastmod>
+    <lastmod>2026-06-26T02:30:34.504Z</lastmod>
   </url>
   <url>
     <loc>https://luyiyun.github.io/Notes/src/learn/advanced-probability/13-finite-product-spaces.html</loc>
-    <lastmod>2026-06-04T02:59:52.643Z</lastmod>
+    <lastmod>2026-06-26T02:30:34.503Z</lastmod>
   </url>
   <url>
     <loc>https://luyiyun.github.io/Notes/src/learn/advanced-probability/11-radon-nikodym-derivative.html</loc>
-    <lastmod>2026-06-04T02:59:52.642Z</lastmod>
+    <lastmod>2026-06-26T02:30:34.503Z</lastmod>
   </url>
   <url>
     <loc>https://luyiyun.github.io/Notes/src/learn/advanced-probability/09-lp-spaces.html</loc>
-    <lastmod>2026-06-04T02:59:52.642Z</lastmod>
+    <lastmod>2026-06-26T02:30:34.503Z</lastmod>
   </url>
   <url>
     <loc>https://luyiyun.github.io/Notes/src/learn/advanced-probability/07-measurable-functions.html</loc>
-    <lastmod>2026-06-04T02:59:52.642Z</lastmod>
+    <lastmod>2026-06-26T02:30:34.502Z</lastmod>
   </url>
   <url>
     <loc>https://luyiyun.github.io/Notes/src/learn/advanced-probability/05-measure-extension.html</loc>
-    <lastmod>2026-06-04T02:59:52.642Z</lastmod>
+    <lastmod>2026-06-26T02:30:34.502Z</lastmod>
   </url>
   <url>
     <loc>https://luyiyun.github.io/Notes/src/learn/advanced-probability/03-measure.html</loc>
-    <lastmod>2026-06-04T02:59:52.642Z</lastmod>
+    <lastmod>2026-06-26T02:30:34.502Z</lastmod>
   </url>
   <url>
     <loc>https://luyiyun.github.io/Notes/src/learn/advanced-probability/01-introduction.html</loc>
-    <lastmod>2026-06-04T02:59:52.642Z</lastmod>
+    <lastmod>2026-06-26T02:30:34.502Z</lastmod>
   </url>
   <url>
     <loc>https://luyiyun.github.io/Notes/index.html</loc>
-    <lastmod>2026-06-04T02:59:52.641Z</lastmod>
+    <lastmod>2026-06-26T02:30:34.501Z</lastmod>
   </url>
   <url>
     <loc>https://luyiyun.github.io/Notes/about.html</loc>
-    <lastmod>2026-06-04T02:59:52.640Z</lastmod>
+    <lastmod>2026-06-26T02:30:34.501Z</lastmod>
   </url>
   <url>
     <loc>https://luyiyun.github.io/Notes/src/learn/advanced-probability/02-sigma-field.html</loc>
-    <lastmod>2026-06-04T02:59:52.642Z</lastmod>
+    <lastmod>2026-06-26T02:30:34.502Z</lastmod>
   </url>
   <url>
     <loc>https://luyiyun.github.io/Notes/src/learn/advanced-probability/04-outer-measure.html</loc>
-    <lastmod>2026-06-04T02:59:52.642Z</lastmod>
+    <lastmod>2026-06-26T02:30:34.502Z</lastmod>
   </url>
   <url>
     <loc>https://luyiyun.github.io/Notes/src/learn/advanced-probability/06-distribution-function.html</loc>
-    <lastmod>2026-06-04T02:59:52.642Z</lastmod>
+    <lastmod>2026-06-26T02:30:34.502Z</lastmod>
   </url>
   <url>
     <loc>https://luyiyun.github.io/Notes/src/learn/advanced-probability/08-integration.html</loc>
-    <lastmod>2026-06-04T02:59:52.642Z</lastmod>
+    <lastmod>2026-06-26T02:30:34.503Z</lastmod>
   </url>
   <url>
     <loc>https://luyiyun.github.io/Notes/src/learn/advanced-probability/10-signed-measures.html</loc>
-    <lastmod>2026-06-04T02:59:52.642Z</lastmod>
+    <lastmod>2026-06-26T02:30:34.503Z</lastmod>
   </url>
   <url>
     <loc>https://luyiyun.github.io/Notes/src/learn/advanced-probability/12-lebesgue-decomposition.html</loc>
-    <lastmod>2026-06-04T02:59:52.642Z</lastmod>
+    <lastmod>2026-06-26T02:30:34.503Z</lastmod>
   </url>
   <url>
     <loc>https://luyiyun.github.io/Notes/src/learn/advanced-probability/14-infinite-product-spaces.html</loc>
-    <lastmod>2026-06-04T02:59:52.643Z</lastmod>
+    <lastmod>2026-06-26T02:30:34.504Z</lastmod>
   </url>
   <url>
     <loc>https://luyiyun.github.io/Notes/src/learn/advanced-probability/16-markov-chains-and-martingales.html</loc>
-    <lastmod>2026-06-04T02:59:52.644Z</lastmod>
+    <lastmod>2026-06-26T02:30:34.504Z</lastmod>
   </url>
   <url>
     <loc>https://luyiyun.github.io/Notes/src/learn/advanced-probability/18-moments.html</loc>
-    <lastmod>2026-06-04T02:59:52.644Z</lastmod>
+    <lastmod>2026-06-26T02:30:34.505Z</lastmod>
   </url>
   <url>
     <loc>https://luyiyun.github.io/Notes/src/learn/advanced-probability/index.html</loc>
-    <lastmod>2026-06-04T02:59:52.645Z</lastmod>
+    <lastmod>2026-06-26T02:30:34.505Z</lastmod>
   </url>
   <url>
     <loc>https://luyiyun.github.io/Notes/src/learn/index.html</loc>
-    <lastmod>2026-06-04T02:59:52.645Z</lastmod>
+    <lastmod>2026-06-26T02:30:34.506Z</lastmod>
   </url>
   <url>
     <loc>https://luyiyun.github.io/Notes/src/learn/prml/07-sparse-kernel-machines.html</loc>
-    <lastmod>2026-06-04T02:59:52.647Z</lastmod>
+    <lastmod>2026-06-26T02:30:34.507Z</lastmod>
   </url>
   <url>
     <loc>https://luyiyun.github.io/Notes/src/learn/prml/09-mixture-models-and-em.html</loc>
-    <lastmod>2026-06-04T02:59:52.647Z</lastmod>
+    <lastmod>2026-06-26T02:30:34.507Z</lastmod>
+  </url>
+  <url>
+    <loc>https://luyiyun.github.io/Notes/src/learn/prml/index.html</loc>
+    <lastmod>2026-06-26T02:30:34.507Z</lastmod>
+  </url>
+  <url>
+    <loc>https://luyiyun.github.io/Notes/src/learn/trajectory-mixture-models/01-gbtm.html</loc>
+    <lastmod>2026-06-26T02:30:34.508Z</lastmod>
+  </url>
+  <url>
+    <loc>https://luyiyun.github.io/Notes/src/learn/trajectory-mixture-models/03-hlme-growth-mixture-models.html</loc>
+    <lastmod>2026-06-26T02:30:34.508Z</lastmod>
+  </url>
+  <url>
+    <loc>https://luyiyun.github.io/Notes/src/learn/trajectory-mixture-models/05-lcmm-latent-process-models.html</loc>
+    <lastmod>2026-06-26T02:30:34.508Z</lastmod>
+  </url>
+  <url>
+    <loc>https://luyiyun.github.io/Notes/src/learn/trajectory-mixture-models/07-jointlcmm-and-mpjlcmm.html</loc>
+    <lastmod>2026-06-26T02:30:34.508Z</lastmod>
   </url>
 </urlset>

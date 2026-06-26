@@ -1,14 +1,5 @@
 [
   {
-    "listing": "/src/learn/prml/index.html",
-    "items": [
-      "/src/learn/prml/06-kernel-methods.html",
-      "/src/learn/prml/07-sparse-kernel-machines.html",
-      "/src/learn/prml/08-graphical-models.html",
-      "/src/learn/prml/09-mixture-models-and-em.html"
-    ]
-  },
-  {
     "listing": "/src/learn/advanced-probability/index.html",
     "items": [
       "/src/learn/advanced-probability/01-introduction.html",
@@ -37,6 +28,16 @@
     "items": [
       "/src/learn/prml/index.html",
       "/src/learn/advanced-probability/index.html"
+    ]
+  },
+  {
+    "listing": "/src/learn/prml/index.html",
+    "items": [
+      "/src/learn/prml/06-kernel-methods.html",
+      "/src/learn/prml/07-sparse-kernel-machines.html",
+      "/src/learn/prml/08-graphical-models.html",
+      "/src/learn/prml/09-mixture-models-and-em.html",
+      "/src/learn/prml/10-approximate-inference.html"
     ]
   }
 ]

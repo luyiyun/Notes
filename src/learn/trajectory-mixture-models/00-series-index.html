@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="从现实纵向随访问题出发，规划基于有限混合模型、潜类别和 LCMM 系列方法的轨迹聚类讲义。">
+
+<title>系列导读：纵向轨迹混合模型 – Rong’s Notes</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-26e9ded75cdb1fe644a41939c9b4c060.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../../styles.css">
+</head>
+
+<body class="nav-sidebar docked nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">Rong’s Notes</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="搜索"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="展开或折叠导航栏" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="../../../index.html" aria-current="page"> 
+<span class="menu-text">首页</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../src/learn/index.html"> 
+<span class="menu-text">专题学习</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../about.html"> 
+<span class="menu-text">关于</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/trajectory-mixture-models/00-series-index.html">Trajectory Mixture Models</a></li><li class="breadcrumb-item"><a href="../../../src/learn/trajectory-mixture-models/00-series-index.html">系列导读：纵向轨迹混合模型</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">首页</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../../src/learn/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">专题学习</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Deep Generative Model</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 show">  
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../../src/learn/advanced-probability/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">高等概率论</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/01-introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">介绍</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/02-sigma-field.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sigma 域</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/03-measure.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">测度</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/04-outer-measure.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">外测度</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/05-measure-extension.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">测度扩张</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/06-distribution-function.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">分布函数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/07-measurable-functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">可测函数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/08-integration.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">积分</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/09-lp-spaces.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lp 空间</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/10-signed-measures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">符号测度</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/11-radon-nikodym-derivative.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R-N 导数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/12-lebesgue-decomposition.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lebesgue 分解</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/13-finite-product-spaces.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">有限乘积空间</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/14-infinite-product-spaces.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">无限乘积空间</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/15-independence-and-conditional-expectation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">独立和条件期望</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/16-markov-chains-and-martingales.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">马尔可夫链与鞅</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/17-statistical-distributions-and-density-functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">统计分布与密度函数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/18-moments.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">矩</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/19-convergence-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">收敛理论</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../../src/learn/prml/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">PRML</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/prml/06-kernel-methods.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">核方法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/prml/07-sparse-kernel-machines.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">稀疏核机器</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/prml/08-graphical-models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">图模型</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/prml/09-mixture-models-and-em.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">混合模型与 EM</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/prml/10-approximate-inference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">近似推断</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Trajectory Mixture Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/trajectory-mixture-models/00-series-index.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">系列导读：纵向轨迹混合模型</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/trajectory-mixture-models/01-gbtm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">GBTM</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/trajectory-mixture-models/02-extended-gbtm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">扩展 GBTM：非高斯结局、多轨迹与协变量</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/trajectory-mixture-models/03-hlme-growth-mixture-models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><code>hlme</code>：从 GBTM 到 LCMM/GMM</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/trajectory-mixture-models/04-estimation-for-lcmm-family.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">LCMM 系列的估计：EM 直觉与 Marquardt 实现</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/trajectory-mixture-models/05-lcmm-latent-process-models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><code>lcmm</code>：非正态/有序结局与 latent process</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/trajectory-mixture-models/06-multlcmm-multivariate-longitudinal-markers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><code>multlcmm</code>/<code>mlcmm</code>：多个纵向指标共享潜在过程</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/trajectory-mixture-models/07-jointlcmm-and-mpjlcmm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><code>Jointlcmm</code> 与 <code>mpjlcmm</code>：纵向轨迹 + 生存结局</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/trajectory-mixture-models/08-model-selection-classification-and-reporting.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">模型选择、分类质量与报告规范</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../about.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">关于</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#背景介绍" id="toc-背景介绍" class="nav-link active" data-scroll-target="#背景介绍">背景介绍</a></li>
+  <li><a href="#统一符号" id="toc-统一符号" class="nav-link" data-scroll-target="#统一符号">统一符号</a></li>
+  <li><a href="#先修知识" id="toc-先修知识" class="nav-link" data-scroll-target="#先修知识">先修知识</a></li>
+  <li><a href="#讲义目录" id="toc-讲义目录" class="nav-link" data-scroll-target="#讲义目录">讲义目录</a>
+  <ul class="collapse">
+  <li><a href="#sec-gbtm" id="toc-sec-gbtm" class="nav-link" data-scroll-target="#sec-gbtm">GBTM：从有限混合到 group-based trajectory modeling</a></li>
+  <li><a href="#sec-extended-gbtm" id="toc-sec-extended-gbtm" class="nav-link" data-scroll-target="#sec-extended-gbtm">扩展 GBTM：非高斯结局、多轨迹与协变量</a></li>
+  <li><a href="#sec-lcmm-gmm" id="toc-sec-lcmm-gmm" class="nav-link" data-scroll-target="#sec-lcmm-gmm">LCMM/GMM：类别内随机效应与 latent class mixed model</a></li>
+  <li><a href="#sec-estimation" id="toc-sec-estimation" class="nav-link" data-scroll-target="#sec-estimation">LCMM 系列估计：EM 直觉与 modified Marquardt</a></li>
+  <li><a href="#sec-latent-process-lcmm" id="toc-sec-latent-process-lcmm" class="nav-link" data-scroll-target="#sec-latent-process-lcmm">Latent Process LCMM：非正态和有界纵向结局</a></li>
+  <li><a href="#sec-mlcmm-multlcmm" id="toc-sec-mlcmm-multlcmm" class="nav-link" data-scroll-target="#sec-mlcmm-multlcmm">MLCMM / multLCMM：多个 marker 与共同潜在过程</a></li>
+  <li><a href="#sec-jointlcmm-mpjlcmm" id="toc-sec-jointlcmm-mpjlcmm" class="nav-link" data-scroll-target="#sec-jointlcmm-mpjlcmm">JointLCMM / mpjLCMM：纵向轨迹类别与 time-to-event 结局</a></li>
+  <li><a href="#sec-model-selection" id="toc-sec-model-selection" class="nav-link" data-scroll-target="#sec-model-selection">模型选择与统计指标：类别数、分类质量和解释边界</a></li>
+  </ul></li>
+  <li><a href="#bibliography" id="toc-bibliography" class="nav-link" data-scroll-target="#bibliography">参考文献</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/trajectory-mixture-models/00-series-index.html">Trajectory Mixture Models</a></li><li class="breadcrumb-item"><a href="../../../src/learn/trajectory-mixture-models/00-series-index.html">系列导读：纵向轨迹混合模型</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">系列导读：纵向轨迹混合模型</h1>
+<p class="subtitle lead">Mixture-Model-Based Trajectory Clustering for Longitudinal Data</p>
+</div>
+
+<div>
+  <div class="description">
+    从现实纵向随访问题出发，规划基于有限混合模型、潜类别和 LCMM 系列方法的轨迹聚类讲义。
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">发布于</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">2026年6月24日</p>
+    </div>
+  </div>
+  
+    <div>
+    <div class="quarto-title-meta-heading">修改于</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date-modified">2026年6月26日</p>
+    </div>
+  </div>
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="背景介绍" class="level1">
+<h1>背景介绍</h1>
+<p><strong>纵向数据的难点常常不只是“平均趋势是什么”，而是“是否存在几类相当不同的变化过程”</strong>。在医学随访中，研究者可能看到一部分患者症状快速缓解，另一部分长期波动，还有一部分逐渐恶化。比如，在认知老化研究中，同样的年龄跨度可能对应稳定、缓慢下降和快速下降等不同认知轨迹；在心理症状、慢病管理和治疗反应研究中，整体平均线也经常掩盖了高度异质的个体路径。针对这类问题，我们通常需要从普通 longitudinal model 进入 model-based trajectory clustering：<strong>用概率模型描述整条轨迹的潜在类别</strong> <span class="citation" data-cites="naginodgers2010clinical herle2020typical">(<a href="#ref-naginodgers2010clinical" role="doc-biblioref">Nagin 和 Odgers 2010年</a>; <a href="#ref-herle2020typical" role="doc-biblioref">Herle 等 2020年</a>)</span>。</p>
+<p>本系列所介绍的方法主要限定在基于 finite mixture models、latent classes 和 latent process mixed models 的方法家族。它的核心思想是：<strong>总体中存在一个不可直接观测的离散类别变量，类别决定个体轨迹的条件分布，模型估计后，可以通过后验分类概率来确定个体属于哪个类别</strong>。这个框架既包括 group-based trajectory modeling 和 LCGA，也包括包含随机效应的 LCMM/GMM、处理非正态观测尺度的 latent process LCMM、多 marker 的 multLCMM，以及把纵向过程和 time-to-event 结局联结起来的 JointLCMM/mpjLCMM <span class="citation" data-cites="proustlima2017lcmm proustlima2014jointreview">(<a href="#ref-proustlima2017lcmm" role="doc-biblioref">Proust-Lima 等 2017年</a>; <a href="#ref-proustlima2014jointreview" role="doc-biblioref">Proust-Lima, Sène, 等 2014年</a>)</span>。</p>
+<p>注意，在本系列中，<strong>不应把“类别”预设为真实存在的自然分型</strong>。类别可能是有理论意义的典型轨迹，也可能只是连续异质性、测量尺度、模型设定、缺失机制或样本选择被离散化后的结果。后续每一种模型都会同时回答两件事：<strong>它怎样把纵向数据写成概率模型，以及它允许我们怎样谨慎解释轨迹类别</strong>。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Key Idea：把轨迹聚类写成概率模型">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>Key Idea：把轨迹聚类写成概率模型
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>本系列所介绍方法的共同点：<strong>先写出潜在类别下整条轨迹的条件分布，再用后验分类概率表达个体属于各类别的不确定性</strong>。</p>
+</div>
+</div>
+</section>
+<section id="统一符号" class="level1">
+<h1>统一符号</h1>
+<p>设研究中共有 <span class="math inline">\(N\)</span> 个个体，个体编号为 <span class="math inline">\(i=1,\ldots,N\)</span>。个体 <span class="math inline">\(i\)</span> 有 <span class="math inline">\(n_i\)</span> 次纵向观测，观测编号为 <span class="math inline">\(j=1,\ldots,n_i\)</span>，第 <span class="math inline">\(j\)</span> 次观测时间记为 <span class="math inline">\(t_{ij}\)</span>，单一 marker 的观测值记为 <span class="math inline">\(Y_{ij}\)</span>。整条纵向轨迹可以写作</p>
+<p><span class="math display">\[
+y_i = (Y_{i1}, \ldots, Y_{in_i})^\top .
+\]</span></p>
+<p>轨迹混合模型引入潜在类别变量 <span class="math inline">\(C_i \in \{1,\ldots,G\}\)</span>，其中 <span class="math inline">\(g=1,\ldots,G\)</span> 表示类别编号，<span class="math inline">\(G\)</span> 是候选类别数。个体 <span class="math inline">\(i\)</span> 归属于类别 <span class="math inline">\(g\)</span> 的概率记为 <span class="math inline">\(\pi_{ig}\)</span>。若类别成员概率依赖基线协变量 <span class="math inline">\(X_{ci}\)</span>，则可以写成</p>
+<p><span class="math display">\[
+\pi_{ig} = P(C_i=g \mid X_{ci}; \gamma).
+\]</span></p>
+<p>个体轨迹的边际分布通常写作</p>
+<p><span class="math display">\[
+p(y_i \mid \theta)
+=
+\sum_{g=1}^{G}
+\pi_{ig} f_g(y_i \mid \theta_g).
+\]</span></p>
+<p>这里 <span class="math inline">\(f_g(\cdot)\)</span> 是类别 <span class="math inline">\(g\)</span> 下整条轨迹的条件分布，不同类型的方法中，<span class="math inline">\(f_g\)</span> 拥有不同的模型假设。比如，GBTM（亦称 LCGA）中，<span class="math inline">\(f_g\)</span> 通常由类别特异的平均轨迹和观测分布决定；而在 LCMM/GMM 中，<span class="math inline">\(f_g\)</span> 还会对类别内随机效应积分。此外，针对不同的数据类型，<span class="math inline">\(f_g\)</span> 还可以对观测尺度进行变换，比如，对于连续 marker，<span class="math inline">\(f_g\)</span> 可以是正态分布；对于二分类 marker，<span class="math inline">\(f_g\)</span> 可以是二项分布；对于多分类 marker，<span class="math inline">\(f_g\)</span> 可以是多项分布。</p>
+<p>模型估计后，最常用的分类量是后验概率</p>
+<p><span class="math display">\[
+\tau_{ig}
+=
+P(C_i=g \mid y_i, X_{ci}; \hat\theta)
+=
+\frac{\hat\pi_{ig} f_g(y_i \mid \hat\theta_g)}
+{\sum_{\ell=1}^{G} \hat\pi_{i\ell} f_\ell(y_i \mid \hat\theta_\ell)} .
+\]</span></p>
+<p>当研究包含多个 marker 时，令 <span class="math inline">\(m=1,\ldots,M\)</span> 表示 marker 编号，观测值可写为 <span class="math inline">\(Y_{ijm}\)</span> 或在 marker-specific 时间上写为 <span class="math inline">\(Y_{ijm}(t_{ijm})\)</span>，这在讨论 multLCMM 时会用到。</p>
+<p>若同时有 time-to-event 结局，则用 <span class="math inline">\(T_i^\ast\)</span> 表示真实事件时间，<span class="math inline">\(\tilde T_i\)</span> 表示观测到的随访时间，<span class="math inline">\(\Delta_i\)</span> 表示事件或删失指标。在 competing risks 中，还需要事件类型指标 <span class="math inline">\(K_i\)</span>。</p>
+</section>
+<section id="先修知识" class="level1">
+<h1>先修知识</h1>
+<p>读者最好能够熟悉四类基础：</p>
+<ul>
+<li>概率模型和 likelihood，</li>
+<li>有限混合模型与 EM 的基本直觉，</li>
+<li>linear mixed-effects model 的固定效应、随机效应和边际似然，</li>
+<li>基础统计软件输出和模型公式的阅读能力。</li>
+</ul>
+<p>一般有限混合模型背景可参考 McLachlan and Peel 的专著 <span class="citation" data-cites="mclachlanpeel2000finite">(<a href="#ref-mclachlanpeel2000finite" role="doc-biblioref">McLachlan 和 Peel 2000年</a>)</span>。</p>
+</section>
+<section id="讲义目录" class="level1">
+<h1>讲义目录</h1>
+<ol type="1">
+<li><a href="../../../src/learn/trajectory-mixture-models/01-gbtm.html">GBTM：从有限混合到 group-based trajectory modeling</a></li>
+<li><a href="../../../src/learn/trajectory-mixture-models/02-extended-gbtm.html">扩展 GBTM：非高斯结局、多轨迹与协变量</a></li>
+<li><a href="../../../src/learn/trajectory-mixture-models/03-hlme-growth-mixture-models.html"><code>hlme</code> / LCMM / GMM：类别内随机效应与 latent class mixed model</a></li>
+<li><a href="../../../src/learn/trajectory-mixture-models/04-estimation-for-lcmm-family.html">LCMM 系列估计：EM 直觉与 modified Marquardt</a></li>
+<li><a href="../../../src/learn/trajectory-mixture-models/05-lcmm-latent-process-models.html">Latent Process LCMM：非正态和有界纵向结局</a></li>
+<li><a href="../../../src/learn/trajectory-mixture-models/06-multlcmm-multivariate-longitudinal-markers.html">MLCMM / multLCMM：多个 marker 与共同潜在过程</a></li>
+<li><a href="../../../src/learn/trajectory-mixture-models/07-jointlcmm-and-mpjlcmm.html">JointLCMM / mpjLCMM：纵向轨迹类别与 time-to-event 结局</a></li>
+<li><a href="../../../src/learn/trajectory-mixture-models/08-model-selection-classification-and-reporting.html">模型选择与统计指标：类别数、分类质量和解释边界</a></li>
+</ol>
+<section id="sec-gbtm" class="level2">
+<h2 class="anchored" data-anchor-id="sec-gbtm">GBTM：从有限混合到 group-based trajectory modeling</h2>
+<p>本章从最简单的潜在轨迹类别模型进入：GBTM 把总体表示为若干 group-specific 轨迹的有限混合，通常用类别内无随机效应或极简随机结构来突出类别平均轨迹、观测分布、后验分类概率和 AvePP。LCGA 在本系列中视为同一模型族的另一命名传统，而不是一个单独并列的方法。读者会先看到 Nagin 的 group-based trajectory modeling 如何把发展轨迹写成 semiparametric mixture，并理解 EM 与 modified Marquardt 这两类估计思想的关系 <span class="citation" data-cites="nagin1999developmental nagin2005group jones2001sas jones2007advances naginodgers2010clinical proustlima2017lcmm">(<a href="#ref-nagin1999developmental" role="doc-biblioref">Nagin 1999年</a>, <a href="#ref-nagin2005group" role="doc-biblioref">2005年</a>; <a href="#ref-jones2001sas" role="doc-biblioref">Jones 等 2001年</a>; <a href="#ref-jones2007advances" role="doc-biblioref">Jones 和 Nagin 2007年</a>; <a href="#ref-naginodgers2010clinical" role="doc-biblioref">Nagin 和 Odgers 2010年</a>; <a href="#ref-proustlima2017lcmm" role="doc-biblioref">Proust-Lima 等 2017年</a>)</span>。</p>
+</section>
+<section id="sec-extended-gbtm" class="level2">
+<h2 class="anchored" data-anchor-id="sec-extended-gbtm">扩展 GBTM：非高斯结局、多轨迹与协变量</h2>
+<p>本章在基础 GBTM 上改变观测分布、类别成员机制和纵向结局结构。它讨论二元、计数、零膨胀、有界连续等结局，解释类别成员协变量如何进入多项逻辑模型，并说明 multi-trajectory GBTM 如何用同一个潜在类别组织多个观测 marker 的联合轨迹 <span class="citation" data-cites="nagin2018multi elmer2018beta">(<a href="#ref-nagin2018multi" role="doc-biblioref">Nagin 等 2018年</a>; <a href="#ref-elmer2018beta" role="doc-biblioref">Elmer 等 2018年</a>)</span>。</p>
+</section>
+<section id="sec-lcmm-gmm" class="level2">
+<h2 class="anchored" data-anchor-id="sec-lcmm-gmm">LCMM/GMM：类别内随机效应与 latent class mixed model</h2>
+<p>本章把模型从“类别解释主要异质性”推进到“类别间平均轨迹差异 + 类别内连续个体差异”：LCMM/GMM 在每个类别内加入 mixed-effects structure，使个体可以围绕所属类别的平均轨迹连续偏离。这里的核心不是多放几个随机效应，而是类别含义随之改变：类别不再承担所有异质性，随机效应和残差结构也参与解释个体差异 <span class="citation" data-cites="muthen1999finite proustlima2017lcmm">(<a href="#ref-muthen1999finite" role="doc-biblioref">Muthén 和 Shedden 1999年</a>; <a href="#ref-proustlima2017lcmm" role="doc-biblioref">Proust-Lima 等 2017年</a>)</span>。</p>
+</section>
+<section id="sec-estimation" class="level2">
+<h2 class="anchored" data-anchor-id="sec-estimation">LCMM 系列估计：EM 直觉与 modified Marquardt</h2>
+<p>本章集中讨论估计问题：潜在类别和随机效应都不可观测时，likelihood 为什么困难，EM 如何通过 posterior responsibility 解释 soft classification，梯度、Hessian、Newton-Raphson 和 modified Marquardt 又如何支持直接最大似然优化。它也会整理局部最优、多起点、Hessian、边界参数和收敛诊断的解释 <span class="citation" data-cites="muthen1999finite proustlima2017lcmm">(<a href="#ref-muthen1999finite" role="doc-biblioref">Muthén 和 Shedden 1999年</a>; <a href="#ref-proustlima2017lcmm" role="doc-biblioref">Proust-Lima 等 2017年</a>)</span>。</p>
+</section>
+<section id="sec-latent-process-lcmm" class="level2">
+<h2 class="anchored" data-anchor-id="sec-latent-process-lcmm">Latent Process LCMM：非正态和有界纵向结局</h2>
+<p>本章处理观测尺度不适合直接放进高斯 mixed model 的情况，例如认知量表、症状评分、有界连续变量、偏态分数和有序等级结局。<code>lcmm()</code> 的 latent process model 通过 link functions 把观测值连接到潜在过程尺度，使读者能够区分“潜在健康或能力轨迹”与“量表观测轨迹”，并理解 linear、beta、spline 和 threshold links 分别适合什么问题 <span class="citation" data-cites="proustlima2017lcmm">(<a href="#ref-proustlima2017lcmm" role="doc-biblioref">Proust-Lima 等 2017年</a>)</span>。</p>
+</section>
+<section id="sec-mlcmm-multlcmm" class="level2">
+<h2 class="anchored" data-anchor-id="sec-mlcmm-multlcmm">MLCMM / multLCMM：多个 marker 与共同潜在过程</h2>
+<p>本章讨论多个纵向 marker 共同测量同一个潜在过程的模型。multLCMM 的重点不是把多个结局简单拼成一组轨迹，而是区分 latent process trajectory、marker-specific measurement model、link functions 和 DIF，使读者能判断什么时候多个 marker 应该共同定义潜在过程，什么时候更适合使用 multi-trajectory GBTM 或分开建模 <span class="citation" data-cites="proustlima2017lcmm proustlima2014jointmultivariate">(<a href="#ref-proustlima2017lcmm" role="doc-biblioref">Proust-Lima 等 2017年</a>; <a href="#ref-proustlima2014jointmultivariate" role="doc-biblioref">Proust-Lima, Dartigues, 等 2014年</a>)</span>。</p>
+</section>
+<section id="sec-jointlcmm-mpjlcmm" class="level2">
+<h2 class="anchored" data-anchor-id="sec-jointlcmm-mpjlcmm">JointLCMM / mpjLCMM：纵向轨迹类别与 time-to-event 结局</h2>
+<p>本章把纵向轨迹和事件结局放入 joint latent class framework：同一个潜在类别 <span class="math inline">\(C_i\)</span> 同时影响纵向子模型和 hazard 子模型，从而连接症状、认知或生物标志物变化与死亡、疾病发生、复发、退出研究或 competing risks。读者会重点区分 joint latent class model 与 shared random effects joint model，并学习 dynamic prediction、EPOCE 和事件子模型解释时的边界 <span class="citation" data-cites="proustlima2014jointreview proustlima2017lcmm proustlima2014jointmultivariate">(<a href="#ref-proustlima2014jointreview" role="doc-biblioref">Proust-Lima, Sène, 等 2014年</a>; <a href="#ref-proustlima2017lcmm" role="doc-biblioref">Proust-Lima 等 2017年</a>; <a href="#ref-proustlima2014jointmultivariate" role="doc-biblioref">Proust-Lima, Dartigues, 等 2014年</a>)</span>。</p>
+</section>
+<section id="sec-model-selection" class="level2">
+<h2 class="anchored" data-anchor-id="sec-model-selection">模型选择与统计指标：类别数、分类质量和解释边界</h2>
+<p>本章集中处理所有方法都会遇到的判断问题：类别数如何选，BIC/ICL/AIC 如何读，posterior probabilities、AvePP 和 entropy 能说明什么，初始化、多起点搜索、局部最优、label switching 和收敛状态怎样影响结论。它会把统计指标与实证报告规范放在一起，提醒读者不要只凭轨迹图或单一信息准则宣布发现了稳定、真实、可行动的群体类别 <span class="citation" data-cites="herle2020typical naginodgers2010clinical">(<a href="#ref-herle2020typical" role="doc-biblioref">Herle 等 2020年</a>; <a href="#ref-naginodgers2010clinical" role="doc-biblioref">Nagin 和 Odgers 2010年</a>)</span>。</p>
+
+
+</section>
+</section>
+<section id="bibliography" class="level1 unnumbered">
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">参考文献</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-elmer2018beta" class="csl-entry" role="listitem">
+Elmer, Jonathan, Bobby L. Jones, 和 Daniel S. Nagin. 2018年. <span>《Using the Beta Distribution in Group-Based Trajectory Models》</span>. <em>BMC Medical Research Methodology</em> 18 (152). <a href="https://doi.org/10.1186/s12874-018-0620-9">https://doi.org/10.1186/s12874-018-0620-9</a>.
+</div>
+<div id="ref-herle2020typical" class="csl-entry" role="listitem">
+Herle, Moritz, Nadia Micali, Mohamed Abdulkadir, 等. 2020年. <span>《Identifying Typical Trajectories in Longitudinal Data: Modelling Strategies and Interpretations》</span>. <em>European Journal of Epidemiology</em> 35: 205～22. <a href="https://doi.org/10.1007/s10654-020-00615-6">https://doi.org/10.1007/s10654-020-00615-6</a>.
+</div>
+<div id="ref-jones2007advances" class="csl-entry" role="listitem">
+Jones, Bobby L., 和 Daniel S. Nagin. 2007年. <span>《Advances in Group-Based Trajectory Modeling and an <span>SAS</span> Procedure for Estimating Them》</span>. <em>Sociological Methods &amp; Research</em> 35 (4): 542～71. <a href="https://doi.org/10.1177/0049124106292364">https://doi.org/10.1177/0049124106292364</a>.
+</div>
+<div id="ref-jones2001sas" class="csl-entry" role="listitem">
+Jones, Bobby L., Daniel S. Nagin, 和 Kathryn Roeder. 2001年. <span>《A <span>SAS</span> Procedure Based on Mixture Models for Estimating Developmental Trajectories》</span>. <em>Sociological Methods &amp; Research</em> 29 (3): 374～93. <a href="https://www.andrew.cmu.edu/user/bjones/refpdf/ref1.pdf">https://www.andrew.cmu.edu/user/bjones/refpdf/ref1.pdf</a>.
+</div>
+<div id="ref-mclachlanpeel2000finite" class="csl-entry" role="listitem">
+McLachlan, Geoffrey J., 和 David Peel. 2000年. <em>Finite Mixture Models</em>. Wiley.
+</div>
+<div id="ref-muthen1999finite" class="csl-entry" role="listitem">
+Muthén, Bengt, 和 Kerby Shedden. 1999年. <span>《Finite Mixture Modeling with Mixture Outcomes Using the <span>EM</span> Algorithm》</span>. <em>Biometrics</em> 55 (2): 463～69. <a href="https://doi.org/10.1111/j.0006-341X.1999.00463.x">https://doi.org/10.1111/j.0006-341X.1999.00463.x</a>.
+</div>
+<div id="ref-nagin1999developmental" class="csl-entry" role="listitem">
+Nagin, Daniel S. 1999年. <span>《Analyzing Developmental Trajectories: A Semiparametric, Group-Based Approach》</span>. <em>Psychological Methods</em> 4 (2): 139～57. <a href="https://doi.org/10.1037/1082-989X.4.2.139">https://doi.org/10.1037/1082-989X.4.2.139</a>.
+</div>
+<div id="ref-nagin2005group" class="csl-entry" role="listitem">
+Nagin, Daniel S. 2005年. <em>Group-Based Modeling of Development</em>. Harvard University Press. <a href="https://doi.org/10.4159/9780674041318">https://doi.org/10.4159/9780674041318</a>.
+</div>
+<div id="ref-nagin2018multi" class="csl-entry" role="listitem">
+Nagin, Daniel S., Bobby L. Jones, Valéria Lima Passos, 和 Richard E. Tremblay. 2018年. <span>《Group-Based Multi-Trajectory Modeling》</span>. <em>Statistical Methods in Medical Research</em> 27 (7): 2015～23. <a href="https://doi.org/10.1177/0962280216673085">https://doi.org/10.1177/0962280216673085</a>.
+</div>
+<div id="ref-naginodgers2010clinical" class="csl-entry" role="listitem">
+Nagin, Daniel S., 和 Candice L. Odgers. 2010年. <span>《Group-Based Trajectory Modeling in Clinical Research》</span>. <em>Annual Review of Clinical Psychology</em> 6: 109～38. <a href="https://doi.org/10.1146/annurev.clinpsy.121208.131413">https://doi.org/10.1146/annurev.clinpsy.121208.131413</a>.
+</div>
+<div id="ref-proustlima2014jointmultivariate" class="csl-entry" role="listitem">
+Proust-Lima, Cécile, Jean-François Dartigues, 和 Hélène Jacqmin-Gadda. 2014年. <em>Joint Modelling of Repeated Multivariate Cognitive Measures and Competing Risks of Dementia and Death: A Latent Process and Latent Class Approach</em>. <a href="https://arxiv.org/abs/1409.7598">https://arxiv.org/abs/1409.7598</a>.
+</div>
+<div id="ref-proustlima2017lcmm" class="csl-entry" role="listitem">
+Proust-Lima, Cécile, Viviane Philipps, 和 Benoit Liquet. 2017年. <span>《Estimation of Extended Mixed Models Using Latent Classes and Latent Processes: The <span>R</span> Package <span>lcmm</span>》</span>. <em>Journal of Statistical Software</em> 78 (2): 1～56. <a href="https://doi.org/10.18637/jss.v078.i02">https://doi.org/10.18637/jss.v078.i02</a>.
+</div>
+<div id="ref-proustlima2014jointreview" class="csl-entry" role="listitem">
+Proust-Lima, Cécile, Mélanie Sène, Jeremy M. G. Taylor, 和 Hélène Jacqmin-Gadda. 2014年. <span>《Joint Latent Class Models for Longitudinal and Time-to-Event Data: A Review》</span>. <em>Statistical Methods in Medical Research</em> 23 (1): 74～90. <a href="https://doi.org/10.1177/0962280212445839">https://doi.org/10.1177/0962280212445839</a>.
+</div>
+</div></section></div></main> <!-- /main -->
+<script>
+(function () {
+  function makeProofsCollapsible() {
+    const proofs = document.querySelectorAll("div.proof");
+
+    proofs.forEach(function (proof) {
+      if (proof.dataset.collapsibleReady === "true") return;
+
+      const details = document.createElement("details");
+
+      details.className = proof.className;
+      details.classList.add("proof-collapsible");
+      details.dataset.collapsibleReady = "true";
+
+      if (proof.id) {
+        details.id = proof.id;
+      }
+
+      details.open = proof.classList.contains("open");
+
+      const summary = document.createElement("summary");
+      const title = proof.querySelector(".proof-title");
+
+      if (title) {
+        summary.innerHTML = title.innerHTML;
+        title.remove();
+      } else {
+        summary.innerHTML = "<strong>Proof</strong>";
+      }
+
+      details.appendChild(summary);
+
+      while (proof.firstChild) {
+        details.appendChild(proof.firstChild);
+      }
+
+      proof.replaceWith(details);
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", makeProofsCollapsible);
+  } else {
+    makeProofsCollapsible();
+  }
+})();
+</script>
+<script>
+(function () {
+  function fixTheoremTitleSpacing() {
+    const titleSelectors = [
+      ".theorem-title",
+      ".lemma-title",
+      ".corollary-title",
+      ".proposition-title",
+      ".conjecture-title",
+      ".definition-title",
+      ".example-title",
+      ".exercise-title",
+      ".solution-title",
+      ".remark-title",
+      ".algorithm-title",
+      ".proof-title"
+    ].join(",");
+
+    document.querySelectorAll(titleSelectors).forEach(function (title) {
+      const p = title.parentElement;
+
+      if (!p || p.tagName.toLowerCase() !== "p") return;
+
+      /*
+        Quarto/Pandoc often inserts a text node like:
+        <p><span class="theorem-title">...</span>&nbsp;</p>
+
+        Remove whitespace-only text nodes, including non-breaking spaces.
+      */
+      Array.from(p.childNodes).forEach(function (node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          const cleaned = node.textContent.replace(/\u00a0/g, " ").trim();
+          if (cleaned === "") {
+            node.remove();
+          }
+        }
+      });
+
+      p.classList.add("math-env-title-p");
+
+      /*
+        If the paragraph only contains the title span after cleanup,
+        mark it as title-only.
+      */
+      const meaningfulChildren = Array.from(p.childNodes).filter(function (node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          return node.textContent.replace(/\u00a0/g, " ").trim() !== "";
+        }
+        return true;
+      });
+
+      if (meaningfulChildren.length === 1 && meaningfulChildren[0] === title) {
+        p.classList.add("math-env-title-only");
+      }
+
+      /*
+        If the title-only paragraph is followed by a list,
+        compress the gap between title and list.
+      */
+      const next = p.nextElementSibling;
+      if (
+        p.classList.contains("math-env-title-only") &&
+        next &&
+        (next.tagName.toLowerCase() === "ol" || next.tagName.toLowerCase() === "ul")
+      ) {
+        p.classList.add("math-env-title-before-list");
+      }
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", fixTheoremTitleSpacing);
+  } else {
+    fixTheoremTitleSpacing();
+  }
+})();
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "已复制");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "已复制");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/luyiyun\.github\.io\/Notes\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<input type="hidden" id="giscus-base-theme" value="light">
+<input type="hidden" id="giscus-alt-theme" value="dark_dimmed">
+<script>
+  function loadGiscus() {
+    // Function to get the theme based on body class
+    const getTheme = () => {
+      let baseTheme = document.getElementById('giscus-base-theme').value;
+      let altTheme = document.getElementById('giscus-alt-theme').value;
+      return document.body.classList.contains('quarto-dark') ? altTheme : baseTheme;
+    };
+    const script = document.createElement("script");
+    script.src = "https://giscus.app/client.js";
+    script.async = true;
+    script.dataset.repo = "luyiyun/Notes-comments";
+    script.dataset.repoId = "R_kgDOScB5XQ";
+    script.dataset.category = "Announcements";
+    script.dataset.categoryId = "DIC_kwDOScB5Xc4C87kL";
+    script.dataset.mapping = "pathname";
+    script.dataset.reactionsEnabled = "1";
+    script.dataset.emitMetadata = "0";
+    script.dataset.inputPosition = "bottom";
+    script.dataset.theme = getTheme();
+    script.dataset.lang = "zh-CN";
+    script.crossOrigin = "anonymous";
+    // Append the script to the desired div instead of at the end of the body
+    document.getElementById("quarto-content").appendChild(script);
+  }
+  loadGiscus();
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
