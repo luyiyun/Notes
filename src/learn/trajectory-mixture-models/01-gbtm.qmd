@@ -1,0 +1,474 @@
+---
+title: "GBTM"
+subtitle: "Group-Based Trajectory Modeling (潜类别增长模型)"
+description: "GBTM（亦称 LCGA）的类别条件轨迹模型、条件独立假设、后验分类、参数估计、模型选择与解释边界。"
+draft: false
+aliases:
+  - GBTM
+  - LCGA
+  - Group-Based Trajectory Modeling
+  - Latent Class Growth Analysis
+tags:
+  - 纵向轨迹混合模型
+  - GBTM
+  - LCGA
+  - EM算法
+  - 轨迹聚类
+date: 2026-06-09
+date-modified: last-modified
+order: 1
+bibliography: ../../../resources/bibliography/trajectory-mixture-models.bib
+reference-section-title: "参考文献"
+---
+
+# 引言
+
+纵向数据中的异质性常常不是“所有人围绕同一条平均曲线波动”这么简单。儿童行为发展、认知老化、慢病症状、治疗反应或社会行为变化，都可能呈现若干种可辨认的典型路径：有人长期稳定，有人逐渐下降，有人快速改善，也有人先升后降。若只报告总体平均轨迹，这些差异会被压缩成一条可能并不代表任何人的曲线。
+
+GBTM 的出发点是把这种异质性写成概率模型。沿用[系列导读：纵向轨迹混合模型](00-series-index.md) 中的统一符号，个体轨迹的边际分布写为若干潜在类别条件分布的混合：
+
+$$
+p(y_i \mid \theta)
+=
+\sum_{g=1}^{G}
+\pi_{ig} f_g(y_i \mid \theta_g).
+$$
+
+这里真正需要展开的是 $f_g(y_i \mid \theta_g)$：**给定个体属于类别 $g$ 后，整条纵向轨迹如何产生？**GBTM 与其他模型的区别，主要就在于此。GBTM 模型非常适合作为轨迹混合模型的起点，因为它把类别条件轨迹模型保持在最简单的形态：**类别解释主要轨迹差异，类别内部通常不再引入个体随机效应**。
+
+# GBTM vs LCGA
+
+GBTM 和 LCGA 在许多应用语境中指向同一类基础模型：**给定潜在类别后，个体共享所属类别的平均轨迹，类别内部通常不再建模随机截距、随机斜率等连续随机效应**。
+
+两个名称来自不同研究传统：
+
+| 名称 | 常见传统 | 在本系列中的含义 |
+|---|---|---|
+| GBTM, group-based trajectory modeling | Nagin 的 group-based developmental trajectory tradition | 用有限混合描述若干组典型发展轨迹 |
+| LCGA, latent class growth analysis | latent variable / growth modeling tradition | 类别内随机效应固定为零或不建模的潜类别增长模型 |
+
+后续内容中，我们以 `gbtm` 作为主名，正文保留 LCGA 作为同义术语。
+
+# GBTM 的核心：类别条件轨迹模型
+
+所有轨迹混合模型共享同一个外层混合结构：
+
+$$
+p(y_i \mid \theta)
+=
+\sum_{g=1}^{G}
+\pi_{ig} f_g(y_i \mid \theta_g).
+$$
+
+不同方法的差异主要体现在 $f_g$。GBTM 对 $f_g$ 的定义性简化可以概括为三点：
+
+1. 类别 $g$ 有自己的典型轨迹函数，通常通过类别特异的时间函数表达。
+2. 给定类别和轨迹函数后，个体重复观测的剩余变异由观测分布或残差表达。
+3. 类别内部通常不再引入个体随机效应，因此不需要对随机效应积分。
+
+这意味着 GBTM 的类别承担了很重的解释责任。类别不仅**区分平均轨迹**，也**吸收了许多本来可能由连续个体差异、非线性、残差相关或测量尺度问题解释的结构**。它的好处是清晰、直观；代价是容易把连续异质性离散化。
+
+
+# 一般形式下的类别条件模型
+
+沿用[系列导读：纵向轨迹混合模型](00-series-index.md)中定义的记号，GBTM 的一般类别条件模型可以写成：
+
+$$
+f_g(y_i \mid \theta_g)
+=
+\prod_{j=1}^{n_i}
+p\{Y_{ij}\mid \eta_g(t_{ij};\beta_g),\phi_g\}.
+$${#eq-gbtm-general}
+
+这个式子把 GBTM 的结构拆成三个层次。
+
+第一，$\eta_g(t;\beta_g)$ 是类别 $g$ 的轨迹预测函数。它描述类别 $g$ 在时间 $t$ 上的典型变化模式。$\beta_g$ 是类别特异参数，因此不同类别可以有不同的起点、斜率、弯曲程度或更复杂的时间形状。这里一般不引入随机效应。
+
+第二，$p\{\cdot\}$ 是观测分布。它说明给定类别轨迹预测函数后，实际观测值怎样围绕轨迹产生。连续、高斯、二元、计数、有界比例等结局，差异主要体现在这一层。
+
+第三，$\phi_g$ 表示分布中的尺度、离散度或其他辅助参数。例如残差方差、计数模型的离散度、有界分布的精度参数等，都可以放在这一层理解。
+
+
+## 类别特异轨迹预测函数
+
+轨迹预测函数 $\eta_g(t;\beta_g)$ 可以使用**时间多项式**，也可以使用**分段函数**、**样条函数**或其他事先指定的**时间基函数**。最常见的写法是：
+
+$$
+\eta_g(t_{ij};\beta_g)
+=
+\beta_{0g}
++ \beta_{1g} t_{ij}
++ \beta_{2g} t_{ij}^{2}
++ \cdots
++ \beta_{pg} t_{ij}^{p}.
+$$
+
+这里 $\beta_{0g}$ 对应类别 $g$ 在参考时间点的水平，$\beta_{1g}$ 表示线性变化趋势，$\beta_{2g}$ 表示弯曲方向和加速或减速，高阶项表达更复杂的轨迹形状。时间变量常需要中心化和缩放，例如把年龄写成 $(\mathrm{age}-65)/10$，让截距和斜率有清楚解释，也减少高阶项造成的数值不稳定。
+
+但是，$\eta_g$ 不一定等于观测均值本身。它可能通过 link function 连接到均值、概率、强度或其他分布参数。例如二元结局中，$\eta_g$ 常是 log-odds；计数结局中，$\eta_g$ 常是 log intensity。区分“轨迹预测子”和“观测尺度上的均值”是理解扩展 GBTM 的第一步。
+
+## 条件独立
+
+@eq-gbtm-general 中的乘积形式隐含了 GBTM 的关键简化：**给定潜在类别和类别轨迹后，重复测量之间的剩余依赖不再通过随机截距、随机斜率等类别内随机效应建模**。
+
+这不是说纵向观测在边际上独立。边际相关性仍然可以由共同的潜在类别诱导出来：同一个人属于某一类别后，多次观测都围绕该类别轨迹变化，因此重复测量在总体层面仍有关联。GBTM 的假设是，一旦类别和类别轨迹给定，剩余相关结构足够简单，可以交给观测分布和残差处理。
+
+这个假设决定了 GBTM 的解释方式。**若同一类别内部仍存在明显连续差异，例如有些人始终高于类别轨迹、有些人始终低于类别轨迹，GBTM 倾向于用额外类别去近似这种连续变异**。后续 LCMM/GMM 正是通过类别内随机效应来放松这一点。
+
+## 类别条件 likelihood
+
+在一般形式下，个体 $i$ 对类别 $g$ 的支持来自整条轨迹的条件 likelihood：
+
+$$
+L_{ig}(\theta_g)
+=
+f_g(y_i\mid\theta_g)
+=
+\prod_{j=1}^{n_i}
+p\{Y_{ij}\mid \eta_g(t_{ij};\beta_g),\phi_g\}.
+$$
+
+一个类别要得到较高后验支持，不只是某个时间点接近该类轨迹，而是整条观测序列在该类条件模型下都比较可能。因此，GBTM 的分类不是单点分类，也不是简单按斜率排序；它依赖完整纵向 likelihood。
+
+# 常见观测分布
+
+GBTM 的一般结构确定之后，观测分布可以根据结局类型改变。不同特例改变的是 $p\{Y_{ij}\mid \eta_g(t_{ij};\beta_g),\phi_g\}$，而不是外层潜在类别框架。
+
+## 连续近似高斯结局
+
+若结局近似连续、残差大致对称、边界效应不强，可以使用高斯观测模型：
+
+$$
+Y_{ij}\mid C_i=g
+\sim
+\mathcal N(\mu_{ij}^{g},\sigma_g^2),
+$$
+
+并令
+
+$$
+\mu_{ij}^{g}
+=
+\eta_g(t_{ij};\beta_g).
+$$
+
+此时类别条件 likelihood 为：
+
+$$
+f_g(y_i\mid\theta_g)
+=
+\prod_{j=1}^{n_i}
+\frac{1}{\sqrt{2\pi\sigma_g^2}}
+\exp\left[
+-\frac{(Y_{ij}-\mu_{ij}^{g})^2}{2\sigma_g^2}
+\right].
+$$
+
+高斯版本最容易讲清楚类别平均轨迹，但也最容易被滥用。若结局有明显天花板、地板、偏态或大量边界值，正态残差可能把测量尺度问题误转化为额外类别。
+
+## 二元结局
+
+若 $Y_{ij}\in\{0,1\}$，例如某症状是否出现、某行为是否发生，可以使用 Bernoulli 分布：
+
+$$
+Y_{ij}\mid C_i=g
+\sim
+\mathrm{Bernoulli}(p_{ij}^{g}),
+$$
+
+并通过 logit link 连接轨迹预测子：
+
+$$
+\log\frac{p_{ij}^{g}}{1-p_{ij}^{g}}
+=
+\eta_g(t_{ij};\beta_g).
+$$
+
+这时类别轨迹描述的是事件发生概率随时间的变化。解释时应回到概率尺度，而不是只看 logit 尺度上的多项式曲线。
+
+## 计数结局
+
+若结局是事件次数，可以使用 Poisson 分布：
+
+$$
+Y_{ij}\mid C_i=g
+\sim
+\mathrm{Poisson}(\lambda_{ij}^{g}),
+\qquad
+\log \lambda_{ij}^{g}
+=
+\eta_g(t_{ij};\beta_g).
+$$
+
+此时类别轨迹描述的是事件强度或期望次数。Poisson 模型隐含均值等于方差；若实际数据有过度离散或大量结构性零值，就需要考虑负二项、零膨胀或其他扩展，而不是只通过增加类别数来吸收分布不匹配。
+
+## 有界或偏态连续结局
+
+若结局是有界连续分数、比例或强偏态量表，高斯版本可能不合适。可以考虑 **beta 分布**、**删失分布**、**变换尺度**。Elmer et al. 讨论了 beta distribution 在 group-based trajectory models 中处理有界连续结局的思路 [@elmer2018beta]。
+
+这些扩展提醒我们：GBTM 的核心不是某一种分布，而是“给定类别后如何写整条轨迹的条件分布”。观测分布一旦不合适，类别形状和类别数都可能被扭曲。
+
+# 后验分类与分类质量
+
+模型拟合后，个体属于类别 $g$ 的后验概率来自 Bayes 公式：
+
+$$
+\tau_{ig}
+=
+P(C_i=g\mid y_i;\hat\theta)
+=
+\frac{
+\hat\pi_{ig} f_g(y_i\mid \hat\theta_g)
+}{
+\sum_{\ell=1}^{G}
+\hat\pi_{i\ell} f_\ell(y_i\mid \hat\theta_\ell)
+}.
+$$
+
+这个公式的含义很直接：一个类别的后验概率高，既因为该类别先验概率较高，也因为它的类别条件轨迹模型更能解释个体的整条观测序列。most likely class 只是后验概率最大的类别：
+
+$$
+\hat C_i
+=
+\arg\max_g \tau_{ig}.
+$$
+
+因此，GBTM 的分类天然是概率分类，不是硬聚类。若某人的后验概率为 $(0.52,0.48)$，硬分到第一类会丢掉大量不确定性；若为 $(0.97,0.03)$，分类才较清楚。
+
+平均后验概率 AvePP 常用来描述分类清晰度。设 $\mathcal I_g=\{i:\hat C_i=g\}$，则
+
+$$
+\mathrm{AvePP}_g
+=
+\frac{1}{|\mathcal I_g|}
+\sum_{i\in \mathcal I_g}
+\tau_{ig}.
+$$
+
+AvePP 高说明被分到该类的个体通常有较强后验支持。它可以作为分类质量指标，但不能证明类别是真实存在的自然亚型。分类清楚只说明在当前数据、当前类别数和当前 $f_g$ 设定下，模型能够较清楚地区分这些轨迹。
+
+# 参数估计
+
+GBTM 的观测数据 log-likelihood 继承了有限混合模型的基本困难：
+
+$$
+\ell(\theta)
+=
+\sum_{i=1}^{N}
+\log
+\left[
+\sum_{g=1}^{G}
+\pi_{ig} f_g(y_i\mid\theta_g)
+\right].
+$$
+
+类别求和位于对数内部，不能先对每个类别单独拟合再合并。参数估计通常可以从两类方法理解：EM 算法把潜在类别看作缺失数据；Newton-Raphson 与 modified Marquardt 则直接最大化观测数据 log-likelihood。
+
+## EM 算法
+
+引入类别指示变量：
+
+$$
+Z_{ig}
+=
+\begin{cases}
+1, & C_i=g,\\
+0, & C_i\ne g.
+\end{cases}
+$$
+
+若 $Z_{ig}$ 可观测，complete-data log likelihood 为：
+
+$$
+\ell_c(\theta)
+=
+\sum_{i=1}^{N}
+\sum_{g=1}^{G}
+Z_{ig}
+\left[
+\log \pi_{ig}
++ \log f_g(y_i\mid\theta_g)
+\right].
+$$
+
+EM 的 E step 用当前参数下的 posterior responsibility 替代未知类别指示变量：
+
+$$
+\tau_{ig}^{(r)}
+=
+E(Z_{ig}\mid y_i,\theta^{(r)})
+=
+\frac{
+\pi_{ig}^{(r)} f_g(y_i\mid\theta_g^{(r)})
+}{
+\sum_{\ell=1}^{G}
+\pi_{i\ell}^{(r)} f_\ell(y_i\mid\theta_\ell^{(r)})
+}.
+$$
+
+M step 最大化期望 complete-data log likelihood：
+
+$$
+Q(\theta\mid\theta^{(r)})
+=
+\sum_{i=1}^{N}
+\sum_{g=1}^{G}
+\tau_{ig}^{(r)}
+\left[
+\log \pi_{ig}
++ \log f_g(y_i\mid\theta_g)
+\right].
+$$
+
+若没有类别成员协变量，类别比例更新为：
+
+$$
+\pi_g^{(r+1)}
+=
+\frac{1}{N}
+\sum_{i=1}^{N}
+\tau_{ig}^{(r)}.
+$$
+
+这说明类别比例是 soft count。轨迹参数的更新则取决于 $f_g$ 的具体观测分布：高斯版本可理解为加权回归，二元版本可理解为加权 logistic model，计数版本可理解为加权 count model。一般地，个体对类别 $g$ 参数更新的贡献由 $\tau_{ig}^{(r)}$ 加权。
+
+EM 的优势是概率含义清楚，能够自然解释后验分类、soft assignment 和 complete-data likelihood。它的限制是收敛可能较慢，而且复杂观测分布或约束参数下，M step 未必有简单闭式解。
+
+## Newton-Raphson 与 modified Marquardt
+
+另一类方法直接最大化观测数据 log-likelihood。记 score vector 为
+
+$$
+U(\theta)
+=
+\frac{\partial \ell(\theta)}{\partial \theta},
+$$
+
+Hessian matrix 为
+
+$$
+H(\theta)
+=
+\frac{\partial^2 \ell(\theta)}
+{\partial \theta \partial \theta^\top}.
+$$
+
+Newton-Raphson 使用二阶近似更新参数：
+
+$$
+\theta^{(r+1)}
+=
+\theta^{(r)}
+-
+H(\theta^{(r)})^{-1}U(\theta^{(r)}).
+$$
+
+在最大值附近，如果 Hessian 稳定且负定，Newton 更新通常比 EM 更快。但混合模型的 likelihood 常常多峰，参数可能接近边界，Hessian 也可能病态，因此纯 Newton 更新可能过大或方向不稳定。
+
+Levenberg-Marquardt 或 modified Marquardt 方法在 Newton 更新中加入阻尼，使更新在二阶 Newton step 和更保守的梯度式 step 之间调节。一个教学化写法是：
+
+$$
+\theta^{(r+1)}
+=
+\theta^{(r)}
+-
+\left[
+H(\theta^{(r)})-\lambda^{(r)}D^{(r)}
+\right]^{-1}
+U(\theta^{(r)}),
+$$
+
+其中 $\lambda^{(r)}$ 是阻尼参数，$D^{(r)}$ 是与曲率尺度相关的矩阵。阻尼项的作用是：当 Newton 方向可靠时，更新接近二阶方法；当曲率不稳定或步长过大时，更新变得更保守。
+
+`lcmm` 方法论文说明该系列模型使用 maximum likelihood framework 下的 modified Marquardt-Levenberg algorithm，并结合参数稳定、likelihood 稳定和导数相关准则判断收敛 [@proustlima2017lcmm]。这说明 EM 可以作为理解潜类别模型的基本语言，但实际最大似然估计并不必然等同于纯 EM。
+
+| 方法 | 主要对象 | 优点 | 需要注意 |
+|---|---|---|---|
+| EM 算法 | posterior responsibility 与 $Q$ 函数 | 解释清楚，soft classification 自然 | 可能收敛较慢，复杂 M step 需数值优化 |
+| Newton-Raphson | score 与 Hessian | 利用曲率信息，局部收敛快 | 对初值、Hessian 和边界参数敏感 |
+| modified Marquardt | 阻尼后的二阶更新 | 在效率和稳定性之间折中 | 仍需检查局部最优和收敛诊断 |
+
+# 模型选择
+
+GBTM 的模型选择不能只问“哪个 $G$ 的信息准则最低”。至少需要同时看拟合、分类、稳定性和解释。
+
+常用信息准则包括：
+
+$$
+\mathrm{AIC}
+=
+-2\log L
++2p,
+$$
+
+$$
+\mathrm{BIC}
+=
+-2\log L
++p\log N,
+$$
+
+其中 $p$ 是参数个数，$N$ 通常按个体数理解。BIC 对复杂度惩罚较强，AIC 惩罚较弱；二者都只是拟合与复杂度的折中指标，不能单独证明类别具有实体意义。
+
+| 检查项 | 作用 | 需要关注 |
+|---|---|---|
+| AIC/BIC/ICL | 比较拟合与复杂度 | 指标最优不等于解释最优 |
+| 收敛状态 | 判断估计是否可信 | 未收敛模型不宜解释 |
+| 多初值稳定性 | 检查局部最优 | 不同初值可能得到不同类别 |
+| 类别比例 | 发现极小类别 | 极小类别可能是不稳定类别或模型补偿 |
+| AvePP/entropy | 判断分类清晰度 | 分类清楚不等于类别真实 |
+| 轨迹形状 | 判断类别是否可解释 | 微小平移或噪声类别不一定有实质意义 |
+| 观测分布适配性 | 检查 $f_g$ 是否合理 | 分布误设可能改变类别数和类别形状 |
+
+特别要注意，类别数和类别条件模型会互相补偿。若观测分布不合适、类别内相关被忽略、时间函数过于僵硬，模型可能通过增加类别数提高 likelihood。此时多出来的类别未必代表新的实质轨迹，而可能是在补偿 $f_g$ 的设定不足。
+
+# 讨论
+
+## 优势
+
+GBTM 的主要优势是结构清楚。每个类别对应一条典型轨迹，后验概率给出个体属于各类别的不确定性，模型结果容易转化为轨迹图、类别比例和分类质量指标。对于探索性描述、临床或社会科学中的 typology 构建，以及需要向非技术读者解释纵向异质性的场景，这种简洁性很有吸引力。
+
+它的另一个优势是教学价值高。GBTM 保留了有限混合模型的核心：潜在类别、类别条件分布、后验概率和类别数选择，同时避免一开始就引入随机效应积分、link function、多个 marker 或 survival 子模型。
+
+## 适用条件
+
+GBTM 更适合用作初始模型或描述性模型，尤其是在研究问题本身关心若干条典型轨迹时。若类别内连续异质性不强，观测分布与数据尺度大致匹配，轨迹形状稳定且类别比例合理，GBTM 可以给出清楚的分类和解释。
+
+若研究重点是“同一类别内部仍有多大个体差异”，或数据明显呈现连续谱而不是离散分组，则 LCMM/GMM 可能更合适。若结局有明显边界、偏态或有序等级结构，则需要考虑扩展 GBTM 或 latent process LCMM，而不是简单套用高斯版本。
+
+## 注意事项
+
+GBTM 类别不应被过快解释为真实存在、边界清晰的自然亚型。更稳妥的说法是：在当前类别条件模型、当前类别数和当前数据下，轨迹可以被概括为若干类典型模式。若要把类别解释为实质亚群，需要理论支持、外部验证、敏感性分析和稳定复现。
+
+报告时至少应说明类别数选择依据、类别比例、后验分类质量、轨迹形状、收敛状态、初始值敏感性和观测分布设定。若后续分析使用 most likely class，还应说明分类不确定性如何处理。
+
+## 解释边界
+
+GBTM 的类别可以有不同解释层次：
+
+| 解释方式 | 含义 | 何时较合理 | 风险 |
+|---|---|---|---|
+| 实体亚群 | 类别近似真实发展机制或 phenotype | 有理论支持、外部验证和稳定复现 | 证据不足时过度本体化 |
+| 离散近似 | 类别是对连续异质性的有限混合近似 | 主要目标是描述和预测异质性 | 类别数与模型设定相关 |
+| 模型补偿 | 类别吸收遗漏随机效应、非正态或缺失机制 | 诊断提示模型误设 | 类别可能是统计伪影 |
+
+Herle et al. 强调，typical trajectories 的解释必须回到模型假设、数据结构和研究问题 [@herle2020typical]。对 GBTM 尤其如此，因为类别内没有随机效应，模型更容易把连续差异切成离散类别。
+
+# 小结
+
+GBTM（亦称 LCGA）把纵向轨迹异质性写成若干类别条件轨迹模型的有限混合。它与后续方法的核心差异在于 $f_g$：给定类别后，个体轨迹主要由类别特异轨迹函数和观测分布描述，类别内部通常不再引入随机效应。
+
+这种简化让 GBTM 清晰、可解释，也让后验概率、AvePP、EM 算法和类别数选择都容易讲清楚。它的代价是类别承担了较重的解释责任，可能把连续异质性、观测分布误设或尺度问题离散化。因此，GBTM 适合作为轨迹混合模型的起点，而不是所有纵向异质性问题的终点。
+
+# 思考题
+
+1. GBTM 的类别条件轨迹模型 $f_g$ 与 LCMM/GMM 的 $f_g$ 有什么根本差异？
+2. 为什么在讨论 Gaussian 版本之前，先写 general observation density 更有助于理解 GBTM？
+3. 如果真实个体差异主要是连续谱，GBTM 可能怎样用类别去近似这种差异？
+4. AvePP 高说明了什么？它不能说明什么？
+5. EM 算法中的 posterior responsibility 与最终后验分类概率是什么关系？
+6. modified Marquardt 为什么需要阻尼，而不是直接使用 Newton 更新？
+
+# 参考说明
+
+本讲义依据 Nagin 的 group-based trajectory modeling 文献、轨迹模型解释综述，以及 `lcmm` companion paper 对最大似然估计和 modified Marquardt 思想的说明整理 [@nagin1999developmental; @nagin2005group; @naginodgers2010clinical; @elmer2018beta; @herle2020typical; @proustlima2017lcmm]。

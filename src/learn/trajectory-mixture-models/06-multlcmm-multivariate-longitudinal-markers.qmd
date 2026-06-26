@@ -16,7 +16,7 @@ tags:
   - 多变量纵向数据
 date: 2026-06-09
 date-modified: last-modified
-order: 7
+order: 6
 bibliography: ../../../resources/bibliography/trajectory-mixture-models.bib
 reference-section-title: "参考文献"
 ---
@@ -25,7 +25,7 @@ reference-section-title: "参考文献"
 
 很多纵向研究不是只测一个结局。认知老化研究可能同时记录 MMSE、IST、BVRT；心理健康研究可能同时记录抑郁、焦虑、睡眠；慢病研究可能同时记录多个生物标志物。一个自然问题是：这些 marker 是否共同反映某个不可直接观测的状态，并且这个状态是否存在不同发展轨迹？
 
-`multlcmm()` 或 `mlcmm()` 处理的正是这个问题。它把第 6 篇的 latent process 思想扩展到多个 marker：多个观测指标通过各自的测量模型和 link function 连接到同一个 underlying latent process。潜在类别描述的是这个共同 latent process 的轨迹类别，而不是任意单个 marker 的类别。
+`multlcmm()` 或 `mlcmm()` 处理的正是这个问题。它把第 5 篇的 latent process 思想扩展到多个 marker：多个观测指标通过各自的测量模型和 link function 连接到同一个 underlying latent process。潜在类别描述的是这个共同 latent process 的轨迹类别，而不是任意单个 marker 的类别。
 
 # 材料范围与证据地图
 
@@ -93,7 +93,7 @@ $$
 | $\mathbf u_{ig}$ | 类别内随机效应，表示个体围绕类别平均轨迹的连续差异 |
 | $w_i(t)$ | 额外序列相关结构 |
 
-这层模型和第 6 篇的 `lcmm()` 很像。差别在于，第 6 篇只有一个观测结局，本篇有多个 marker 都要连接到同一个 $A_i(t)$。
+这层模型和第 5 篇的 `lcmm()` 很像。差别在于，第 5 篇只有一个观测结局，本篇有多个 marker 都要连接到同一个 $A_i(t)$。
 
 # 测量模型
 
@@ -220,7 +220,7 @@ $$
 1. 数据层面：每个 marker 的测量时间、缺失模式、量表类型可能不同。
 2. 计算层面：随机效应维度、link 参数和类别参数都增加，likelihood 更复杂。
 
-`lcmm` 系列仍在 maximum likelihood 框架下估计，使用 modified Marquardt 类型算法 [@proustlima2017lcmm]。第 5 篇的初始值、多起点、Hessian 和收敛诊断在这里更重要。
+`lcmm` 系列仍在 maximum likelihood 框架下估计，使用 modified Marquardt 类型算法 [@proustlima2017lcmm]。第 4 篇的初始值、多起点、Hessian 和收敛诊断在这里更重要。
 
 # R 应用流程
 
@@ -342,9 +342,9 @@ marker-specific shift 或 contrast 描述测量层面的偏差。它可能反映
 
 多变量模型的价值在于同时解释 latent process 和 measurement model。只报告类别名称而不报告各 marker 如何测量潜在过程，会丢掉模型最重要的一半。
 
-# 与第 8 篇的衔接
+# 与第 7 篇的衔接
 
-`multlcmm()` 只处理纵向 marker。第 8 篇的 `mpjlcmm()` 会在纵向 latent processes 之外加入 time-to-event 结局。简化地说：
+`multlcmm()` 只处理纵向 marker。第 7 篇的 `mpjlcmm()` 会在纵向 latent processes 之外加入 time-to-event 结局。简化地说：
 
 - `multlcmm()`：多个 marker $\rightarrow$ 共同 latent process。
 - `mpjlcmm()`：一个或多个 latent processes $\rightarrow$ 再联合事件风险。

@@ -14,7 +14,7 @@ tags:
   - link-functions
 date: 2026-06-09
 date-modified: last-modified
-order: 6
+order: 5
 bibliography: ../../../resources/bibliography/trajectory-mixture-models.bib
 reference-section-title: "参考文献"
 ---
@@ -40,7 +40,7 @@ reference-section-title: "参考文献"
 | 来源 | 类型 | 本篇作用 | 限制 |
 |---|---|---|---|
 | `[用户旧笔记: LCMM]` | 用户提供材料 | 提供 LCMM 基本结构、类别成员模型、类别内 mixed model 与非正态扩展动机 | 当前仓库未包含旧 Obsidian 原文 |
-| `[用户旧笔记: MultiLCMM]` | 用户提供材料 | 提供 latent process 与 measurement/link model 的思想 | 多 marker 测量模型留到第 7 篇 |
+| `[用户旧笔记: MultiLCMM]` | 用户提供材料 | 提供 latent process 与 measurement/link model 的思想 | 多 marker 测量模型留到第 6 篇 |
 | Proust-Lima et al. (2017) | 官方方法论文 | 支持 `lcmm()` 的 latent process、link function 和估计方法 [@proustlima2017lcmm] | 本篇是学习笔记，不复现全部软件细节 |
 | `lcmm` 官方 `lcmm()` 文档 | 官方实现资料 | 校准 `link = "linear"`、`"beta"`、`"Splines"`、`"thresholds"`、`intnodes`、`epsY`、`cor` 等参数 | 参数名和默认值以后续安装版本为准 |
 
@@ -313,9 +313,9 @@ link function 越灵活，越可能出现收敛困难、边界参数和过拟合
 
 有界变量的最小值、最大值、重缩放和 `epsY` 会影响 link 估计。不同预处理可能改变 latent scale 的形状和解释，因此应在报告中说明。
 
-# 与第 7 篇的衔接
+# 与第 6 篇的衔接
 
-本篇讨论一个纵向结局如何通过 link function 连接 latent process。第 7 篇 `multlcmm()` 会把这个思想扩展到多个 marker：
+本篇讨论一个纵向结局如何通过 link function 连接 latent process。第 6 篇 `multlcmm()` 会把这个思想扩展到多个 marker：
 
 $$
 Y_{kij}
@@ -323,7 +323,7 @@ Y_{kij}
 H_k(\tilde Y_{kij};\eta_k),
 $$
 
-其中每个 marker $k$ 可以有自己的 link function，但它们共同测量同一个 latent process。也就是说，本篇是“一个观测通道”的 latent process model；第 7 篇是“多个观测通道”的 latent process model。
+其中每个 marker $k$ 可以有自己的 link function，但它们共同测量同一个 latent process。也就是说，本篇是“一个观测通道”的 latent process model；第 6 篇是“多个观测通道”的 latent process model。
 
 # 小结
 

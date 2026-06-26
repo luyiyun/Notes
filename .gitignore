@@ -34,3 +34,4 @@ _extensions/
 resources/audits/
 .qsync-*.html
 resources/coverage
+*-coverage-audit.md

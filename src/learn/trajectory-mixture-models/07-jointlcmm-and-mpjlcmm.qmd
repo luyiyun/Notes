@@ -16,7 +16,7 @@ tags:
   - 联合模型
 date: 2026-06-09
 date-modified: last-modified
-order: 8
+order: 7
 bibliography: ../../../resources/bibliography/trajectory-mixture-models.bib
 reference-section-title: "参考文献"
 ---
@@ -107,7 +107,7 @@ $$
 
 ## 非高斯或 latent process 结局
 
-若结局有界、偏态或有序，可以沿用第 6 篇的 latent process：
+若结局有界、偏态或有序，可以沿用第 5 篇的 latent process：
 
 $$
 A_i(t)\mid C_i=g
@@ -122,7 +122,7 @@ $$
 
 ## 多 marker 情形
 
-`mpjlcmm()` 可以把多个纵向 marker 或多个 longitudinal latent processes 放进 joint model。简化地说，第 7 篇的 `multlcmm()` 负责多个 marker 与 latent process 的关系；`mpjlcmm()` 进一步把这些 longitudinal processes 与事件风险联合起来。
+`mpjlcmm()` 可以把多个纵向 marker 或多个 longitudinal latent processes 放进 joint model。简化地说，第 6 篇的 `multlcmm()` 负责多个 marker 与 latent process 的关系；`mpjlcmm()` 进一步把这些 longitudinal processes 与事件风险联合起来。
 
 # 生存子模型
 
@@ -309,7 +309,7 @@ m_joint <- Jointlcmm(
 | 三阶段方法 | 先估计类别，再校正分类误差 | 适合某些后续变量分析 | 实现和假设需谨慎 |
 | 硬分类后回归 | 用 most likely class 做 Cox | 简单直观 | 忽略分类不确定性，不推荐作为唯一分析 |
 
-第 9 篇会进一步讨论 post-classification analyses 和报告规范。
+第 8 篇会进一步讨论 post-classification analyses 和报告规范。
 
 # 常见误区
 

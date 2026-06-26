@@ -14,7 +14,7 @@ tags:
   - LCMM
 date: 2026-06-09
 date-modified: last-modified
-order: 9
+order: 8
 bibliography: ../../../resources/bibliography/trajectory-mixture-models.bib
 reference-section-title: "参考文献"
 ---

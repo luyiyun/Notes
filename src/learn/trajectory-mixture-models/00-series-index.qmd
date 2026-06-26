@@ -54,7 +54,7 @@ p(y_i \mid \theta)
 \pi_{ig} f_g(y_i \mid \theta_g).
 $$
 
-这里 $f_g(\cdot)$ 是类别 $g$ 下整条轨迹的条件分布，不同类型的方法中，$f_g$ 拥有不同的模型假设。比如，GBTM/LCGA 中，$f_g$ 通常由类别特异的平均轨迹和观测分布决定；而在LCMM/GMM 中，$f_g$ 还会对类别内随机效应积分。此外，针对不同的数据类型，$f_g$ 还可以对观测尺度进行变换，比如，对于连续 marker，$f_g$ 可以是正态分布；对于二分类 marker，$f_g$ 可以是二项分布；对于多分类 marker，$f_g$ 可以是多项分布。
+这里 $f_g(\cdot)$ 是类别 $g$ 下整条轨迹的条件分布，不同类型的方法中，$f_g$ 拥有不同的模型假设。比如，GBTM（亦称 LCGA）中，$f_g$ 通常由类别特异的平均轨迹和观测分布决定；而在 LCMM/GMM 中，$f_g$ 还会对类别内随机效应积分。此外，针对不同的数据类型，$f_g$ 还可以对观测尺度进行变换，比如，对于连续 marker，$f_g$ 可以是正态分布；对于二分类 marker，$f_g$ 可以是二项分布；对于多分类 marker，$f_g$ 可以是多项分布。
 
 模型估计后，最常用的分类量是后验概率
 
@@ -78,7 +78,7 @@ $$
 - 概率模型和 likelihood，
 - 有限混合模型与 EM 的基本直觉，
 - linear mixed-effects model 的固定效应、随机效应和边际似然，
-- R formula 或 SAS procedure 的基本阅读能力。
+- 基础统计软件输出和模型公式的阅读能力。
 
 一般有限混合模型背景可参考 McLachlan and Peel 的专著
 [@mclachlanpeel2000finite]。
@@ -86,21 +86,30 @@ $$
 
 # 讲义目录
 
-1. [GBTM/LCGA：从有限混合到 group-based trajectory modeling](#sec-gbtm-lcga)
-2. [LCMM/GMM：类别内随机效应与 latent class mixed model](#sec-lcmm-gmm)
-3. [Latent Process LCMM：非正态和有界纵向结局](#sec-latent-process-lcmm)
-4. [MLCMM / multLCMM：多个 marker 与共同潜在过程](#sec-mlcmm-multlcmm)
-5. [JointLCMM / mpjLCMM：纵向轨迹类别与 time-to-event 结局](#sec-jointlcmm-mpjlcmm)
-6. [模型选择与统计指标：类别数、分类质量和解释边界](#sec-model-selection)
-7. [代码实现专题：R `lcmm` package 与 SAS PROC TRAJ](#sec-code-implementation)
+1. [GBTM：从有限混合到 group-based trajectory modeling](01-gbtm.qmd)
+2. [扩展 GBTM：非高斯结局、多轨迹与协变量](02-extended-gbtm.qmd)
+3. [`hlme` / LCMM / GMM：类别内随机效应与 latent class mixed model](03-hlme-growth-mixture-models.qmd)
+4. [LCMM 系列估计：EM 直觉与 modified Marquardt](04-estimation-for-lcmm-family.qmd)
+5. [Latent Process LCMM：非正态和有界纵向结局](05-lcmm-latent-process-models.qmd)
+6. [MLCMM / multLCMM：多个 marker 与共同潜在过程](06-multlcmm-multivariate-longitudinal-markers.qmd)
+7. [JointLCMM / mpjLCMM：纵向轨迹类别与 time-to-event 结局](07-jointlcmm-and-mpjlcmm.qmd)
+8. [模型选择与统计指标：类别数、分类质量和解释边界](08-model-selection-classification-and-reporting.qmd)
 
-## GBTM/LCGA：从有限混合到 group-based trajectory modeling {#sec-gbtm-lcga}
+## GBTM：从有限混合到 group-based trajectory modeling {#sec-gbtm}
 
-本章从最简单的潜在轨迹类别模型进入：GBTM/LCGA 把总体表示为若干 group-specific 轨迹的有限混合，通常用类别内无随机效应或极简随机结构来突出类别平均轨迹、观测分布、后验分类概率和 AvePP。读者会先看到 Nagin 的 group-based trajectory modeling 如何把发展轨迹写成 semiparametric mixture [@nagin1999developmental; @nagin2005group; @jones2001sas; @jones2007advances; @naginodgers2010clinical]。
+本章从最简单的潜在轨迹类别模型进入：GBTM 把总体表示为若干 group-specific 轨迹的有限混合，通常用类别内无随机效应或极简随机结构来突出类别平均轨迹、观测分布、后验分类概率和 AvePP。LCGA 在本系列中视为同一模型族的另一命名传统，而不是一个单独并列的方法。读者会先看到 Nagin 的 group-based trajectory modeling 如何把发展轨迹写成 semiparametric mixture，并理解 EM 与 modified Marquardt 这两类估计思想的关系 [@nagin1999developmental; @nagin2005group; @jones2001sas; @jones2007advances; @naginodgers2010clinical; @proustlima2017lcmm]。
+
+## 扩展 GBTM：非高斯结局、多轨迹与协变量 {#sec-extended-gbtm}
+
+本章在基础 GBTM 上改变观测分布、类别成员机制和纵向结局结构。它讨论二元、计数、零膨胀、有界连续等结局，解释类别成员协变量如何进入多项逻辑模型，并说明 multi-trajectory GBTM 如何用同一个潜在类别组织多个观测 marker 的联合轨迹 [@nagin2018multi; @elmer2018beta]。
 
 ## LCMM/GMM：类别内随机效应与 latent class mixed model {#sec-lcmm-gmm}
 
 本章把模型从“类别解释主要异质性”推进到“类别间平均轨迹差异 + 类别内连续个体差异”：LCMM/GMM 在每个类别内加入 mixed-effects structure，使个体可以围绕所属类别的平均轨迹连续偏离。这里的核心不是多放几个随机效应，而是类别含义随之改变：类别不再承担所有异质性，随机效应和残差结构也参与解释个体差异 [@muthen1999finite; @proustlima2017lcmm]。
+
+## LCMM 系列估计：EM 直觉与 modified Marquardt {#sec-estimation}
+
+本章集中讨论估计问题：潜在类别和随机效应都不可观测时，likelihood 为什么困难，EM 如何通过 posterior responsibility 解释 soft classification，梯度、Hessian、Newton-Raphson 和 modified Marquardt 又如何支持直接最大似然优化。它也会整理局部最优、多起点、Hessian、边界参数和收敛诊断的解释 [@muthen1999finite; @proustlima2017lcmm]。
 
 ## Latent Process LCMM：非正态和有界纵向结局 {#sec-latent-process-lcmm}
 
@@ -117,9 +126,3 @@ $$
 ## 模型选择与统计指标：类别数、分类质量和解释边界 {#sec-model-selection}
 
 本章集中处理所有方法都会遇到的判断问题：类别数如何选，BIC/ICL/AIC 如何读，posterior probabilities、AvePP 和 entropy 能说明什么，初始化、多起点搜索、局部最优、label switching 和收敛状态怎样影响结论。它会把统计指标与实证报告规范放在一起，提醒读者不要只凭轨迹图或单一信息准则宣布发现了稳定、真实、可行动的群体类别 [@herle2020typical; @naginodgers2010clinical]。
-
-## 代码实现专题：R `lcmm` package 与 SAS PROC TRAJ {#sec-code-implementation}
-
-本章单独整理软件实现，把方法讲解和代码教程分开：R 侧以 `lcmm` package 的 `hlme()`、`lcmm()`、`multlcmm()`、`Jointlcmm()` 和 `mpjlcmm()` 为主，SAS 侧以 PROC TRAJ 的 GBTM 生态为主。代码专题会强调模型公式、初值、多起点搜索、收敛诊断、预测和报告表的可复现流程，而不在前面的方法章节中穿插完整代码教程 [@jones2001sas; @jones2007advances; @proustlima2017lcmm]。
-
-

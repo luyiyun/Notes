@@ -15,7 +15,7 @@ tags:
   - 最大似然
 date: 2026-06-09
 date-modified: last-modified
-order: 5
+order: 4
 bibliography: ../../../resources/bibliography/trajectory-mixture-models.bib
 reference-section-title: "参考文献"
 ---
@@ -456,7 +456,7 @@ LCMM 系列常见数值问题包括：
 | 极小类别 | 某类别比例接近 0 | 可能是过多类别、异常点或局部最优 |
 | 完美分类 | posterior probability 接近 0/1 | Hessian 可能不稳定，标准误可能很大 |
 | 方差接近 0 | 随机效应或残差方差在边界 | 模型结构可能过度复杂 |
-| spline 参数边界 | link function 过于灵活或节点不合适 | 第 6 篇 `lcmm()` 特别需要注意 |
+| spline 参数边界 | link function 过于灵活或节点不合适 | 第 5 篇 `lcmm()` 特别需要注意 |
 | 多 marker 高维积分 | `multlcmm` 或 `mpjlcmm` 收敛慢 | 参数多、随机效应维度高 |
 | 生存子模型复杂 | joint model hazard 不稳定 | 事件数不足或 hazard 结构过细 |
 
