@@ -449,7 +449,7 @@ window.Quarto = {
   <li><a href="#model-comparison" id="toc-model-comparison" class="nav-link" data-scroll-target="#model-comparison">Model Comparison</a></li>
   <li><a href="#思考题" id="toc-思考题" class="nav-link" data-scroll-target="#思考题">思考题</a></li>
   </ul></li>
-  <li><a href="#illustration-variational-mixture-of-gaussians" id="toc-illustration-variational-mixture-of-gaussians" class="nav-link" data-scroll-target="#illustration-variational-mixture-of-gaussians">Illustration: Variational Mixture of Gaussians</a>
+  <li><a href="#illustration-1-variational-mixture-of-gaussians" id="toc-illustration-1-variational-mixture-of-gaussians" class="nav-link" data-scroll-target="#illustration-1-variational-mixture-of-gaussians">Illustration 1: Variational Mixture of Gaussians</a>
   <ul class="collapse">
   <li><a href="#核心问题-1" id="toc-核心问题-1" class="nav-link" data-scroll-target="#核心问题-1">核心问题</a></li>
   <li><a href="#模型与先验" id="toc-模型与先验" class="nav-link" data-scroll-target="#模型与先验">模型与先验</a></li>
@@ -460,7 +460,7 @@ window.Quarto = {
   <li><a href="#induced-factorizations" id="toc-induced-factorizations" class="nav-link" data-scroll-target="#induced-factorizations">Induced Factorizations</a></li>
   <li><a href="#思考题-1" id="toc-思考题-1" class="nav-link" data-scroll-target="#思考题-1">思考题</a></li>
   </ul></li>
-  <li><a href="#variational-linear-regression" id="toc-variational-linear-regression" class="nav-link" data-scroll-target="#variational-linear-regression">Variational Linear Regression</a>
+  <li><a href="#illustration-2-variational-linear-regression" id="toc-illustration-2-variational-linear-regression" class="nav-link" data-scroll-target="#illustration-2-variational-linear-regression">Illustration 2: Variational Linear Regression</a>
   <ul class="collapse">
   <li><a href="#问题背景" id="toc-问题背景" class="nav-link" data-scroll-target="#问题背景">问题背景</a></li>
   <li><a href="#variational-distribution-1" id="toc-variational-distribution-1" class="nav-link" data-scroll-target="#variational-distribution-1">Variational Distribution</a></li>
@@ -468,20 +468,19 @@ window.Quarto = {
   <li><a href="#lower-bound" id="toc-lower-bound" class="nav-link" data-scroll-target="#lower-bound">Lower Bound</a></li>
   <li><a href="#思考题-2" id="toc-思考题-2" class="nav-link" data-scroll-target="#思考题-2">思考题</a></li>
   </ul></li>
-  <li><a href="#exponential-family-distributions" id="toc-exponential-family-distributions" class="nav-link" data-scroll-target="#exponential-family-distributions">Exponential Family Distributions</a>
+  <li><a href="#通用形式下的平均场变分推断" id="toc-通用形式下的平均场变分推断" class="nav-link" data-scroll-target="#通用形式下的平均场变分推断">通用形式下的平均场变分推断</a>
   <ul class="collapse">
-  <li><a href="#从具体模型到通用形式" id="toc-从具体模型到通用形式" class="nav-link" data-scroll-target="#从具体模型到通用形式">从具体模型到通用形式</a></li>
+  <li><a href="#exponential-family-distributions" id="toc-exponential-family-distributions" class="nav-link" data-scroll-target="#exponential-family-distributions">Exponential Family Distributions</a></li>
   <li><a href="#variational-message-passing" id="toc-variational-message-passing" class="nav-link" data-scroll-target="#variational-message-passing">Variational Message Passing</a></li>
   <li><a href="#思考题-3" id="toc-思考题-3" class="nav-link" data-scroll-target="#思考题-3">思考题</a></li>
   </ul></li>
   <li><a href="#local-variational-methods" id="toc-local-variational-methods" class="nav-link" data-scroll-target="#local-variational-methods">Local Variational Methods</a>
   <ul class="collapse">
-  <li><a href="#核心问题-2" id="toc-核心问题-2" class="nav-link" data-scroll-target="#核心问题-2">核心问题</a></li>
   <li><a href="#convex-duality-与局部-bound" id="toc-convex-duality-与局部-bound" class="nav-link" data-scroll-target="#convex-duality-与局部-bound">Convex Duality 与局部 Bound</a></li>
   <li><a href="#logistic-sigmoid-的-bound" id="toc-logistic-sigmoid-的-bound" class="nav-link" data-scroll-target="#logistic-sigmoid-的-bound">Logistic Sigmoid 的 Bound</a></li>
   <li><a href="#思考题-4" id="toc-思考题-4" class="nav-link" data-scroll-target="#思考题-4">思考题</a></li>
   </ul></li>
-  <li><a href="#variational-logistic-regression" id="toc-variational-logistic-regression" class="nav-link" data-scroll-target="#variational-logistic-regression">Variational Logistic Regression</a>
+  <li><a href="#illustration-3-variational-logistic-regression" id="toc-illustration-3-variational-logistic-regression" class="nav-link" data-scroll-target="#illustration-3-variational-logistic-regression">Illustration 3: Variational Logistic Regression</a>
   <ul class="collapse">
   <li><a href="#variational-posterior-distribution" id="toc-variational-posterior-distribution" class="nav-link" data-scroll-target="#variational-posterior-distribution">Variational Posterior Distribution</a></li>
   <li><a href="#optimizing-the-variational-parameters" id="toc-optimizing-the-variational-parameters" class="nav-link" data-scroll-target="#optimizing-the-variational-parameters">Optimizing the Variational Parameters</a></li>
@@ -490,7 +489,7 @@ window.Quarto = {
   </ul></li>
   <li><a href="#expectation-propagation" id="toc-expectation-propagation" class="nav-link" data-scroll-target="#expectation-propagation">Expectation Propagation</a>
   <ul class="collapse">
-  <li><a href="#核心问题-3" id="toc-核心问题-3" class="nav-link" data-scroll-target="#核心问题-3">核心问题</a></li>
+  <li><a href="#moment-matching" id="toc-moment-matching" class="nav-link" data-scroll-target="#moment-matching">Moment Matching</a></li>
   <li><a href="#ep-algorithm" id="toc-ep-algorithm" class="nav-link" data-scroll-target="#ep-algorithm">EP Algorithm</a></li>
   <li><a href="#example-the-clutter-problem" id="toc-example-the-clutter-problem" class="nav-link" data-scroll-target="#example-the-clutter-problem">Example: The Clutter Problem</a></li>
   <li><a href="#expectation-propagation-on-graphs" id="toc-expectation-propagation-on-graphs" class="nav-link" data-scroll-target="#expectation-propagation-on-graphs">Expectation Propagation on Graphs</a></li>
@@ -529,7 +528,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">修改于</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">2026年6月26日</p>
+      <p class="date-modified">2026年6月28日</p>
     </div>
   </div>
     
@@ -848,8 +847,8 @@ q(m)\propto p(m)\exp\{\mathcal{L}_m\}.
 </ol>
 </section>
 </section>
-<section id="illustration-variational-mixture-of-gaussians" class="level1">
-<h1>Illustration: Variational Mixture of Gaussians</h1>
+<section id="illustration-1-variational-mixture-of-gaussians" class="level1">
+<h1>Illustration 1: Variational Mixture of Gaussians</h1>
 <section id="核心问题-1" class="level2">
 <h2 class="anchored" data-anchor-id="核心问题-1">核心问题</h2>
 <p>第 9 章用最大似然和 EM 估计 Gaussian mixture model (GMM)，但最大似然有两个严重问题：</p>
@@ -1210,8 +1209,8 @@ q(Z)=\prod_n q(z_n).
 </ol>
 </section>
 </section>
-<section id="variational-linear-regression" class="level1">
-<h1>Variational Linear Regression</h1>
+<section id="illustration-2-variational-linear-regression" class="level1">
+<h1>Illustration 2: Variational Linear Regression</h1>
 <section id="问题背景" class="level2">
 <h2 class="anchored" data-anchor-id="问题背景">问题背景</h2>
 <p>第 3 章的 Bayesian linear regression 在 evidence framework 中对超参数 <span class="math inline">\(\alpha,\beta\)</span> 做 point estimate。本节改用 fully Bayesian 思路，把 <span class="math inline">\(\alpha\)</span> 也当作随机变量并放置先验。为了简化，暂时假设噪声 precision <span class="math inline">\(\beta\)</span> 已知。</p>
@@ -1316,7 +1315,18 @@ q(w)\,dw\\
 -\mathbb{E}_w[\ln q(w)]
 -\mathbb{E}_{\alpha}[\ln q(\alpha)].
 \end{aligned}
-\]</span> Bishop 给出闭式展开，用来比较 polynomial order。图 10.9 中，数据来自三阶多项式，lower bound 在 <span class="math inline">\(M=3\)</span> 达到峰值；最大似然则会偏好越来越高阶的模型，因为 residual error 会随复杂度增加而下降。</p>
+\]</span> 这里我们给出闭式展开，用来比较 polynomial order。</p>
+<div id="fig-prml-10-9" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-prml-10-9-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/prml-10-9-20260627-155456.png" class="img-fluid figure-img" style="width:50.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-prml-10-9-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;9 不同 polynomial order的 lower bound展开图
+</figcaption>
+</figure>
+</div>
+<p>上图中，数据来自三阶多项式，lower bound 在 <span class="math inline">\(M=3\)</span> 达到峰值；最大似然则会偏好越来越高阶的模型，因为 residual error 会随复杂度增加而下降。</p>
 <p>这些项展开为 <span class="math display">\[
 \begin{aligned}
 \mathbb{E}_w[\ln p(t\mid w)]
@@ -1380,11 +1390,12 @@ a_0\ln b_0-\ln\Gamma(a_0)
 </ol>
 </section>
 </section>
-<section id="exponential-family-distributions" class="level1">
-<h1>Exponential Family Distributions</h1>
-<section id="从具体模型到通用形式" class="level2">
-<h2 class="anchored" data-anchor-id="从具体模型到通用形式">从具体模型到通用形式</h2>
-<p>前面两个例子都依赖共轭结构。第 10.4 节把这种结构抽象成 exponential family。设独立同分布数据 <span class="math inline">\(X=\{x_n\}\)</span> 及对应 latent variables <span class="math inline">\(Z=\{z_n\}\)</span> 的 complete-data likelihood 为 <span class="math display">\[
+<section id="通用形式下的平均场变分推断" class="level1">
+<h1>通用形式下的平均场变分推断</h1>
+<p>前面两个例子都依赖共轭结构，是具体的例子。在本节中，我们考虑更一般形式的平均场变分推断，比如依赖 exponential family 或概率图的形式。</p>
+<section id="exponential-family-distributions" class="level2">
+<h2 class="anchored" data-anchor-id="exponential-family-distributions">Exponential Family Distributions</h2>
+<p>设独立同分布数据 <span class="math inline">\(X=\{x_n\}\)</span> 及对应 latent variables <span class="math inline">\(Z=\{z_n\}\)</span> 的 complete-data likelihood 为 <span class="math display">\[
 p(X,Z\mid \eta)
 =
 \prod_{n=1}^N
@@ -1421,7 +1432,12 @@ f(\nu_N,\chi_N)g(\eta)^{\nu_N}
 \chi_N=\chi_0+\sum_{n=1}^N
 \mathbb{E}_{z_n}[u(x_n,z_n)].
 \]</span></p>
-<p>因此共轭 exponential family 下的变分推断有统一的两步结构：用 latent posterior 计算 expected sufficient statistics，再用 parameter posterior 的 expected natural parameters 更新 latent posterior。</p>
+<p>因此共轭 exponential family 下的变分推断有统一的两步结构：</p>
+<ol type="1">
+<li>用 latent posterior 计算 expected sufficient statistics，</li>
+<li>再用 parameter posterior 的 expected natural parameters 更新 latent posterior。</li>
+</ol>
+<p>这与 EM 算法的步骤非常相似。</p>
 </section>
 <section id="variational-message-passing" class="level2">
 <h2 class="anchored" data-anchor-id="variational-message-passing">Variational Message Passing</h2>
@@ -1451,37 +1467,241 @@ q(x)=\prod_i q_i(x_i),
 </section>
 <section id="local-variational-methods" class="level1">
 <h1>Local Variational Methods</h1>
-<section id="核心问题-2" class="level2">
-<h2 class="anchored" data-anchor-id="核心问题-2">核心问题</h2>
-<p>前面的 variational inference 是 global method：直接近似整个 posterior。Local variational methods 则从模型中的某个局部因子入手，用一个可处理的 bound 替换难处理的函数。例如 logistic regression 中的 sigmoid likelihood 破坏了 Gaussian 共轭性，但如果能把 sigmoid 下界写成 exponential quadratic form，就能恢复 Gaussian 后验近似。</p>
-</section>
+<p>前面的 variational inference 是 <strong>global method</strong>：直接近似整个 posterior。但是，很多情况下，其所推导出的 ELBO 难以直接处理。例如 logistic regression 中的 sigmoid likelihood 破坏了 Gaussian 共轭性，但如果能把 sigmoid 下界写成 exponential quadratic form，就能恢复 Gaussian 后验近似。</p>
+<p>此时，<strong>Local variational methods</strong> 的方法应运而生。其从模型中的某个局部因子入手，用一个可处理的 bound 替换难处理的 ELBO 局部性项，从而得到一个可解析的形式。global VI 给出 <span class="math display">\[
+\ln p(X)
+\ge
+\mathcal{L}_{\mathrm{global}}(q)
+=
+\mathbb{E}_q[\ln p(X,Z)]
+-\mathbb{E}_q[\ln q(Z)].
+\]</span> 如果其中某个局部项 <span class="math inline">\(\ln f(a)\)</span> 不可处理，则可以引入局部 variational parameter <span class="math inline">\(\xi\)</span>，构造 <span class="math display">\[
+\ln f(a) \ge g(a,\xi),
+\]</span> 从而得到一个更低但可优化的 bound： <span class="math display">\[
+\ln p(X)
+\ge
+\mathcal{L}_{\mathrm{global}}(q)
+\ge
+\mathcal{L}_{\mathrm{local}}(q,\xi).
+\]</span></p>
+<p>因此 local method 可以看成 global VI 的一层辅助近似：<strong>它牺牲 bound 的 tightness，换来解析期望、共轭结构或闭式更新</strong>。若原始 global ELBO 已经可计算且可优化，则 local bound 通常没有必要；它的价值主要在于把原本推导不下去的 global variational approximation 变成可运行的算法。</p>
 <section id="convex-duality-与局部-bound" class="level2">
 <h2 class="anchored" data-anchor-id="convex-duality-与局部-bound">Convex Duality 与局部 Bound</h2>
 <p>若 <span class="math inline">\(f(x)\)</span> 是 convex function，则任意切线都是它的 lower bound。以 <span class="math display">\[
 f(x)=\exp(-x)
 \]</span> 为例，在 <span class="math inline">\(x=\xi\)</span> 处的一阶 Taylor 展开为 <span class="math display">\[
 y(x)=f(\xi)+f'(\xi)(x-\xi),
-\]</span> 并满足 <span class="math inline">\(y(x)\le f(x)\)</span>，等号在 <span class="math inline">\(x=\xi\)</span> 处成立。图 10.10 展示了不同切线给出的 lower bounds。</p>
-<p>更一般地，convex duality 给出 <span class="math display">\[
-f(x)=\max_{\lambda}\{\lambda x-g(\lambda)\},
-\]</span> 其中 dual function 为 <span class="math display">\[
-g(\lambda)=\max_x\{\lambda x-f(x)\}.
-\]</span> 对 concave function，则相应地有 upper bound： <span class="math display">\[
-f(x)=\min_{\lambda}\{\lambda x-g(\lambda)\}.
-\]</span> 图 10.11 用几何方式解释了 dual function 的含义：给定斜率 <span class="math inline">\(\lambda\)</span> 后，最佳线性 bound 的截距由函数曲线与直线之间的最小垂直距离决定。</p>
+\]</span> 并满足 <span class="math inline">\(y(x)\le f(x)\)</span>，等号在 <span class="math inline">\(x=\xi\)</span> 处成立。下图展示了不同切线给出的 lower bounds。</p>
+<div id="fig-prml10-10" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-prml10-10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/prml-10-10-20260627-163721.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-prml10-10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;10 exp 函数的切线与 lower bound
+</figcaption>
+</figure>
+</div>
+<p>这个例子其实已经包含了 convex duality 的核心思想：<strong>不要只看某一条切线，而是把所有可能的线性 lower bounds 组织成一个参数化的 family</strong>。设我们希望用斜率为 <span class="math inline">\(\lambda\)</span> 的直线 <span class="math display">\[
+\lambda x + b
+\]</span> 去下界 convex function <span class="math inline">\(f(x)\)</span>。为了让它对所有 <span class="math inline">\(x\)</span> 都是 lower bound，必须有 <span class="math display">\[
+\lambda x+b\le f(x),\quad \forall x.
+\]</span> 这等价于 <span class="math display">\[
+b\le f(x)-\lambda x,\quad \forall x,
+\]</span> 因此在给定斜率 <span class="math inline">\(\lambda\)</span> 时，允许的最大截距为 <span class="math display">\[
+b^\star(\lambda)
+=
+\inf_x\{f(x)-\lambda x\}
+=
+-\sup_x\{\lambda x-f(x)\}.
+\]</span> 也就是说，最紧的线性 lower bound 可以写成 <span class="math display">\[
+\lambda x-g(\lambda),
+\]</span> 其中 <span class="math display">\[
+g(\lambda)
+=
+\sup_x\{\lambda x-f(x)\}.
+\]</span></p>
+<div id="def-label" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 1 (Convex Conjugate)</strong></span> 对函数 <span class="math inline">\(f:\mathbb{R}^d\to\mathbb{R}\cup\{+\infty\}\)</span>，它的 <strong>convex conjugate</strong> 定义为 <span class="math display">\[
+f^\star(\lambda)
+=
+\sup_x\{\lambda^Tx-f(x)\}.
+\]</span> 在一维情形中，这个 conjugate 记作 <span class="math inline">\(g(\lambda)\)</span>。<strong>Fenchel-Moreau theorem</strong>说明：如果 <span class="math inline">\(f\)</span> 是 proper、closed、convex function，那么可以从它的 biconjugate 恢复原函数： <span class="math display">\[
+f(x)
+=
+\sup_{\lambda}\{\lambda^Tx-f^\star(\lambda)\}.
+\]</span></p>
+</div>
+<p>在 PRML 的一维图示中，这里的 <span class="math inline">\(\lambda\)</span> 可以理解为切线斜率。若 <span class="math inline">\(f\)</span> 可微，那么在接触点 <span class="math inline">\(\xi\)</span> 处有 <span class="math display">\[
+\lambda=f'(\xi),
+\]</span> 对应的 affine lower bound 正是 <span class="math display">\[
+f(\xi)+f'(\xi)(x-\xi).
+\]</span> 例如 <span class="math inline">\(f(x)=\exp(-x)\)</span> 时，切线斜率为 <span class="math display">\[
+\lambda=f'(\xi)=-\exp(-\xi).
+\]</span> 它的 convex conjugate 在 <span class="math inline">\(\lambda&lt;0\)</span> 时为 <span class="math display">\[
+g(\lambda)
+=
+\lambda\{1-\ln(-\lambda)\}.
+\]</span> 将 <span class="math inline">\(\lambda=-\exp(-\xi)\)</span> 代入 <span class="math inline">\(\lambda x-g(\lambda)\)</span>，就得到上面的一阶 Taylor 切线。因此，<span class="math inline">\(\exp(-x)\)</span> 的例子不是一个孤立技巧，而是一般 convex conjugate 表示的一个具体实例。</p>
+<p>对 <strong>concave function</strong>，则相应地可以构造 upper bound。直观上，这是因为 <span class="math inline">\(-f(x)\)</span> 是 convex function；把上面的 lower-bound 结构应用到 <span class="math inline">\(-f(x)\)</span>，再乘回负号，就会得到 <span class="math display">\[
+f(x)
+=
+\inf_{\lambda}\{\lambda x-g(\lambda)\}.
+\]</span> 这里的 <span class="math inline">\(g(\lambda)\)</span> 对应 concave conjugate，可写为 <span class="math display">\[
+g(\lambda)
+=
+\inf_x\{\lambda x-f(x)\}.
+\]</span></p>
+<div id="fig-prml-10-11" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-prml-10-11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/prml-10-11-20260627-192305.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-prml-10-11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;11 dual function 的几何解释
+</figcaption>
+</figure>
+</div>
+<p>上图用几何方式解释了 dual function 的含义：<strong>给定斜率 <span class="math inline">\(\lambda\)</span> 后，最佳线性 bound 的截距由函数曲线与直线之间的最小垂直距离决定</strong>。后面处理 logistic sigmoid 时，就是先把难处理的非线性函数改写成适合做 conjugate bound 的形式，再引入局部参数选择一条尽量贴紧的 bound。</p>
 </section>
 <section id="logistic-sigmoid-的-bound" class="level2">
 <h2 class="anchored" data-anchor-id="logistic-sigmoid-的-bound">Logistic Sigmoid 的 Bound</h2>
 <p>logistic sigmoid 为 <span class="math display">\[
 \sigma(x)=\frac{1}{1+\exp(-x)}.
-\]</span> 它本身既非 convex 也非 concave，但 <span class="math inline">\(\ln\sigma(x)\)</span> 是 concave。因此可以得到指数形式的 upper bound： <span class="math display">\[
+\]</span> 它本身既非 convex 也非 concave，所以不能直接使用上一节的 convex/concave duality。不过，若取对数， <span class="math display">\[
+f(x)=\ln\sigma(x)=-\ln(1+\exp(-x)),
+\]</span> 则 <span class="math inline">\(f(x)\)</span> 是 concave function。因此可以先对 <span class="math inline">\(f(x)\)</span> 构造 upper bound，再通过指数变换得到 <span class="math inline">\(\sigma(x)\)</span> 的 upper bound。对 concave function 有 <span class="math display">\[
+f(x)
+=
+\inf_{\lambda}\{\lambda x-g(\lambda)\},
+\]</span> 其中 <span class="math display">\[
+g(\lambda)
+=
+\inf_x\{\lambda x-f(x)\}.
+\]</span> 为了求 <span class="math inline">\(g(\lambda)\)</span>，令 <span class="math display">\[
+\frac{d}{dx}\{\lambda x-f(x)\}=0.
+\]</span> 由于 <span class="math display">\[
+f'(x)=\frac{\exp(-x)}{1+\exp(-x)}=\sigma(-x),
+\]</span> stationarity condition 给出 <span class="math display">\[
+\lambda=\sigma(-x).
+\]</span> 因此 <span class="math inline">\(\lambda\in(0,1)\)</span>，且 <span class="math display">\[
+x=\ln\frac{1-\lambda}{\lambda}.
+\]</span> 代回 <span class="math inline">\(g(\lambda)=\lambda x-f(x)\)</span>，可得 <span class="math display">\[
+g(\lambda)
+=
+-\lambda\ln\lambda-(1-\lambda)\ln(1-\lambda),
+\]</span> 也就是 Bernoulli random variable 的 binary entropy。于是 <span class="math display">\[
+\ln\sigma(x)
+\le
+\lambda x-g(\lambda),
+\]</span> 并且 <span class="math display">\[
 \sigma(x)\le \exp\{\lambda x-g(\lambda)\}.
-\]</span> 这里 <span class="math inline">\(g(\lambda)\)</span> 与 binary entropy 有关。图 10.12 左图展示了这种 exponential upper bound。</p>
-<p>对 Bayesian logistic regression 更有用的是 Gaussian 形式的 lower bound。通过把 <span class="math display">\[
+\]</span></p>
+<div id="fig-prml-10-12" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-prml-10-12-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/prml-10-12-20260628-113307.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-prml-10-12-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;12 exponential upper bound
+</figcaption>
+</figure>
+</div>
+<p>在上图中，左图展示了这种 exponential <strong>upper</strong> bound。这个 bound 说明 logistic sigmoid 可以由一族指数线性函数从上方包住。不过在 Bayesian logistic regression 中，我们更需要 likelihood 的 <strong>lower</strong> bound，才能得到 model evidence 的 lower bound。</p>
+<p>具体来说，在 Bayesian logistic regression 中，给定 <span class="math display">\[
+a_n=w^T\phi_n,
+\]</span> likelihood 可以写成 <span class="math display">\[
+p(t\mid w)
+=
+\prod_{n=1}^N p(t_n\mid w),
+\qquad
+p(t_n\mid w)
+=
+\sigma(a_n)^{t_n}\{1-\sigma(a_n)\}^{1-t_n}.
+\]</span> 我们关心的是 model evidence <span class="math display">\[
+p(t)
+=
+\int p(t\mid w)p(w)\,dw.
+\]</span> 如果能够构造一个局部 lower bound <span class="math display">\[
+p(t_n\mid w)\ge h_n(w,\xi_n),
+\]</span> 则整体 likelihood 也有 lower bound <span class="math display">\[
+p(t\mid w)
+\ge
+\prod_{n=1}^N h_n(w,\xi_n),
+\]</span> 从而 <span class="math display">\[
+p(t)
+\ge
+\int
+\left\{\prod_{n=1}^N h_n(w,\xi_n)\right\}
+p(w)\,dw.
+\]</span> 取对数后，这就给出了可以优化的 evidence lower bound。</p>
+<p>这个 lower bound 还不能只是任意形式。为了和 Gaussian prior <span class="math display">\[
+p(w)=\mathcal{N}(w\mid m_0,S_0)
+\]</span> 结合后仍然可解析，它最好具有 exponential quadratic form： <span class="math display">\[
+h_n(w,\xi_n)
+=
+\exp\{\text{constant}+\text{linear term in }w-\text{quadratic term in }w\}.
+\]</span> 这样 <span class="math inline">\(\prod_n h_n(w,\xi_n)p(w)\)</span> 仍然是未归一化 Gaussian，归一化常数、posterior approximation 和 ELBO 都可以闭式计算。每个 <span class="math inline">\(\xi_n\)</span> 是一个 local variational parameter，用来让第 <span class="math inline">\(n\)</span> 个数据点的 bound 尽量贴紧真实 likelihood。</p>
+<p>对 Bayesian logistic regression 更有用的是 Gaussian 形式的 lower bound。<strong>Jaakkola-Jordan bound</strong> 的推导从如下恒等式开始： <span class="math display">\[
 \ln\sigma(x)
 =
 \frac{x}{2}-\ln\left(\exp(x/2)+\exp(-x/2)\right)
-\]</span> 改写，并把后一项看成 <span class="math inline">\(x^2\)</span> 的函数，可得 Jaakkola-Jordan bound： <span id="eq-prml10-logistic-bound"><span class="math display">\[
+\]</span> 令 <span class="math display">\[
+u=x^2,\qquad
+h(u)
+=
+-\ln\left(\exp(\sqrt{u}/2)+\exp(-\sqrt{u}/2)\right).
+\]</span> 则 <span class="math display">\[
+\ln\sigma(x)=\frac{x}{2}+h(x^2).
+\]</span> 注意到，<span class="math inline">\(h(u)\)</span> 是 <span class="math inline">\(u=x^2\)</span> 的 <strong>convex function</strong>，因此可以对 <span class="math inline">\(h(u)\)</span> 使用线性 lower bound。为了避免和后面 logistic regression 中的正号记号混淆，先把这个切线斜率记作 <span class="math inline">\(\tilde{\lambda}\)</span>。其 conjugate function 为 <span class="math display">\[
+\tilde{g}(\tilde{\lambda})
+=
+\sup_{u\ge 0}\{\tilde{\lambda}u-h(u)\}.
+\]</span> 由于 <span class="math inline">\(u=x^2\)</span>，stationarity condition 为 <span class="math display">\[
+0
+=
+\tilde{\lambda}
+-
+\frac{du}{dx}\frac{d}{du}h(u)
+=
+\tilde{\lambda}
++\frac{1}{4x}\tanh\left(\frac{x}{2}\right).
+\]</span> 我们假设上述等式的解是 <span class="math inline">\(x=\xi\)</span>（切线与 <span class="math inline">\(h(u)\)</span> 在此处相切，也就是 <span class="math inline">\(u=\xi^2\)</span> 处相切，其中 <span class="math inline">\(\xi&gt;0\)</span>），则 <span class="math display">\[
+\tilde{\lambda}(\xi)
+=
+-\frac{1}{4\xi}\tanh\left(\frac{\xi}{2}\right)
+=
+-\frac{1}{2\xi}\left[\sigma(\xi)-\frac{1}{2}\right].
+\]</span> 在这个接触点处， <span class="math display">\[
+\tilde{g}(\tilde{\lambda}(\xi))
+=
+\tilde{\lambda}(\xi)\xi^2
++\ln\left(\exp(\xi/2)+\exp(-\xi/2)\right).
+\]</span> 因此对 <span class="math inline">\(h(x^2)\)</span> 有 <span class="math display">\[
+h(x^2)
+\ge
+\tilde{\lambda}(\xi)(x^2-\xi^2)
+-\ln\left(\exp(\xi/2)+\exp(-\xi/2)\right).
+\]</span> 代回 <span class="math inline">\(\ln\sigma(x)=x/2+h(x^2)\)</span>，并利用 <span class="math display">\[
+\ln\sigma(\xi)
+=
+\frac{\xi}{2}
+-\ln\left(\exp(\xi/2)+\exp(-\xi/2)\right),
+\]</span> 得到 <span class="math display">\[
+\ln\sigma(x)
+\ge
+\ln\sigma(\xi)
++\frac{x-\xi}{2}
++\tilde{\lambda}(\xi)(x^2-\xi^2).
+\]</span> 由于 <span class="math inline">\(\tilde{\lambda}(\xi)&lt;0\)</span>，通常把正的 quantity 定义为 <span class="math display">\[
+\lambda(\xi)
+=
+-\tilde{\lambda}(\xi)
+=
+\frac{1}{2\xi}\left[\sigma(\xi)-\frac{1}{2}\right]
+=
+\frac{1}{4\xi}\tanh\left(\frac{\xi}{2}\right).
+\]</span> 当 <span class="math inline">\(\xi\to 0\)</span> 时可取连续极限 <span class="math inline">\(\lambda(0)=1/8\)</span>。 于是可得在 logistic regression 部分使用的 <strong>Jaakkola-Jordan lower bound</strong>： <span id="eq-prml10-logistic-bound"><span class="math display">\[
 \sigma(x)
 \ge
 \sigma(\xi)
@@ -1489,11 +1709,7 @@ f(x)=\min_{\lambda}\{\lambda x-g(\lambda)\}.
 \frac{x-\xi}{2}
 -\lambda(\xi)(x^2-\xi^2)
 \right\},
-\tag{9}\]</span></span> 其中按照 PRML 在 logistic regression 部分使用的记号， <span class="math display">\[
-\lambda(\xi)
-=
-\frac{1}{2\xi}\left[\sigma(\xi)-\frac{1}{2}\right].
-\]</span> 这个 bound 在 <span class="math inline">\(x=\xi\)</span> 与 <span class="math inline">\(x=-\xi\)</span> 处取等号。图 10.12 右图展示了其形状：它是 sigmoid 的下界，同时指数内部是 <span class="math inline">\(x\)</span> 的二次函数，因此和 Gaussian prior 相乘后仍可解析归一化。</p>
+\tag{9}\]</span></span> 这个 bound 在 <span class="math inline">\(x=\xi\)</span> 与 <span class="math inline">\(x=-\xi\)</span> 处取等号。上图右图展示了其形状：它是 sigmoid 的下界，同时指数内部是 <span class="math inline">\(x\)</span> 的二次函数，因此和 Gaussian prior 相乘后仍可解析归一化。</p>
 <div class="callout callout-style-default callout-warning callout-titled" title="容易混淆处">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1504,7 +1720,7 @@ f(x)=\min_{\lambda}\{\lambda x-g(\lambda)\}.
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>不同教材对 <span class="math inline">\(\lambda(\xi)\)</span> 的符号可能采用不同约定。这里采用 PRML 在公式 (10.149)-(10.150) 的 logistic regression 记号，使 lower bound 写成 <a href="#eq-prml10-logistic-bound" class="quarto-xref">式&nbsp;9</a>。</p>
+<p>PRML 在推导 convex conjugate 时的斜率 <span class="math inline">\(\tilde{\lambda}(\xi)\)</span> 是负数；到公式 (10.149)-(10.150) 的 logistic regression 记号中，则改用正数 <span class="math inline">\(\lambda(\xi)=-\tilde{\lambda}(\xi)\)</span>。这里采用后者，所以 quadratic term 写成 <span class="math inline">\(-\lambda(\xi)(x^2-\xi^2)\)</span>。</p>
 </div>
 </div>
 <p>若要计算 <span class="math display">\[
@@ -1512,7 +1728,7 @@ I=\int \sigma(a)p(a)\,da,
 \]</span> 其中 <span class="math inline">\(p(a)\)</span> 是 Gaussian，则可用 <a href="#eq-prml10-logistic-bound" class="quarto-xref">式&nbsp;9</a> 得到 <span class="math display">\[
 I\ge \int f(a,\xi)p(a)\,da=F(\xi),
 \]</span> 再选择 <span class="math inline">\(\xi^\star\)</span> 最大化 <span class="math inline">\(F(\xi)\)</span>。该 bound 对单个 <span class="math inline">\(a\)</span> 可精确贴合，但积分时 <span class="math inline">\(\xi^\star\)</span> 是对 <span class="math inline">\(p(a)\)</span> 下所有可能 <span class="math inline">\(a\)</span> 的折中。</p>
-<p>Bishop 也指出，这个 sigmoid lower bound 不能直接推广到 multiclass softmax。多分类 local variational bound 需要额外构造，且文中提到的某些 softmax Gaussian bound 缺少严格证明。</p>
+<p>注意，这个 sigmoid lower bound 不能直接推广到 multiclass softmax。多分类 local variational bound 需要额外构造，且文中提到的某些 softmax Gaussian bound 缺少严格证明。</p>
 </section>
 <section id="思考题-4" class="level2">
 <h2 class="anchored" data-anchor-id="思考题-4">思考题</h2>
@@ -1523,11 +1739,12 @@ I\ge \int f(a,\xi)p(a)\,da=F(\xi),
 </ol>
 </section>
 </section>
-<section id="variational-logistic-regression" class="level1">
-<h1>Variational Logistic Regression</h1>
+<section id="illustration-3-variational-logistic-regression" class="level1">
+<h1>Illustration 3: Variational Logistic Regression</h1>
+<p>根据上面关于 local bound 的知识准备好，我们就可以来探索使用 VI来解决第三个经典的模型估计问题：二分类 logistic regression。</p>
 <section id="variational-posterior-distribution" class="level2">
 <h2 class="anchored" data-anchor-id="variational-posterior-distribution">Variational Posterior Distribution</h2>
-<p>第 4 章用 Laplace approximation 近似 Bayesian logistic regression。第 10.6 节则用 local variational bound。二者都会得到 Gaussian posterior approximation，但变分方法优化的是一个严格的 model evidence lower bound，并且通常比 Laplace 更灵活。</p>
+<p>第 4 章用 Laplace approximation 近似 Bayesian logistic regression。上一节则用 local variational bound。二者都会得到 Gaussian posterior approximation，但变分方法优化的是一个严格的 model evidence lower bound，并且通常比 Laplace 更灵活。</p>
 <p>二分类 logistic regression 中，令 <span class="math display">\[
 a=w^T\phi,
 \]</span> 则 <span class="math display">\[
@@ -1576,7 +1793,17 @@ S_0^{-1}
 +2\sum_{n=1}^N
 \lambda(\xi_n)\phi_n\phi_n^T.
 \]</span></p>
-<p>图 10.13 展示了线性可分数据上的 Bayesian logistic regression：左图的 predictive contours 在远离数据处向外展开，反映分类不确定性增加；右图展示从 posterior 中抽取多个 <span class="math inline">\(w\)</span> 后得到的不同 decision boundaries。</p>
+<p>下图展示了线性可分数据上的 Bayesian logistic regression：左图的 predictive contours 在远离数据处向外展开，反映分类不确定性增加；右图展示从 posterior 中抽取多个 <span class="math inline">\(w\)</span> 后得到的不同 decision boundaries。</p>
+<div id="fig-prml-10-13" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-prml-10-13-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/prml-10-13-20260628-115751.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-prml-10-13-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;13 线性可分数据上的 Bayesian logistic regression
+</figcaption>
+</figure>
+</div>
 </section>
 <section id="optimizing-the-variational-parameters" class="level2">
 <h2 class="anchored" data-anchor-id="optimizing-the-variational-parameters">Optimizing the Variational Parameters</h2>
@@ -1599,7 +1826,7 @@ Q(\xi,\xi^{\text{old}})
 =
 \phi_n^T(S_N+m_Nm_N^T)\phi_n.
 \tag{10}\]</span></span></p>
-<p>积分也可直接解析完成，得到 PRML 公式 (10.164) 的 lower bound： <span class="math display">\[
+<p>积分也可直接解析完成，得到书中的 lower bound： <span class="math display">\[
 \mathcal{L}(\xi)
 =
 \frac{1}{2}\ln\frac{|S_N|}{|S_0|}
@@ -1666,23 +1893,58 @@ b_N=b_0+\frac{1}{2}\mathbb{E}[w^Tw].
 </section>
 <section id="expectation-propagation" class="level1">
 <h1>Expectation Propagation</h1>
-<section id="核心问题-3" class="level2">
-<h2 class="anchored" data-anchor-id="核心问题-3">核心问题</h2>
 <p>Expectation propagation (EP) 也是确定性近似推断，但它和 variational Bayes 的关键区别在于 KL 方向。Variational Bayes 主要最小化 <span class="math display">\[
 \operatorname{KL}(q\Vert p),
 \]</span> 而 EP 的局部步骤基于 <span class="math display">\[
 \operatorname{KL}(p\Vert q).
-\]</span> 因此 EP 更接近 moment matching，通常覆盖 posterior mass 更充分，但在多峰问题中也可能平均多个不兼容的 modes。</p>
-<p>设要在 exponential family 内用 <span class="math display">\[
+\]</span> 因此 EP <strong>更接近 moment matching，通常覆盖 posterior mass 更充分，但在多峰问题中也可能平均多个不兼容的 modes</strong>。</p>
+<section id="moment-matching" class="level2">
+<h2 class="anchored" data-anchor-id="moment-matching">Moment Matching</h2>
+<p>为了理解为什么 EP 会自然引出 moment matching，先考虑一个更简单的问题：固定一个真实分布 <span class="math inline">\(p(z)\)</span>，并希望在 exponential family 中找一个近似分布 <span class="math inline">\(q(z)\)</span>，使 <span class="math display">\[
+\operatorname{KL}(p\Vert q)
+\]</span> 尽可能小。设 <span class="math display">\[
 q(z)=h(z)g(\eta)\exp\{\eta^Tu(z)\}
-\]</span> 近似固定分布 <span class="math inline">\(p(z)\)</span>。最小化 <span class="math inline">\(\operatorname{KL}(p\Vert q)\)</span> 对 <span class="math inline">\(\eta\)</span> 求导，得到 <span class="math display">\[
+\]</span> 其中 <span class="math inline">\(\eta\)</span> 是 natural parameters，<span class="math inline">\(u(z)\)</span> 是 sufficient statistics，<span class="math inline">\(g(\eta)\)</span> 是 normalization factor。对 <span class="math inline">\(\eta\)</span> 来说， <span class="math display">\[
+\begin{aligned}
+\operatorname{KL}(p\Vert q)
+&amp;=
+\int p(z)\ln\frac{p(z)}{q(z)}\,dz \\
+&amp;=
+\int p(z)\ln p(z)\,dz
+-\int p(z)\ln h(z)\,dz
+-\ln g(\eta)
+-\eta^T\mathbb{E}_{p(z)}[u(z)].
+\end{aligned}
+\]</span> 前两项与 <span class="math inline">\(\eta\)</span> 无关，因此可写成 <span class="math display">\[
+\operatorname{KL}(p\Vert q)
+=
+-\ln g(\eta)
+-\eta^T\mathbb{E}_{p(z)}[u(z)]
++\text{const}.
+\]</span> 对 <span class="math inline">\(\eta\)</span> 求导并令其为零，得到 <span class="math display">\[
+-\nabla_{\eta}\ln g(\eta)
+=
+\mathbb{E}_{p(z)}[u(z)].
+\]</span> 另一方面，因为 <span class="math inline">\(q(z)\)</span> 必须归一化， <span class="math display">\[
+1
+=
+g(\eta)\int h(z)\exp\{\eta^Tu(z)\}\,dz.
+\]</span> 对这个归一化条件求导，可以得到 exponential family 的标准恒等式 <span class="math display">\[
+-\nabla_{\eta}\ln g(\eta)
+=
+\mathbb{E}_{q(z)}[u(z)].
+\]</span> 于是最优条件变成 <span class="math display">\[
 \mathbb{E}_{q(z)}[u(z)]
 =
 \mathbb{E}_{p(z)}[u(z)].
-\]</span> 也就是说，最优 exponential-family 近似通过匹配 sufficient statistics 得到。若 <span class="math inline">\(q\)</span> 是 Gaussian，这就是匹配均值和协方差。</p>
+\]</span> 这就是 <strong>moment matching</strong>：<strong>在给定的 exponential family 近似族内，最小化 <span class="math inline">\(\operatorname{KL}(p\Vert q)\)</span> 等价于让 <span class="math inline">\(q\)</span> 和 <span class="math inline">\(p\)</span> 的 expected sufficient statistics 相同</strong>。</p>
+<p>如果 <span class="math inline">\(q(z)\)</span> 是 Gaussian，那么 sufficient statistics 可以取为 <span class="math display">\[
+u(z)=\{z,zz^T\}.
+\]</span> 因此 moment matching 就是令 <span class="math inline">\(q\)</span> 的一阶矩和二阶矩等于 <span class="math inline">\(p\)</span> 的一阶矩和二阶矩，也就是<strong>匹配 mean 与 covariance</strong>。</p>
 </section>
 <section id="ep-algorithm" class="level2">
 <h2 class="anchored" data-anchor-id="ep-algorithm">EP Algorithm</h2>
+<p>接下来，我们来探索使用 EP 来解决实际的近似推断问题。</p>
 <p>很多模型的 joint distribution 可以写成因子乘积 <span class="math display">\[
 p(D,\theta)=\prod_i f_i(\theta).
 \]</span> 对应 posterior 为 <span class="math display">\[
@@ -1696,7 +1958,62 @@ q(\theta)
 =
 \frac{1}{Z}\prod_i\widetilde{f}_i(\theta),
 \]</span> 其中 <span class="math inline">\(\widetilde{f}_i\)</span> 受限于某个 exponential family，使整体 <span class="math inline">\(q\)</span> 可处理。</p>
-<p>若要更新第 <span class="math inline">\(j\)</span> 个因子，EP 执行以下步骤：</p>
+<p>理想情况下，我们希望通过最小化 <span class="math display">\[
+\operatorname{KL}(p\Vert q)
+=
+\operatorname{KL}
+\left(
+\frac{1}{p(D)}\prod_i f_i(\theta)
+\middle\Vert
+\frac{1}{Z}\prod_i\widetilde{f}_i(\theta)
+\right)
+\]</span> 来同时确定所有近似因子。但这个目标涉及真实 posterior 下的期望，而真实 posterior 正是我们无法计算的对象，所以全局优化通常不可行。一个粗糙的想法是分别近似每个因子 <span class="math inline">\(f_i(\theta)\)</span>，但这样会忽略其它因子已经给出的 posterior context，多个局部误差相乘后可能导致很差的整体近似。</p>
+<p>EP 的核心想法是：<strong>不要孤立地近似单个因子，而是在其它近似因子形成的上下文中更新它</strong>。假设当前要更新第 <span class="math inline">\(j\)</span> 个因子，并把其它因子暂时固定。我们希望新的整体近似 <span class="math display">\[
+q^{\text{new}}(\theta)
+\propto
+\widetilde{f}^{\text{new}}_j(\theta)
+\prod_{i\ne j}\widetilde{f}_i(\theta)
+\]</span> 尽量接近 <span class="math display">\[
+f_j(\theta)\prod_{i\ne j}\widetilde{f}_i(\theta).
+\]</span> 也就是说，第 <span class="math inline">\(j\)</span> 个真实因子不是在整个参数空间中被单独拟合，而是在其它因子认为重要的区域中被拟合。</p>
+<p>为此，先从当前近似 posterior 中除去旧的第 <span class="math inline">\(j\)</span> 个近似因子，得到 cavity distribution： <span class="math display">\[
+q^{\setminus j}(\theta)
+=
+\frac{q(\theta)}{\widetilde{f}_j(\theta)}.
+\]</span> 这里的 <span class="math inline">\(q^{\setminus j}\)</span> 可以是不归一化的，它表示“除了第 <span class="math inline">\(j\)</span> 个因子以外，其它近似因子共同给出的背景信息”。然后把真实因子 <span class="math inline">\(f_j(\theta)\)</span> 乘回去并归一化，得到 tilted distribution： <span class="math display">\[
+\widehat{p}_j(\theta)
+=
+\frac{1}{Z_j}f_j(\theta)q^{\setminus j}(\theta),
+\qquad
+Z_j
+=
+\int f_j(\theta)q^{\setminus j}(\theta)\,d\theta.
+\]</span> 如果 <span class="math inline">\(\widehat{p}_j\)</span> 仍然不可处理，就在 tractable exponential family 中找一个新的 <span class="math inline">\(q^{\text{new}}(\theta)\)</span>，使 <span class="math display">\[
+q^{\text{new}}
+=
+\arg\min_{q\in\mathcal{Q}}
+\operatorname{KL}(\widehat{p}_j\Vert q).
+\]</span> 上一节的 moment matching 结果告诉我们：这个 projection 等价于让 <span class="math inline">\(q^{\text{new}}\)</span> 和 <span class="math inline">\(\widehat{p}_j\)</span> 匹配 sufficient statistics。</p>
+<p>最后还要把这个新的整体近似重新写回“因子乘积”的形式。由于 <span class="math display">\[
+q^{\text{new}}(\theta)
+\propto
+\widetilde{f}^{\text{new}}_j(\theta)q^{\setminus j}(\theta),
+\]</span> 所以有 <span class="math display">\[
+\widetilde{f}^{\text{new}}_j(\theta)
+=
+K\frac{q^{\text{new}}(\theta)}{q^{\setminus j}(\theta)}.
+\]</span> 常数 <span class="math inline">\(K\)</span> 由 zeroth-order moment matching 决定，即要求替换前后的局部归一化质量一致： <span class="math display">\[
+\int \widetilde{f}^{\text{new}}_j(\theta)q^{\setminus j}(\theta)\,d\theta
+=
+\int f_j(\theta)q^{\setminus j}(\theta)\,d\theta
+=
+Z_j.
+\]</span> 因为 <span class="math inline">\(q^{\text{new}}\)</span> 已经归一化，所以 <span class="math inline">\(K=Z_j\)</span>，于是 <span class="math display">\[
+\widetilde{f}^{\text{new}}_j(\theta)
+=
+Z_j\frac{q^{\text{new}}(\theta)}{q^{\setminus j}(\theta)}.
+\]</span></p>
+<p>因此，若要更新第 <span class="math inline">\(j\)</span> 个因子，EP 执行以下步骤：</p>
 <ol type="1">
 <li>从当前 posterior approximation 中除去该近似因子，得到 cavity distribution <span class="math display">\[
 q^{\setminus j}(\theta)
@@ -1715,7 +2032,17 @@ Z_j=\int f_j(\theta)q^{\setminus j}(\theta)\,d\theta.
 Z_j\frac{q^{\text{new}}(\theta)}{q^{\setminus j}(\theta)}
 \]</span> 存储更新后的局部近似因子。</li>
 </ol>
-<p>图 10.14 回到前面 Figure 4.14/10.1 的非 Gaussian 例子，比较 Laplace、variational 和 EP Gaussian approximations。EP 因为使用 <span class="math inline">\(\operatorname{KL}(p\Vert q)\)</span>，通常比 <span class="math inline">\(\operatorname{KL}(q\Vert p)\)</span> 的 variational approximation 更宽。</p>
+<div id="fig-prml-10-14" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-prml-10-14-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/prml-10-14-20260628-123104.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-prml-10-14-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;14 非Gaussian下不同方法的比较
+</figcaption>
+</figure>
+</div>
+<p>上图比较 Laplace、variational 和 EP Gaussian approximations。EP 因为使用 <span class="math inline">\(\operatorname{KL}(p\Vert q)\)</span>，通常比 <span class="math inline">\(\operatorname{KL}(q\Vert p)\)</span> 的 variational approximation 更宽。</p>
 <p>Bishop 总结的 EP 过程是：初始化所有近似因子，反复选择一个因子、除去它、乘回真实因子、做 moment matching、再把更新后的 factor 存回。最后用近似因子替换真实因子来估计 posterior 和 evidence： <span class="math display">\[
 p(D)\simeq \int\prod_i\widetilde{f}_i(\theta)\,d\theta.
 \]</span></p>
@@ -1736,7 +2063,17 @@ p(D)\simeq \int\prod_i\widetilde{f}_i(\theta)\,d\theta.
 </section>
 <section id="example-the-clutter-problem" class="level2">
 <h2 class="anchored" data-anchor-id="example-the-clutter-problem">Example: The Clutter Problem</h2>
-<p>图 10.15 展示 clutter problem：观测点来自目标 Gaussian 和背景 clutter Gaussian 的混合，目标是推断目标 Gaussian 的均值 <span class="math inline">\(\theta\)</span>。模型为 <span class="math display">\[
+<div id="fig-prml-10-15" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-prml-10-15-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/prml-10-15-20260628-135129.png" class="img-fluid figure-img" style="width:50.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-prml-10-15-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;15 The Clutter Problem
+</figcaption>
+</figure>
+</div>
+<p>上图展示 clutter problem：观测点来自<strong>目标 Gaussian</strong> 和<strong>背景 clutter Gaussian</strong> 的混合，目标是推断<strong>目标 Gaussian</strong> 的均值 <span class="math inline">\(\theta\)</span>。模型为 <span class="math display">\[
 p(x\mid \theta)
 =
 (1-w)\mathcal{N}(x\mid \theta,I)
@@ -1745,7 +2082,48 @@ p(x\mid \theta)
 p(\theta)=\mathcal{N}(\theta\mid 0,bI).
 \]</span> 对 <span class="math inline">\(N\)</span> 个观测， <span class="math display">\[
 p(D,\theta)=p(\theta)\prod_{n=1}^N p(x_n\mid \theta).
-\]</span> 由于每个 observation 的 likelihood 是二项 mixture，精确 posterior 是 <span class="math inline">\(2^N\)</span> 个 Gaussian 的 mixture，中等规模 <span class="math inline">\(N\)</span> 下就不可处理。</p>
+\]</span> 由于每个 observation 的 likelihood 是两个 Gaussian 的 mixture，精确 posterior 为 <span class="math display">\[
+p(\theta\mid D)
+\propto
+\mathcal{N}(\theta\mid 0,bI)
+\prod_{n=1}^N
+\left[
+(1-w)\mathcal{N}(x_n\mid \theta,I)
++w\mathcal{N}(x_n\mid 0,aI)
+\right].
+\]</span> 这里复杂度来自 product of sums。若引入 latent assignment <span class="math display">\[
+z_n\in\{0,1\},
+\]</span> 其中 <span class="math inline">\(z_n=1\)</span> 表示第 <span class="math inline">\(n\)</span> 个点来自目标 Gaussian，<span class="math inline">\(z_n=0\)</span> 表示它来自 clutter Gaussian，则上式可展开为 <span class="math display">\[
+p(\theta\mid D)
+\propto
+\sum_{z\in\{0,1\}^N}
+\mathcal{N}(\theta\mid 0,bI)
+\prod_{n=1}^N
+\left[
+(1-w)\mathcal{N}(x_n\mid \theta,I)
+\right]^{z_n}
+\left[
+w\mathcal{N}(x_n\mid 0,aI)
+\right]^{1-z_n}.
+\]</span> 对任意固定的 assignment <span class="math inline">\(z\)</span>，只有 <span class="math inline">\(z_n=1\)</span> 的数据点会提供关于 <span class="math inline">\(\theta\)</span> 的 Gaussian likelihood，因此这一项关于 <span class="math inline">\(\theta\)</span> 仍然是 Gaussian： <span class="math display">\[
+\mathcal{N}(\theta\mid 0,bI)
+\prod_{n:z_n=1}\mathcal{N}(x_n\mid \theta,I)
+\propto
+\mathcal{N}(\theta\mid m_z,S_z),
+\]</span> 其中 <span class="math display">\[
+S_z^{-1}
+=
+\left(b^{-1}+\sum_{n=1}^N z_n\right)I,
+\qquad
+m_z
+=
+S_z\sum_{n=1}^N z_nx_n.
+\]</span> 因此精确 marginal posterior over <span class="math inline">\(\theta\)</span> 不是一个高维对象，而是一个最多包含 <span class="math inline">\(2^N\)</span> 个 component 的 Gaussian mixture： <span class="math display">\[
+p(\theta\mid D)
+=
+\sum_{z\in\{0,1\}^N}
+\pi_z\mathcal{N}(\theta\mid m_z,S_z).
+\]</span> 这里 <span class="math inline">\(\pi_z\)</span> 吸收了 mixture weights、clutter likelihood 和 normalization constant。也就是说，<span class="math inline">\(\theta\)</span> 的维度不随 <span class="math inline">\(N\)</span> 增长，但需要 marginalize 的 latent assignment 数量随 <span class="math inline">\(N\)</span> 指数增长，所以中等规模 <span class="math inline">\(N\)</span> 下精确处理就会变得不可行。</p>
 <p>EP 取 spherical Gaussian approximation <span class="math display">\[
 q(\theta)=\mathcal{N}(\theta\mid m,vI),
 \]</span> 并把每个 likelihood factor 近似为 exponential-quadratic form <span class="math display">\[
@@ -1801,7 +2179,28 @@ B
 \frac{m^Tm}{v}
 -\sum_{n=1}^N\frac{m_n^Tm_n}{v_n}.
 \]</span> 这里 <span class="math inline">\(m,v\)</span> 是最终 Gaussian approximation <span class="math inline">\(q(\theta)\)</span> 的参数。</p>
-<p>图 10.16 展示了单个 factor 的近似：真实 <span class="math inline">\(f_n(\theta)\)</span>、当前 cavity <span class="math inline">\(q^{\setminus n}\)</span> 和近似 factor <span class="math inline">\(\widetilde{f}_n\)</span>。关键点是，近似因子不试图在全局逼近 <span class="math inline">\(f_n\)</span>，而是在 cavity 所强调的 <span class="math inline">\(\theta\)</span> 区域中逼近它。图 10.17 比较 EP、variational Bayes 和 Laplace approximation 在 clutter problem 上对 posterior mean 与 evidence 的误差，EP 在该例中表现更好。</p>
+<div id="fig-prml-10-16" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-prml-10-16-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/prml-10-16-20260628-140256.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-prml-10-16-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;16 单个factor近似
+</figcaption>
+</figure>
+</div>
+<p>上图展示了单个 factor 的近似：真实 <span class="math inline">\(f_n(\theta)\)</span>、当前 cavity <span class="math inline">\(q^{\setminus n}\)</span> 和近似 factor <span class="math inline">\(\widetilde{f}_n\)</span>。关键点是，近似因子不试图在全局逼近 <span class="math inline">\(f_n\)</span>，而是在 cavity 所强调的 <span class="math inline">\(\theta\)</span> 区域中逼近它。</p>
+<div id="fig-prml-10-17" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-prml-10-17-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/prml-10-17-20260628-140402.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-prml-10-17-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;17 EP、variational Bayes 和 Laplace approximation 的比较
+</figcaption>
+</figure>
+</div>
+<p>上图比较 EP、variational Bayes 和 Laplace approximation 在 clutter problem 上对 posterior mean 与 evidence 的误差，EP 在该例中表现更好。</p>
 </section>
 <section id="expectation-propagation-on-graphs" class="level2">
 <h2 class="anchored" data-anchor-id="expectation-propagation-on-graphs">Expectation Propagation on Graphs</h2>
@@ -1895,7 +2294,7 @@ f_j(\theta_j)
 </ol>
 </div>
 </div>
-<p>第 11 章会转向 sampling methods。与本章的确定性近似不同，采样方法把困难转移到随机样本的生成、混合和误差评估上。两类方法的优缺点互补：确定性方法通常更快、更结构化；采样方法通常更通用，并且在足够计算资源下更接近精确推断。</p>
+<p>下一章我们会转向 sampling methods。与本章的确定性近似不同，采样方法把困难转移到随机样本的生成、混合和误差评估上。两类方法的优缺点互补：确定性方法通常更快、更结构化；采样方法通常更通用，并且在足够计算资源下更接近精确推断。</p>
 
 
 </section>
