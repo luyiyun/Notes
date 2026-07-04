@@ -16,7 +16,7 @@ tags:
   - 轨迹聚类
 date: 2026-06-09
 date-modified: last-modified
-order: 1
+order: 2
 bibliography: ../../../resources/bibliography/trajectory-mixture-models.bib
 reference-section-title: "参考文献"
 ---
@@ -25,7 +25,7 @@ reference-section-title: "参考文献"
 
 纵向数据中的异质性常常不是“所有人围绕同一条平均曲线波动”这么简单。儿童行为发展、认知老化、慢病症状、治疗反应或社会行为变化，都可能呈现若干种可辨认的典型路径：有人长期稳定，有人逐渐下降，有人快速改善，也有人先升后降。若只报告总体平均轨迹，这些差异会被压缩成一条可能并不代表任何人的曲线。
 
-GBTM 的出发点是把这种异质性写成概率模型。沿用[系列导读：纵向轨迹混合模型](00-series-index.md) 中的统一符号，个体轨迹的边际分布写为若干潜在类别条件分布的混合：
+GBTM 的出发点是把这种异质性写成概率模型。沿用[轨迹混合模型的一般框架](01-general-trajectory-mixture-models.qmd)中的统一符号，个体轨迹的边际分布写为若干潜在类别条件分布的混合：
 
 $$
 p(y_i \mid \theta)
@@ -71,7 +71,7 @@ $$
 
 # 一般形式下的类别条件模型
 
-沿用[系列导读：纵向轨迹混合模型](00-series-index.md)中定义的记号，GBTM 的一般类别条件模型可以写成：
+沿用[轨迹混合模型的一般框架](01-general-trajectory-mixture-models.qmd)中定义的记号，GBTM 的一般类别条件模型可以写成：
 
 $$
 f_g(y_i \mid \theta_g)

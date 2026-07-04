@@ -220,7 +220,7 @@ $$
 1. 数据层面：每个 marker 的测量时间、缺失模式、量表类型可能不同。
 2. 计算层面：随机效应维度、link 参数和类别参数都增加，likelihood 更复杂。
 
-`lcmm` 系列仍在 maximum likelihood 框架下估计，使用 modified Marquardt 类型算法 [@proustlima2017lcmm]。第 4 篇的初始值、多起点、Hessian 和收敛诊断在这里更重要。
+`lcmm` 系列仍在 maximum likelihood 框架下估计，使用 modified Marquardt 类型算法 [@proustlima2017lcmm]。第 1 篇 [一般框架](01-general-trajectory-mixture-models.qmd) 中的初始值、多起点、Hessian 和收敛诊断在这里更重要。
 
 # R 应用流程
 

@@ -14,14 +14,14 @@ tags:
   - 潜类别模型
 date: 2026-06-09
 date-modified: last-modified
-order: 2
+order: 3
 bibliography: ../../../resources/bibliography/trajectory-mixture-models.bib
 reference-section-title: "参考文献"
 ---
 
 # 引言
 
-上一篇 [GBTM](01-gbtm.qmd) 把模型放在最简洁的情形中：一个纵向结局、类别内没有随机效应、给定类别后用一条类别平均轨迹解释重复测量。本篇讨论 GBTM 的三个常见扩展方向：
+上一篇 [GBTM](02-gbtm.qmd) 把模型放在最简洁的情形中：一个纵向结局、类别内没有随机效应、给定类别后用一条类别平均轨迹解释重复测量。本篇讨论 GBTM 的三个常见扩展方向：
 
 1. 观测结局不一定是高斯连续变量。
 2. 潜在类别比例可以由基线协变量解释。
@@ -391,7 +391,7 @@ multi-trajectory GBTM 的类别是联合模式。若类别 1 在 marker A 上下
 
 扩展 GBTM 的核心不是把模型变复杂，而是让概率模型更贴近数据结构。非高斯结局要求重新思考观测分布；类别成员协变量要求区分类别归属机制和纵向均值结构；多轨迹模型要求把类别解释为多个 marker 的联合模式。
 
-本篇与后续三篇的关系可以这样理解：扩展 GBTM 仍主要保留“类别内无随机效应”的简化；第 3 篇 `hlme`/LCMM 会加入类别内随机效应；第 5 篇 `lcmm` 会把观测尺度和潜在过程尺度分开；第 6 篇 `multlcmm` 会用测量模型处理多个 marker 与共同 latent process 的关系。
+本篇与后续几篇的关系可以这样理解：扩展 GBTM 仍主要保留“类别内无随机效应”的简化；第 4 篇 `hlme`/LCMM 会加入类别内随机效应；第 5 篇 `lcmm` 会把观测尺度和潜在过程尺度分开；第 6 篇 `multlcmm` 会用测量模型处理多个 marker 与共同 latent process 的关系。
 
 # 思考题
 

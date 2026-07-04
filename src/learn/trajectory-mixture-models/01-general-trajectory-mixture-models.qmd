@@ -1,0 +1,503 @@
+---
+title: "轨迹混合模型的一般框架"
+subtitle: "A General Framework for Trajectory Mixture Models"
+description: "从最一般的有限混合视角介绍纵向轨迹混合模型的符号、似然、后验分类、参数估计、模型比较与解释边界。"
+draft: false
+aliases:
+  - 轨迹混合模型
+  - trajectory mixture model
+  - latent class trajectory model
+  - finite mixture longitudinal model
+tags:
+  - 纵向轨迹混合模型
+  - 有限混合模型
+  - 潜类别模型
+  - EM算法
+  - 最大似然
+date: 2026-07-04
+date-modified: last-modified
+order: 1
+bibliography: ../../../resources/bibliography/trajectory-mixture-models.bib
+reference-section-title: "参考文献"
+---
+
+# 引言
+
+纵向轨迹混合模型的基本问题是：**当总体平均轨迹不能代表任何一类真实个体路径时，我们怎样用概率模型描述轨迹异质性？**在普通纵向模型中，研究者通常先写出一个总体平均趋势，再用残差或随机效应表达个体围绕平均趋势的偏离。这种做法适合“所有人共享同一种变化机制，只是水平或斜率不同”的场景。
+
+但很多实际研究并不满足这个图景。治疗反应可能有快速缓解、延迟改善和无反应几类；认知老化可能有稳定、缓慢下降和快速下降几类；慢病症状可能有长期低水平、持续高水平和复发波动几类。此时，异质性不只是连续噪声，而可能体现为若干种典型变化过程。轨迹混合模型把这个想法写成一个有限混合结构：**总体由若干潜在类别组成，每个类别有自己的轨迹分布，个体所属类别不可直接观测，只能从整条纵向轨迹中推断** [@mclachlanpeel2000finite; @naginodgers2010clinical]。
+
+本篇只讨论最一般的框架。后续每个具体模型都会把这里的抽象对象具体化：
+
+- GBTM 规定类别内通常没有随机效应；
+- LCMM/GMM 在类别内加入随机效应；
+- latent process LCMM 引入观测尺度和潜在过程尺度；
+- multLCMM 处理多个 marker；
+- JointLCMM 把纵向轨迹和事件结局放进同一个潜类别结构。
+
+换句话说，后续模型的差异主要是**如何具体写出类别条件分布**。
+
+::: {.callout-important title="核心线索"}
+本篇提供后续各章反复使用的符号、似然、后验分类、EM 直觉、梯度直觉、Marquardt 优化、模型比较和解释边界。之后讨论具体模型时，将主要关注各模型如何定义 $f_g$ 以及它们带来的额外假设。
+:::
+
+# 统一符号
+
+设研究中共有 $N$ 个个体，个体编号为 $i=1,\ldots,N$。个体 $i$ 有 $n_i$ 次纵向观测，观测编号为 $j=1,\ldots,n_i$，第 $j$ 次观测时间记为 $t_{ij}$，单一 marker 的观测值记为 $Y_{ij}$。整条纵向轨迹写作
+
+$$
+y_i = (Y_{i1}, \ldots, Y_{in_i})^\top .
+$$
+
+轨迹混合模型引入潜在类别变量
+
+$$
+C_i \in \{1,\ldots,G\},
+$$
+
+其中 $g=1,\ldots,G$ 表示类别编号，$G$ 是候选类别数。个体 $i$ 归属于类别 $g$ 的先验或类别成员概率记为
+
+$$
+\pi_{ig}=P(C_i=g\mid X_{ci};\gamma),
+$$
+
+其中 $X_{ci}$ 是解释类别成员概率的基线协变量，$\gamma$ 是类别成员模型参数。若没有类别成员协变量，$\pi_{ig}$ 就退化为总体类别比例。
+
+给定类别 $C_i=g$ 后，个体整条轨迹的条件分布记为
+
+$$
+f_g(y_i\mid \theta_g).
+$$
+
+这里 $f_g$ 是本系列最重要的抽象对象。它可以是 GBTM 中由类别特异平均曲线和观测分布定义的轨迹分布，也可以在后续 LCMM/GMM 中包含类别内连续个体差异，还可以进一步包含 link function、多 marker 测量模型或 time-to-event 子模型。
+
+当研究包含多个 marker 时，令 $m=1,\ldots,M$ 表示 marker 编号，观测值可写为 $Y_{ijm}$，或者在 marker-specific 时间上写为 $Y_{ijm}(t_{ijm})$。当研究同时包含 time-to-event 结局时，令 $T_i^\ast$ 表示真实事件时间，$\tilde T_i$ 表示观测随访时间，$\Delta_i$ 表示事件或删失指标；若有 competing risks，还需要事件类型指标 $K_i$。这些符号在本篇只作为接口，具体模型留到 multLCMM 和 JointLCMM 中展开。
+
+# 一般模型
+
+## 类别成员模型
+
+类别成员模型描述个体在看到纵向轨迹之前属于各潜在类别的概率。最常见的是多项逻辑模型。若第 $G$ 类作为参考类，则对 $g=1,\ldots,G-1$，
+
+$$
+\pi_{ig}
+=
+\frac{\exp(X_{ci}^\top\gamma_g)}
+{1+\sum_{h=1}^{G-1}\exp(X_{ci}^\top\gamma_h)},
+$$
+
+而参考类概率为
+
+$$
+\pi_{iG}
+=
+\frac{1}
+{1+\sum_{h=1}^{G-1}\exp(X_{ci}^\top\gamma_h)}.
+$$
+
+这个模型只描述类别归属概率如何随基线协变量变化。**它不表示协变量直接改变类别内轨迹形状**；如果某个协变量还要影响纵向轨迹本身，就需要把它放入 $f_g(y_i\mid\theta_g)$ 的轨迹子模型中。
+
+## 类别条件轨迹分布
+
+给定类别后，$f_g(y_i\mid\theta_g)$ 描述个体整条轨迹如何产生。一个非常抽象但有用的写法是
+
+$$
+y_i\mid (C_i=g) \sim f_g(\cdot\mid\theta_g).
+$$
+
+不同模型的差异主要体现在 $f_g$ 的内部结构。例如，在基础 GBTM 中，$f_g$ 通常由类别特异的平均轨迹函数 $\mu_g(t)$ 和观测分布共同决定；在 LCMM/GMM 中，$f_g$ 会进一步包含类别内部的连续个体差异；在 latent process、multLCMM 和 JointLCMM 中，$f_g$ 还会吸收观测尺度、多个 marker 或事件过程。具体模型的数学展开留到后续章节，这里只需要把 $f_g$ 理解为“给定类别后整条数据如何产生”的概率描述。
+
+## 观测数据似然
+
+因为 $C_i$ 不可观测，个体轨迹的边际分布是类别条件分布的加权和：
+
+$$
+p(y_i\mid\theta)
+=
+\sum_{g=1}^{G}
+\pi_{ig} f_g(y_i\mid\theta_g).
+$$
+
+总 log-likelihood 为
+
+$$
+\ell(\theta)
+=
+\sum_{i=1}^{N}
+\log
+\left[
+\sum_{g=1}^{G}
+\pi_{ig} f_g(y_i\mid\theta_g)
+\right].
+$$
+
+::: {.callout-important title="log-likelihood 是估计困难的来源"}
+
+### log-sum 结构是估计困难的来源
+
+观测 log-likelihood 的关键不是单个类别条件密度，而是
+
+$$
+\log
+\left[
+\sum_{g=1}^{G}
+\pi_{ig} f_g(y_i\mid\theta_g)
+\right].
+$$
+
+如果类别 $C_i$ 可观测，求和会消失，模型近似变成按类别分组后的多个纵向模型。正因为类别不可观测，模型必须同时估计类别成员概率和类别条件轨迹分布，并在每次参数变化后重新评估每个个体对各类别的支持程度。这会带来参数强耦合、多峰 likelihood、label switching，以及边界参数下 Hessian 或标准误不稳定等问题。
+
+:::
+
+到这里，一般轨迹混合模型可以正式概括为下面的结构。
+
+::: {#def-general-trajectory-mixture}
+
+### 一般轨迹混合模型
+
+在本系列中，一个一般轨迹混合模型由三部分组成：
+
+1. 潜在类别变量 $C_i\in\{1,\ldots,G\}$。
+2. 类别成员概率 $\pi_{ig}=P(C_i=g\mid X_{ci};\gamma)$。
+3. 类别条件轨迹分布 $f_g(y_i\mid\theta_g)$。
+
+观测轨迹的边际分布为
+
+$$
+p(y_i\mid\theta)
+=
+\sum_{g=1}^{G}
+\pi_{ig} f_g(y_i\mid\theta_g).
+$$
+
+后续所有具体模型都可以看作对 $\pi_{ig}$ 或 $f_g$ 的不同具体化。
+
+:::
+
+## 后验分类概率
+
+模型估计后，类别成员概率会被整条轨迹的信息更新。由 Bayes 公式，个体属于类别 $g$ 的后验概率为：
+
+::: {#prp-posterior-classification}
+
+### 后验分类公式
+
+$$
+\tau_{ig}
+=
+P(C_i=g\mid y_i,X_{ci};\hat\theta)
+=
+\frac{
+\hat\pi_{ig} f_g(y_i\mid\hat\theta_g)
+}{
+\sum_{\ell=1}^{G}
+\hat\pi_{i\ell} f_\ell(y_i\mid\hat\theta_\ell)
+}.
+$$
+
+后验分类同时依赖两个因素：类别成员模型给出的先验倾向 $\hat\pi_{ig}$，以及该类别对整条轨迹的解释能力 $f_g(y_i\mid\hat\theta_g)$。
+
+:::
+
+这个量有两层含义：
+
+1. **分类依据**：most likely class 通常取 $\arg\max_g \tau_{ig}$。
+2. **不确定性度量**：如果一个个体在两个类别上后验概率接近，硬分类就会丢失重要信息。
+
+后续所有类别命名、轨迹图、类别比例和后续回归分析，都应记住类别是模型推断结果，不是直接观测标签 [@herle2020typical]。
+
+# 参数估计
+
+## 最大似然估计
+
+轨迹混合模型通常使用最大似然估计：
+
+$$
+\hat\theta
+=
+\arg\max_\theta \ell(\theta).
+$$
+
+这里的 $\theta$ 包含**类别成员模型参数**、**类别条件轨迹参数**、**测量模型参数**，以及**可能的事件模型参数**。
+
+最大似然框架的优点是统一：**无论后续模型是 GBTM、LCMM、multLCMM 还是 JointLCMM，都可以回到同一个观测 likelihood**。缺点也很明显：**likelihood 可能多峰、参数可能接近边界，复杂模型中的优化和 Hessian 都可能难以稳定计算**。
+
+## EM 算法
+
+EM 算法把潜在类别看作 missing data。它的核心不是先给每个人硬分组，而是反复做两件事：**先用当前参数计算每个人属于各类别的后验责任度，再用这些后验责任度重新估计模型参数**。这个过程之所以自然，来自 complete-data likelihood 的结构。
+
+定义类别指示变量
+
+$$
+Z_{ig}
+=
+\begin{cases}
+1, & C_i=g,\\
+0, & C_i\ne g.
+\end{cases}
+$$
+
+::: {#prp-complete-data-likelihood}
+
+### complete-data likelihood
+
+如果 $Z_{ig}$ 可观测，complete-data log-likelihood 可写成
+
+$$
+\ell_c(\theta)
+=
+\sum_{i=1}^{N}
+\sum_{g=1}^{G}
+Z_{ig}
+\left[
+\log \pi_{ig}
++\log f_g(y_i\mid\theta_g)
+\right].
+$$
+
+这条式子把类别成员模型和类别条件轨迹模型拆开。若类别真的已知，估计就接近“分类后的多组纵向模型”；实际中类别不可观测，所以 EM 用后验概率替代未知的 $Z_{ig}$。
+
+:::
+
+在第 $t$ 次迭代，E step 使用当前参数 $\theta^{(t)}$ 计算
+
+$$
+\tau_{ig}^{(t)}
+=
+P(C_i=g\mid y_i,\theta^{(t)}).
+$$
+
+::: {#prp-em-q-function}
+
+### EM 的 Q 函数
+
+EM 的 Q 函数为
+
+$$
+\begin{aligned}
+Q(\theta\mid\theta^{(t)})
+&=
+E_{\theta^{(t)}}[\ell_c(\theta)\mid y] \\
+&=
+\sum_{i=1}^{N}
+\sum_{g=1}^{G}
+\tau_{ig}^{(t)}
+\log \pi_{ig}
++
+\sum_{i=1}^{N}
+\sum_{g=1}^{G}
+\tau_{ig}^{(t)}
+\log f_g(y_i\mid\theta_g).
+\end{aligned}
+$$
+
+因此，M step 可以理解为**用后验概率 $\tau_{ig}^{(t)}$ 对类别成员模型和类别内轨迹模型进行加权估计**。
+
+:::
+
+在简单混合模型中，M step 可能有闭式或近似闭式更新；在复杂纵向模型中，M step 本身往往仍需数值优化。
+
+EM
+的教学价值尤其重要。它提供了一个优雅的框架，利用后验概率计算和某些现成的模型估计就可以实现轨迹混合模型的估计。
+
+
+## 基于梯度的直接最大化
+
+许多复杂轨迹混合模型不会使用纯 EM，而是直接最大化观测 log-likelihood，这一般来说优化速度更快一些。即便如此，后验概率仍会出现在梯度中，因为观测 likelihood 本身就是对不可观测类别求和后的结果。
+
+::: {#prp-posterior-weighted-gradient}
+
+### 混合模型梯度的后验加权形式
+
+令 $\phi_g$ 表示类别 $g$ 的类别条件模型参数。只要 $f_g$ 对 $\phi_g$ 可微，观测 log-likelihood 对 $\phi_g$ 的梯度可写为
+
+$$
+\frac{\partial \ell(\theta)}{\partial \phi_g}
+=
+\sum_{i=1}^{N}
+\tau_{ig}
+\frac{\partial \log f_g(y_i\mid\theta_g)}{\partial \phi_g}.
+$$
+
+对多项逻辑类别成员模型，若第 $G$ 类为参考类，则
+
+$$
+\frac{\partial\ell(\theta)}{\partial\gamma_g}
+=
+\sum_{i=1}^{N}
+(\tau_{ig}-\pi_{ig})X_{ci},
+\qquad g=1,\ldots,G-1.
+$$
+
+:::
+
+这说明 EM 和直接最大化并不是两套互相无关的语言。EM 显式计算 posterior responsibility；直接优化则把同样的后验信息隐含在梯度和 Hessian 中。后续理解 Newton-Raphson、Marquardt 和 `lcmm` 的收敛诊断时，这一点很重要。
+
+### Newton-Raphson
+
+若使用直接优化，Newton-Raphson 根据梯度 $s(\theta)=\nabla\ell(\theta)$ 和 Hessian $H(\theta)=\nabla^2\ell(\theta)$ 更新：
+
+$$
+\theta^{(t+1)}
+=
+\theta^{(t)}
+-
+\left[
+H(\theta^{(t)})
+\right]^{-1}
+s(\theta^{(t)}).
+$$
+
+在局部最大值附近，Hessian 应该是负定的。若二阶近似准确，Newton 步可以很快收敛；但在混合模型中，远离最优点时 Hessian 可能不稳定，类别比例或方差参数接近边界时也可能导致更新方向不可靠。
+
+### modified Marquardt
+
+Marquardt 思路是在 Newton 步和更保守的梯度方向之间折中。一个教学化写法是把 Hessian 调整为
+
+$$
+H_\lambda = H-\lambda D,
+$$
+
+其中 $D$ 常取与 Hessian 对角线相关的矩阵，$\lambda$ 是阻尼参数。若 Newton 步表现良好，$\lambda$ 可以较小；若 Hessian 不稳定或更新导致 likelihood 下降，增大 $\lambda$ 会让步长更保守。
+
+`lcmm` 包的 companion paper 说明其估计使用 maximum likelihood 和 modified Marquardt algorithm，并设置了较严格的收敛准则 [@proustlima2017lcmm]。这里不需要把教学公式等同于软件内部实现；实际实现会包含参数变换、约束处理和特定收敛诊断。
+
+### 初始化、局部最优与收敛诊断
+
+混合模型的 likelihood 往往多峰，因此初始值不是技术小事。常见策略包括从单类别模型开始、使用多组随机初始值、先短迭代筛选起点，再完整优化。报告中应说明是否使用多起点、最终 log-likelihood 是否可复现、是否出现不同局部最优。
+
+收敛诊断至少包括：
+
+| 诊断 | 含义 | 风险信号 |
+|---|---|---|
+| 参数变化 | 相邻迭代参数是否稳定 | 参数仍明显移动 |
+| likelihood 变化 | 目标函数是否稳定 | logLik 仍上升或震荡 |
+| Hessian/second derivatives | 是否支持局部最大值和标准误 | Hessian 非负定、无法求逆 |
+| 类别比例 | 类别是否有足够数据支持 | 某类比例接近 0 |
+| 初始值敏感性 | 多起点是否收敛到同一解 | 多个不同 logLik 解 |
+
+::: {.callout-warning title="不要只看 log-likelihood"}
+较高 log-likelihood 不足以保证模型可解释。若 Hessian 不合格、类别极小、posterior probabilities 很低或轨迹形状缺乏实质意义，模型仍然不适合直接报告为稳定类别结构。
+:::
+
+# 模型比较
+
+轨迹混合模型的比较，表面上常被说成“选几个类别”，但真正比较的是一组候选概率模型。每个候选模型都包含类别数、时间函数、观测分布、类别成员模型，以及是否包含多个 marker 或事件过程等设定。若只改变 $G$，可以说是在同一模型族内做 class enumeration；若同时改变这些结构，就已经是在比较不同模型族。
+
+因此，模型比较不能只问“哪个模型的 likelihood 更高”。类别数增加几乎总能改善拟合，但也会带来更多参数、更小的类别、更不稳定的后验分类，以及更强的过度解释风险。一个可报告的模型至少要同时满足三类要求：拟合足够好，分类和估计足够稳定，类别解释在研究背景中说得通。
+
+本节先给出三组基础工具：
+
+- 信息准则用来比较拟合与复杂度，
+- posterior probabilities 相关指标用来检查分类质量，
+- 解释边界用来提醒我们不要把 latent class 直接当作真实自然分型。
+
+更完整的类别数选择、敏感性分析和报告规范，放在第 8 篇 [模型选择、分类质量与报告规范](08-model-selection-classification-and-reporting.qmd) 中。
+
+## 信息准则
+
+类别数 $G$ 通常不能只靠视觉决定。常见信息准则包括
+
+$$
+\mathrm{AIC}=-2\ell(\hat\theta)+2p,
+$$
+
+$$
+\mathrm{BIC}=-2\ell(\hat\theta)+p\log N,
+$$
+
+其中 $p$ 是自由参数个数。**AIC 惩罚较轻，更偏向预测或拟合；BIC 惩罚较重，更常用于类别数选择**。对于混合模型，BIC 低并不自动意味着类别有实质解释，因为分布误设、异常点、缺失机制和连续异质性都可能被模型离散成额外类别。
+
+**ICL(Integrated Completed Likelihood) **在 BIC 基础上进一步惩罚分类不确定性。一个常见近似写法是
+
+$$
+\mathrm{ICL}
+\approx
+\mathrm{BIC}
+-2\sum_{i=1}^{N}
+\sum_{g=1}^{G}
+\hat\tau_{ig}\log\hat\tau_{ig}.
+$$
+
+因为 $\sum_g \hat\tau_{ig}\log\hat\tau_{ig}\le 0$，分类越模糊，惩罚越大。ICL 更偏好分离清楚的类别，但也可能牺牲对连续异质性的细腻刻画。
+
+## 分类质量
+
+后验概率可以生成多种分类质量指标。若 $\hat C_i=\arg\max_g\hat\tau_{ig}$，类别 $g$ 的 AvePP 可写为
+
+$$
+\mathrm{AvePP}_g
+=
+\frac{1}{n_g}
+\sum_{i:\hat C_i=g}
+\hat\tau_{ig},
+$$
+
+其中 $n_g$ 是被硬分到类别 $g$ 的个体数。AvePP 越高，说明被分到该类的个体平均后验支持越强。
+
+标准化 entropy 常写为
+
+$$
+\mathrm{Entropy}
+=
+1+
+\frac{1}{N\log G}
+\sum_{i=1}^{N}
+\sum_{g=1}^{G}
+\hat\tau_{ig}\log\hat\tau_{ig}.
+$$
+
+它接近 1 时，分类较清楚；接近 0 时，分类高度模糊。需要注意的是，高 entropy 不等于类别一定真实，低 entropy 也不等于模型一定无用。它只说明在当前模型下，类别后验是否分离。
+
+## 类别解释边界
+
+轨迹混合模型容易给人一种“发现了自然分型”的错觉。更谨慎的表述是：**模型在给定假设、变量、时间函数、观测分布、缺失机制和类别数下，给出了一组能够概括轨迹异质性的潜在类别**。类别可能对应有意义的典型过程，也可能**只是连续差异被离散化后的近似** [@herle2020typical]。
+
+因此，模型比较不能只看一个指标。比较时至少要同时考虑：
+
+| 维度 | 核心问题 |
+|---|---|
+| 拟合 | logLik、AIC、BIC 是否改善 |
+| 简约性 | 新增类别是否只是切分极小群体 |
+| 分类质量 | posterior probabilities、AvePP、entropy 是否支持清楚分类 |
+| 稳定性 | 多起点、敏感性分析、变量缩放和时间函数是否稳定 |
+| 可解释性 | 轨迹形状和类别命名是否有实质背景支持 |
+| 报告风险 | 后续分析是否处理了分类不确定性 |
+
+# 与后续模型的关系
+
+后续章节都沿用本篇的一般结构。它们的主要差异可以压缩为：$\pi_{ig}$ 怎么写，$f_g$ 怎么写，以及是否还有观测尺度、多个 marker 或事件结局。
+
+| 后续模型 | 主要问题 | $f_g$ 的具体化 |
+|---|---|---|
+| [GBTM](02-gbtm.qmd) | 若干典型轨迹能否概括异质性 | 类别特异平均轨迹 + 观测分布，类别内通常不加随机效应 |
+| [扩展 GBTM](03-extended-gbtm.qmd) | 非高斯结局、多轨迹和协变量如何进入 | 改变观测分布、类别成员模型或多个 marker 的联合轨迹结构 |
+| [`hlme`/LCMM/GMM](04-hlme-growth-mixture-models.qmd) | 类别间差异和类别内连续差异如何并存 | 类别特异 mixed model，在类别内表达连续个体差异 |
+| [`lcmm` latent process](05-lcmm-latent-process-models.qmd) | 非正态、有界或有序观测如何处理 | 潜在过程轨迹 + link function + 观测尺度模型 |
+| [`multlcmm`/MLCMM](06-multlcmm-multivariate-longitudinal-markers.qmd) | 多个 marker 是否共同测量同一潜在过程 | 共同 latent process + marker-specific measurement/link model |
+| [JointLCMM/mpjLCMM](07-jointlcmm-and-mpjlcmm.qmd) | 纵向轨迹类别如何连接事件风险 | 纵向子模型 + hazard 子模型共享同一个潜在类别 |
+| [模型选择与报告](08-model-selection-classification-and-reporting.qmd) | 类别数、分类质量和解释边界如何报告 | 汇总各模型共同的比较、诊断和报告原则 |
+
+# 小结
+
+轨迹混合模型可以从一个核心公式理解：
+
+$$
+p(y_i\mid\theta)
+=
+\sum_{g=1}^{G}
+\pi_{ig} f_g(y_i\mid\theta_g).
+$$
+
+类别成员概率 $\pi_{ig}$ 描述个体进入各潜在类别的倾向；类别条件分布 $f_g$ 描述给定类别后整条轨迹如何产生；后验概率 $\tau_{ig}$ 把先验类别倾向和轨迹证据结合起来，成为分类、估计和诊断的中心对象。
+
+EM 算法通过 complete-data likelihood 解释 soft classification；直接最大化和 modified Marquardt 解释复杂 LCMM 系列模型如何实际估计；信息准则、后验分类质量和收敛诊断共同决定模型是否值得报告。后续每个具体模型都将在这个框架中回答一个更具体的问题：它怎样写出 $f_g$，以及这种写法允许我们怎样谨慎解释轨迹类别。
+
+# 思考题
+
+1. 如果总体平均轨迹平滑下降，为什么仍然可能需要轨迹混合模型？
+2. $\pi_{ig}$ 和 $\tau_{ig}$ 的概念差异是什么？为什么后者不能被简单理解为模型输入？
+3. 为什么观测 log-likelihood 中的 log-sum 结构会带来局部最优和 label switching？
+4. EM 中的 soft classification 与后续分析中使用 most likely class 有什么差别？
+5. 当 BIC 变小但某个类别比例很小、AvePP 也不高时，应如何判断模型是否值得保留？
+

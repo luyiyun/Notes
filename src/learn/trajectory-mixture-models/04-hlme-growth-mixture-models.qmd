@@ -16,7 +16,7 @@ tags:
   - 随机效应
 date: 2026-06-09
 date-modified: last-modified
-order: 3
+order: 4
 bibliography: ../../../resources/bibliography/trajectory-mixture-models.bib
 reference-section-title: "参考文献"
 ---
@@ -263,7 +263,7 @@ $$
 \right].
 $$
 
-这条公式解释了为什么 LCMM/GMM 比普通 mixed model 难估计：随机效应积分带来 $f_g$，潜在类别求和又包在对数里面。第 4 篇会专门讨论 EM 直觉、梯度和 Marquardt 实现。
+这条公式解释了为什么 LCMM/GMM 比普通 mixed model 难估计：随机效应积分带来 $f_g$，潜在类别求和又包在对数里面。第 1 篇 [一般框架](01-general-trajectory-mixture-models.qmd) 已经说明 EM 直觉、梯度和 Marquardt 实现的通用结构。
 
 # 后验分类概率
 
@@ -387,7 +387,7 @@ m2_grid <- gridsearch(
 2. log-likelihood 变化是否足够小。
 3. second derivatives / Hessian 相关准则是否满足。
 
-若模型停止但 Hessian 不合格，参数标准误、置信区间和 Wald 检验可能不可靠。第 4 篇会详细解释 `conv`、`gconv` 和 Marquardt 诊断。
+若模型停止但 Hessian 不合格，参数标准误、置信区间和 Wald 检验可能不可靠。第 1 篇 [一般框架](01-general-trajectory-mixture-models.qmd) 已经解释 Hessian、局部最优和 Marquardt 诊断的通用含义。
 
 ## Class-membership model
 
