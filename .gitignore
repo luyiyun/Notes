@@ -35,3 +35,4 @@ resources/audits/
 .qsync-*.html
 resources/coverage
 *-coverage-audit.md
+resources/audits/*

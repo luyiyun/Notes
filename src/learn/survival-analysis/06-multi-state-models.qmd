@@ -1,0 +1,148 @@
+---
+title: "多状态模型"
+description: "整理多状态生存模型的状态、转移、转移强度、Markov 与 semi-Markov 假设、Aalen-Johansen 估计和建模策略。"
+draft: true
+aliases:
+  - 多状态生存模型
+  - multi-state survival models
+  - MSM
+  - Illness-Death Model
+tags:
+  - 生存分析
+  - 多状态模型
+  - 转移强度
+  - Aalen-Johansen
+  - Markov假设
+  - semi-Markov假设
+date: 2026-02-07
+date-modified: last-modified
+order: 6
+---
+
+# 背景与引言
+
+在传统的生存分析（Survival Analysis）中，我们通常关注的是从“初始状态”到“失效事件”（如死亡）的单一终点。最经典的 Kaplan-Meier 估计和 Cox 比例风险模型处理的是这种两状态（Alive $\to$ Dead）结构。然而，在医学研究、卫生经济学及许多社会科学领域，个体的经历往往更为复杂，包含多个中间事件。
+
+例如，癌症患者的病程可能经历“健康 $\to$ 局部复发 $\to$ 远处转移 $\to$ 死亡”的过程；或者在骨髓移植研究中，患者可能经历“移植 $\to$ 急性抗宿主病 (GVHD) $\to$ 慢性 GVHD $\to$ 死亡”。在这些情境下，中间事件不仅是结果的一部分，更是影响最终预后的重要因素。
+
+**多状态生存模型 (Multi-State Survival Models, MSM)** 正是为了解决这一问题而诞生的。它提供了一个统一的框架，将**竞争风险模型**和**传统的生存模型**作为特例包含在内，允许研究者分析**个体在不同离散状态之间随时间转移的随机过程**。通过这种模型，我们可以更精确地描述疾病的自然史，评估干预措施对不同病程阶段的影响，并预测患者的长期预后。
+
+::: {.callout-note title="最佳实践"}
+当你的研究数据中包含除“死亡/终点”以外的重要中间事件（如复发、并发症、恢复），且你想探究这些中间事件如何改变最终结局的风险，或者你想预测处于某一状态下的患者未来的路径概率时，**必须** 优先考虑使用多状态模型，而不是简单地对每个事件单独做生存分析。
+:::
+
+# 核心概念与模型结构
+
+多状态模型由**状态 (States)** 和**转移 (Transitions)** 两个基本要素构成。首先，**状态**是个体在特定时刻所处的环境或健康状况。状态通常分为两类：第一类是**暂时态 (Transient States)**，个体可以进入该状态，也可以离开该状态进入其他状态（例如“无病生存”、“住院”）；第二类是**吸收态 (Absorbing States)**，一旦个体进入该状态，就无法离开（例如“死亡”）。其次，**转移**描述了从一个状态移动到另一个状态的可能性。所有的可能转移构成了模型的结构，通常用有向图来表示。
+
+常见的多状态模型结构包括：
+- **竞争风险模型 (Competing Risks Model)**：这是最简单的多状态模型扩展。个体从初始状态出发，可能进入多个互斥的吸收态之一（例如“死于癌症”或“死于其他原因”）。
+- **疾病 - 死亡模型 (Illness-Death Model)**：这是一个经典的三状态模型。个体从“健康”状态开始，可以直接进入“死亡”状态，也可以先进入“疾病”状态（中间事件），然后再进入“死亡”状态。这种模型可以用来评估疾病状态对死亡风险的改变。
+- **逐步进展模型 (Progressive Model)**：状态之间只能单向流动，例如从 1 到 2，从 2 到 3，不可逆转。
+
+![多状态模型中的状态与转移结构。](../../../assets/images/survival-analysis/multi-state-model-structure.png){width="800px"}
+
+::: {.callout-tip title="提示"}
+在开始建模之前，务必画出你的**状态转移图 (Transition Diagram)**。这是一个由方框（状态）和箭头（允许的转移）组成的图形。如果在数据中未观察到某个方向的转移（例如从“死亡”回到“活着”），则该转移在转移矩阵中应被禁止。如上图所示。
+:::
+
+# 数学理论基础
+
+多状态模型的核心是随机过程 $X(t)$，它表示个体在 $t$ 时刻所处的状态。我们的目标是估计转移强度和转移概率。
+
+## 转移强度
+
+**转移强度（或称瞬时风险率，Transition Intensities）** 是多状态模型的基本参数，类似于生存分析中的风险函数（Hazard Function）。对于从状态 $h$ 到状态 $j$ 的转移，其转移强度 $\lambda_{hj}(t)$ 定义为：
+
+$$
+ \lambda_{hj}(t) = \lim_{\Delta t \to 0} \frac{P(X(t+\Delta t)=j \mid X(t)=h)}{\Delta t} 
+$$
+
+这意味着，给定在时刻 $t$ 处于状态 $h$ 的条件下，个体在下一瞬间转移到状态 $j$ 的瞬时速率。所有的转移强度构成了一个**转移强度矩阵** $Q(t)$，其中的非对角元素为 $\lambda_{hj}(t)$，对角元素为 $-\sum_{j \neq h} \lambda_{hj}(t)$。
+
+## 马尔可夫与半马尔可夫假设
+
+这是多状态模型中最关键的两个假设：
+
+- **马尔可夫假设 (Markov Assumption)** 认为“未来只取决于现在，与过去无关”。具体来说，个体未来转移到哪个状态以及何时转移，仅取决于当前时刻 $t$ 所在的状态，而与它在当前状态停留了多久或之前的路径无关。这被称为 **“Clock Forward”时间尺度**，即时间 $t$ 总是指从研究开始（如随机化或确诊）算起的时间。
+- **半马尔可夫假设 (Semi-Markov Assumption)** 进一步放宽了上述假设限制。它允许转移强度依赖于个体进入当前状态的时间。这被称为 **“Clock Reset”时间尺度**，即每次进入新状态时，时间重置为 0。在这种模型中，风险不仅取决于“现在在哪里”，还取决于“在这里待了多久”（Sojourn time）。
+
+## Aalen-Johansen 估计量
+
+对于转移概率 $P_{hj}(s, t)$（即在时刻 $s$ 处于状态 $h$ 的个体，在时刻 $t$ 处于状态 $j$ 的概率），**Aalen-Johansen 估计量** 是 Kaplan-Meier 估计量在多状态设置下的推广。
+
+对于马尔可夫过程，转移概率矩阵 $\mathbf{P}(s, t)$ 可以通过转移强度矩阵的乘积积分来表示。在非参数设置下，Aalen-Johansen 估计量利用累积风险函数的矩阵形式直接计算转移概率，它是处理竞争风险累积发生率函数 (CIF) 的标准方法。
+
+::: {.callout-important title="核心公式"}
+在竞争风险模型中，Aalen-Johansen 估计量退化为累积发生率函数 (Cumulative Incidence Function, CIF)。切记**不要**使用 `1 - Kaplan-Meier` 来估计竞争风险下的发生率，因为 Kaplan-Meier 将竞争事件视为截尾（Censored），这会导致高估关注事件的发生概率。关于此的详细介绍，可见 [竞争风险模型](05-competing-risks.qmd)。
+:::
+
+::: {.callout-note title="最佳实践"}
+在大多数临床试验分析中，首先尝试使用 **马尔可夫模型**（Clock Forward）。虽然“无记忆性”假设在生物学上并不总是严格成立，但它通常能提供良好的近似，并且数学处理和软件实现（如预测整个队列的未来状态分布）要简单得多。如果怀疑停留时间有强烈影响，可以在 Cox 模型中将“当前状态的停留时间”作为一个时变协变量加入，而不是直接通过复杂的半马尔可夫数学框架来求解。
+:::
+
+# 估计方法与建模策略
+
+根据对基线风险函数的假设不同，多状态模型的估计方法主要分为三类。
+
+## 非参数法 (Non-parametric Methods)
+
+这种方法不需要假设转移强度的具体函数形式。最典型的是上文提到的 Aalen-Johansen 估计量。它主要用于描述性分析，例如绘制不同状态随时间变化的占用概率（State Occupation Probabilities）图，或者计算竞争风险下的累积发生率。
+
+## 半参数法 (Semi-parametric Methods)
+
+这是最常用的回归分析方法，通常基于 Cox 比例风险模型。我们可以为每一个可能的转移（例如 $1 \to 2$，$1 \to 3$，$2 \to 3$）建立一个独立的 Cox 模型：
+
+$$
+ \lambda_{hj}(t \mid Z) = \lambda_{hj,0}(t) \exp(\beta_{hj}^T Z) 
+$$
+
+其中 $Z$ 是协变量向量。这允许协变量对不同的转移产生不同的影响（例如，治疗可能减少复发风险，但对复发后的死亡风险没有影响）。通过分层 Cox 模型（Stratified Cox Model），我们可以将转移类型作为分层变量，从而在一个统一的模型中拟合所有参数。
+
+## 参数法 (Parametric Methods)
+
+如果假设转移强度服从特定的分布（如 Weibull, Exponential, Gompertz），则可以使用参数化模型。参数模型的优势在于可以更平滑地推断尾部数据，并且更容易计算复杂的预测量（如预期寿命），尤其是在数据区间截尾（Interval Censored）的情况下。
+
+::: {.callout-note title="最佳实践"}
+建模的标准流程建议如下：
+1.  **描述性统计：** 使用 Aalen-Johansen 估计量绘制堆叠概率图 (Stacked Probability Plot)，直观展示随时间推移处于各状态的患者比例。
+2.  **效应估计：** 使用针对特定转移的 Cox 模型来评估协变量的影响。
+3.  **预测：** 如果需要预测给定特征患者的 5 年预后（如处于缓解期的概率），结合基线风险和 Cox 回归系数计算转移概率矩阵。
+:::
+
+# 数据结构与软件实现
+
+实施多状态模型的一个主要障碍是数据准备。标准生存数据通常是“宽格式”（每位患者一行），而多状态模型通常需要“长格式”（Counting Process Format）。
+
+## 数据准备
+
+数据必须转换为 `(id, T_start, T_stop, status, transition_id)` 的格式。
+对于每一位患者，如果在观察期间经历了 $k$ 次状态转移，或者处于 $m$ 个可能的风险区间中，他/她在数据集中就会有多行记录。每一行代表患者在特定状态下的一段风险时间。
+
+例如，一个经历了 $1 \to 2 \to 3$ 的患者，会有两部分数据：
+第一部分：从 $t=0$ 到 $t=t_1$，处于状态 1，结局是转移到状态 2（Status=1）。
+第二部分：从 $t=t_1$ 到 $t=t_2$，处于状态 2，结局是转移到状态 3（Status=1）。
+同时，在第一部分的时间段内，该患者也处于转移到状态 3 的风险中（如果 $1 \to 3$ 是允许的），这通常通过数据扩增和分层变量来处理。
+
+## 软件工具
+
+**R 语言** 是目前实现多状态模型最强大的工具。
+1. **`survival` 包：** 基础工具。利用 `coxph()` 函数配合 `strata()` 可以拟合多状态 Cox 模型。
+2. **`mstate` 包：** 专门用于多状态模型的“瑞士军刀”。它提供了 `msprep()` 函数将宽数据转换为长数据，`transMat()` 定义转移矩阵，以及计算预测概率和标准误的函数。 [5]
+3. **`flexsurv` 包：** 用于完全参数化的多状态模型。
+
+::: {.callout-note title="示例代码逻辑"}
+在 R 中使用 `mstate` 的典型工作流：
+1. 定义转移矩阵：`tmat <- transMat(x = list(c(2, 3), c(3), c()), names = c("Healthy", "Illness", "Death"))`
+2. 转换数据：`msdata <- msprep(data = wide_df, trans = tmat, …)`
+3. 拟合模型：`cxh <- coxph(Surv(Tstart, Tstop, status) ~ covariate + strata(trans), data = msdata)`
+4. 预测概率：使用 `msfit()` 计算累积风险，然后用 `probtrans()` 计算转移概率。
+:::
+
+# 参考
+
+* Andersen, P. K., & Keiding, N. Multi-state models for event history analysis. *Statistical Methods in Medical Research* **11**, 91–115 (2002). https://doi.org/10.1191/0962280202sm281ra
+* Meira-Machado, L. et al. Multi-state models for the analysis of time-to-event data. *Statistical Methods in Medical Research* **18**, 195–222 (2009). https://doi.org/10.1177/0962280208092301
+* Aalen, O. O. & Johansen, S. An Empirical Transition Matrix for Non-Homogeneous Markov Chains Based on Censored Observations. *Scandinavian Journal of Statistics* **5**, 141-150 (1978).
+* Putter, H., Fiocco, M. & Geskus, R. B. Tutorial in biostatistics: competing risks and multi-state models. *Statistics in Medicine* **26**, 2389–2430 (2007). https://doi.org/10.1002/sim.2712
+* de Wreede, L. C., Fiocco, M. & Putter, H. mstate: An R Package for the Analysis of Competing Risks and Multi-State Models. *Journal of Statistical Software* **38**, 1–30 (2011). https://doi.org/10.18637/jss.v038.i07

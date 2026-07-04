@@ -1,0 +1,228 @@
+---
+title: "单事件数据的极大似然估计"
+description: "整理右删失单事件生存数据的似然构造、对数似然、测度论解释与指数分布模型示例。"
+draft: true
+aliases:
+  - survival maximum likelihood
+  - 生存数据极大似然估计
+  - 右删失似然
+tags:
+  - 生存分析
+  - 极大似然估计
+  - 右删失
+  - 似然函数
+  - 测度论
+date: 2025-10-05
+date-modified: last-modified
+order: 2
+---
+
+# 背景与意义
+
+在生存分析中，参数化建模（Parametric Modeling）假设生存时间 $T$ 服从某种特定的概率分布（如指数分布、Weibull 分布等）。与非参数方法（如 Kaplan-Meier）相比，参数模型能够提供完整的生存曲线预测，并在样本量较小时通过分布假设提高估计效率。
+
+**极大似然估计是参数化建模的核心算法**。其核心在于，通过引入**指标变量**来同时处理 **“发生事件”的观测值**和 **“未发生事件”的删失值**，从而充分利用数据中的截断信息，这是生存分析区别于普通回归建模的关键所在。
+
+# 极大似然函数
+
+在生存数据中，每个观测个体 $i$ 通常由一个二元组 $(t_i, \delta_i)$ 表示。其中，$t_i$ 是观测到的时间，$\delta_i$ 是事件指示变量（若发生事件则 $\delta_i=1$，若为右删失则 $\delta_i=0$）。
+
+## 个体似然贡献
+
+对于观测到事件发生的个体（$\delta_i = 1$）。我们已知该个体在确切的时刻 $t_i$ 发生失效。因此，该样本对似然函数的贡献即为该时刻的概率密度函数值 $f(t_i; \theta)$，其中 $\theta$ 是分布的待估参数。
+
+对于右删失的个体（$\delta_i = 0$）。我们只知道该个体的真实失效时间 $T$ 大于观测时间 $t_i$。根据生存函数的定义，$P(T > t_i) = S(t_i; \theta)$。因此，该样本对似然函数的贡献为生存函数值 $S(t_i; \theta)$。
+
+综合上述两种情况，单个观测样本 $i$ 的似然贡献可以写成：
+
+$$
+ L_i(\theta) = [f(t_i; \theta)]^{\delta_i} \cdot [S(t_i; \theta)]^{1-\delta_i} 
+$$
+
+## 总体似然函数
+
+假设各样本之间相互独立，总体的似然函数 $L(\theta)$ 等于所有个体似然贡献的连乘积：
+
+$$
+ L(\theta) = \prod_{i=1}^{n} \left\{ [f(t_i; \theta)]^{\delta_i} \cdot [S(t_i; \theta)]^{1-\delta_i} \right\} 
+$$
+
+为了简化计算，利用风险函数 $h(t) = f(t)/S(t)$ 的关系，可以将 $f(t)$ 替换为 $h(t)S(t)$。代入上式后可得：
+
+$$
+ L(\theta) = \prod_{i=1}^{n} \left\{ [h(t_i; \theta) S(t_i; \theta)]^{\delta_i} \cdot [S(t_i; \theta)]^{1-\delta_i} \right\} 
+$$
+
+合并生存函数项后，得到基于**风险函数**和**生存函数**的通用似然表达形式：
+
+$$
+ L(\theta) = \prod_{i=1}^{n} \left\{ [h(t_i; \theta)]^{\delta_i} \cdot S(t_i; \theta) \right\} 
+$$
+
+## 对数似然函数
+
+在实际求解过程中，通常对似然函数取对数以将连乘转变为求和，从而便于求导寻优。对数似然函数 $l(\theta) = \ln L(\theta)$ 的推导如下：
+
+$$
+ l(\theta) = \sum_{i=1}^{n} \left\{ \delta_i \ln[h(t_i; \theta)] + \ln[S(t_i; \theta)] \right\} 
+$$
+
+进一步利用生存函数与累积风险函数的关系 $S(t) = \exp(-H(t))$，其中 $H(t) = \int_0^t h(u)du$，上式可最终化简为：
+
+$$
+ l(\theta) = \sum_{i=1}^{n} \left\{ \delta_i \ln[h(t_i; \theta)] - H(t_i; \theta) \right\} 
+$${#eq-surv-llk-2}
+
+
+这一公式是所有参数化生存模型的底层计算逻辑。模型求解的目标就是找到一组参数 $\hat{\theta}$，使得该对数似然函数达到最大值。
+
+# 基于测度论的深入理解
+
+这里有个问题我们需要深入讨论一下，就是关于似然函数的定义。在之前的研究中，我们不涉及这种连续型和离散型随机变量的联合分布，所以似然函数就是密度函数的乘积没有问题。但是在当前的场景中， **似然函数是密度和概率的乘积**，这是否存在问题呢？
+
+简而言之，看似“将密度和概率相乘”的操作，在数学上是**为我们实际观测到的、混合类型的随机变量（观测时间 $Y$ 和事件指示 $\delta$）构建其联合概率密度函数**的正确过程。这个密度函数是相对于一个恰当构造的**支配测度 (dominating measure)** 来定义的。
+
+下面我们来详细论证一下。
+
+### 严格定义问题中的随机变量
+
+我们首先需要定义概率空间 $(\Omega, \mathcal{F}, P_\theta)$，其中 $\theta$ 是我们关心的模型参数。在这个空间上，我们定义两个基础的、通常是**不可观测**的非负随机变量：
+
+1. **真实事件时间 $T$**：其分布由我们关心的参数 $\theta$ 决定。我们假设 $T$ 是一个连续随机变量，其概率密度函数为 $f_T(t; \theta)$，生存函数为 $S_T(t; \theta)$。其分布对应的概率测度为 $P_T$。
+2. **删失时间 $C$**：其分布通常由与 $\theta$ 无关的参数决定（这是**非信息性删失**的关键假设）。我们假设 $C$ 也是连续的，其密度为 $f_C(c)$，生存函数为 $S_C(c)$。
+
+在实际研究中，我们无法同时观测到 $T$ 和 $C$。我们能观测到的是由它们衍生的两个新变量：
+
+1. **观测时间 $Y$**: $Y = \min(T, C)$
+2. **事件指示 $\delta$**: $\delta = \mathbb{I}(T \le C)$，其中 $\mathbb{I}(\cdot)$ 是指示函数。
+
+我们的目标是为**观测数据 $(Y, \delta)$** 构建似然函数。这意味着，我们需要推导出 $(Y, \delta)$ 这对随机变量的**联合概率分布**。
+
+### 推导观测数据的联合分布
+
+由于 $Y$ 是连续的，而 $\delta$ 是离散的（取值为 0 或 1），所以 $(Y, \delta)$ 是一个**混合型随机变量**。它的分布既不是纯连续的，也不是纯离散的。为了描述它的分布，我们需要分别考虑 $\delta=1$ 和 $\delta=0$ 的情况。
+
+#### 情况 A: 事件发生 ($\delta=1$)
+
+当 $\delta=1$ 时，意味着 $T \le C$ 并且 $Y=T$。我们想求在给定 $\delta=1$ 的条件下，$Y$ 的条件概率密度函数 $f_{Y|\delta}(y | \delta=1)$。首先，我们计算联合事件的概率：
+
+$$
+ P(Y \le y, \delta=1) = P(\min(T,C) \le y, T \le C) = P(T \le y, T \le C) 
+$$
+
+由于 $T$ 和 $C$ 相互独立（核心假设），我们可以对 $C$ 的所有可能值进行积分：
+
+$$
+\begin{align}
+P(T \le y, T \le C) &= \int_0^y P(t \le C) f_T(t; \theta) dt \\
+&= \int_0^y S_C(t) f_T(t; \theta) dt
+\end{align}
+$$
+
+这是 $(Y, \delta=1)$ 联合分布的累积分布函数。对其求导以获得联合“密度” $f_{Y,\delta}(y, 1)$：
+
+$$
+f_{Y,\delta}(y, 1) = \frac{d}{dy} P(Y \le y, \delta=1) = S_C(y) f_T(y; \theta)
+$$
+
+#### 情况 B: 数据删失 ($\delta=0$)
+
+当 $\delta=0$ 时，意味着 $T > C$ 并且 $Y=C$。我们用类似的方法推导联合“密度” $f_{Y,\delta}(y, 0)$：
+
+$$
+ P(Y \le y, \delta=0) = P(\min(T,C) \le y, T > C) = P(C \le y, T > C) 
+$$
+
+根据独立性：
+
+$$
+\begin{align}
+P(C \le y, T > C) &= \int_0^y P(T > c) f_C(c) dc \\
+&= \int_0^y S_T(c; \theta) f_C(c) dc
+\end{align}
+$$
+
+对其求导得到：
+
+$$
+f_{Y,\delta}(y, 0) = \frac{d}{dy} P(Y \le y, \delta=0) = S_T(y; \theta) f_C(y)
+$$
+
+### 构建似然函数
+
+对于单个观测数据 $(y_i, \delta_i)$，其对总似然的贡献就是这个联合“密度”在 $(y_i, \delta_i)$ 处的取值。我们可以用一个统一的表达式来表示：
+
+$$
+ L_i(\theta) = [S_C(y_i) f_T(y_i; \theta)]^{\delta_i} \cdot [S_T(y_i; \theta) f_C(y_i)]^{1-\delta_i} 
+$$
+
+在**非信息性删失**的假设下，$f_C$ 和 $S_C$ 的分布不依赖于我们关心的参数 $\theta$。因此，在最大化关于 $\theta$ 的似然函数时，这些项可以被看作是常数而被忽略。所以，与 $\theta$ 相关的部分是：
+
+$$
+ L_i(\theta) \propto [f_T(y_i; \theta)]^{\delta_i} \cdot [S_T(y_i; \theta)]^{1-\delta_i} 
+$$
+
+这个表达式正是我们之前直观构建的似然函数！
+
+### 测度论解释
+
+上述推导中的“密度”一词需要更严格的定义。我们的观测空间是 $\mathcal{X} = \mathbb{R}^+ \times \{0, 1\}$。我们需要在这个空间上定义一个**支配测度 (dominating measure)** $\nu$。一个自然的选择是**勒贝格测度 $\mu_L$** 和**计数测度 $\mu_c$** 的**乘积测度**，即 $\nu = \mu_L \times \mu_c$。我们观测数据 $(Y, \delta)$ 的联合概率测度 $P_{Y,\delta}$ 是绝对连续于这个支配测度 $\nu$ 的（即 $P_{Y,\delta} \ll \nu$）。根据**Radon-Nikodym 定理**，存在一个可测函数 $p(y, \delta)$，称为 $P_{Y,\delta}$ 关于 $\nu$ 的 **Radon-Nikodym 导数**，使得对于任何可测集 $A \subset \mathcal{X}$，都有：
+
+$$
+ P_{Y,\delta}(A) = \int_A p(y, \delta) d\nu
+$$
+
+这个导数 $p(y, \delta)$ 就是我们所说的**联合概率密度函数**。我们上面在第 2 步中推导出的 $f_{Y,\delta}(y, \delta)$ 正是这个 Radon-Nikodym 导数 $p(y, \delta)$。
+* 对于事件观测 $(\delta_i=1)$，我们贡献的是 $f_T(y_i)$，它是关于勒贝格测度的密度。
+* 对于删失观测 $(\delta_i=0)$，我们贡献的是 $S_T(y_i)$，它是一个概率。
+
+在乘积测度 $\nu$ 的框架下，这两个看似不同性质的量，都被统一为联合分布关于支配测度 $\nu$ 的**密度**。
+
+总之，从严格的数学角度看，上述推导是合理的。其合理性根植于以下几点：
+
+1. **似然函数是基于我们实际观测到的数据 $(Y, \delta)$ 构建的，而非不可观测的 $T$。**
+2. **观测数据 $(Y, \delta)$ 是一个混合型随机变量，其联合分布的“密度”需要针对离散和连续部分分别推导。**
+3. **这个“密度”在测度论中被严谨地定义为概率测度关于一个乘积支配测度（勒贝格测度 $\times$ 计数测度）的 Radon-Nikodym 导数。**
+4. **我们直观上将“概率密度”和“生存概率”相乘得到的表达式，恰好就是这个严格推导出的、在非信息性删失假设下简化后的联合密度函数。**
+
+因此，这一操作不仅是统计实践中的一个便利工具，更有着坚实的测度论和高等概率论基础。
+
+# 实例：指数分布模型
+
+指数分布是参数化建模中最简单的形式，其风险函数为常数 $h(t) = \lambda$，生存函数为 $S(t)=\exp(-\lambda t)$，累计风险风险函数为 $H(t)=\lambda t$。将 $h(t)$ 和 $H(t)$ 代入通用的对数似然表达式 @eq-surv-llk-2 中：
+
+$$
+ l(\lambda) = \sum_{i=1}^{n} [ \delta_i \ln(\lambda) - \lambda t_i ]
+$$
+
+进一步整理得：
+
+$$
+ l(\lambda) = d \ln(\lambda) - \lambda \sum_{i=1}^{n} t_i
+$$
+
+其中 $d = \sum \delta_i$ 表示总观测到的事件数量。
+
+对 $\lambda$ 求导并令导数为零：
+
+$$
+ \frac{dl}{d\lambda} = \frac{d}{\lambda} - \sum_{i=1}^{n} t_i = 0
+$$
+
+解得指数分布下参数的极大似然估计量为：
+
+$$
+ \hat{\lambda} = \frac{d}{\sum_{i=1}^{n} t_i}
+$$
+
+这表明，在指数分布假设下，风险率的估计值等于总事件数除以总观测时长（Total Time at Risk）。
+
+::: {.callout-tip title="**最佳实践**"}
+在选择具体分布时，建议先绘制非参数估计的对数累积风险曲线（$\ln H(t)$ 对 $\ln t$）。如果曲线接近直线，则 Weibull 分布通常是较好的参数选择；如果风险率随时间基本恒定，则优先选择指数分布。对于具有倒 U 型风险特征的数据，对数正态（Log-normal）或对数逻辑（Log-logistic）分布往往能提供更好的拟合效果。
+:::
+
+# 参考
+
+* Collett, D. *Modelling Survival Data in Medical Research*. **CRC Press**, 153-170 (2023). https://doi.org/10.1201/9781003282525
+* Kalbfleisch, J. D. & Prentice, R. L. *The Statistical Analysis of Failure Time Data*. **Wiley Series in Probability and Statistics**, 65-94 (2002). https://doi.org/10.1002/9781118032985
+* [Survival Analysis - Maximum Likelihood Estimation](https://www.statisticalmethods.com/survival-analysis/mle/) (访问于 2024-05-23)

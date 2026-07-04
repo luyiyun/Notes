@@ -1,0 +1,44 @@
+---
+title: "生存分析"
+description: "从事件-时间分布函数、删失数据似然、Kaplan-Meier 估计、参数化模型、竞争风险到多状态模型的专题学习笔记。"
+draft: true
+listing:
+  contents: "*.qmd"
+  type: table
+  sort: "order"
+  fields: [title, description, date]
+  sort-ui: false
+  filter-ui: false
+aliases:
+  - survival analysis
+  - time-to-event analysis
+tags:
+  - 生存分析
+  - time-to-event
+  - 学习笔记
+date: 2026-06-30
+date-modified: last-modified
+order: 0
+---
+
+# 背景介绍
+
+生存分析关心的是“从起点到事件发生经历了多久”，但它真正困难的地方不只是时间变量本身，而是现实数据经常只给出不完整的观察：个体可能在研究结束时尚未发生事件，也可能中途失访，或者在关注事件发生之前经历了另一类会改变风险空间的事件。
+
+本专题按照从基础概率对象到复杂事件结构的顺序整理：先定义生存函数、风险函数、密度函数和累积发生率函数，再讨论右删失数据的似然构造、Kaplan-Meier 非参数估计、参数化生存模型、竞争风险模型和多状态模型。这样的顺序有一个好处：后面的 CIF、Aalen-Johansen 估计和多状态转移概率，都可以回到前面的事件-时间分布对象来理解。
+
+::: {.callout-note title="阅读线索"}
+如果只需要入门，可以先读前 3 篇：基本函数、单事件似然和 Kaplan-Meier 估计。若研究问题包含多种互斥终点或中间状态，再进入竞争风险和多状态模型。
+:::
+
+# 讲义目录
+
+1. [事件-时间分布函数](01-time-to-event-functions.qmd)
+2. [单事件数据的极大似然估计](02-maximum-likelihood-for-single-event-data.qmd)
+3. [Kaplan-Meier 估计](03-kaplan-meier-estimator.qmd)
+4. [生存函数的参数化模型](04-parametric-survival-models.qmd)
+5. [竞争风险模型](05-competing-risks.qmd)
+6. [多状态模型](06-multi-state-models.qmd)
+
+:::{#listing}
+:::

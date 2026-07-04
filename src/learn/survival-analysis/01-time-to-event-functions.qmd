@@ -1,0 +1,314 @@
+---
+title: "事件-时间分布函数"
+description: "从生存函数、风险函数、密度函数和累积发生率函数出发，整理单事件与多事件生存分析中的基本概率对象及其关系。"
+draft: true
+aliases:
+  - 事件时间分布函数
+  - time-to-event functions
+  - 生存函数
+  - 风险函数
+  - 累积发生率函数
+  - CIF
+tags:
+  - 生存分析
+  - time-to-event
+  - 生存函数
+  - 风险函数
+  - 累积发生率函数
+  - 竞争风险
+date: 2025-09-11
+date-modified: last-modified
+order: 1
+---
+
+# 背景与意义
+
+生存分析（Survival Analysis）是统计学中一个专注于分析“时间 - 事件”（time-to-event）数据的分支。这类数据记录了从某个起始时间点到一个特定事件发生所经历的时间长度。其应用场景非常广泛，例如在医学研究中分析患者接受治疗后的生存时间、在工程学中评估机械零件的失效时间、在社会学中研究失业人员找到新工作所需的时间等。
+
+生存分析的核心挑战在于处理 **删失数据（Censored Data）**。**删失是指在研究结束时，我们只知道某个体在特定时间点之后仍然“存活”（未经历事件），但并不知道其确切的事件发生时间**。例如，一个患者在研究结束时仍然健在，或者失联了。简单地忽略这些数据会造成严重的偏倚，而生存分析提供了一套有效的方法来处理这类不完整信息。
+
+在整个分析框架中，**各类事件 - 时间分布函数** 扮演着最核心的角色，比如生存函数 $S(t)$、风险函数 $h(t)$、累计发生率函数 $F(t)$ 等。如果从概率论和数理统计的严格定义来看，它们是对 **生存时间和事件变量概率分布的不同数学表达形式**。它直接回答了研究者最关心的问题：“一个个体能够存活超过某个特定时间点 $t$ 的概率是多少？”。通过对生存函数的建模和比较，我们可以**评估不同疗法、不同风险因素对生存时间的影响**。
+
+# 定义
+
+为了确保定义的严谨性，我们需要首先定义两个基本随机变量：
+1. **$T$**：非负连续随机变量，表示从起点到“某种事件”发生的时间。
+2. **$\delta$**：离散随机变量，表示事件的类型。$\delta \in \{1, 2, \dots, K\}$，其中 $K$ 是可能的事件类型总数，比如在患者的整个治疗周期中，可能历经治疗、复发、进展、康复、死亡等。
+
+通常，我们整个历程中可能仅关注一个事件（$\delta \in\{ 1 \}$），也就是最常见的**生存分析**。我们还可能在整个历程中关注多个事件，比如竞争风险模型、多状态生存模型等。
+
+## 生存函数 {#sec-survival-function}
+
+**生存函数（Survival Function）** 是生存分析中最基础的函数，它描述了个体在特定时间点仍然“存活”也就是未发生任何感兴趣事件的概率。
+
+### 总体生存函数 {#sec-overall-survival}
+
+在存在多种潜在事件（竞争风险）的情况下，生存函数通常指的是**总体生存函数 (Overall Survival Function)**。它描述的是个体在时间 $t$ 之前，**没有发生任何一种类型**（$\delta \in \{1, \dots, K\}$）的事件的概率。数学表达式为：
+
+$$
+ S(t) = P(T > t) = 1- \sum\limits_{k=1}^{K}P(T\leq t,\delta=k),
+$${#eq-overall-surv}
+
+
+这意味着随机变量 $T$ 取值大于 $t$。**在仅有一种事件类型（$K=1$）的单一终点分析中**，生存函数依然定义为 $P(T > t)$。此时，它直观地表示**个体直到时刻 $t$ 仍未发生该单一死因的概率**。
+
+::: {.callout-note title="**最佳实践 (Best Practice)**"}
+在多事件分析（如竞争风险模型）中，提及 $S(t)$ 时，默认指代的是“无事件生存率”或“总体生存率”。如果要描述特定原因的生存情况，应避免使用单纯的 $S(t)$ 符号，以免混淆。
+:::
+
+### 净生存函数 {#sec-net-survival}
+
+在多事件分析中，为了研究某一特定原因（例如癌症）的**纯粹致死力**，统计学家引入了 **潜在失效时间 (Latent Failure Times)** 的概念。假设针对每种风险 $k$，个体都有一个潜在的死亡时间 $T_k$（例如：假设只有癌症存在，该个体会活到 $T_{cancer}$；假设只有车祸存在，该个体会活到 $T_{accident}$）。
+
+现实中我们观察到的时间是 $T = \min(T_1, \dots, T_K)$。而 **净生存函数（Net Survival Function，也被称为边缘生存函数）** 关注的是那个**不可见**的潜在时间 $T_k$。其定义如下：
+
+$$
+ S_k(t) = P(T_k > t) 
+$$
+
+**物理含义**：在一个假想的世界里，如果**消除了除 $k$ 以外的所有竞争风险**（即假设其他风险永远不会发生），个体能活过时间 $t$ 的概率。
+
+::: {.callout-important title="**核心辨析：净生存函数 vs 条件概率**"}
+*   **不是** $P(T > t \mid \delta = k)$：这不是“已知死于某原因的人”的生存率。
+*   **是** $P(T_k > t)$：这是**潜在变量 $T_k$ 的边缘概率**。
+*   **直观理解**：它是一个**假想世界**（Hypothetical World）里的**无条件生存率**。这个假想世界的设定是：只有风险 $k$ 存在，其他风险都被消除了。
+:::
+
+为了计算 $S_k(t)$，通常需要假设各潜在风险之间相互独立（Independent Censoring）。在此前提下，它与特定原因风险函数 $h_k(t)$ 的关系为：
+
+$$
+ S_k(t) = \exp\left( - \int_0^t h_k(u) \, du \right) 
+$$
+
+这就是我们在常规 Kaplan-Meier 分析中，将“死于其他原因”视为“删失 (Censored)”时所估计的函数。
+* **应用场景**：药物研发（评估药效）、病理机制研究（癌症本身的凶险程度）。
+* **注意**：它描述的是一种生物学属性或假想场景，而非患者在现实中的实际预后。
+
+::: {.callout-note title="**最佳实践 (Best Practice)**"}
+*   **区分场景**：如果您关注的是患者的**实际预后**（如：给病人做咨询），请使用 **总体生存函数 $S(t)$** 或 **CIF**。如果您关注的是疾病的**生物学致死性**（如：比较两种药物对肿瘤的控制力），可以使用 **净生存函数 $S_k(t)$**（即把其他死因当作删失的 KM 法）。
+:::
+
+## 累积发生率函数 {#sec-cumulative-incidence-function}
+
+**累积发生率函数（Cumulative Incidence Function，CIF）** 用于描述在时间 $t$ 之前，发生**特定类型**事件的绝对概率。它是竞争风险模型中最重要的分布函数。
+
+对于第 $k$ 类事件（$k \in \{1, \dots, K\}$），CIF 定义为时间 $T$ 和事件类型 $\delta$ 的**联合概率分布 (Joint Probability Distribution)**。它表示个体在时间 $t$ 或之前，发生了第 $k$ 类事件的概率。数学表达式为：
+
+$$
+ F_k(t) = P(T \le t, \delta = k) 
+$$
+
+这是一个非条件概率，也被称为**粗概率（Crude Probability）**。它不仅取决于事件 $k$ 自身的发生强度，还受制于其他竞争事件是否先发生。
+
+在单一事件类型（$K=1$）的情况下，由于 $\delta$ 只能取 1（假设不考虑删失），联合概率退化为边缘概率。此时 CIF 就等同于标准的**累积分布函数 (Cumulative Distribution Function, CDF)**：
+
+$$
+ F(t) = P(T \le t) 
+$$
+
+这表示在时间 $t$ 前发生事件的概率。
+
+::: {.callout-note title="**最佳实践 (Best Practice)**"}
+在很多软件输出或文献中，单一事件的 $F(t)$ 常被称为 "Risk" 或 "Failure probability"，而在多事件中则严格称为 CIF。但在数学本质上，单事件的 CDF 就是 CIF 的一种特例。
+:::
+
+## 风险函数 {#sec-hazard-function}
+
+**风险函数（Hazard Function）** 描述的是在给定个体已经存活到时间 $t$ 的条件下，下一瞬间发生事件的**瞬时速率**。它不是一个概率，而是一个**速率（Rate）**。
+
+对于第 $k$ 类事件，其风险函数称为**特定原因风险函数 (Cause-specific Hazard Function)**，记为 $\lambda_k(t)$ 或 $h_k(t)$。它定义为：在个体活到了时间 $t$（即 $T \ge t$）的条件下，在极短的时间区间 $[t, t+\Delta t)$ 内，发生第 $k$ 类事件的条件概率极限。数学表达式为：
+
+$$
+ \lambda_k(t) = \lim_{\Delta t \to 0^+} \frac{P(t \le T < t + \Delta t, \delta = k \mid T \ge t)}{\Delta t} 
+$$
+
+注意，这里的条件 $T \ge t$ 意味着个体在 $t$ 时刻之前没有发生**任何**类型的事件（$\delta$ 尚未确定）。
+
+在单一事件类型下，风险函数简化为标准的风险率 $\lambda(t)$。定义逻辑相同，只是不再区分 $\delta$ 的类型：
+
+$$
+ \lambda(t) = \lim_{\Delta t \to 0^+} \frac{P(t \le T < t + \Delta t \mid T \ge t)}{\Delta t} 
+$$
+
+::: {.callout-note title="**最佳实践 (Best Practice)**"}
+理解风险函数的关键在于分母的条件 $T \ge t$。无论是在普通分析还是竞争风险分析中，**风险函数总是基于“当前还活着的风险集（Risk Set）”来定义的**。这是它与 CIF（基于初始人群定义）最本质的区别。
+:::
+
+## 概率密度函数 {#sec-density-function}
+
+**概率密度函数 (Probability Density Function, PDF)** 描述了在特定时间 $t$ 发生特定事件的“绝对强度”。与风险函数不同，它不是一个基于“存活至今”的条件速率，而是事件在时间轴上分布的原始概率浓度。
+
+在多事件背景下，第 $k$ 类事件的概率密度函数通常被称为 **次分布密度函数 (Sub-distribution Density Function)**。它描述的是时间 $T$ 与事件类型 $\delta$ 的联合密度，即在时间 $t$ 的瞬时邻域内发生第 $k$ 类事件的概率。数学表达式为：
+
+$$
+ f_k(t) = \lim_{\Delta t \to 0^+} \frac{P(t \le T < t + \Delta t, \delta = k)}{\Delta t} 
+$$
+
+从累积发生率函数（CIF）的角度来看，次分布密度函数正是 CIF 的一阶导数：
+
+$$
+ f_k(t) = \frac{d}{dt} CIF_k(t) 
+$${#eq-cif-dist}
+
+
+这代表了在时刻 $t$ 观测到第 $k$ 类事件发生的瞬时概率流。需要注意的是，由于个体可能死于其他竞争风险，第 $k$ 类事件的密度函数在整个时间轴（0 到 $\infty$）上的积分等于该事件最终发生的总比例 $P(\delta = k)$，这个值通常小于 1。
+
+在单一事件类型（$K=1$）的情况下，概率密度函数退化为标准的边缘密度函数 $f(t)$。它直接描述了生存函数 $S(t)$ 随时间流逝而下降的速度。数学表达式为：
+
+$$
+ f(t) = \frac{d}{dt} F(t) = - \frac{d}{dt} S(t) 
+$$
+
+在单一事件模型中，$f(t)$ 在整个时间轴上的积分恒等于 1（假设所有个体最终都会发生事件）。
+
+::: {.callout-note title="**最佳实践 (Best Practice)**"}
+*   **区分密度与风险**：在统计建模时，请务必区分 $f_k(t)$（密度）与 $h_k(t)$（风险）。第一，密度函数是相对于“初始总人群”的发生强度；第二，风险函数是相对于“当前时刻仍存活人群”的发生强度。
+*   **可视化应用**：当您想要展示某种疾病发病或死亡的“高峰时间点”时，绘制密度函数（或其直方图估计）比生存曲线更具直观解释力。
+:::
+
+# 函数间的内在联系
+
+在生存分析中，生存函数 $S(t)$、风险函数 $h(t)$、累积发生率函数 $CIF(t)$ 以及概率密度函数 $f(t)$ 并非相互独立的指标。它们实际上是**同一个随机过程（事件发生时间与类型）在不同侧面的数学投影**。
+
+只要确定了其中任何一个函数，理论上就可以通过微积分关系推导出其他所有函数。理解这些关系对于深入掌握生存分析的机制至关重要。
+
+## 单事件情境
+
+在最基础的单事件（无竞争风险）生存分析中，我们只关注时间 $T$。此时，$S(t)$、$h(t)$ 和 $f(t)$ 之间存在着严密的微积分关系。
+
+**从 $S(t)$ 到 $h(t)$**：风险函数本质上是生存函数的**对数导数的负值**。
+
+$$
+\begin{align}
+h(t) &= \lim_{ \Delta t \to 0 }\frac{P(t\leq T<t+\Delta t|T\geq t)}{\Delta t} \\
+&=\lim_{ \Delta t \to 0 }\frac{P(t\leq T<t+\Delta t)}{P(T\geq t)\Delta t} \\
+&=\frac{f(t)}{S(t)}=\frac{-S'(t)}{S(t)} = -\frac{d}{dt} \log S(t)
+\end{align}
+$${#eq-s2h}
+
+
+::: {.callout-note title="直观解释"}
+风险率 = （当前时刻死亡的概率密度）/（当前还活着的人群比例）。
+:::
+
+**从 $h(t)$ 到 $S(t)$**：如果我们知道了风险函数，可以通过积分求回生存函数。我们直接利用上面的等式 @eq-s2h：
+
+$$
+h(t)=-\frac{d}{dt}\log S(t),
+$$
+
+得到
+
+$$
+S(t) = \exp\left( - \int_0^t h(u) \, du \right) = \exp(-H(t))
+$$
+
+其中 $H(t)$ 是**累积风险函数**。这表明生存概率随着累积风险的增加呈指数衰减。这是 Cox 模型能预测生存率的数学基础。
+
+**概率密度函数 $f(t)$** 描述了事件在某一时刻发生的“绝对强度”（不考虑之前是否存活）。根据 @eq-s2h，可以直接得到
+
+$$
+ f(t) = h(t) \cdot S(t)
+$$
+
+对于以上内容的直观理解是：要在 $t$ 时刻发生事件（$f(t)$），个体必须满足两个条件：
+1. 活过了之前的 $t$ 时间（概率为 $S(t)$）；
+2. 在 $t$ 时刻的瞬间被风险击中（速率为 $h(t)$）。
+
+## 多事件情景
+
+在引入竞争风险后（$\delta \in \{1, \dots, K\}$），上述简单关系被拓展为更复杂的网络。核心的变化在于：**特定事件的发生率不仅取决于该事件的风险，还取决于总体生存状况。**
+
+我们先看 **竞争风险函数与次密度函数、总体生存函数**之间的关系：
+
+$$
+\begin{align}
+\lambda_k(t) &= \lim_{\Delta t \to 0^+} \frac{P(t \le T < t + \Delta t, \delta = k \mid T \ge t)}{\Delta t} \\
+&=\lim_{\Delta t \to 0^+} \frac{P(t \le T < t + \Delta t, \delta = k )}{\Delta t P(T\geq t)} \\
+&=\frac{f_{k}(t)}{S_{overall}(t)}.
+\end{align}
+$${#eq-s2h-multi}
+
+
+比较公式 @eq-s2h 和 @eq-s2h-multi，其中最需要注意的点是分母是**总体生存函数**。
+
+我们对 @eq-overall-surv 两端求导，再结合 @eq-s2h-multi，可以得到如下结果：
+
+$$
+\begin{align}
+\frac{dS_{overall}(t)}{dt}=-\sum\limits_{k=1}^{K}\lambda_{k}(t)S_{overall}(t)
+\end{align}
+$$
+
+简单变形后就可以得到如何通过**竞争风险函数来计算总体生存函数**的公式：
+
+$$
+ S_{overall}(t) = \exp\left( - \int_0^t \sum_{k=1}^{K} \lambda_k(u) \, du \right)
+$$
+
+这意味着，**任何一个竞争风险 $\lambda_k(t)$ 的升高，都会通过指数函数导致总体生存率 $S_{overall}(t)$ 的下降**。
+
+利用 @eq-s2h-multi 和次密度函数的定义 @eq-cif-dist，我们可以知道 **CIF 与生存函数、竞争风险函数之间的关系**：
+
+$$
+ CIF_k(t) = \int_0^t \underbrace{S_{overall}(u)}_{\text{先要活到} u} \cdot \underbrace{h_k(u)}_{\text{死于原因} k} \, du
+$$
+
+这是竞争风险模型中最重要的公式，被称为 **CIF 的定义方程**：
+
+**其中**：
+* $CIF_k(t)$ 是 $S_{overall}(t)$ 和 $h_k(t)$ 的卷积（加权积分）。
+* **关键点**：即使特定原因的风险 $h_k(t)$ 保持不变，如果其他竞争风险增加，会导致 $S_{overall}(u)$ 下降，从而导致 $CIF_k(t)$ **下降**。
+* 这解释了为什么在竞争风险中不能只看 Hazard Ratio，必须看 CIF。
+
+利用 @eq-overall-surv，我们还可以得到**总体生存函数与 CIF 之间的关系**。也就是，在任何时间点 $t$，所有可能的状态概率之和必须为 1：
+
+$$
+ S_{overall}(t) + \sum_{k=1}^{K} CIF_k(t) = 1
+$$
+
+或者写作微分形式（概率密度的和）：
+
+$$
+ f_{overall}(t) = \sum_{k=1}^{K} f_k(t)
+$$
+
+其中 $f_k(t) = S_{overall}(t) \cdot h_k(t)$ 是第 $k$ 类事件的**次分布密度函数**。
+
+::: {.callout-note title="**直观理解：漏水的桶**"}
+想象一个装满水的水桶（总体生存 $S(0)=1$）：
+* 桶底有 $K$ 个不同大小的洞（代表不同的风险 $h_k$）。
+*   **$S(t)$**：桶里还剩下的水量。
+*   **$h_k(t)$**：第 $k$ 个洞在当前压力下的**出水流速**。
+*   **$CIF_k(t)$**：从第 $k$ 个洞流到地上的**积水量**。
+
+**关系体现**：
+1.  流速（$h_k$）越大，积水（$CIF_k$）越快，桶里的水（$S$）减少得越快。
+2.  如果桶里的水（$S$）已经漏光了，即使洞（$h_k$）再大，也流不出水了（这就是为什么计算 $CIF$ 必须乘上 $S$）。
+:::
+
+## 关系总结
+
+为了方便记忆，我们可以梳理出以下的推导路径：
+
+1. **已知 $h_k(t)$ (所有 $k$)** $\rightarrow$ 可求 $S_{overall}(t)$ $\rightarrow$ 结合两者可求 $CIF_k(t)$。这是**正向推导**（建模常用的路径）。
+2. **已知 $CIF_k(t)$ (所有 $k$)** $\rightarrow$ 可求 $\sum CIF = 1 - S_{overall}(t)$ $\rightarrow$ 求导可得 $h_k(t)$。这是**逆向推导**（从数据反推机制）。
+
+::: {.callout-important title="**核心结论**"}
+*   **生存函数 $S(t)$** 是风险函数的**累积指数映射**。
+*   **累积发生率 $CIF(t)$** 是风险函数在生存曲线上的**加权累积**。
+* 在多事件分析中，**总体生存率**是连接各个竞争事件的纽带，任何一个风险的变化都会通过改变总体生存率，进而影响其他所有事件的 $CIF$。
+:::
+
+# 参考
+
+* faculty. washington. edu. *Lecture 5: Survival Analysis 5.1 Survival Function*. (访问于 2024-09-11)
+* Fiveable. *Survival and hazard functions | Actuarial Mathematics Class Notes*. (访问于 2024-09-11)
+* Incerti, D. *Parametric survival modeling*. (2019). https://www.devinincerti.com/2019/06/18/parametric-survival-modeling.html (访问于 2024-09-11)
+* BMJ. *Parametric survival models versus Kaplan-Meier estimates*. (2003). https://www.bmj.com/content/326/7380/106.1 (访问于 2024-09-11)
+* Wikipedia. *Survival analysis*. (2024). https://en.wikipedia.org/wiki/Survival_analysis (访问于 2024-09-11)
+* R-bloggers. *Parametric survival modeling*. (2019). https://www.r-bloggers.com/2019/06/parametric-survival-modeling/ (访问于 2024-09-11)
+* PySurvival. *Theory - PySurvival*. https://www.pysurvival.io/theory (访问于 2024-09-11)
+* JoVE. *Video: Parametric Survival Analysis: Weibull and Exponential Methods*. (2025). https://www.jove.com/v/10636/parametric-survival-analysis-weibull-and-exponential-methods (访问于 2024-09-11)
+* data. princeton. edu. *Parametric Survival Models*. https://data.princeton.edu/pop509/ParametricSurvivalModels.pdf (访问于 2024-09-11)
+* PMC. *An Introduction to Survival Statistics: Kaplan-Meier Analysis*. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5962737/ (访问于 2024-09-11)

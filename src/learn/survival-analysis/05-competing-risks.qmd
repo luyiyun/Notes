@@ -1,0 +1,381 @@
+---
+title: "竞争风险模型"
+description: "整理竞争风险中的 CIF、Aalen-Johansen 估计、Gray 检验、原因别风险模型与 Fine-Gray 子分布风险模型。"
+draft: true
+aliases:
+  - 竞争风险
+  - competing risks
+  - CIF
+  - Aalen-Johansen
+  - Fine-Gray模型
+tags:
+  - 生存分析
+  - 竞争风险
+  - 累积发生率函数
+  - Aalen-Johansen
+  - Gray检验
+  - Fine-Gray模型
+date: 2026-01-12
+date-modified: last-modified
+order: 5
+---
+
+# 什么是“竞争风险”？
+
+在标准的生存分析（如 Kaplan-Meier 或标准 Cox 模型）中，我们通常关注单一终点事件（如“死亡”或“疾病复发”）。然而，在真实的临床或医学研究中，受试者可能会经历多种类型的事件。如果某种事件的发生，导致我们无法观察到主要研究终点，或者根本性地改变了主要终点的发生概率，那么这种事件就被称为 **竞争风险 (Competing Risk)**。
+
+最经典的例子是在肿瘤研究中，如果我们的主要研究终点是“特定癌症的死因（Cancer-specific death）”，那么“死于车祸”或“死于心血管疾病”就是竞争风险。因为一旦患者死于车祸，他就永远不可能再死于该癌症。
+
+::: {.callout-note title="说明"}
+竞争事件不仅是观察结束，而是从根本上改变了主要事件发生的概率空间。
+:::
+
+# 传统方法的缺陷
+
+如果你在存在竞争风险的情况下，依然使用传统的**Kaplan-Meier (KM) 法**或**标准 Cox 模型**，会产生严重的偏差。传统方法主要依赖于一个核心数学前提：**独立删失（Independent Censoring）**。这些方法认为，当一个对象被“删失”时，模型假设该对象**仅仅是退出了观察**，如果对他继续进行观察，**他发生目标事件的概率应当与留在队列中的其他人相同**。
+
+然而，当一个对象发生了竞争事件（例如死于心脏病），他**并非**仅仅退出了“癌症死亡”的观察队列，而是**物理上永远失去了**发生癌症死亡的可能性。将“竞争事件”作为“删失”处理，等同于假设：“这个死于心脏病的人，如果当初没死于心脏病，他未来死于癌症的概率和那些活着的人是一样的”。这种假设在数学上**人为地缩小了分母（风险集），导致对剩余人群发生目标事件的概率估算过高**。
+
+::: {.callout-important title="结论"}
+在存在竞争风险时，**Kaplan-Meier 估计的是一种虚拟世界的概率**（即假设竞争风险不存在时的概率），而非现实世界中事件发生的**绝对风险**。在现实场景中，就是会存在很多竞争事件，其就是会“夺走”主要事件的部分风险。
+:::
+
+为了直观证明这一偏差，我们构建一个微型的模拟临床试验。
+
+## 模拟实验
+
+假设我们进行一项老年白血病患者的随访研究：
+* **总人数 ($N$)**：100 人。
+* **主要事件 (Event 1)**：白血病复发（我们关心的）。
+* **竞争事件 (Event 2)**：死于感染（竞争风险）。
+* **观察时间点**：我们简化为两个时间点，$T_1$ 和 $T_2$。
+
+事件发生过程的整个过程是：
+* **$T_0$ (入组)**：100 人全部存活。
+* **$T_1$ (早期)**：
+    * 有 **20 人** 死于感染（竞争事件发生）。
+    * 没有人复发。
+    * 剩余 **80 人** 存活且未复发。
+* **$T_2$ (晚期)**：
+    * 在剩余的 80 人中，有 **10 人** 白血病复发（主要事件发生）。
+    * 其他 70 人仍存活。
+
+我们来看看在 $T_2$ 时刻，“白血病复发率”分别是多少。首先是**真实累积发生率 (Actual Cumulative Incidence)**。这是最直观的统计。总人数有 100 人，实际复发总人数为 10 人，**$T_2$ 时刻的真实复发率** = $10 / 100 = \mathbf{10\%}$。
+
+::: {.callout-tip title="现实意义"}
+如果你是医生，你告诉病人：“在所有入组的病人中，最终有 10% 的人复发了。”这是事实。
+:::
+
+KM 法会将 $T_1$ 时刻死于感染的 20 人标记为 **“删失”**，并从分母中移除。在**步骤 1 (在 $T_1$)**，$T_1$ 生存率（无复发率） = $100\%$。**步骤 2 (在 $T_2$)**，$T_2$ 时段内的条件复发概率 = $10 / 80 = 12.5\%$，条件生存概率 = $1 - 12.5\% = 87.5\%$。从而计算得到**KM 累积复发率**：
+
+$$
+ \text{KM Rate} = 1 - (\text{S}(T_1) \times S(T_2)) = 1 - (1.0 \times 0.875) = \mathbf{12.5\%}
+$$
+
+从而得到如下的结果对比：
+
+* **真实风险 (CIF)**：**10%**
+* **传统方法 (KM)**：**12.5%**
+
+**偏差幅度：** $(12.5\% - 10\%) / 10\% = \textbf{25\%}$ 的高估偏差。
+
+::: {.callout-warning title="偏差来源解析"}
+KM 法把那 20 个死于感染的人“踢出”了分母。它隐含地假设：这 20 个人如果没死于感染，留在队列里，也会有 $10/80$ 的概率复发。
+但实际上，这 20 个人已经死亡，他们复发的概率是 **0**。KM 法强行给死人赋予了复发的风险权重，导致结果虚高。
+:::
+
+为了验证上述逻辑并非特例，我们可以使用 Python 进行一次基于随机数据的蒙特卡洛模拟，展示随着竞争风险比例增加，偏差是如何扩大的。
+
+<details>
+<summary>模拟实验代码</summary>
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+from lifelines import KaplanMeierFitter
+from lifelines import AalenJohansenFitter
+
+# 1. 设置随机种子和样本量
+np.random.seed(42)
+N = 1000
+
+# 2. 模拟数据生成
+# 假设主要事件(复发)的时间服从指数分布
+T_interest = np.random.exponential(scale=10, size=N)
+# 假设竞争事件(死亡)的时间服从指数分布，且发生率较高
+T_competing = np.random.exponential(scale=8, size=N) 
+# 删失时间
+T_censoring = np.random.exponential(scale=15, size=N)
+
+# 3. 确定最终观察到的时间和事件类型
+# Event type: 0=Censored, 1=Interest, 2=Competing
+time = []
+event = []
+
+for i in range(N):
+    t_min = min(T_interest[i], T_competing[i], T_censoring[i])
+    time.append(t_min)
+    if t_min == T_interest[i]:
+        event.append(1) # 发生主要事件
+    elif t_min == T_competing[i]:
+        event.append(2) # 发生竞争事件
+    else:
+        event.append(0) # 删失
+
+# 4. 传统 KM 方法 (错误做法)
+# 将竞争事件(2)视为删失(0)
+event_km = [1 if e == 1 else 0 for e in event]
+kmf = KaplanMeierFitter()
+kmf.fit(time, event_observed=event_km, label='Kaplan-Meier (Overestimation)')
+
+# 5. 累积发生率 CIF 方法 (正确做法)
+# 使用 Aalen-Johansen 估计器
+ajf = AalenJohansenFitter(calculate_variance=True)
+ajf.fit(time, event, event_of_interest=1, label='CIF (True Risk)')
+
+# 6. 绘图对比
+plt.figure(figsize=(10, 6))
+# 注意：KM计算的是生存率 S(t)，我们需要 1-S(t) 得到发生率
+plt.plot(kmf.timeline, 1 - kmf.survival_function_, label='1 - KM (Traditional)', linestyle='--')
+ajf.plot(label='CIF (Competitive Risk Model)')
+
+plt.title("Simulation: Kaplan-Meier Bias in Presence of Competing Risks")
+plt.xlabel("Time")
+plt.ylabel("Cumulative Incidence Probability")
+plt.legend()
+plt.grid(True)
+plt.show()
+```
+
+</details>
+
+结果如下：
+
+![竞争风险模拟中，1 - Kaplan-Meier 估计高于累积发生率函数。](../../../assets/images/survival-analysis/competing-risks-km-vs-cif.png)
+
+::: {.callout-note title="最佳实践"}
+在研究方案设计阶段，必须明确定义终点。如果存在竞争事件（如研究癌症复发时的非癌症死亡），**决不能** 简单地使用 Kaplan-Meier 曲线绘制累积发生率，而应使用累积发生率函数 (CIF)。
+:::
+
+# 累积发生率函数 (CIF) {#sec-competing-cif}
+
+为了解决 KM 法的高估问题，我们引入了 **累计发生率函数（Cumulative Incidence Function，CIF）**。CIF 能够正确地估计在时间 $t$ 之前发生第 $k$ 类事件的边际概率。
+
+假设 $T$ 是发生事件的时间，$\epsilon$ 是事件的类型（$\epsilon \in \{1, 2, …, K\}$）。对于第 $k$ 类事件，其累积发生率函数定义为：
+
+$$
+ CIF_k(t) = P(T \le t, \epsilon = k) = \int_{0}^{t} \lambda_k(u) \cdot S(u) \, du 
+$$
+
+这里有两个关键部分。首先是 $\lambda_k(u)$，即第 $k$ 类事件的 **原因别风险函数（Cause-Specific Hazard）**，表示在时刻 $u$ 未发生任何事件的条件下，瞬间发生第 $k$ 类事件的速率：
+
+$$
+ \lambda_k(u) = \lim_{\Delta u \to 0} \frac{P(u \le T < u + \Delta u, \epsilon = k \mid T \ge u)}{\Delta u} 
+$$
+
+不难看出，其定义与 [传统意义上的风险函数](01-time-to-event-functions.qmd#sec-hazard-function) 基本一致，只是增加了对于特定类别事件的限制。然后是 $S(u)$，即 **总体生存函数（Overall Survival Function）**，即 $P(T > u)$，表示在时刻 $u$ 之前没有发生**任何**类型事件（包括主要事件和竞争事件）的概率。注意，如果只有一类事件，则上述 $\lambda_{k}(u)$ 就退化为不同的风险函数，则上述 $\lambda_{k}(u)\cdot S(u)=f(u)$ 其实就是事件时间的概率密度函数，对其进行积分得到的就是 $F(t)=1-S(t)$。也就是说，这里的 $CIF_{k}(t)$ 其实是**对事件时间累计分布函数的推广**。
+
+通过引入 $S(u)$，CIF 考虑了竞争事件对总体生存概率的拉低作用，因此 **$CIF_k(t)$ 的估计值总是小于或等于 1-KM 的估计值**，从而纠正了偏差。
+
+::: {.callout-note title="统计特性"}
+在任何时刻 $t$，所有类型事件的 CIF 之和加上总体生存率等于 1：
+
+$$
+ \sum_{k=1}^{K} CIF_k(t) + S(t) = \sum\limits_{k=1}^{K}P(T\leq t,\epsilon=k)+P(T>t)=1 
+$$
+:::
+
+::: {.callout-note title="最佳实践"}
+在报告竞争风险数据的描述性统计结果时，应展示 CIF 曲线（Aalen-Johansen）而不是 KM 曲线。对于单变量组间比较（如治疗组 vs 对照组），不应使用 Log-rank 检验（Log-rank 比较的是 Hazard），而应使用 **Gray's Test**，这是专门用于比较 CIF 的非参数检验方法。
+:::
+
+# Aalen-Johansen 估计 {#sec-aalen-johansen}
+
+如果说 Kaplan-Meier (KM) 是标准生存分析中生存率的非参数估计“黄金标准”，那么 **Aalen-Johansen (AJ)** 估计量就是竞争风险模型中累积发生率 (CIF) 的非参数估计“黄金标准”。
+
+回顾之前定义的 CIF 积分公式：$CIF_k(t) = \int_{0}^{t} S(u) \cdot \lambda_k(u) \, du$。但是，在实际的临床数据中，时间是离散的（即事件发生在具体的观察点 $t_1, t_2, …$ 上）。所以，Aalen-Johansen 估计量将上述积分转化为离散求和的形式。对于第 $k$ 类事件，在时间 $t$ 的累积发生率估计为：
+
+$$
+ \hat{CIF}_k(t) = \sum_{t_j \le t} \hat{S}(t_{j-1}) \cdot \frac{d_{kj}}{n_j} 
+$$
+
+其中：
+1. **$t_j$**: 各个发生事件的时间点（无论是主要事件还是竞争事件）。
+2. **$\hat{S}(t_{j-1})$**: 这是 **总体生存函数 (Overall Survival)** 的 Kaplan-Meier 估计值（若任一类别事件发生，其 event=1，基于此进行 KM 估计得到的生存函数）。它表示在 $t_j$ 时刻之前，受试者没有发生 **任何** 类型事件（既没发生事件 $k$，也没发生竞争事件）的概率。
+3. **$\frac{d_{kj}}{n_j}$**: 这是 $t_j$ 时刻第 $k$ 类事件的 **瞬时发生率**。其中 $d_{kj}$ 指在时刻 $t_j$ 发生第 $k$ 类事件的人数，$n_j$ 指在时刻 $t_j$ 处于风险集中的总人数（即**此时还未发生任何事件的人数**）。
+
+## 与 Kaplan-Meier 估计的对比
+
+通常我们认为 Kaplan-Meier (KM) 是计算 **“生存率”** 的乘法公式，而 Aalen-Johansen (AJ) 是计算 **“发生率”（1-“生存率”）** 的加法公式。但实际上，不管是从“生存率”视角，还是“发生率”视角，都可以对两者进行理解和计算，统一视角后，**AJ 估计量本质上就是 KM 逻辑在累积发生率视角下的自然延伸**。
+
+### “生存率”视角 (乘积形式)
+
+这是教科书中最常见的 KM 定义，它关注的是 **“杯子里还剩多少水”**。它的计算核心是 **条件生存概率** 的连续相乘：
+
+$$
+ \hat{S}_{KM}(t) = \prod_{t_j \le t} \left( 1 - \frac{d_j}{n_j} \right) 
+$$
+
+* **$d_j$**: 在时刻 $t_j$ 发生的事件总数。
+* **物理意义**: 每一刻的剩余比例 = 上一刻剩余比例 $\times$ (1 - 当前瞬间流失率)。
+
+### “发生率”视角 (加和形式)
+
+如果我们换个角度，不问还剩多少，而是问 **“总共漏出了多少水”**（即累积失效概率 $F(t) = 1 - S(t)$）。这时，我们就需要计算每一个时间点“跌落”的幅度。在时刻 $t_j$，生存曲线下降的幅度等于：
+
+$$
+ \text{Drop}_j = \hat{S}(t_{j-1}) - \hat{S}(t_j) = \hat{S}(t_{j-1}) \times \frac{d_j}{n_j} 
+$$
+
+* **$\hat{S}(t_{j-1})$**: 在这一刻之前，风险池里还剩多少人（存量）。
+* **$\frac{d_j}{n_j}$**: 在这一刻，发生事件的瞬间速率（流速）。
+
+因此，KM 对应的累积发生率（$1-KM$）实际上等价于所有这些“跌落”的 **总和**：
+
+$$
+ 1 - \hat{S}_{KM}(t) = \sum_{t_j \le t} \hat{S}(t_{j-1}) \cdot \frac{d_j}{n_j} 
+$$
+
+现在引入竞争风险。这一场景无非是把“漏水”的出口从一个变成了多个（如：出口 k=1 代表复发，出口 k=2 代表死亡）。Aalen-Johansen (AJ) 估计量所做的，仅仅是将上述中的 $d_j$（总事件数）拆分成了 $d_{kj}$（特定类型的事件数）：
+
+$$
+ \hat{CIF}_k(t) = \sum_{t_j \le t} \hat{S}_{overall}(t_{j-1}) \cdot \frac{d_{kj}}{n_j} 
+$$
+
+容易在数学上可以证明：
+
+$$
+ \hat{CIF}_{AJ}(t) \le  1 - \hat{S}_{KM}(t) 
+$$
+
+当且仅当没有竞争事件时，两者相等。
+
+## 多状态模型
+
+Aalen-Johansen 估计量的本质实际上是 **多状态马尔可夫模型 (Multi-state Markov Model)** 的转移概率估计。
+
+* **初始状态 (State 0)**: 每个人开始时都处于“无事件”状态。
+* **吸收状态 (Absorbing States)**: 个体可以转移到“事件 $k$” (State 1) 或“竞争事件” (State 2)。一旦进入这些状态，就不能再出来。
+
+AJ 估计量计算的就是从 State 0 转移到 State 1 的概率矩阵。这种视角使得 AJ 估计量不仅限于竞争风险，还可以扩展到更复杂的场景，例如“健康 -> 患病 -> 死亡”的模型（Illness-Death Model）。关于多状态马尔科夫模型的详细介绍，可见 [多状态模型](06-multi-state-models.qmd)。
+
+::: {.callout-note title="最佳实践"}
+*   **绘图标准**: 在涉及竞争风险的论文中，描述事件发生率时，**必须** 声明使用的是 Aalen-Johansen 估计量 (Aalen-Johansen estimator) 计算的累积发生率 (CIF)。
+*   **软件验证**: 大多数现代统计软件计算 CIF 时默认使用的就是 AJ 算法。例如 R 语言 `cmprsk` 包中的 `cuminc()` 函数，其输出结果即为 AJ 估计值。无需手动编程实现公式。
+*   **数据检查**: 检查 $\sum \hat{CIF}_k(t) + \hat{S}_{all}(t) = 1$ 是否成立，这是验证 AJ 计算是否正确的简单方法
+:::
+
+# Gray's 检验
+
+在绘制出累积发生率 (CIF) 曲线后，我们通常需要回答一个问题：**“不同组别（如治疗组 vs 对照组）的累积发生率是否存在显著差异？”** 在标准生存分析中，我们使用 **Log-rank 检验**。但在竞争风险数据中，直接使用 Log-rank 检验通常是不合适的，我们需要使用 **Gray's 检验**（由 Robert J. Gray 于 1988 年提出）。
+
+## 基本原理
+
+Gray's 检验专门用于比较不同组别的 **累积发生率函数 (CIF)**。它的零假设 ($H_0$) 是：
+
+$$
+ H_0: CIF_{1,k}(t) = CIF_{2,k}(t) \quad \text{对于所有 } t \le \tau 
+$$
+
+即两组针对第 $k$ 类事件的累积发生率曲线在整个时间段内是重合的。Gray's 检验本质上是对 **子分布风险 (Subdistribution Hazard)** 的加权 Log-rank 检验。它在构建“风险集 (Risk set)”时，采用了与 Fine-Gray 模型相同的逻辑：**那些已经发生了竞争事件的个体，并没有被移除，而是被保留在风险集中（尽管赋予了特定的权重）。** 这使得检验能够直接反映“事件实际发生比例”的差异，而不仅仅是“瞬时发生速度”的差异。
+
+## 对比 Log-rank 检验
+
+要理解 Gray's 检验的必要性，首先要明白 Log-rank 检验在比较什么。
+
+* **Log-rank 检验的对象**：它是比较各组的 **原因别风险 (Cause-Specific Hazard, $\lambda_k$)**。即，“在此时此刻还活着的人中，两组发生事件的瞬时速率是否相同？”
+* **CIF 的决定因素**：回顾 CIF 公式 $\int S(u) \cdot \lambda_k(u) du$。CIF 不仅取决于 $\lambda_k$，还取决于 $S(u)$（总体生存率，受竞争风险影响）。
+
+假设治疗组不仅降低了癌症复发（$\lambda_{recurrence} \downarrow$），同时也导致了严重的心脏毒性死亡（$\lambda_{death} \uparrow$）。**Log-rank 结果**可能会告诉你复发风险显著降低了（因为它只看 $\lambda_{recurrence}$）。**临床现实**则是由于很多患者死于心脏毒性，他们根本没有机会复发。最终观察到的“复发累积发生率 (CIF)”在两组间可能看起来没有差异，甚至治疗组更低只是因为人先死光了。如果你想比较的是 **“最终有多少比例的人复发了”**（即 CIF 曲线的高低），Log-rank 检验无法给出正确答案，因为它忽略了竞争风险对 $S(u)$ 的改变。
+
+在实际分析中，应该根据研究目的选择检验方法：
+
+| 特性 | Log-rank 检验 | Gray's 检验 |
+| :--- | :--- | :--- |
+| **比较对象** | 原因别风险 (Cause-Specific Hazard) | 累积发生率 (Cumulative Incidence, CIF) |
+| **对竞争事件的处理** | 视为删失 (Censored)，移除出风险集。 | 保留在风险集中 (加权处理)。 |
+| **研究问题示例** | “这种药物在生物学上是否改变了肿瘤的生长速度？” | “这种药物是否降低了 5 年内实际观察到的复发患者比例？” |
+| **相互关系** | 如果各组的竞争风险完全相同，Log-rank 与 Gray's 结果趋于一致。 | 如果各组的竞争风险差异很大，结果可能截然相反。 |
+
+::: {.callout-note title="典型悖论"}
+假设 A 组比 B 组更老、更虚弱（竞争死亡风险极高）。
+*   **Log-rank**: 可能显示 A 组和 B 组的痴呆症发病速率（Hazard）一样。
+*   **Gray's Test**: 可能显示 A 组的痴呆症累积发生率 **显著低于** B 组。
+*   **解释**: 并不是 A 组脑子更好，而是 A 组的人在得痴呆症之前就先死于其他原因了。Gray's 检验正确地捕捉到了“A 组最终得痴呆的人更少”这一事实。
+:::
+
+## 局限性与注意事项
+
+1. **效能问题 (Power)**：像 Log-rank 一样，Gray's 检验对 **比例假设** 比较敏感。如果两条 CIF 曲线发生交叉（例如早期 A 组高，晚期 B 组高），Gray's 检验的效能会显著下降，可能得出“无显著差异”的假阴性结论。
+2. **仅仅是检验**：Gray's 检验只能告诉你 P 值（是否有差异），不能告诉你差异的大小（Effect Size）。要量化差异，需要配合 Fine-Gray 回归模型计算 SHR (Subdistribution Hazard Ratio)。
+
+::: {.callout-note title="最佳实践"}
+*   **单变量分析标准动作**：在涉及竞争风险的论文表格（Table 1 或 Table 2）中，对比各组事件发生率时，**必须注明使用 Gray's Test** 计算 P 值，而非 Log-rank Test 或 Chi-square。
+*   **R 语言实现**：使用 `cmprsk` 包中的 `cuminc()` 函数。
+```R
+    # 示例代码
+    fit <- cuminc(ftime = time, fstatus = status, group = group_variable)
+    fit # 输出中会包含 Gray's test (K-sample test) 的 p-value
+    ```
+:::
+
+# 回归模型：两种风险函数的博弈
+
+在进行多变量分析时，竞争风险模型主要分为两派，分别基于对“风险 (Hazard)”的不同定义。选择哪一种模型取决于你的 **研究目的**。
+
+## 原因别风险模型
+
+**原因别风险模型 (Cause-Specific Hazard Model)** 是最直观的方法。我们对每一种事件类型分别建立 Cox 比例风险模型。在分析事件 A 时，将发生竞争事件 B 的人作为“删失”处理。其风险函数定义为：
+
+$$
+ h_k^{cs}(t) = \lim_{\Delta t \to 0} \frac{P(t \le T < t + \Delta t, \epsilon = k | T \ge t)}{\Delta t} 
+$$
+
+**特点：** 它描述的是“在当前时刻还活著且未发生任何事件的人群中，下一瞬间发生事件 $k$ 的速率”。这反映了生物学上的瞬时风险。
+
+## Fine-Gray 子分布风险模型
+
+**Fine-Gray 子分布风险模型 (Subdistribution Hazard Model)** 由 Fine 和 Gray 于 1999 年提出。它直接对 CIF 进行建模。其风险函数（子分布风险）定义为：
+
+$$
+ \lambda_k^{sd}(t) = \lim_{\Delta t \to 0} \frac{P(t \le T < t + \Delta t, \epsilon = k | T \ge t \cup (T \le t \cap \epsilon \ne k))}{\Delta t} 
+$$
+
+**特点：** 注意条件概率中的分母。风险集（Risk Set）不仅包含了当时未发生任何事件的人，还“非自然”地包含了 **已经发生竞争风险** 的人。这种数学处理使得该模型的协变量系数 ($\beta$) 能够直接反映对最终累积发生率 (CIF) 的影响。
+
+## 3.3 模型对比与选择
+
+| 维度           | 原因别风险模型                            | Fine-Gray 模型                            |
+| :----------- | :--------------------------------- | :-------------------------------------- |
+| **研究问题**     | **病因学**：研究暴露因素是否改变了某种特定疾病发生的生物学速率。 | **预后/预测**：研究暴露因素如何影响患者在一段时间内发生该事件的绝对概率。 |
+| **对竞争事件的处理** | 将竞争事件视为删失 (Censored)。              | 将发生竞争事件者保留在风险集中 (通过加权)。                 |
+| **结果解释**     | 风险比 (HR) 反映瞬时速率的增加。                | 子分布风险比 (SHR) 反映累积发生率的相对变化。              |
+| **示例**       | 这种药物是否在药理上减少了癌症复发？                 | 给定这种药物，患者 5 年后的癌症复发率实际上是升高了还是降低了？       |
+
+::: {.callout-warning title="解释的陷阱"}
+一个变量可能增加事件 A 的瞬时风险（Cause-Specific HR > 1），但如果它同时极大地增加了竞争事件 B 的风险（让患者先死于 B），那么最终观察到的事件 A 的累积发生率可能是下降的（Fine-Gray SHR < 1）。这就是为什么在竞争风险中，HR 和 SHR 的方向可能不一致 [4]。
+:::
+
+::: {.callout-note title="最佳实践"}
+*   **首选策略：** 在一篇高质量的临床论文中，建议 **同时报告** 两种模型的结果。Cause-Specific 模型解释生物学关联，Fine-Gray 模型解释临床预后和资源规划意义。
+*   **如果必须二选一：** 如果你的目的是建立临床预测模型（如列线图 Nomogram）或评估某个因素对特定结局的实际疾病负担的影响，请使用 **Fine-Gray 模型**。
+:::
+
+# 软件实现
+
+主流统计软件均支持竞争风险模型分析。
+
+* **R 语言**
+    * `cmprsk` 包：提供 `cuminc()` 函数计算 CIF 和进行 Gray's Test，以及 `crr()` 函数进行 Fine-Gray 模型回归。
+    * `survival` 包：可以通过构建多状态模型（Multi-state model）进行分析。
+    * `riskRegression` 包：适合用于构建和评估预测模型。
+* **SAS**
+    * `PROC LIFETEST`：使用 `PLOTS=CIF` 选项绘制 CIF 曲线。
+    * `PROC PHREG`：使用 `EVENTCODE` 选项进行 Fine-Gray 模型分析。
+
+# 参考
+
+* Fine, J. P. & Gray, R. J. A proportional hazards model for the subdistribution of a competing risk. *Journal of the American Statistical Association* **94**, 496–509 (1999). https://doi.org/10.1080/01621459.1999.10474144
+* Austin, P. C., Lee, D. S. & Fine, J. P. Introduction to the analysis of survival data in the presence of competing risks. *Circulation* **133**, 601–609 (2016). https://doi.org/10.1161/CIRCULATIONAHA.115.017719
+* Gray, R. J. A class of K-sample tests for comparing the cumulative incidence of a competing risk. *The Annals of Statistics* **16**, 1141–1154 (1988). https://doi.org/10.1214/aos/1176350951
+* Lau, B., Cole, S. R. & Gange, S. J. Competing risk regression models for epidemiologic data. *American Journal of Epidemiology* **170**, 244–256 (2009). https://doi.org/10.1093/aje/kwp107
