@@ -470,8 +470,7 @@ $$
 
 | 后续模型 | 主要问题 | $f_g$ 的具体化 |
 |---|---|---|
-| [GBTM](02-gbtm.qmd) | 若干典型轨迹能否概括异质性 | 类别特异平均轨迹 + 观测分布，类别内通常不加随机效应 |
-| [扩展 GBTM](03-extended-gbtm.qmd) | 非高斯结局、多轨迹和协变量如何进入 | 改变观测分布、类别成员模型或多个 marker 的联合轨迹结构 |
+| [GBTM](02-gbtm.qmd) | 若干典型轨迹能否概括异质性；非高斯结局、协变量和多轨迹如何进入 | 类别特异平均轨迹 + 观测分布，类别内通常不加随机效应；可扩展类别成员模型、观测分布、I-splines link 或多个 marker 的联合轨迹结构 |
 | [`hlme`/LCMM/GMM](04-hlme-growth-mixture-models.qmd) | 类别间差异和类别内连续差异如何并存 | 类别特异 mixed model，在类别内表达连续个体差异 |
 | [`lcmm` latent process](05-lcmm-latent-process-models.qmd) | 非正态、有界或有序观测如何处理 | 潜在过程轨迹 + link function + 观测尺度模型 |
 | [`multlcmm`/MLCMM](06-multlcmm-multivariate-longitudinal-markers.qmd) | 多个 marker 是否共同测量同一潜在过程 | 共同 latent process + marker-specific measurement/link model |
@@ -500,4 +499,3 @@ EM 算法通过 complete-data likelihood 解释 soft classification；直接最�
 3. 为什么观测 log-likelihood 中的 log-sum 结构会带来局部最优和 label switching？
 4. EM 中的 soft classification 与后续分析中使用 most likely class 有什么差别？
 5. 当 BIC 变小但某个类别比例很小、AvePP 也不高时，应如何判断模型是否值得保留？
-

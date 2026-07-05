@@ -50,11 +50,7 @@ reference-section-title: "参考文献"
 
 ## [GBTM：从有限混合到 group-based trajectory modeling](02-gbtm.qmd) {#sec-gbtm}
 
-本章从最简单的潜在轨迹类别模型进入：GBTM 把总体表示为若干 group-specific 轨迹的有限混合，通常用类别内无随机效应或极简随机结构来突出类别平均轨迹、观测分布、后验分类概率和 AvePP。LCGA 在本系列中视为同一模型族的另一命名传统，而不是一个单独并列的方法。读者会先看到 Nagin 的 group-based trajectory modeling 如何把发展轨迹写成 semiparametric mixture，并理解 EM 与 modified Marquardt 这两类估计思想的关系 [@nagin1999developmental; @nagin2005group; @jones2001sas; @jones2007advances; @naginodgers2010clinical; @proustlima2017lcmm]。
-
-## [扩展 GBTM：非高斯结局、多轨迹与协变量](03-extended-gbtm.qmd) {#sec-extended-gbtm}
-
-本章在基础 GBTM 上改变观测分布、类别成员机制和纵向结局结构。它讨论二元、计数、零膨胀、有界连续等结局，解释类别成员协变量如何进入多项逻辑模型，并说明 multi-trajectory GBTM 如何用同一个潜在类别组织多个观测 marker 的联合轨迹 [@nagin2018multi; @elmer2018beta]。
+本章从最简单的潜在轨迹类别模型进入，并把常见扩展放在同一章中讨论。GBTM 把总体表示为若干 group-specific 轨迹的有限混合，通常用类别内无随机效应或极简随机结构来突出类别平均轨迹和观测分布。LCGA 在本系列中视为同一模型族的另一命名传统。读者会看到高斯、二元、计数、零膨胀、有界连续和 I-splines link 等实现如何改变类别条件分布，也会学习类别成员协变量、多轨迹 GBTM、EM 与 modified Marquardt 估计，以及这些扩展带来的诊断和解释风险 [@nagin1999developmental; @nagin2005group; @jones2001sas; @jones2007advances; @naginodgers2010clinical; @nagin2018multi; @elmer2018beta; @proustlima2017lcmm]。
 
 ## [LCMM/GMM：类别内随机效应与 latent class mixed model](04-hlme-growth-mixture-models.qmd) {#sec-lcmm-gmm}
 
