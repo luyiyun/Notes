@@ -6,9 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="基于用户旧笔记 GBTM.md 中的连接函数、协变量和模型选择内容，整理扩展 GBTM 的系统学习笔记。">
+<meta name="description" content="GBTM（亦称 LCGA）的类别条件轨迹模型、类别内无随机效应、非高斯结局、类别成员协变量、多轨迹扩展、I-splines link 与分布特异估计要点。">
 
-<title>扩展 GBTM：非高斯结局、多轨迹与协变量 – Rong’s Notes</title>
+<title>GBTM – Rong’s Notes</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -163,7 +163,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/trajectory-mixture-models/00-series-index.html">Trajectory Mixture Models</a></li><li class="breadcrumb-item"><a href="../../../src/learn/trajectory-mixture-models/02-extended-gbtm.html">扩展 GBTM：非高斯结局、多轨迹与协变量</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/trajectory-mixture-models/00-series-index.html">Trajectory Mixture Models</a></li><li class="breadcrumb-item"><a href="../../../src/learn/trajectory-mixture-models/02-gbtm.html">GBTM</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
@@ -200,24 +200,24 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
  <span class="menu-text">Deep Generative Model</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 show">  
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 show">  
       </ul>
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="../../../src/learn/advanced-probability/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">高等概率论</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 show">  
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../../src/learn/advanced-probability/01-introduction.html" class="sidebar-item-text sidebar-link">
@@ -338,11 +338,11 @@ window.Quarto = {
       <div class="sidebar-item-container"> 
             <a href="../../../src/learn/prml/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">PRML</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 show">  
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../../src/learn/prml/06-kernel-methods.html" class="sidebar-item-text sidebar-link">
@@ -377,13 +377,13 @@ window.Quarto = {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
  <span class="menu-text">Trajectory Mixture Models</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 show">  
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth2 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../../src/learn/trajectory-mixture-models/00-series-index.html" class="sidebar-item-text sidebar-link">
@@ -392,26 +392,20 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../src/learn/trajectory-mixture-models/01-gbtm.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../src/learn/trajectory-mixture-models/01-general-trajectory-mixture-models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">轨迹混合模型的一般框架</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/trajectory-mixture-models/02-gbtm.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">GBTM</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../src/learn/trajectory-mixture-models/02-extended-gbtm.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">扩展 GBTM：非高斯结局、多轨迹与协变量</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../src/learn/trajectory-mixture-models/03-hlme-growth-mixture-models.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../src/learn/trajectory-mixture-models/04-hlme-growth-mixture-models.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><code>hlme</code>：从 GBTM 到 LCMM/GMM</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../src/learn/trajectory-mixture-models/04-estimation-for-lcmm-family.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">LCMM 系列的估计：EM 直觉与 Marquardt 实现</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -458,39 +452,38 @@ window.Quarto = {
     <h2 id="toc-title">目录</h2>
    
   <ul>
-  <li><a href="#引言" id="toc-引言" class="nav-link active" data-scroll-target="#引言">引言</a></li>
-  <li><a href="#材料范围与证据地图" id="toc-材料范围与证据地图" class="nav-link" data-scroll-target="#材料范围与证据地图">材料范围与证据地图</a></li>
-  <li><a href="#统一模型骨架" id="toc-统一模型骨架" class="nav-link" data-scroll-target="#统一模型骨架">统一模型骨架</a></li>
-  <li><a href="#结局分布的扩展" id="toc-结局分布的扩展" class="nav-link" data-scroll-target="#结局分布的扩展">结局分布的扩展</a>
+  <li><a href="#引言" id="toc-引言" class="nav-link active" data-scroll-target="#引言">引言</a>
   <ul class="collapse">
-  <li><a href="#连续高斯结局" id="toc-连续高斯结局" class="nav-link" data-scroll-target="#连续高斯结局">连续高斯结局</a></li>
-  <li><a href="#二元结局" id="toc-二元结局" class="nav-link" data-scroll-target="#二元结局">二元结局</a></li>
-  <li><a href="#计数结局" id="toc-计数结局" class="nav-link" data-scroll-target="#计数结局">计数结局</a></li>
-  <li><a href="#零膨胀计数" id="toc-零膨胀计数" class="nav-link" data-scroll-target="#零膨胀计数">零膨胀计数</a></li>
-  <li><a href="#删失有界与-beta-结局" id="toc-删失有界与-beta-结局" class="nav-link" data-scroll-target="#删失有界与-beta-结局">删失、有界与 beta 结局</a></li>
+  <li><a href="#gbtmlcga-的定位" id="toc-gbtmlcga-的定位" class="nav-link" data-scroll-target="#gbtmlcga-的定位">GBTM/LCGA 的定位</a></li>
   </ul></li>
-  <li><a href="#类别成员协变量" id="toc-类别成员协变量" class="nav-link" data-scroll-target="#类别成员协变量">类别成员协变量</a>
+  <li><a href="#类别条件轨迹模型" id="toc-类别条件轨迹模型" class="nav-link" data-scroll-target="#类别条件轨迹模型">类别条件轨迹模型</a></li>
+  <li><a href="#类别内无随机效应与条件独立" id="toc-类别内无随机效应与条件独立" class="nav-link" data-scroll-target="#类别内无随机效应与条件独立">类别内无随机效应与条件独立</a></li>
+  <li><a href="#不同数据类型下的具体实现" id="toc-不同数据类型下的具体实现" class="nav-link" data-scroll-target="#不同数据类型下的具体实现">不同数据类型下的具体实现</a>
   <ul class="collapse">
-  <li><a href="#从固定类别比例到个体化类别概率" id="toc-从固定类别比例到个体化类别概率" class="nav-link" data-scroll-target="#从固定类别比例到个体化类别概率">从固定类别比例到个体化类别概率</a></li>
-  <li><a href="#classmb-的解释边界" id="toc-classmb-的解释边界" class="nav-link" data-scroll-target="#classmb-的解释边界"><code>classmb</code> 的解释边界</a></li>
+  <li><a href="#gaussian-continuous-outcome" id="toc-gaussian-continuous-outcome" class="nav-link" data-scroll-target="#gaussian-continuous-outcome">Gaussian continuous outcome</a></li>
+  <li><a href="#bernoulli-logistic-binary-outcome" id="toc-bernoulli-logistic-binary-outcome" class="nav-link" data-scroll-target="#bernoulli-logistic-binary-outcome">Bernoulli / logistic binary outcome</a></li>
+  <li><a href="#poisson-count-outcome" id="toc-poisson-count-outcome" class="nav-link" data-scroll-target="#poisson-count-outcome">Poisson count outcome</a></li>
+  <li><a href="#negative-binomial-and-overdispersed-count-outcome" id="toc-negative-binomial-and-overdispersed-count-outcome" class="nav-link" data-scroll-target="#negative-binomial-and-overdispersed-count-outcome">Negative-binomial and overdispersed count outcome</a></li>
+  <li><a href="#zero-inflated-count-outcome" id="toc-zero-inflated-count-outcome" class="nav-link" data-scroll-target="#zero-inflated-count-outcome">Zero-inflated count outcome</a></li>
+  <li><a href="#beta-censored-and-bounded-continuous-outcome" id="toc-beta-censored-and-bounded-continuous-outcome" class="nav-link" data-scroll-target="#beta-censored-and-bounded-continuous-outcome">Beta, censored, and bounded continuous outcome</a></li>
+  <li><a href="#i-splines-link-for-measurement-scale" id="toc-i-splines-link-for-measurement-scale" class="nav-link" data-scroll-target="#i-splines-link-for-measurement-scale">I-splines link for measurement scale</a></li>
+  <li><a href="#分布与估计贡献速查" id="toc-分布与估计贡献速查" class="nav-link" data-scroll-target="#分布与估计贡献速查">分布与估计贡献速查</a></li>
   </ul></li>
-  <li><a href="#多轨迹-gbtm" id="toc-多轨迹-gbtm" class="nav-link" data-scroll-target="#多轨迹-gbtm">多轨迹 GBTM</a>
-  <ul class="collapse">
-  <li><a href="#从单一轨迹到联合轨迹" id="toc-从单一轨迹到联合轨迹" class="nav-link" data-scroll-target="#从单一轨迹到联合轨迹">从单一轨迹到联合轨迹</a></li>
-  <li><a href="#多轨迹模型和多个单变量模型的区别" id="toc-多轨迹模型和多个单变量模型的区别" class="nav-link" data-scroll-target="#多轨迹模型和多个单变量模型的区别">多轨迹模型和多个单变量模型的区别</a></li>
-  </ul></li>
+  <li><a href="#类别成员协变量" id="toc-类别成员协变量" class="nav-link" data-scroll-target="#类别成员协变量">类别成员协变量</a></li>
+  <li><a href="#多轨迹-gbtm" id="toc-多轨迹-gbtm" class="nav-link" data-scroll-target="#多轨迹-gbtm">多轨迹 GBTM</a></li>
   <li><a href="#模型选择与诊断" id="toc-模型选择与诊断" class="nav-link" data-scroll-target="#模型选择与诊断">模型选择与诊断</a></li>
   <li><a href="#应用例子如何选择扩展方向" id="toc-应用例子如何选择扩展方向" class="nav-link" data-scroll-target="#应用例子如何选择扩展方向">应用例子：如何选择扩展方向</a></li>
   <li><a href="#注意事项与常见误区" id="toc-注意事项与常见误区" class="nav-link" data-scroll-target="#注意事项与常见误区">注意事项与常见误区</a>
   <ul class="collapse">
   <li><a href="#不要用类别数补偿分布误设" id="toc-不要用类别数补偿分布误设" class="nav-link" data-scroll-target="#不要用类别数补偿分布误设">不要用类别数补偿分布误设</a></li>
-  <li><a href="#不要把-class-membership-effect-解释成纵向因果效应" id="toc-不要把-class-membership-effect-解释成纵向因果效应" class="nav-link" data-scroll-target="#不要把-class-membership-effect-解释成纵向因果效应">不要把 class-membership effect 解释成纵向因果效应</a></li>
+  <li><a href="#不要把类别成员效应解释成纵向因果效应" id="toc-不要把类别成员效应解释成纵向因果效应" class="nav-link" data-scroll-target="#不要把类别成员效应解释成纵向因果效应">不要把类别成员效应解释成纵向因果效应</a></li>
   <li><a href="#不要把联合类别拆回单个-marker-类别" id="toc-不要把联合类别拆回单个-marker-类别" class="nav-link" data-scroll-target="#不要把联合类别拆回单个-marker-类别">不要把联合类别拆回单个 marker 类别</a></li>
   <li><a href="#不要忽略未收敛模型" id="toc-不要忽略未收敛模型" class="nav-link" data-scroll-target="#不要忽略未收敛模型">不要忽略未收敛模型</a></li>
   </ul></li>
+  <li><a href="#与后续章节的衔接" id="toc-与后续章节的衔接" class="nav-link" data-scroll-target="#与后续章节的衔接">与后续章节的衔接</a></li>
   <li><a href="#小结" id="toc-小结" class="nav-link" data-scroll-target="#小结">小结</a></li>
   <li><a href="#思考题" id="toc-思考题" class="nav-link" data-scroll-target="#思考题">思考题</a></li>
-  <li><a href="#参考来源" id="toc-参考来源" class="nav-link" data-scroll-target="#参考来源">参考来源</a></li>
+  <li><a href="#参考说明" id="toc-参考说明" class="nav-link" data-scroll-target="#参考说明">参考说明</a></li>
   <li><a href="#bibliography" id="toc-bibliography" class="nav-link" data-scroll-target="#bibliography">参考文献</a></li>
   </ul>
 </nav>
@@ -498,15 +491,15 @@ window.Quarto = {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/trajectory-mixture-models/00-series-index.html">Trajectory Mixture Models</a></li><li class="breadcrumb-item"><a href="../../../src/learn/trajectory-mixture-models/02-extended-gbtm.html">扩展 GBTM：非高斯结局、多轨迹与协变量</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/trajectory-mixture-models/00-series-index.html">Trajectory Mixture Models</a></li><li class="breadcrumb-item"><a href="../../../src/learn/trajectory-mixture-models/02-gbtm.html">GBTM</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">扩展 GBTM：非高斯结局、多轨迹与协变量</h1>
-<p class="subtitle lead">Outcome Distributions, Multi-Trajectory Models, and Class-Membership Covariates</p>
+<h1 class="title">GBTM</h1>
+<p class="subtitle lead">Group-Based Trajectory Modeling (潜类别增长模型)</p>
 </div>
 
 <div>
   <div class="description">
-    基于用户旧笔记 GBTM.md 中的连接函数、协变量和模型选择内容，整理扩展 GBTM 的系统学习笔记。
+    GBTM（亦称 LCGA）的类别条件轨迹模型、类别内无随机效应、非高斯结局、类别成员协变量、多轨迹扩展、I-splines link 与分布特异估计要点。
   </div>
 </div>
 
@@ -524,7 +517,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">修改于</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">2026年6月28日</p>
+      <p class="date-modified">2026年7月5日</p>
     </div>
   </div>
     
@@ -537,327 +530,478 @@ window.Quarto = {
 
 <section id="引言" class="level1">
 <h1>引言</h1>
-<p>上一篇 <a href="../../../src/learn/trajectory-mixture-models/01-gbtm.html">GBTM</a> 把模型放在最简洁的情形中：一个纵向结局、类别内没有随机效应、给定类别后用一条类别平均轨迹解释重复测量。本篇讨论 GBTM 的三个常见扩展方向：</p>
-<ol type="1">
-<li>观测结局不一定是高斯连续变量。</li>
-<li>潜在类别比例可以由基线协变量解释。</li>
-<li>多个纵向结局可以联合定义同一个潜在轨迹类别。</li>
-</ol>
-<p>这些扩展都没有改变 GBTM 的核心：总体分布仍然是若干类别条件轨迹分布的有限混合：</p>
-<p><span class="math display">\[
-p(\mathbf y_i \mid \theta)
-=
-\sum_{k=1}^{K}
-\pi_{ik}
-p_k(\mathbf y_i \mid \theta_k).
-\]</span></p>
-<p>真正变化的是 <span class="math inline">\(p_k(\mathbf y_i \mid \theta_k)\)</span> 的观测分布、<span class="math inline">\(\pi_{ik}\)</span> 的类别成员机制，或者 <span class="math inline">\(\mathbf y_i\)</span> 是否包含多个 marker。换句话说，扩展 GBTM 不是“换一个聚类算法”，而是在同一个潜类别轨迹框架里调整数据生成机制。</p>
-</section>
-<section id="材料范围与证据地图" class="level1">
-<h1>材料范围与证据地图</h1>
+<p>在纵向研究中，研究者常常不是一开始就需要最复杂的模型。很多时候，最先出现的问题是：总体平均轨迹明显不够，数据中似乎存在多个轨迹亚组，例如快速改善、持续高水平、缓慢恶化或长期稳定等。</p>
+<p>GBTM 的价值就在这个位置。它提供了一种相对<strong>轻量</strong>、<strong>清楚</strong>的做法：<strong>先问总体能否被概括为少数几条典型轨迹，并用后验概率表达每个个体属于这些轨迹的证据强弱</strong>。对探索性分析、临床或社会科学中的 typology 构建、以及需要向非技术读者解释纵向异质性的场景，GBTM 往往是轨迹混合模型中最自然的入口 <span class="citation" data-cites="nagin1999developmental nagin2005group naginodgers2010clinical">(<a href="#ref-nagin1999developmental" role="doc-biblioref">Nagin 1999年</a>, <a href="#ref-nagin2005group" role="doc-biblioref">2005年</a>; <a href="#ref-naginodgers2010clinical" role="doc-biblioref">Nagin 和 Odgers 2010年</a>)</span>。</p>
+<p>GBTM 通常让每个类别对应一条类别平均轨迹，<strong>类别内部不再加入随机截距、随机斜率等连续随机效应</strong>；个体围绕类别轨迹的<strong>剩余差异主要由观测分布、残差方差或离散度参数表达</strong>。因此，它的结果直观、容易画图、容易命名，也容易说明“哪些人更像哪条轨迹”。代价是类别承担了很重的解释责任：<strong>如果真实差异更像连续谱，或观测分布、时间函数、残差相关没有写好，GBTM 可能会把这些问题离散化为额外类别</strong> <span class="citation" data-cites="herle2020typical">(<a href="#ref-herle2020typical" role="doc-biblioref">Herle 等 2020年</a>)</span>。</p>
+<p>上一讲<a href="../../../src/learn/trajectory-mixture-models/01-general-trajectory-mixture-models.html">轨迹混合模型的一般框架</a>已经系统介绍了外层 mixture likelihood、后验分类、参数估计和模型比较。本篇沿用那套框架，把 GBTM 作为一个完整专题：从基础类别条件轨迹模型，到非高斯结局、类别成员协变量、多轨迹扩展和测量尺度 link。</p>
+<section id="gbtmlcga-的定位" class="level2">
+<h2 class="anchored" data-anchor-id="gbtmlcga-的定位">GBTM/LCGA 的定位</h2>
+<p>GBTM 和 LCGA 在许多应用语境中指向同一类基础模型：给定潜在类别后，个体共享所属类别的平均轨迹，类别内部不再建模连续随机效应。</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>来源</th>
-<th>类型</th>
-<th>本篇作用</th>
-<th>限制</th>
+<th>名称</th>
+<th>常见传统</th>
+<th>在本系列中的含义</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>[用户旧笔记: GBTM]</code></td>
-<td>用户提供材料</td>
-<td>提供正态、二元、泊松、ZIP、删失正态、有界结局、类别成员协变量和模型选择指标的结构</td>
-<td>当前仓库未包含旧 Obsidian 原文，只能以现有草稿中的摘录和系列审计为锚点</td>
+<td>GBTM, group-based trajectory modeling</td>
+<td>Nagin 的 group-based developmental trajectory tradition</td>
+<td>用有限混合描述若干组典型发展轨迹</td>
 </tr>
 <tr class="even">
-<td>Nagin group-based modeling 文献</td>
-<td>方法原始来源</td>
-<td>支持 GBTM 作为 semi-parametric group-based approach 的基本解释 <span class="citation" data-cites="nagin1999developmental nagin2005group">(<a href="#ref-nagin1999developmental" role="doc-biblioref">Nagin 1999年</a>, <a href="#ref-nagin2005group" role="doc-biblioref">2005年</a>)</span></td>
-<td>不同软件实现的默认分布和诊断指标不完全一致</td>
-</tr>
-<tr class="odd">
-<td>Nagin et al.&nbsp;(2018)</td>
-<td>方法扩展论文</td>
-<td>支持 group-based multi-trajectory modeling 的联合轨迹思想 <span class="citation" data-cites="nagin2018multi">(<a href="#ref-nagin2018multi" role="doc-biblioref">Nagin 等 2018年</a>)</span></td>
-<td>公式在本篇中作教学化改写</td>
-</tr>
-<tr class="even">
-<td>Elmer et al.&nbsp;(2018)</td>
-<td>应用方法论文</td>
-<td>支持 beta distribution 用于有界连续结局的 GBTM <span class="citation" data-cites="elmer2018beta">(<a href="#ref-elmer2018beta" role="doc-biblioref">Elmer 等 2018年</a>)</span></td>
-<td>本篇只解释建模动机，不复现实证结果</td>
-</tr>
-<tr class="odd">
-<td><code>lcmm</code>/相关软件文档</td>
-<td>官方实现资料</td>
-<td>校准 <code>classmb</code>、后验分类和信息准则等软件语义 <span class="citation" data-cites="proustlima2017lcmm">(<a href="#ref-proustlima2017lcmm" role="doc-biblioref">Proust-Lima 等 2017年</a>)</span></td>
-<td><code>lcmm</code> 不是传统 GBTM 的唯一实现，<code>proc traj</code>、Mplus、Stata 插件等也有不同功能</td>
-</tr>
-<tr class="even">
-<td>Lu longitudinal clustering review</td>
-<td>方法综述</td>
-<td>给出纵向聚类软件生态背景 <span class="citation" data-cites="lu2025clustering">(<a href="#ref-lu2025clustering" role="doc-biblioref">Lu 2025年</a>)</span></td>
-<td>出版元数据仍需人工复核</td>
+<td>LCGA, latent class growth analysis</td>
+<td>latent variable / growth modeling tradition</td>
+<td>类别内随机效应固定为零或不建模的潜类别增长模型</td>
 </tr>
 </tbody>
 </table>
-<div class="callout callout-style-default callout-caution callout-titled" title="需人工复核">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">注意</span>需人工复核
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>用户提到的 <code>assets/images/trajectory-mixture-models/</code> 当前为空目录，因此本篇没有迁移图片、OCR 或截图内容。若后续补入旧笔记图片，应重新核对本篇的“用户材料覆盖情况”。</p>
-</div>
-</div>
+<p>GBTM 可以看作 GMM/LCMM 的一个极简边界情形。后续 <a href="../../../src/learn/trajectory-mixture-models/04-hlme-growth-mixture-models.html"><code>hlme</code>：从 GBTM 到 LCMM/GMM</a> 会把类别内随机效应加回来；这时类别不再独自承担所有个体差异，而是和随机截距、随机斜率共同解释异质性。</p>
+<p>这种定位带来一个实践含义：<strong>GBTM 适合回答“是否可以用若干条典型轨迹概括总体异质性”，但不适合回答“同一类别内部个体差异有多大”</strong>。如果后一个问题很重要，GBTM 通常只是起点，而不是终点。</p>
 </section>
-<section id="统一模型骨架" class="level1">
-<h1>统一模型骨架</h1>
-<p>对个体 <span class="math inline">\(i\)</span>，令 <span class="math inline">\(C_i \in \{1,\ldots,K\}\)</span> 表示潜在类别。给定类别 <span class="math inline">\(k\)</span> 后，GBTM 通常假设重复测量在类别平均轨迹和观测分布给定后条件独立：</p>
-<p><span class="math display">\[
-p_k(\mathbf y_i \mid \theta_k)
+</section>
+<section id="类别条件轨迹模型" class="level1">
+<h1>类别条件轨迹模型</h1>
+<p>GBTM 对 <span class="math inline">\(f_g\)</span> 的最常见写法是：</p>
+<p><span id="eq-gbtm-general"><span class="math display">\[
+f_g(y_i \mid \theta_g)
 =
 \prod_{j=1}^{n_i}
-p(y_{ij} \mid t_{ij}, C_i=k, \theta_k).
-\]</span></p>
-<p>类别 <span class="math inline">\(k\)</span> 的线性预测子可以写成：</p>
+p\{Y_{ij}\mid \eta_g(t_{ij};\beta_g),\phi_g\}.
+\tag{1}\]</span></span></p>
+<p>这个式子有三层含义:</p>
+<ol type="1">
+<li><span class="math inline">\(\eta_g(t;\beta_g)\)</span> 是类别 <span class="math inline">\(g\)</span> 的轨迹预测函数。它描述该类别在时间 <span class="math inline">\(t\)</span> 上的典型变化模式。不同类别可以有不同的起点、斜率、弯曲程度或更复杂的时间形状。</li>
+<li><span class="math inline">\(p\{\cdot\}\)</span> 是观测分布。连续分数、二元指标、计数、有界比例和偏态量表的差异，主要体现在这一层。换观测分布不是换聚类思想，而是改变“给定类别轨迹后，观测值如何产生”的概率模型。</li>
+<li><span class="math inline">\(\phi_g\)</span> 收纳尺度、离散度或精度等辅助参数，例如高斯残差方差、负二项离散度、beta 分布精度参数等。它们影响类别内观测值围绕轨迹的分散程度。</li>
+</ol>
+<p>最基础的轨迹预测函数常用时间多项式：</p>
 <p><span class="math display">\[
-\eta_{ij}^{k}
+\eta_g(t_{ij};\beta_g)
 =
-\beta_{0k}
-+ \beta_{1k} t_{ij}
-+ \beta_{2k} t_{ij}^{2}
+\beta_{0g}
++ \beta_{1g} t_{ij}
++ \beta_{2g} t_{ij}^{2}
 + \cdots
-+ \beta_{pk} t_{ij}^{p}.
++ \beta_{pg} t_{ij}^{p}.
 \]</span></p>
-<p>这里 <span class="math inline">\(\eta_{ij}^{k}\)</span> 不一定等于观测均值本身。它可以通过不同 link function 连接到均值、概率、强度或某个有界尺度参数。扩展 GBTM 的第一步，就是分清楚三个层次：</p>
+<p>这里 <span class="math inline">\(\beta_{0g}\)</span> 表示参考时间点水平，<span class="math inline">\(\beta_{1g}\)</span> 表示线性变化，<span class="math inline">\(\beta_{2g}\)</span> 表示弯曲方向和加速或减速。时间变量通常需要中心化和缩放，例如把年龄写成 <span class="math inline">\((\mathrm{age}-65)/10\)</span>，让截距和斜率更容易解释，也减少高阶项带来的数值不稳定。</p>
+<p>需要特别区分的是：<span class="math inline">\(\eta_g\)</span> 不一定等于观测尺度上的均值。对二元结局，<span class="math inline">\(\eta_g\)</span> 常是 log-odds；对计数结局，<span class="math inline">\(\eta_g\)</span> 常是 log intensity；对有界比例，<span class="math inline">\(\eta_g\)</span> 可能是 logit 均值。解释轨迹时，最后往往要把它变回概率、强度或原量表附近的含义。</p>
+</section>
+<section id="类别内无随机效应与条件独立" class="level1">
+<h1>类别内无随机效应与条件独立</h1>
+<p><a href="#eq-gbtm-general" class="quarto-xref">式&nbsp;1</a> 中的乘积形式体现了 GBTM 的关键简化：<strong>给定潜在类别和类别轨迹后，重复测量之间的剩余依赖不再通过个体随机截距、随机斜率等类别内随机效应建模</strong>。</p>
+<p>这不等于说纵向观测在总体上独立。<strong>边际相关性仍然可以由共同的潜在类别诱导出来</strong>：同一个人属于某类后，多次观测都围绕该类轨迹产生，因此整条轨迹会表现出连续性。GBTM 的假设更准确地说是：<strong>类别已经解释了主要的系统性个体差异，剩余部分可以用观测分布中的误差、方差或离散度处理</strong>。</p>
+<p>这个假设决定了 GBTM 的解释风险。若同一类别内部仍存在明显连续差异，例如有些人始终高于类别均值、有些人始终低于类别均值，GBTM 往往会用更多类别去近似这种连续谱。若数据中有强烈残差相关、随机斜率差异或个体基线差异，增加类别数可能改善 likelihood，却不一定意味着发现了新的实质亚群。</p>
+<div class="callout callout-style-default callout-warning callout-titled" title="类别承担了很重的解释责任">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">警告</span>类别承担了很重的解释责任
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>GBTM 的类别不仅区分平均轨迹，也可能吸收类别内连续异质性、残差相关、非线性设定不足和观测分布误设。解释类别时应始终回到当前 <span class="math inline">\(f_g\)</span> 的设定，而不是把 most likely class 当成直接观测到的真实标签。</p>
+</div>
+</div>
+</section>
+<section id="不同数据类型下的具体实现" class="level1">
+<h1>不同数据类型下的具体实现</h1>
+<p>GBTM 的外层混合结构不随结局类型改变。真正变化的是</p>
+<p><span class="math display">\[
+p\{Y_{ij}\mid \eta_g(t_{ij};\beta_g),\phi_g\}.
+\]</span></p>
+<p>总论已经给出通用 EM 和 modified Marquardt 的整体结构；本节只看各分布如何改变 <span class="math inline">\(f_g(y_i\mid\theta_g)\)</span>，以及由此带来的 M step、score、Hessian 和参数约束差异。下面按常见结局类型展开。</p>
+<section id="gaussian-continuous-outcome" class="level2">
+<h2 class="anchored" data-anchor-id="gaussian-continuous-outcome">Gaussian continuous outcome</h2>
+<p>若结局近似连续、残差大致对称、边界效应不强，可以使用高斯观测模型：</p>
+<p><span class="math display">\[
+Y_{ij}\mid C_i=g
+\sim
+\mathcal N(\mu_{ij}^{g},\sigma_g^2),
+\qquad
+\mu_{ij}^{g}
+=
+\eta_g(t_{ij};\beta_g).
+\]</span></p>
+<p>此时类别条件 likelihood 是逐时间点正态密度的乘积：</p>
+<p><span class="math display">\[
+f_g(y_i\mid\theta_g)
+=
+\prod_{j=1}^{n_i}
+\frac{1}{\sqrt{2\pi\sigma_g^2}}
+\exp\left[
+-\frac{(Y_{ij}-\mu_{ij}^{g})^2}{2\sigma_g^2}
+\right].
+\]</span></p>
+<p><span class="math inline">\(\mu_{ij}^{g}\)</span> 是类别 <span class="math inline">\(g\)</span> 的平均轨迹，<span class="math inline">\(\sigma_g^2\)</span> 表示观测值围绕这条轨迹的剩余方差。若允许 <span class="math inline">\(\sigma_g^2\)</span> 随类别变化，不同类别可以有不同的轨迹稳定性；若约束为共同方差，则类别主要通过均值轨迹区分。</p>
+<p>在 EM 语言下，若类别平均轨迹对参数是线性的，即 <span class="math inline">\(\eta_g(t_{ij};\beta_g)=x_{ij}^{\top}\beta_g\)</span>，高斯版本的 M step <strong>直接就是加权最小二乘</strong>。给定 posterior weights <span class="math inline">\(\tau_{ig}\)</span> 后，类别 <span class="math inline">\(g\)</span> 的轨迹参数等价于最小化</p>
+<p><span class="math display">\[
+\sum_{i=1}^{N}
+\tau_{ig}
+\sum_{j=1}^{n_i}
+\left(
+Y_{ij}-\eta_g(t_{ij};\beta_g)
+\right)^2
+\]</span></p>
+<p>设</p>
+<p><span class="math display">\[
+y_i=(Y_{i1},\ldots,Y_{in_i})^{\top},
+\qquad
+X_i=
+\begin{pmatrix}
+x_{i1}^{\top}\\
+\vdots\\
+x_{in_i}^{\top}
+\end{pmatrix},
+\]</span></p>
+<p>其中 <span class="math inline">\(X_i\)</span> 的第 <span class="math inline">\(j\)</span> 行是时间点 <span class="math inline">\(t_{ij}\)</span> 对应的设计向量 <span class="math inline">\(x_{ij}^{\top}\)</span>。如果加权设计矩阵满秩，则闭式解为：</p>
+<p><span class="math display">\[
+\hat\beta_g
+=
+\left(\sum_{i=1}^{N}\tau_{ig}X_i^{\top}X_i\right)^{-1}
+\left(\sum_{i=1}^{N}\tau_{ig}X_i^{\top}y_i\right).
+\]</span></p>
+<p>若允许每个类别有自己的残差方差，对应的 MLE 更新是：</p>
+<p><span class="math display">\[
+\hat\sigma_g^2
+=
+\frac{
+\sum_{i=1}^{N}\tau_{ig}
+\left\|y_i-X_i\hat\beta_g\right\|^2
+}{
+\sum_{i=1}^{N}\tau_{ig}n_i
+}.
+\]</span></p>
+<p>若所有类别共享同一个残差方差，则把各类别的加权残差平方和合并：</p>
+<p><span class="math display">\[
+\hat\sigma^2
+=
+\frac{
+\sum_{g=1}^{G}\sum_{i=1}^{N}\tau_{ig}
+\left\|y_i-X_i\hat\beta_g\right\|^2
+}{
+\sum_{g=1}^{G}\sum_{i=1}^{N}\tau_{ig}n_i
+}.
+\]</span></p>
+<p>这些公式说明：在线性高斯 GBTM 中，M step 的均值参数和方差参数都有闭式更新；真正需要小心的是加权设计矩阵必须满秩，极小类别、过高阶时间多项式或高度共线的时间基函数仍可能让矩阵求逆和方差估计不稳定。</p>
+<p>从 modified Marquardt 的角度看，高斯模型的特别之处在于 score 具有加权残差形式。若 <span class="math inline">\(\eta_g(t_{ij};\beta_g)=x_{ij}^{\top}\beta_g\)</span>，则类别 <span class="math inline">\(g\)</span> 的轨迹参数 score 可以写成：</p>
+<p><span class="math display">\[
+U_{\beta_g}
+=
+\frac{1}{\sigma_g^2}
+\sum_{i=1}^{N}\tau_{ig}
+\sum_{j=1}^{n_i}
+x_{ij}
+\left(Y_{ij}-x_{ij}^{\top}\beta_g\right).
+\]</span></p>
+<p>对应的 Hessian 近似是加权设计矩阵的负曲率：</p>
+<p><span class="math display">\[
+H_{\beta_g}
+=
+-
+\frac{1}{\sigma_g^2}
+\sum_{i=1}^{N}\tau_{ig}
+\sum_{j=1}^{n_i}
+x_{ij}x_{ij}^{\top}.
+\]</span></p>
+<p>因此，高斯 GBTM 的数值问题通常不在均值参数本身，而在方差必须为正、类别方差是否过小、以及极小类别是否让加权残差平方和不稳定。</p>
+<p>高斯版本最容易画出和解释，但也最容易被滥用。对有天花板、地板、偏态或大量边界值的量表，正态残差可能把测量尺度问题误转化为额外类别。</p>
+</section>
+<section id="bernoulli-logistic-binary-outcome" class="level2">
+<h2 class="anchored" data-anchor-id="bernoulli-logistic-binary-outcome">Bernoulli / logistic binary outcome</h2>
+<p>若 <span class="math inline">\(Y_{ij}\in\{0,1\}\)</span>，例如某症状是否出现、某行为是否发生，可以使用 Bernoulli 观测模型：</p>
+<p><span class="math display">\[
+Y_{ij}\mid C_i=g
+\sim
+\mathrm{Bernoulli}(p_{ij}^{g}),
+\]</span></p>
+<p>并用 logit link 连接轨迹预测子：</p>
+<p><span class="math display">\[
+\mathrm{logit}(p_{ij}^{g})
+=
+\log\frac{p_{ij}^{g}}{1-p_{ij}^{g}}
+=
+\eta_g(t_{ij};\beta_g).
+\]</span></p>
+<p>类别 <span class="math inline">\(g\)</span> 的 weighted log-likelihood 部分为：</p>
+<p><span class="math display">\[
+\sum_{i=1}^{N}
+\tau_{ig}
+\sum_{j=1}^{n_i}
+\left[
+Y_{ij}\log p_{ij}^{g}
++(1-Y_{ij})\log(1-p_{ij}^{g})
+\right].
+\]</span></p>
+<p>这相当于按个体 posterior weights 加权的二元响应轨迹模型。轨迹解释应回到概率尺度，而不是只解释 logit 尺度上的多项式系数，因为相同的 logit 差异在低概率区和高概率区对应不同的概率变化。</p>
+<p>在命名上，Bernoulli GBTM 和 latent class analysis (LCA) 有联系，但不完全相同。若二元重复测量只是被当作多个类别指标，模型不强调连续时间趋势或增长曲线，那么它接近 longitudinal LCA；若 <span class="math inline">\(\eta_g(t)\)</span> 明确写成时间函数，并把类别解释为概率轨迹，则更准确的说法是 Bernoulli/logistic GBTM，或 binary-outcome LCGA。</p>
+<p>估计上，EM 的 E step 仍然只更新个体属于类别的责任度；分布特异的部分在 M step：类别 <span class="math inline">\(g\)</span> 的 <span class="math inline">\(\beta_g\)</span> 通过加权 logistic likelihood 更新。若 <span class="math inline">\(\eta_g(t_{ij};\beta_g)=x_{ij}^{\top}\beta_g\)</span>，则 modified Marquardt 中常见的 score 和 Hessian 结构为：</p>
+<p><span class="math display">\[
+U_{\beta_g}
+=
+\sum_{i=1}^{N}\tau_{ig}
+\sum_{j=1}^{n_i}
+x_{ij}(Y_{ij}-p_{ij}^{g}),
+\]</span></p>
+<p><span class="math display">\[
+H_{\beta_g}
+=
+-
+\sum_{i=1}^{N}\tau_{ig}
+\sum_{j=1}^{n_i}
+p_{ij}^{g}(1-p_{ij}^{g})
+x_{ij}x_{ij}^{\top}.
+\]</span></p>
+<p>当某个类别中几乎全是 0 或全是 1 时，logistic 参数可能出现近似分离，Hessian 变得平坦或病态；这时增加类别数得到的“完美轨迹”反而可能是不稳定的边界解。</p>
+</section>
+<section id="poisson-count-outcome" class="level2">
+<h2 class="anchored" data-anchor-id="poisson-count-outcome">Poisson count outcome</h2>
+<p>若结局是事件次数，可以从 Poisson GBTM 开始：</p>
+<p><span class="math display">\[
+Y_{ij}\mid C_i=g
+\sim
+\mathrm{Poisson}(\lambda_{ij}^{g}),
+\qquad
+\log \lambda_{ij}^{g}
+=
+\eta_g(t_{ij};\beta_g).
+\]</span></p>
+<p>这里 <span class="math inline">\(\lambda_{ij}^{g}\)</span> 是类别 <span class="math inline">\(g\)</span> 在时间 <span class="math inline">\(t_{ij}\)</span> 的期望次数或事件强度。Poisson 模型隐含</p>
+<p><span class="math display">\[
+E(Y_{ij}\mid C_i=g)
+=
+\mathrm{Var}(Y_{ij}\mid C_i=g)
+=
+\lambda_{ij}^{g}.
+\]</span></p>
+<p>类别 <span class="math inline">\(g\)</span> 的 weighted log-likelihood 可以写为</p>
+<p><span class="math display">\[
+\sum_{i=1}^{N}
+\tau_{ig}
+\sum_{j=1}^{n_i}
+\left[
+Y_{ij}\log\lambda_{ij}^{g}
+-\lambda_{ij}^{g}
+-\log(Y_{ij}!)
+\right].
+\]</span></p>
+<p>若存在暴露时间或观察窗口不同的问题，需要把 offset 或暴露量放入强度模型中。若实际数据过度离散，简单 Poisson 可能会把分散度不足误解释为更多潜在类别。</p>
+<p>在 EM 中，Poisson GBTM 的 M step 是加权 Poisson likelihood。若 <span class="math inline">\(\eta_g(t_{ij};\beta_g)=x_{ij}^{\top}\beta_g\)</span> 且 <span class="math inline">\(\lambda_{ij}^{g}=\exp(x_{ij}^{\top}\beta_g)\)</span>，modified Marquardt 的核心量为：</p>
+<p><span class="math display">\[
+U_{\beta_g}
+=
+\sum_{i=1}^{N}\tau_{ig}
+\sum_{j=1}^{n_i}
+x_{ij}(Y_{ij}-\lambda_{ij}^{g}),
+\]</span></p>
+<p><span class="math display">\[
+H_{\beta_g}
+=
+-
+\sum_{i=1}^{N}\tau_{ig}
+\sum_{j=1}^{n_i}
+\lambda_{ij}^{g}
+x_{ij}x_{ij}^{\top}.
+\]</span></p>
+<p>这和 Bernoulli 模型形式相似，但曲率由 <span class="math inline">\(\lambda_{ij}^{g}\)</span> 决定。若少数极大计数主导 <span class="math inline">\(\lambda\)</span>，或暴露时间没有正确进入 offset，score 和 Hessian 都会把这些观测当作轨迹类别差异来吸收。</p>
+</section>
+<section id="negative-binomial-and-overdispersed-count-outcome" class="level2">
+<h2 class="anchored" data-anchor-id="negative-binomial-and-overdispersed-count-outcome">Negative-binomial and overdispersed count outcome</h2>
+<p>当计数结局的方差显著大于均值时，可以用负二项或其他过度离散计数模型。一个常见参数化是：</p>
+<p><span class="math display">\[
+E(Y_{ij}\mid C_i=g)=\lambda_{ij}^{g},
+\qquad
+\mathrm{Var}(Y_{ij}\mid C_i=g)
+=
+\lambda_{ij}^{g}
++ \kappa_g(\lambda_{ij}^{g})^2,
+\]</span></p>
+<p>其中 <span class="math inline">\(\kappa_g\)</span> 是离散度参数。若 <span class="math inline">\(\kappa_g\)</span> 越大，同一类别内的计数越分散。这个模型把一部分额外变异交给观测分布，而不是强迫模型用更多类别去吸收。</p>
+<p>在估计上，负二项版本通常没有像高斯那样简单的闭式 M step。EM 的 M step 可以理解为最大化加权负二项 log-likelihood；直接最大化时，score 和 Hessian 还要包含离散度参数的导数与约束。和 Poisson 相比，<span class="math inline">\(\beta_g\)</span> 的更新不只受均值强度 <span class="math inline">\(\lambda_{ij}^{g}\)</span> 影响，还会被 <span class="math inline">\(\kappa_g\)</span> 改变曲率：同样的残差在高离散度类别中被视为更可容忍，在低离散度类别中则对 score 贡献更大。</p>
+<p>因此，negative-binomial GBTM 的估计要同时检查两个边界。第一，若 <span class="math inline">\(\kappa_g\rightarrow 0\)</span>，模型退回接近 Poisson；第二，若 <span class="math inline">\(\kappa_g\)</span> 很大，类别内分散度可能吸收了本来会被类别区分的异质性。Marquardt 更新通常需要对离散度使用正值约束或重参数化，否则 Hessian 很容易在边界附近不稳定。</p>
+</section>
+<section id="zero-inflated-count-outcome" class="level2">
+<h2 class="anchored" data-anchor-id="zero-inflated-count-outcome">Zero-inflated count outcome</h2>
+<p>在发展犯罪、症状发作、医疗使用次数、单细胞计数、宏基因组等数据中，很多观测为 0。若这些 0 不只是 Poisson 随机波动，而是来自“结构性不会发生事件”的状态，可以考虑 zero-inflated count model。以 zero-inflated Poisson 为例：</p>
+<p><span class="math display">\[
+P(Y_{ij}=0\mid C_i=g)
+=
+\omega_{ij}^{g}
++(1-\omega_{ij}^{g})\exp(-\lambda_{ij}^{g}),
+\]</span></p>
+<p><span class="math display">\[
+P(Y_{ij}=y\mid C_i=g)
+=
+(1-\omega_{ij}^{g})
+\frac{(\lambda_{ij}^{g})^y\exp(-\lambda_{ij}^{g})}{y!},
+\qquad y=1,2,\ldots .
+\]</span></p>
+<p>其中 <span class="math inline">\(\omega_{ij}^{g}\)</span> 是结构性零值概率，<span class="math inline">\(\lambda_{ij}^{g}\)</span> 是非结构性计数部分的强度。二者都可以随时间和类别变化。解释时必须区分两个轨迹：一条是“是否处于结构性零值状态”的概率轨迹，另一条是“非结构性计数过程”的强度轨迹。</p>
+<p>ZIP 版本的 EM 可以额外引入一个零值来源指示变量。对于 <span class="math inline">\(Y_{ij}=0\)</span> 的观测，E step 除了计算类别责任度 <span class="math inline">\(\tau_{ig}\)</span>，还可以计算该 0 来自结构性零值部分的条件概率：</p>
+<p><span class="math display">\[
+\rho_{ijg}
+=
+P(\text{structural zero}\mid Y_{ij}=0,C_i=g)
+=
+\frac{\omega_{ij}^{g}}
+{\omega_{ij}^{g}+(1-\omega_{ij}^{g})\exp(-\lambda_{ij}^{g})}.
+\]</span></p>
+<p>M step 随后可以把 <span class="math inline">\(\tau_{ig}\rho_{ijg}\)</span> 用作零值过程的权重，把 <span class="math inline">\(\tau_{ig}(1-\rho_{ijg})\)</span> 用作计数过程的权重。若不显式使用这种辅助分解，也可以直接做加权数值最大化。</p>
+<p>modified Marquardt 在 ZIP 中更敏感，因为每个 0 的 log-likelihood 同时包含 <span class="math inline">\(\omega_{ij}^{g}\)</span> 和 <span class="math inline">\(\lambda_{ij}^{g}\)</span>。当一个类别几乎全是 0 时，模型可能难以区分“结构性零值概率很高”和“计数强度极低”这两种解释；这会让 Hessian 出现强相关或边界曲率。</p>
+</section>
+<section id="beta-censored-and-bounded-continuous-outcome" class="level2">
+<h2 class="anchored" data-anchor-id="beta-censored-and-bounded-continuous-outcome">Beta, censored, and bounded continuous outcome</h2>
+<p>有界连续分数、比例和强偏态量表常常不适合直接套用高斯版本。例如认知量表有上下界，比例变量只能落在 <span class="math inline">\([0,1]\)</span>，症状分数可能大量堆在低值区域。此时可以考虑 beta、删失或潜在尺度模型。</p>
+<p>若变量可以重缩放为 <span class="math inline">\(Y_{ij}^\ast\in(0,1)\)</span>，可用 beta 分布表达有界、偏态和异方差：</p>
+<p><span class="math display">\[
+Y_{ij}^\ast\mid C_i=g
+\sim
+\mathrm{Beta}(\alpha_{ij}^{g},\delta_{ij}^{g}).
+\]</span></p>
+<p>一种常见参数化是</p>
+<p><span class="math display">\[
+\alpha_{ij}^{g}=\mu_{ij}^{g}\phi_g,
+\qquad
+\delta_{ij}^{g}=(1-\mu_{ij}^{g})\phi_g,
+\qquad
+\mathrm{logit}(\mu_{ij}^{g})
+=
+\eta_g(t_{ij};\beta_g).
+\]</span></p>
+<p><span class="math inline">\(\mu_{ij}^{g}\)</span> 是有界尺度上的条件均值，<span class="math inline">\(\phi_g\)</span> 是精度参数。<span class="math inline">\(\phi_g\)</span> 越大，观测值越集中在均值附近。Elmer et al.&nbsp;讨论了 beta distribution 在 group-based trajectory models 中处理有界连续结局的用法 <span class="citation" data-cites="elmer2018beta">(<a href="#ref-elmer2018beta" role="doc-biblioref">Elmer 等 2018年</a>)</span>。</p>
+<p>若边界值来自量表截断或删失，可以改写为潜在连续变量先生成，再被上下界截断成观测分数。删失模型的 likelihood 需要同时处理落在内部的密度和落在边界的概率质量。EM 或 Marquardt 估计中，这会改变类别条件密度和边界参数的导数，也更容易出现边界参数不稳定。</p>
+<p>这类模型的估计通常需要数值加权极大似然，而不是闭式 M step。对 beta GBTM，M step 同时更新均值轨迹 <span class="math inline">\(\mu_{ij}^{g}\)</span> 和精度 <span class="math inline">\(\phi_g\)</span>；score/Hessian 包含 beta density 的 digamma 或 trigamma 型曲率，且 <span class="math inline">\(\mu\)</span> 必须留在 <span class="math inline">\((0,1)\)</span>、<span class="math inline">\(\phi_g\)</span> 必须为正。对删失或边界模型，内部观测贡献密度项，边界观测贡献累积分布概率项；因此 Marquardt 的导数会混合 density 与 CDF 的梯度，边界附近尤其需要检查收敛和参数稳定性。</p>
+<div class="callout callout-style-default callout-warning callout-titled" title="不要用类别数补偿测量尺度">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">警告</span>不要用类别数补偿测量尺度
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>有界连续变量不一定都要用 beta 或删失模型。如果边界只是量表设计但数据远离边界，高斯近似可能足够；如果大量观测恰好等于边界，普通 beta 分布又不能直接处理 0 或 1，需要零一膨胀、删失建模或合适的重缩放策略。</p>
+</div>
+</div>
+</section>
+<section id="i-splines-link-for-measurement-scale" class="level2">
+<h2 class="anchored" data-anchor-id="i-splines-link-for-measurement-scale">I-splines link for measurement scale</h2>
+<p>当观测分数和潜在健康、能力或症状过程之间并非线性关系时，可以把类别轨迹建立在潜在过程尺度上，再用单调 link function 把观测 marker 映射到潜在尺度。I-splines link 属于这种测量尺度模型：它不是时间轨迹函数，也不是在 <span class="math inline">\(\eta_g(t)\)</span> 中加入样条时间项，而是用一组单调样条基函数近似未知的观测尺度转换。</p>
+<p>设 <span class="math inline">\(\Lambda_i(t)\)</span> 表示潜在过程，<span class="math inline">\(H^{-1}\)</span> 表示从观测 marker 到潜在过程尺度的单调转换。可以写成：</p>
+<p><span class="math display">\[
+H^{-1}(Y_{ij})
+=
+b_1
++ b_2 I_1(Y_{ij})
++ \cdots
++ b_{Q+1} I_Q(Y_{ij}),
+\]</span></p>
+<p>其中 <span class="math inline">\(I_1,\ldots,I_Q\)</span> 是 I-splines 基函数。为了保持 link function 单调，除截距外的样条系数通常需要非负约束。节点数量越多，link function 越灵活；但参数也越多，识别和收敛越困难。</p>
+<p>节点位置有三种常见思想。第一，等距节点把观测 marker 的取值范围均匀切分，适合观测分布较均匀时使用。第二，分位数节点让节点落在 marker 的经验分布分位点附近，适合观测值在某些区间更密集时使用。第三，人工指定内部节点，把研究者认为重要的量表区间单独放入模型，例如临床阈值附近或天花板效应明显的区域。</p>
+<p>I-splines link 的解释重点是：<strong>类别轨迹存在于潜在过程尺度上，观测分数只是这个潜在过程的非线性、单调测量结果</strong>。如果 link function 在量表两端很陡或很平，原始分数上的小变化和潜在过程上的变化就不能直接等同。第 5 篇 <a href="../../../src/learn/trajectory-mixture-models/05-lcmm-latent-process-models.html">Latent Process LCMM</a> 会进一步系统讨论这类 link function。</p>
+<p>估计上，I-splines link 的难点不在 EM 的外层责任度，而在 link 参数和潜在尺度轨迹参数需要共同确定。M step 通常是加权数值最大化：样条系数要满足单调性约束，节点数量和节点位置会改变基函数形状，也会改变 Hessian 的条件数。若某些样条系数贴近 0，link function 在局部会变得接近平坦；若节点过密，参数之间可能高度相关，导致 modified Marquardt 阻尼频繁增大或标准误不稳定。</p>
+</section>
+<section id="分布与估计贡献速查" class="level2">
+<h2 class="anchored" data-anchor-id="分布与估计贡献速查">分布与估计贡献速查</h2>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>层次</th>
-<th>符号</th>
-<th>问题</th>
+<th>结局或 link</th>
+<th>改变的模型部分</th>
+<th>EM 中的 M step 直觉</th>
+<th>Marquardt 中的主要变化</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>类别结构</td>
-<td><span class="math inline">\(C_i\)</span>、<span class="math inline">\(\pi_{ik}\)</span></td>
-<td>个体更可能属于哪条轨迹？</td>
+<td>Gaussian</td>
+<td>均值轨迹与残差方差</td>
+<td>线性均值轨迹时有 WLS 闭式解；方差由加权残差平方和闭式更新</td>
+<td>残差型 score，负的加权设计矩阵曲率，方差正值约束</td>
 </tr>
 <tr class="even">
-<td>轨迹线性预测子</td>
-<td><span class="math inline">\(\eta_{ij}^{k}\)</span></td>
-<td>类别 <span class="math inline">\(k\)</span> 的时间趋势如何变化？</td>
+<td>Bernoulli/logistic</td>
+<td>概率轨迹与 logit link</td>
+<td>加权 logistic likelihood</td>
+<td><span class="math inline">\(Y-p\)</span> 型 score，<span class="math inline">\(p(1-p)\)</span> 型曲率，近似分离风险</td>
 </tr>
 <tr class="odd">
-<td>观测分布</td>
-<td><span class="math inline">\(p(y_{ij}\mid\eta_{ij}^{k})\)</span></td>
-<td>给定轨迹后，实际观测值怎样围绕轨迹产生？</td>
+<td>Poisson</td>
+<td>强度轨迹与 log link</td>
+<td>加权 Poisson likelihood</td>
+<td><span class="math inline">\(Y-\lambda\)</span> 型 score，<span class="math inline">\(\lambda\)</span> 型曲率，offset 与极端计数敏感</td>
+</tr>
+<tr class="even">
+<td>Negative binomial</td>
+<td>强度与离散度</td>
+<td>加权负二项 likelihood</td>
+<td>离散度改变均值参数曲率，并带来正值或边界约束</td>
+</tr>
+<tr class="odd">
+<td>Zero-inflated count</td>
+<td>结构零值概率 + 计数强度</td>
+<td>可加入零值来源责任度，分别更新零值与计数过程</td>
+<td>两部分 log-likelihood 的导数相互纠缠，零值类别易出现边界</td>
+</tr>
+<tr class="even">
+<td>Beta/bounded</td>
+<td>有界均值、精度、删失或边界概率</td>
+<td>加权 beta / 删失 likelihood，通常数值更新</td>
+<td>精度、边界、CDF 项和 link 约束共同影响 Hessian</td>
+</tr>
+<tr class="odd">
+<td>I-splines link</td>
+<td>观测尺度到潜在尺度的单调转换</td>
+<td>加权数值最大化，无简单闭式更新</td>
+<td>单调系数、节点位置和局部平坦 link 影响曲率稳定性</td>
 </tr>
 </tbody>
 </table>
-<div class="callout callout-style-default callout-important callout-titled" title="核心区分">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">重要</span>核心区分
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>改变观测分布或 link function，不等于改变潜在类别的定义。潜在类别仍由整条轨迹的概率模式定义；改变的是每个时间点的观测值如何从类别轨迹中生成。</p>
-</div>
-</div>
-</section>
-<section id="结局分布的扩展" class="level1">
-<h1>结局分布的扩展</h1>
-<section id="连续高斯结局" class="level2">
-<h2 class="anchored" data-anchor-id="连续高斯结局">连续高斯结局</h2>
-<p>最简单的版本是假设：</p>
-<p><span class="math display">\[
-Y_{ij}\mid C_i=k
-\sim
-\mathcal N(\mu_{ij}^{k}, \sigma_k^2),
-\qquad
-\mu_{ij}^{k}=\eta_{ij}^{k}.
-\]</span></p>
-<p>这适合近似连续、残差大致对称、量表边界不强的结局。若变量是 MMSE、抑郁量表、生活质量量表这类有上下界的分数，直接套用高斯模型可能会出现两个问题：预测均值超出合法范围，以及残差分布被边界压缩。此时应考虑删失正态、beta link、splines link 或 <code>lcmm()</code> 的 latent process 框架，而不是简单增加类别数来吸收边界效应。</p>
-</section>
-<section id="二元结局" class="level2">
-<h2 class="anchored" data-anchor-id="二元结局">二元结局</h2>
-<p>当 <span class="math inline">\(Y_{ij}\in\{0,1\}\)</span>，例如是否出现症状、是否犯罪、是否服药，可以使用 Bernoulli 分布：</p>
-<p><span class="math display">\[
-Y_{ij}\mid C_i=k
-\sim
-\mathrm{Bernoulli}(p_{ij}^{k}),
-\]</span></p>
-<p>并用 logit link 描述类别特异概率轨迹：</p>
-<p><span class="math display">\[
-\mathrm{logit}(p_{ij}^{k})
-=
-\log\frac{p_{ij}^{k}}{1-p_{ij}^{k}}
-=
-\eta_{ij}^{k}.
-\]</span></p>
-<p>解释时要回到概率尺度。<span class="math inline">\(\eta_{ij}^{k}\)</span> 每增加 1，odds 乘以 <span class="math inline">\(e\)</span>；但概率变化幅度取决于当前位置。例如从 0.1 到 0.2 与从 0.8 到 0.9 在 logit 尺度上的意义并不相同。</p>
-</section>
-<section id="计数结局" class="level2">
-<h2 class="anchored" data-anchor-id="计数结局">计数结局</h2>
-<p>当结局是事件次数，可以使用 Poisson 分布：</p>
-<p><span class="math display">\[
-Y_{ij}\mid C_i=k
-\sim
-\mathrm{Poisson}(\lambda_{ij}^{k}),
-\qquad
-\log \lambda_{ij}^{k}=\eta_{ij}^{k}.
-\]</span></p>
-<p>这时轨迹描述的是事件强度或期望次数的变化。Poisson 模型隐含均值等于方差：</p>
-<p><span class="math display">\[
-E(Y_{ij}\mid C_i=k)
-=
-\mathrm{Var}(Y_{ij}\mid C_i=k)
-=
-\lambda_{ij}^{k}.
-\]</span></p>
-<p>如果实际数据过度离散，或存在大量结构性零值，简单 Poisson 可能会把过度离散误解释为更多潜在类别。</p>
-</section>
-<section id="零膨胀计数" class="level2">
-<h2 class="anchored" data-anchor-id="零膨胀计数">零膨胀计数</h2>
-<p>在发展犯罪、症状发作、医疗使用次数等数据中，很多个体在某些时间点为 0。若这些 0 不只是 Poisson 随机波动，而是来自“结构性不会发生事件”的状态，可以考虑 zero-inflated Poisson (ZIP)：</p>
-<p><span class="math display">\[
-P(Y_{ij}=0\mid C_i=k)
-=
-\omega_{ij}^{k}
-+(1-\omega_{ij}^{k})\exp(-\lambda_{ij}^{k}),
-\]</span></p>
-<p><span class="math display">\[
-P(Y_{ij}=y\mid C_i=k)
-=
-(1-\omega_{ij}^{k})
-\frac{(\lambda_{ij}^{k})^y\exp(-\lambda_{ij}^{k})}{y!},
-\qquad y=1,2,\ldots
-\]</span></p>
-<p>其中 <span class="math inline">\(\omega_{ij}^{k}\)</span> 是结构性零值概率，<span class="math inline">\(\lambda_{ij}^{k}\)</span> 是非结构性零值部分的 Poisson 强度。ZIP 版本往往需要更多参数，因此要特别关注收敛、类别比例和参数可解释性。</p>
-</section>
-<section id="删失有界与-beta-结局" class="level2">
-<h2 class="anchored" data-anchor-id="删失有界与-beta-结局">删失、有界与 beta 结局</h2>
-<p>当结局是有上下界的连续比例或量表分数，例如 <span class="math inline">\(0\)</span> 到 <span class="math inline">\(1\)</span> 的比例、0 到 30 的认知分数、0 到 100 的功能评分，高斯模型可能不合适。Elmer et al.&nbsp;讨论了在 group-based trajectory models 中使用 beta distribution 的思路，用 beta 分布表达有界、偏态、异方差的连续结局 <span class="citation" data-cites="elmer2018beta">(<a href="#ref-elmer2018beta" role="doc-biblioref">Elmer 等 2018年</a>)</span>。</p>
-<p>若把观测值重缩放为 <span class="math inline">\(Y_{ij}^\ast\in(0,1)\)</span>，可以写：</p>
-<p><span class="math display">\[
-Y_{ij}^\ast\mid C_i=k
-\sim
-\mathrm{Beta}(\alpha_{ij}^{k}, \delta_{ij}^{k}).
-\]</span></p>
-<p>一种常见参数化是用均值 <span class="math inline">\(\mu_{ij}^{k}\)</span> 与精度 <span class="math inline">\(\phi_k\)</span>：</p>
-<p><span class="math display">\[
-\alpha_{ij}^{k}=\mu_{ij}^{k}\phi_k,
-\qquad
-\delta_{ij}^{k}=(1-\mu_{ij}^{k})\phi_k,
-\qquad
-\mathrm{logit}(\mu_{ij}^{k})=\eta_{ij}^{k}.
-\]</span></p>
-<p>这里 <span class="math inline">\(\mu_{ij}^{k}\)</span> 是类别 <span class="math inline">\(k\)</span> 在时间 <span class="math inline">\(t_{ij}\)</span> 的条件均值，<span class="math inline">\(\phi_k\)</span> 控制分布集中程度。<span class="math inline">\(\phi_k\)</span> 越大，观测值越集中在均值附近；<span class="math inline">\(\phi_k\)</span> 越小，分布越分散。</p>
-<div class="callout callout-style-default callout-warning callout-titled" title="容易混淆处">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">警告</span>容易混淆处
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>有界连续变量不一定都要用 beta GBTM。如果边界只是量表设计但数据远离边界，高斯近似可能足够；如果大量观测恰好等于边界，普通 beta 分布又不能直接处理 0 或 1，需要零一膨胀、删失建模或合适的重缩放策略。</p>
-</div>
-</div>
 </section>
 </section>
 <section id="类别成员协变量" class="level1">
 <h1>类别成员协变量</h1>
-<section id="从固定类别比例到个体化类别概率" class="level2">
-<h2 class="anchored" data-anchor-id="从固定类别比例到个体化类别概率">从固定类别比例到个体化类别概率</h2>
-<p>无协变量时，类别比例是固定的：</p>
+<p>基础 GBTM 可以假设类别比例固定：</p>
 <p><span class="math display">\[
-P(C_i=k)=\pi_k,
+P(C_i=g)=\pi_g,
 \qquad
-\sum_{k=1}^{K}\pi_k=1.
+\sum_{g=1}^{G}\pi_g=1.
 \]</span></p>
-<p>若研究者关心基线特征是否与轨迹类别相关，可以把 <span class="math inline">\(\pi_k\)</span> 扩展为多项逻辑回归：</p>
+<p>若研究者关心基线特征是否与轨迹类别相关，可以把类别成员概率写成多项逻辑模型。令 <span class="math inline">\(Z_i\)</span> 表示基线协变量，并以第 <span class="math inline">\(G\)</span> 类为参考类：</p>
 <p><span class="math display">\[
-\pi_{ik}
+\pi_{ig}
 =
-P(C_i = k \mid z_i)
+P(C_i=g\mid Z_i)
 =
-\frac{
-\exp(\gamma_{0k}+z_i^\top\gamma_k)
-}{
-\sum_{\ell=1}^{K}
-\exp(\gamma_{0\ell}+z_i^\top\gamma_\ell)
-}.
+\frac{\exp(\gamma_{0g}+Z_i^\top\gamma_g)}
+{1+\sum_{h=1}^{G-1}\exp(\gamma_{0h}+Z_i^\top\gamma_h)},
+\qquad g=1,\ldots,G-1,
 \]</span></p>
-<p>为保证识别，通常选择一个参考类别，例如令 <span class="math inline">\(\gamma_{0K}=0\)</span> 且 <span class="math inline">\(\gamma_K=\mathbf 0\)</span>。于是相对于参考类别 <span class="math inline">\(K\)</span>：</p>
+<p>而</p>
 <p><span class="math display">\[
-\log
-\frac{P(C_i=k\mid z_i)}{P(C_i=K\mid z_i)}
+\pi_{iG}
 =
-\gamma_{0k}+z_i^\top\gamma_k.
+\frac{1}
+{1+\sum_{h=1}^{G-1}\exp(\gamma_{0h}+Z_i^\top\gamma_h)}.
 \]</span></p>
-<p>这条公式回答的是：在纵向轨迹信息进入模型之前，基线协变量如何改变个体属于不同潜在类别的先验概率。</p>
-</section>
-<section id="classmb-的解释边界" class="level2">
-<h2 class="anchored" data-anchor-id="classmb-的解释边界"><code>classmb</code> 的解释边界</h2>
-<p>在 <code>lcmm</code> 函数族中，类别成员协变量通常通过 <code>classmb</code> 指定。它和纵向子模型中的协变量不是同一件事：</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>放置位置</th>
-<th>统计含义</th>
-<th>解释问题</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>classmb = ~ z</code></td>
-<td><span class="math inline">\(z\)</span> 进入类别成员模型</td>
-<td>哪些基线特征让个体更可能属于某类？</td>
-</tr>
-<tr class="even">
-<td><code>fixed = y ~ z + time</code></td>
-<td><span class="math inline">\(z\)</span> 进入纵向均值结构</td>
-<td>在所有类别或总体平均上，<span class="math inline">\(z\)</span> 与结局水平/变化有关吗？</td>
-</tr>
-<tr class="odd">
-<td><code>mixture = ~ time</code></td>
-<td>时间效应类别特异</td>
-<td>各类别的轨迹形状是否不同？</td>
-</tr>
-</tbody>
-</table>
-<p>如果同一个协变量同时进入 <code>classmb</code> 和 longitudinal model，它同时回答两个问题：它是否改变类别成员概率，以及在给定类别后是否仍与结局水平有关。解释时不能把两者混成一句“这个变量影响轨迹”。</p>
+<p>这条模型回答的是：在纵向轨迹信息进入后验分类之前，基线协变量如何改变个体属于不同潜在类别的先验倾向。它不是说协变量直接改变给定类别内的纵向均值；若一个协变量还要影响类别内轨迹，就应进入类别条件轨迹模型。</p>
 <div class="callout callout-style-default callout-important callout-titled" title="协变量会改变类别定义">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -868,15 +1012,12 @@ P(C_i = k \mid z_i)
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>加入 class-membership covariates 后，模型会在类别划分和协变量关联之间共同优化。含协变量模型与不含协变量模型的类别未必一一对应，因此比较类别名称、比例和轨迹形状时要重新检查，而不能机械沿用旧模型的类别编号。</p>
+<p>加入类别成员协变量后，模型会在类别划分、类别比例和协变量关联之间共同优化。含协变量模型与不含协变量模型的类别未必一一对应，因此比较类别名称、比例和轨迹形状时要重新检查，而不能机械沿用旧模型的类别编号。</p>
 </div>
 </div>
-</section>
 </section>
 <section id="多轨迹-gbtm" class="level1">
 <h1>多轨迹 GBTM</h1>
-<section id="从单一轨迹到联合轨迹" class="level2">
-<h2 class="anchored" data-anchor-id="从单一轨迹到联合轨迹">从单一轨迹到联合轨迹</h2>
 <p>如果同一个个体有多个纵向结局，例如认知分数、抑郁评分和身体功能，单独为每个结局拟合 GBTM 会得到多个分类结果。问题是：这些分类未必一致，也无法直接回答“哪些人呈现共同的多维发展模式”。</p>
 <p>Group-based multi-trajectory modeling 的思想是让同一个潜在类别 <span class="math inline">\(C_i\)</span> 同时定义多个结局的轨迹 <span class="citation" data-cites="nagin2018multi">(<a href="#ref-nagin2018multi" role="doc-biblioref">Nagin 等 2018年</a>)</span>。设第 <span class="math inline">\(m\)</span> 个 marker 的纵向向量为 <span class="math inline">\(\mathbf y_{im}\)</span>，个体完整数据为：</p>
 <p><span class="math display">\[
@@ -884,26 +1025,23 @@ P(C_i = k \mid z_i)
 =
 (\mathbf y_{i1},\ldots,\mathbf y_{iM}).
 \]</span></p>
-<p>在给定类别 <span class="math inline">\(k\)</span> 后，可以写成：</p>
+<p>在给定类别 <span class="math inline">\(g\)</span> 后，可以写成：</p>
 <p><span class="math display">\[
-p(\mathbf y_i\mid C_i=k,\theta_k)
+p(\mathbf y_i\mid C_i=g,\theta_g)
 =
 \prod_{m=1}^{M}
-p_{km}(\mathbf y_{im}\mid \theta_{km}),
+p_{gm}(\mathbf y_{im}\mid \theta_{gm}),
 \]</span></p>
 <p>于是边际 likelihood 为：</p>
 <p><span class="math display">\[
 p(\mathbf y_i\mid\theta)
 =
-\sum_{k=1}^{K}
-\pi_k
+\sum_{g=1}^{G}
+\pi_g
 \prod_{m=1}^{M}
-p_{km}(\mathbf y_{im}\mid \theta_{km}).
+p_{gm}(\mathbf y_{im}\mid \theta_{gm}).
 \]</span></p>
-<p>同一个类别 <span class="math inline">\(k\)</span> 现在是一组轨迹的组合，而不是某一个 marker 的轨迹。例如一个类别可以被描述为“认知缓慢下降 + 抑郁稳定低 + 身体功能快速下降”。</p>
-</section>
-<section id="多轨迹模型和多个单变量模型的区别" class="level2">
-<h2 class="anchored" data-anchor-id="多轨迹模型和多个单变量模型的区别">多轨迹模型和多个单变量模型的区别</h2>
+<p>同一个类别 <span class="math inline">\(g\)</span> 现在是一组轨迹的组合，而不是某一个 marker 的轨迹。例如一个类别可以被描述为“认知缓慢下降 + 抑郁稳定低 + 身体功能快速下降”。</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 25%">
@@ -927,38 +1065,25 @@ p_{km}(\mathbf y_{im}\mid \theta_{km}).
 <td>类别交叉后组合过多，忽略 marker 间共同模式</td>
 </tr>
 <tr class="even">
-<td>multi-trajectory GBTM</td>
+<td>Multi-trajectory GBTM</td>
 <td>一个类别同时包含多个 marker 轨迹</td>
 <td>直接得到联合 phenotype</td>
 <td>若某个 marker 主导 likelihood，类别可能主要反映该 marker</td>
 </tr>
 <tr class="odd">
-<td><code>multlcmm</code></td>
-<td>多 marker 共同测量同一个 latent process</td>
+<td>共同 latent process 模型</td>
+<td>多个 marker 共同测量同一个潜在过程</td>
 <td>显式建模测量尺度和共同潜在过程</td>
 <td>需要“共同潜在过程”假设，计算更复杂</td>
 </tr>
 </tbody>
 </table>
-<p>multi-trajectory GBTM 和 <code>multlcmm</code> 都处理多个纵向指标，但统计假设不同。前者直接把多个观测轨迹联合分组；后者认为多个 marker 是同一个潜在过程的测量通道，并通过 marker-specific link functions 连接观测值。</p>
-<div class="callout callout-style-default callout-note callout-titled" title="与 multlcmm 的区别">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">注记</span>与 multlcmm 的区别
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>multi-trajectory GBTM 的类别是多个观测结局轨迹的联合模式；<code>multlcmm</code> 的类别是共同 latent process 的类别，观测 marker 还要经过测量模型或 link function。若多个 marker 不测量同一个潜在状态，multi-trajectory GBTM 可能更自然；若多个 marker 是同一潜在能力或症状维度的测量，<code>multlcmm</code> 更有结构性。</p>
-</div>
-</div>
-</section>
+<p>multi-trajectory GBTM 和共同 latent process 模型都处理多个纵向指标，但统计假设不同。前者直接把多个观测轨迹联合分组；后者认为多个 marker 是同一个潜在过程的测量通道，并通过 marker-specific link functions 连接观测值。若多个 marker 不测量同一个潜在状态，multi-trajectory GBTM 可能更自然；若多个 marker 是同一潜在能力或症状维度的测量，共同 latent process 模型更有结构性。</p>
 </section>
 <section id="模型选择与诊断" class="level1">
 <h1>模型选择与诊断</h1>
-<p>扩展 GBTM 的模型选择比基础模型更容易误判，因为分布设定、类别数、协变量和多轨迹结构会互相补偿。常用指标包括：</p>
+<p>GBTM 的模型选择不能只问“哪个 <span class="math inline">\(G\)</span> 的信息准则最低”。当观测分布、类别成员协变量、多轨迹结构和 link function 都可能变化时，模型比较实际上是在比较一组不同的数据生成机制。</p>
+<p>常用信息准则包括：</p>
 <p><span class="math display">\[
 \mathrm{BIC}
 =
@@ -972,15 +1097,15 @@ p_{km}(\mathbf y_{im}\mid \theta_{km}).
 <p>其中 <span class="math inline">\(\ell(\hat\theta)\)</span> 是最大化后的 log-likelihood，<span class="math inline">\(p\)</span> 是自由参数个数，<span class="math inline">\(N\)</span> 通常按个体数而不是观测总数理解。BIC 惩罚复杂度较强，AIC 惩罚较弱；二者都不能单独证明类别具有实体意义。</p>
 <p>分类质量通常通过 posterior class-membership probabilities 检查：</p>
 <p><span class="math display">\[
-\hat p_{ik}
+\hat\tau_{ig}
 =
-P(C_i=k\mid \mathbf y_i,\hat\theta)
+P(C_i=g\mid y_i,\hat\theta)
 =
 \frac{
-\hat\pi_{ik}p_k(\mathbf y_i\mid\hat\theta_k)
+\hat\pi_{ig}f_g(y_i\mid\hat\theta_g)
 }{
-\sum_{\ell=1}^{K}
-\hat\pi_{i\ell}p_\ell(\mathbf y_i\mid\hat\theta_\ell)
+\sum_{\ell=1}^{G}
+\hat\pi_{i\ell}f_\ell(y_i\mid\hat\theta_\ell)
 }.
 \]</span></p>
 <p>AvePP、entropy、posterior classification table 和类别比例都应一起看。一个模型即使 BIC 较低，也可能因为类别极小、后验概率重叠、参数在边界上或轨迹没有实质解释价值而不适合报告。</p>
@@ -1006,7 +1131,7 @@ P(C_i=k\mid \mathbf y_i,\hat\theta)
 <tr class="even">
 <td>类别数</td>
 <td>BIC/AIC 是否改善？类别是否可解释？</td>
-<td>比较 <span class="math inline">\(K=1,\ldots,K_{\max}\)</span>，报告未收敛模型</td>
+<td>比较一组候选类别数，报告未收敛模型</td>
 </tr>
 <tr class="odd">
 <td>分类质量</td>
@@ -1015,32 +1140,37 @@ P(C_i=k\mid \mathbf y_i,\hat\theta)
 </tr>
 <tr class="even">
 <td>类别比例</td>
-<td>是否出现 1%-2% 的极小类别？</td>
+<td>是否出现极小类别？</td>
 <td>检查是否局部最优、异常点或模型误设</td>
 </tr>
 <tr class="odd">
 <td>协变量</td>
-<td><code>classmb</code> 是否改变类别结构？</td>
+<td>类别成员协变量是否改变类别结构？</td>
 <td>重新命名类别，避免和无协变量模型直接对齐</td>
 </tr>
 <tr class="even">
 <td>多轨迹</td>
 <td>是否某个 marker 主导分类？</td>
-<td>标准化、检查各 marker 的拟合与解释贡献</td>
+<td>检查各 marker 的拟合与解释贡献</td>
+</tr>
+<tr class="odd">
+<td>I-splines link</td>
+<td>link 是否过于弯曲或参数贴近边界？</td>
+<td>重新检查节点数量、节点位置和量表范围</td>
 </tr>
 </tbody>
 </table>
-<div class="callout callout-style-default callout-warning callout-titled" title="LMR-aLRT 与 BLRT 的软件边界">
+<div class="callout callout-style-default callout-warning callout-titled" title="不要只看拟合改善">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">警告</span>LMR-aLRT 与 BLRT 的软件边界
+<span class="screen-reader-only">警告</span>不要只看拟合改善
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>用户旧笔记中提到 LMR-aLRT 和 BLRT。它们常见于 Mplus 等 latent class/growth mixture 工作流，但 <code>lcmm</code> 官方输出通常以 logLik、AIC、BIC、后验分类和收敛诊断为主。本系列后续报告规范会把这些检验标为“视软件而定”，不把它们写成 <code>lcmm</code> 的默认输出。</p>
+<p>类别数和类别条件模型会互相补偿。若观测分布不合适、类别内相关被忽略、时间函数过于僵硬，模型可能通过增加类别数提高 likelihood。此时多出来的类别未必代表新的实质轨迹，而可能是在补偿 <span class="math inline">\(f_g\)</span> 的设定不足。</p>
 </div>
 </div>
 </section>
@@ -1048,16 +1178,16 @@ P(C_i=k\mid \mathbf y_i,\hat\theta)
 <h1>应用例子：如何选择扩展方向</h1>
 <p>假设研究者分析 65 岁以上人群的认知量表，观测到三个现象：</p>
 <ol type="1">
-<li>MMSE 有明显上界，很多人在早期接近满分。</li>
+<li>量表有明显上界，很多人在早期接近满分。</li>
 <li>部分个体随访时间较短且缺失与健康状态有关。</li>
 <li>教育水平可能影响个体属于不同下降轨迹的概率。</li>
 </ol>
 <p>一个稳妥的建模顺序是：</p>
 <ol type="1">
 <li>先用基础高斯 GBTM/LCGA 建立类别数和轨迹形状的直觉。</li>
-<li>检查边界效应和残差，若高斯假设明显不合适，考虑有界分布、link function 或第 5 篇的 <code>lcmm()</code> latent process 模型。</li>
-<li>再加入教育水平作为 <code>classmb</code>，比较类别轨迹是否仍稳定。</li>
-<li>若还有其他认知 marker，例如 IST、BVRT，再判断它们是要做 multi-trajectory GBTM，还是第 6 篇所说的共同 latent process。</li>
+<li>检查边界效应和残差，若高斯假设明显不合适，考虑有界分布、删失模型或潜在尺度 link。</li>
+<li>再加入教育水平作为类别成员协变量，比较类别轨迹是否仍稳定。</li>
+<li>若还有其他认知 marker，再判断它们是要做 multi-trajectory GBTM，还是共同 latent process 模型。</li>
 </ol>
 <p>这个顺序的好处是每次只改变一个主要建模假设。若同时改变分布、类别数、协变量和多 marker 结构，很难判断结果变化来自哪里。</p>
 </section>
@@ -1067,9 +1197,9 @@ P(C_i=k\mid \mathbf y_i,\hat\theta)
 <h2 class="anchored" data-anchor-id="不要用类别数补偿分布误设">不要用类别数补偿分布误设</h2>
 <p>如果数据有强偏态、过多零值或边界堆积，增加类别数可能会提高 likelihood，但得到的类别可能只是分布误设的补丁。此时更应该检查观测分布和 link function。</p>
 </section>
-<section id="不要把-class-membership-effect-解释成纵向因果效应" class="level2">
-<h2 class="anchored" data-anchor-id="不要把-class-membership-effect-解释成纵向因果效应">不要把 class-membership effect 解释成纵向因果效应</h2>
-<p><code>classmb</code> 中的协变量解释的是类别成员概率差异，不是“协变量导致某条轨迹”。尤其在观测研究中，类别本身也是模型推断的结果，不能自动成为因果中介或真实亚型。</p>
+<section id="不要把类别成员效应解释成纵向因果效应" class="level2">
+<h2 class="anchored" data-anchor-id="不要把类别成员效应解释成纵向因果效应">不要把类别成员效应解释成纵向因果效应</h2>
+<p>类别成员模型中的协变量解释的是类别成员概率差异，不是“协变量导致某条轨迹”。尤其在观测研究中，类别本身也是模型推断的结果，不能自动成为因果中介或真实亚型。</p>
 </section>
 <section id="不要把联合类别拆回单个-marker-类别" class="level2">
 <h2 class="anchored" data-anchor-id="不要把联合类别拆回单个-marker-类别">不要把联合类别拆回单个 marker 类别</h2>
@@ -1077,26 +1207,34 @@ P(C_i=k\mid \mathbf y_i,\hat\theta)
 </section>
 <section id="不要忽略未收敛模型" class="level2">
 <h2 class="anchored" data-anchor-id="不要忽略未收敛模型">不要忽略未收敛模型</h2>
-<p>扩展模型更容易出现局部最优、边界参数和 Hessian 问题。报告时应说明尝试过哪些类别数、哪些模型未收敛、采用什么初始值策略。</p>
+<p>扩展模型更容易出现局部最优、边界参数和 Hessian 问题。报告时应说明尝试过哪些候选模型、哪些模型未收敛、采用什么初始值策略。</p>
 </section>
+</section>
+<section id="与后续章节的衔接" class="level1">
+<h1>与后续章节的衔接</h1>
+<p>本篇现在把基础 GBTM 和常见扩展放在一起：非高斯结局要求重新思考观测分布；类别成员协变量要求区分类别归属机制和纵向均值结构；多轨迹模型要求把类别解释为多个 marker 的联合模式；I-splines link 则提醒我们，观测量表和潜在过程尺度可能不同。</p>
+<p>后续几篇会继续放松 GBTM 的简化：第 4 篇 <a href="../../../src/learn/trajectory-mixture-models/04-hlme-growth-mixture-models.html"><code>hlme</code>/LCMM/GMM</a> 会加入类别内随机效应；第 5 篇 <a href="../../../src/learn/trajectory-mixture-models/05-lcmm-latent-process-models.html">Latent Process LCMM</a> 会把观测尺度和潜在过程尺度系统分开；第 6 篇 <a href="../../../src/learn/trajectory-mixture-models/06-multlcmm-multivariate-longitudinal-markers.html">MLCMM / multLCMM</a> 会用测量模型处理多个 marker 与共同 latent process 的关系。</p>
 </section>
 <section id="小结" class="level1">
 <h1>小结</h1>
-<p>扩展 GBTM 的核心不是把模型变复杂，而是让概率模型更贴近数据结构。非高斯结局要求重新思考观测分布；类别成员协变量要求区分类别归属机制和纵向均值结构；多轨迹模型要求把类别解释为多个 marker 的联合模式。</p>
-<p>本篇与后续三篇的关系可以这样理解：扩展 GBTM 仍主要保留“类别内无随机效应”的简化；第 3 篇 <code>hlme</code>/LCMM 会加入类别内随机效应；第 5 篇 <code>lcmm</code> 会把观测尺度和潜在过程尺度分开；第 6 篇 <code>multlcmm</code> 会用测量模型处理多个 marker 与共同 latent process 的关系。</p>
+<p>GBTM（亦称 LCGA）把一般轨迹混合模型中的 <span class="math inline">\(f_g(y_i\mid\theta_g)\)</span> 具体化为“类别特异轨迹函数 + 观测分布”的乘积形式。它的核心特征不是某一种固定分布，而是类别内通常没有随机效应：类别平均轨迹承担主要异质性解释，剩余变异由残差、方差、离散度或精度参数处理。</p>
+<p>不同数据类型下，GBTM 可以对应 Gaussian、Bernoulli、Poisson、negative-binomial、zero-inflated count、beta、censored/bounded 等观测模型；I-splines link 则通过单调测量函数处理观测尺度与潜在过程尺度不一致的问题。类别成员协变量和 multi-trajectory GBTM 进一步扩展了类别概率和纵向数据结构，但仍保留“类别内无随机效应”的基本简化。</p>
 </section>
 <section id="思考题" class="level1">
 <h1>思考题</h1>
 <ol type="1">
+<li>GBTM 的类别条件模型 <span class="math inline">\(f_g\)</span> 与 LCMM/GMM 的 <span class="math inline">\(f_g\)</span> 最关键的差别是什么？</li>
+<li>为什么 I-splines link 改变的是观测尺度和潜在尺度之间的关系，而不是时间轨迹本身？</li>
+<li>如果真实个体差异主要是连续谱，GBTM 可能怎样用额外类别去近似这种差异？</li>
+<li>在二元或计数 GBTM 中，为什么不能只解释 <span class="math inline">\(\eta_g(t)\)</span> 的多项式系数？</li>
 <li>如果同一指标既有强偏态又有天花板效应，应优先改变观测分布、link function，还是增加类别数？为什么？</li>
-<li>在 class-membership model 中加入协变量后，类别是否还能与不含协变量的模型直接比较？</li>
+<li>在类别成员模型中加入协变量后，类别是否还能与不含协变量的模型直接比较？</li>
 <li>多轨迹模型得到的类别，是“任一 marker 的类别”，还是“多个 marker 的联合类别”？</li>
-<li>如果两个 marker 的单变量 GBTM 类别不一致，什么时候应该接受这种不一致，什么时候应该拟合联合模型？</li>
 </ol>
 </section>
-<section id="参考来源" class="level1">
-<h1>参考来源</h1>
-<p>本篇主要依据用户旧笔记中的 GBTM 扩展框架，并结合 GBTM 原始文献、multi-trajectory GBTM、beta GBTM、<code>lcmm</code> companion paper 与纵向聚类综述进行解释性整理 <span class="citation" data-cites="nagin1999developmental nagin2005group nagin2018multi elmer2018beta proustlima2017lcmm herle2020typical lu2025clustering">(<a href="#ref-nagin1999developmental" role="doc-biblioref">Nagin 1999年</a>, <a href="#ref-nagin2005group" role="doc-biblioref">2005年</a>; <a href="#ref-nagin2018multi" role="doc-biblioref">Nagin 等 2018年</a>; <a href="#ref-elmer2018beta" role="doc-biblioref">Elmer 等 2018年</a>; <a href="#ref-proustlima2017lcmm" role="doc-biblioref">Proust-Lima 等 2017年</a>; <a href="#ref-herle2020typical" role="doc-biblioref">Herle 等 2020年</a>; <a href="#ref-lu2025clustering" role="doc-biblioref">Lu 2025年</a>)</span>。</p>
+<section id="参考说明" class="level1">
+<h1>参考说明</h1>
+<p>本讲义依据 Nagin 的 group-based trajectory modeling 文献、GBTM 临床应用综述、multi-trajectory GBTM、beta GBTM、典型轨迹解释综述、纵向聚类综述，以及 latent process link function 和 modified Marquardt 估计的相关说明整理 <span class="citation" data-cites="nagin1999developmental nagin2005group naginodgers2010clinical nagin2018multi elmer2018beta herle2020typical lu2025clustering proustlima2017lcmm lcmmdocs2026">(<a href="#ref-nagin1999developmental" role="doc-biblioref">Nagin 1999年</a>, <a href="#ref-nagin2005group" role="doc-biblioref">2005年</a>; <a href="#ref-naginodgers2010clinical" role="doc-biblioref">Nagin 和 Odgers 2010年</a>; <a href="#ref-nagin2018multi" role="doc-biblioref">Nagin 等 2018年</a>; <a href="#ref-elmer2018beta" role="doc-biblioref">Elmer 等 2018年</a>; <a href="#ref-herle2020typical" role="doc-biblioref">Herle 等 2020年</a>; <a href="#ref-lu2025clustering" role="doc-biblioref">Lu 2025年</a>; <a href="#ref-proustlima2017lcmm" role="doc-biblioref">Proust-Lima 等 2017年</a>, <a href="#ref-lcmmdocs2026" role="doc-biblioref">2026年</a>)</span>。</p>
 
 
 </section>
@@ -1124,8 +1262,14 @@ Nagin, Daniel S. 2005年. <em>Group-Based Modeling of Development</em>. Harvard 
 <div id="ref-nagin2018multi" class="csl-entry" role="listitem">
 Nagin, Daniel S., Bobby L. Jones, Valéria Lima Passos, 和 Richard E. Tremblay. 2018年. <span>《Group-Based Multi-Trajectory Modeling》</span>. <em>Statistical Methods in Medical Research</em> 27 (7): 2015～23. <a href="https://doi.org/10.1177/0962280216673085">https://doi.org/10.1177/0962280216673085</a>.
 </div>
+<div id="ref-naginodgers2010clinical" class="csl-entry" role="listitem">
+Nagin, Daniel S., 和 Candice L. Odgers. 2010年. <span>《Group-Based Trajectory Modeling in Clinical Research》</span>. <em>Annual Review of Clinical Psychology</em> 6: 109～38. <a href="https://doi.org/10.1146/annurev.clinpsy.121208.131413">https://doi.org/10.1146/annurev.clinpsy.121208.131413</a>.
+</div>
 <div id="ref-proustlima2017lcmm" class="csl-entry" role="listitem">
 Proust-Lima, Cécile, Viviane Philipps, 和 Benoit Liquet. 2017年. <span>《Estimation of Extended Mixed Models Using Latent Classes and Latent Processes: The <span>R</span> Package <span>lcmm</span>》</span>. <em>Journal of Statistical Software</em> 78 (2): 1～56. <a href="https://doi.org/10.18637/jss.v078.i02">https://doi.org/10.18637/jss.v078.i02</a>.
+</div>
+<div id="ref-lcmmdocs2026" class="csl-entry" role="listitem">
+Proust-Lima, Cécile, Viviane Philipps, 和 Benoit Liquet. 2026年. <em><span>lcmm</span>: Extended Mixed Models Using Latent Classes and Latent Processes</em>. <span>Lcmm</span> Package Documentation. <a href="https://cecileproust-lima.github.io/lcmm/">https://cecileproust-lima.github.io/lcmm/</a>.
 </div>
 </div></section></div></main> <!-- /main -->
 <script>
