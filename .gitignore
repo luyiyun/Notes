@@ -14,6 +14,7 @@ _site/
 *.webp
 *.pdf
 *.excalidraw.md
+*.svg
 # *.excalidraw
 
 # assets/
@@ -36,3 +37,5 @@ resources/audits/
 resources/coverage
 *-coverage-audit.md
 resources/audits/*
+
+_codes/

@@ -121,13 +121,13 @@ $$\lim_{ n \to \infty }A_{n}:={\lim\inf}_{ n \to \infty }A_{n}=\lim\sup_{ n \to 
 
 我们首先定义集合系是 sample space 子集的集合。
 
-1. 如果某个非空集合系 $\mathcal{J}$ 满足 
+1. 如果某个非空集合系 $\mathcal{J}$ 满足
   $$A,B\in\mathcal{J}\implies A\cap B\in\mathcal{J},$$
   则称之为 **${\pi}$-class**。
 2. 如果存在某个 $\pi$-class $\mathcal{I}$ 满足下面的条件，则称之为 **semi-ring**：
   $$\forall A,B\in\mathcal{I},A\subset B\implies \exists \{ C_{k}\in\mathcal{I},k=1,\dots,n \},$$
  其中$\forall C_{i},C_{j},C_{i}\cap C_{j}=\emptyset$,使得$B\setminus A=\cup^{n}_{k=1}C_{k}$。
-3. 如果某个非空集合系 $\mathcal{R}$ 对并和差运算是封闭的，则称之为 **ring**。即 
+3. 如果某个非空集合系 $\mathcal{R}$ 对并和差运算是封闭的，则称之为 **ring**。即
   $$A,B\in\mathcal{R}\implies A\cup B,A\setminus B\in\mathcal{R}.$$
 4. 若某个非空集合系 $\mathcal{R}$ 对可列并和差运算封闭，则称之为 **$\sigma$ -ring**，即
   $$
@@ -227,7 +227,7 @@ graph LR
 
 ## 集合系生成
 
-1. 如果 $\mathcal{I}$ 是 semi-ring，则 
+1. 如果 $\mathcal{I}$ 是 semi-ring，则
   $$
   r(\mathcal{I})=\cup_{n=1}^{\infty}\{ \cup_{k=1}^{n}A_{k}|\{ A_{k}\in\mathcal{I},k=1,\dots,n \}\text{两两不交} \}.
   $$
