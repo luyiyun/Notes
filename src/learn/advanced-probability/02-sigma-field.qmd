@@ -37,10 +37,13 @@ $\mathcal{F}$ 是 $\Omega$ 的子集组成的集合，如果其满足下面的 3
 $(\Omega, \mathcal{F})$ 则称之为一个 measurable space。
 
 :::
+
 注意到，以上的三个条件有许多等价形式：
+
 * 我们可以使用 $\Omega$ 和**差集的封闭性**来替换 2。
 * 只要保证了差集的封闭性，我们可以使用互斥集合可列并来替代条件 3。
 * 只要存在补运算的封闭性，根据 DeMorgan's Law，我们可以将可列交运算修改为可列并运算。
+
 根据以上的替换，可以有很多很多的等价定义方法。以下使我们列举的四组等价定义：
 
 ::: {#def-02-sigma-field-2}
@@ -70,7 +73,9 @@ $(\Omega, \mathcal{F})$ 则称之为一个 measurable space。
 3. $A_{i}\in\mathcal{F},i=1,2,\dots\implies\cap A_{i}\in\mathcal{F}$
 
 :::
+
 针对一个 sample space，我们可以构造出非常多的 $\sigma$-field，以下是几个常见的例子：
+
 * 对于任何一个集合，都会存在两个 **trivial $\sigma$-field**：Power set 和 $\{ \emptyset,\Omega \}$。
 * 另外一个常被用来辅助理解 $\sigma$-field 的例子是：$\{ \emptyset,A,A^c,\Omega \}$，其中 $A\subset\Omega$ 并且 $A\neq\Omega$。
 * 在后续的文章中，最常被提及的 $\sigma$ -field 应该是 @def-borel-sigma-field，其使用 $\mathcal{B}$ 表示。它是定义在实数轴 $\mathbb{R}$ 上的一个 $\sigma$ -field，其生成自 $\mathbb{R}$ 上的区间或开集。在我们介绍完 [Sigma 域的生成](#02-sigma-field-sigma-域的生成) 后，我们会更清晰地知道它是一个怎样的对象。

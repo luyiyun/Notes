@@ -327,7 +327,7 @@ A_{2}&=\{ f+g<a,f+g=\infty \} \\
 &=\emptyset \\
 A_{3}&=\{ f+g<a,-\infty<f+g<\infty \} \\
 &=\{ f<a-g \}\cap \{ -\infty<f,g<\infty \} \\
-&=\bigcup_{\gamma \in\mathbb{Q}}\left[ \{ f<\gamma \} \cap \{ g<a-\gamma \} \right]\cap \{ -\infty<f,g<\infty \} 
+&=\bigcup_{\gamma \in\mathbb{Q}}\left[ \{ f<\gamma \} \cap \{ g<a-\gamma \} \right]\cap \{ -\infty<f,g<\infty \}
 \end{align}
 $$
 
@@ -553,8 +553,9 @@ $$
 :::
 
 ::: {.proof}
-(1) 1 的证明比较简单，略。
-(2) 我们构造这样的可测函数列
+**(1)** 1 的证明比较简单，略。
+
+**(2)** 我们构造这样的可测函数列
 
 $$
 f_{n}=\sum\limits_{k=0}^{n2^{n}-1} \frac{k}{2^{n}}I_{\left\{  \frac{k}{2^{n}}\leq f<\frac{k+1}{2^{n}}  \right\}}+nI_{\{ f\geq n \}}
@@ -577,12 +578,12 @@ $$
 
 即 $f_{n}\uparrow f$ 是一致成立的。
 
-(3) 我们利用 $f=f^{+}-f^{-}$，然后分别找到 $f^{+}$ 和 $f^{-}$ 的简单函数列 $\{ f^{+}_{n} \}$ 和 $\{ f^{-}_{n} \}$，则有 $f_{n}=f_{n}^{+}-f_{n}^{-}$ 是简单函数，并且 $f_{n}\to f$。并且也容易证明，当 $f$ 有界时，$f^{+},f^{-}$ 也有界，进而可以证明收敛是一致成立的。
+**(3)** 我们利用 $f=f^{+}-f^{-}$，然后分别找到 $f^{+}$ 和 $f^{-}$ 的简单函数列 $\{ f^{+}_{n} \}$ 和 $\{ f^{-}_{n} \}$，则有 $f_{n}=f_{n}^{+}-f_{n}^{-}$ 是简单函数，并且 $f_{n}\to f$。并且也容易证明，当 $f$ 有界时，$f^{+},f^{-}$ 也有界，进而可以证明收敛是一致成立的。
 :::
 
 以上定理非常重要，因为其提供了一种证明关于可测函数的命题的统一方法论，可以称之为**典型方法**。
 
-::: {.callout-important title="典型方法"}
+::: {#typical-method .callout-important title="典型方法"}
 为了证明一个关于可测函数的命题，我们可以将其分为以下几个步骤：
 
 1. 证明该命题对于最简单的函数——指示函数成立；
@@ -591,7 +592,6 @@ $$
 4. 证明该命题对于一般可测函数——两个非负可测函数的差成立。
 
 :::
-<span id="typical-method"></span>
 
 在下一节中，@thm-composite-func 的证明就是典型方法的一个例子。
 
@@ -616,13 +616,12 @@ $g$ 是 $(X,\mathcal{F})$ 到 $(Y,\mathcal{T})$ 的可测映射，$h$ 是 $(X,g^
 :::
 
 ::: {.callout-note title="两个定理的图示"}
-
-![复合可测映射](https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/composite-mapping-20260514-181034.png)
+![复合可测映射](https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/composite-mapping-20260514-181034.png){#fig-composite-func width=50%}
 
 - 第二个定理的充分性是第一个定理的特例（$\mathcal{F}=g^{-1}(\mathcal{T})$，$(Z,\mathcal{Z})=(\bar{\mathbb{R}},\mathcal{B}_{\bar{\mathbb{R}}})$）。
 - 第二个定理中，$g$ 和 $f$ 的地位是不同的，$g$ 一直是条件。
-
 :::
+
 ::: {.proof}
 我们只需要证明必要性即可。
 
@@ -690,7 +689,7 @@ $$
 (注意到 if exists 的条件，如果面向广义可测函数，则该条件是极限存在或= $\pm\infty$ ；如果面向 Borel 函数，则该条件是极限有界) 。则 $f$ 是 $(Y,\mathcal{T})$ 上的可测函数，且
 
 $$
-h(x)=\lim_{ n \to \infty } h_{n}(x)=\lim_{ n \to \infty } 
+h(x)=\lim_{ n \to \infty } h_{n}(x)=\lim_{ n \to \infty }
 f_{n}(g(x))=f(g(x)).
 $$
 
@@ -872,5 +871,5 @@ $$
 :::
 
 ::: {.callout-note }
-以上证明过程中所构造的随机变量涉及到统计中非常重要的一种采样方法：逆分布函数采样。
+以上证明过程中所构造的随机变量涉及到统计中非常重要的一种采样方法：**逆分布函数采样**。
 :::

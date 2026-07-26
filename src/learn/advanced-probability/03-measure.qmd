@@ -193,26 +193,30 @@ $$
 
 $(\Omega,\mathcal{F},\nu)$ 是一个 measure space，则 $\nu$ 有以下性质
 
-1. 可减性, 即若$A,B\in \mathcal{F},A\subset B,\nu(A)<\infty$，则有
+1. **可减性**, 即若$A,B\in \mathcal{F},A\subset B,\nu(A)<\infty$，则有
   $$
   \begin{align}
   \nu(B\setminus A)=\nu(B)-\nu(A).
   \end{align}
   $$
-2. 有限可加性, 即若$A_{i}\in\mathcal{F},i=1,2,\dots,N$两两不交，则有
+
+2. **有限可加性**, 即若$A_{i}\in\mathcal{F},i=1,2,\dots,N$两两不交，则有
   $$
   \nu(\cup_{i=1}^{N}A_{i})=\sum_{i=1}^{N}\nu(A_{i}).
   $$
 
-3. 单调性，即
+3. **单调性**，即
   $$
   A\subset B\implies \nu(A)\leq \nu(B).
   $$
-4. 半可列可加性,即
+
+4. **半可列可加性**,即
   $$A_{i},i=1,2,\dots\implies \nu(\cup_{i=1}^{\infty}A_{i})\leq \sum\limits_{i=1}^{\infty}\nu(A_{i}).$$
-5. 上连续性, 即若$A_{n}\downarrow A$ 且 $\nu(A_{1})<\infty$，则有
+
+5. **上连续性**, 即若$A_{n}\downarrow A$ 且 $\nu(A_{1})<\infty$，则有
   $$\nu(A)=\lim_{ n \to \infty }v(A_{n})=\cap_{n=1}^{\infty}A_n.$$
-6. 下连续性, 若$A_{n}\uparrow A$，则有
+
+6. **下连续性**, 若$A_{n}\uparrow A$，则有
   $$\nu(A)=\lim_{ n \to \infty }v(A_{n})=\cup_{n=1}^{\infty}A_n$$
 
 :::

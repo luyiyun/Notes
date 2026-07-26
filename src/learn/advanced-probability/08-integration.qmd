@@ -24,7 +24,7 @@ order: 8
 
 若该测度空间是一个概率空间，则几乎处处成立也被称为**几乎必然成立** (almost surely)，记作 **a.s.**。
 
-# 定义
+# 积分的定义
 
 我们使用 [典型方法](07-measurable-functions.qmd#typical-method) 来定义积分，整个过程分为三个步骤。
 
@@ -258,7 +258,7 @@ $$
 - 这里讨论的一般可测函数，既可以是广义可测函数，也可以是 Borel 函数。
 - 一般可测函数的积分并不总是存在的，因此，我们需要定义两个前置条件。
 
-::: {#def-inte-func}
+::: {#def-integable-func-exist}
 
 ## 积分存在
 
@@ -269,7 +269,11 @@ $$
 $$
 
 则称其**积分存在**或**积分有意义**（**exists**）。
-**Definition: 可积性**
+:::
+
+::: {#def-integable}
+
+## 可积性
 若 $f$ 满足
 
 $$
@@ -277,7 +281,12 @@ $$
 $$
 
 则称 $f$ 是**可积的**（**integrable**）。
-**Definition: 一般可测函数的积分**
+:::
+
+::: {#def-general-inte-func}
+
+## 一般可测函数的积分
+
 当测度空间 $(X,\mathcal{F},\mu)$ 上的可测函数 $f$ 积分存在时，定义
 
 $$
@@ -310,9 +319,9 @@ $$
 
 :::
 
-# 性质
+# 一般积分的性质
 
-## 积分存在和可积性的相关性质
+## 积分存在和可积性性质
 
 根据上面的定义，我们知道，讨论函数的积分，需要先讨论函数积分是否存在。因此，这里我们将先去讨论一下函数积分存在（可积）相关的一些性质和重要结论。
 
@@ -458,7 +467,7 @@ $$
 并且 $f,g$ 其中之一**可积**, 则另外一个一定**积分存在**, 并且有
 
 $$
-\int f \, d\mu\geq \int g \, d\mu.  
+\int f \, d\mu\geq \int g \, d\mu.
 $$
 
 :::
@@ -474,7 +483,7 @@ $$
 因此有
 
 $$
-\int g^{+} \, d\mu\leq \int \lvert f \rvert  \, d\mu<\infty,  
+\int g^{+} \, d\mu\leq \int \lvert f \rvert  \, d\mu<\infty,
 $$
 
 这就已经证明了 $g$ 一定积分存在.
@@ -1086,7 +1095,7 @@ $$
 \mathop{\lim\inf}_{ n \to \infty } \int _{X}f_{n} \, d\mu \\
 &\leq \mathop{\lim\sup}_{ n \to \infty } \int _{X}f_{n} \, d\mu\leq
 \int _{X}\mathop{\lim\sup}_{ n \to \infty } f_{n} \, d\mu=
-\int _{X}\lim_{ n \to \infty } f_{n} \, d\mu=\int _{X}f \, d\mu  
+\int _{X}\lim_{ n \to \infty } f_{n} \, d\mu=\int _{X}f \, d\mu
 \end{align}
 $$
 
@@ -1101,8 +1110,8 @@ $$
 设 $\{ f_{n},n=1,2,\dots \}$ 和 $f$ 是**有限**测度空间 $(X,\mathcal{F},\mu)$ 上的可测函数。若存在 $M>0$ 使得 $\left| f_{n} \right|\leq M$ a.e.对每个 $n$ 成立并且 $f_{n}\overset{ a.e. }{ \longrightarrow }f$ 或 $f_{n}\overset{ \mu }{ \longrightarrow }f$，则
 
 $$
-\lim_{ n \to \infty } \int _{X}f_{n} \, d\mu=\int _{X}f \, d\mu.  
-$$ 
+\lim_{ n \to \infty } \int _{X}f_{n} \, d\mu=\int _{X}f \, d\mu.
+$$
 
 :::
 
@@ -1117,7 +1126,7 @@ $$
 (1) 令 $\nu=\mu \circ g^{-1}$，则 $(Y,\mathcal{T},\nu)$ 是一个测度空间；
 (2) 对于 $(Y,\mathcal{T},\nu)$ 上的任何可测函数 $f$，只要等式
   $$
-  \int _{Y}f \, d\nu =\int _{X}f\circ g \, d\mu,  
+  \int _{Y}f \, d\nu =\int _{X}f\circ g \, d\mu,
   $$
   之一端有意义，就一定成立。
 
@@ -1193,7 +1202,7 @@ $$
 **利用 @thm-inte-by-subs，我们还可以简化积分计算。比如对于一个可测函数的积分**
 
 $$
-\int _{X}f \, d\mu, 
+\int _{X}f \, d\mu,
 $$
 
 这个可测函数所在的测度空间 $(X,\mathcal{F},\mu)$ 可能非常 crazy，可能是任意的东西，但是我们都可以将其转换为 $(\mathbb{R},\mathcal{B})$ 上的积分
@@ -1245,7 +1254,7 @@ $g$ 是一个 $X$ 上的可积函数。则对于每个 $\theta \in(a,b)$，$\fra
 
 $$
 \frac{d}{d\theta}\int _{X}f(x,\theta) \, d\mu=
-\int _{X}\frac{ \partial f(x,\theta) }{ \partial \theta }  \, d \mu 
+\int _{X}\frac{ \partial f(x,\theta) }{ \partial \theta }  \, d \mu
 $$
 
 :::
@@ -1265,7 +1274,7 @@ $$
 $$
 \begin{align}
 \left| f(x,\theta_{2})-f(x,\theta_{1}) \right| &=
-\left| 
+\left|
 \int _{\theta_{1}}^{\theta_{2}}
 \frac{ \partial f }{ \partial \theta } \, d\theta
 \right|  \\
@@ -1285,13 +1294,13 @@ $${#eq-7cc7ac}
 
 $$
 \begin{align}
-\int _{X}\frac{ \partial f(x,\theta) }{ \partial \theta }  \, d \mu 
+\int _{X}\frac{ \partial f(x,\theta) }{ \partial \theta }  \, d \mu
 &=\int _{X}\lim_{ n \to \infty } h_{n}(x,\theta) \, d\mu \\
 &=\lim_{ n \to \infty } \int _{X}h_{n}(x,\theta) \, d\mu \\
 &=\lim_{ n \to \infty } \int _{X}\frac{
 f\left( x,\theta+1 / n \right)-f(x,\theta)
 }{1 / n} \, d\mu \\
-&=\lim_{ n \to \infty }n\left[ 
+&=\lim_{ n \to \infty }n\left[
 \int _{X}f(x,\theta+1/n) \, d \mu- \int _{X}f(x,\theta)
 \right]  \, d\mu \\
 &= \frac{d}{d\theta}\int _{X}f(x,\theta) \, d\mu
@@ -1333,7 +1342,7 @@ $$
 $$
 \begin{align}
 &\int _{\mathbb{R}}f \, dx  :=\int _{\mathbb{R}}f \, dm \\
-&\int _{A}f \, dx :=\int _{\mathbb{R}}fI_{A} \, dm 
+&\int _{A}f \, dx :=\int _{\mathbb{R}}fI_{A} \, dm
 \end{align}
 $$
 
@@ -1382,7 +1391,7 @@ $$
 接下来，对于一般函数 $f$，我们将其分为 $f^{+}-f^{-}$ 两个非负函数。根据 Riemann 积分的性质，可以知道：若 $f$ 可积，则 $f^{+},f^{-}$ 可积，并且
 
 $$
-\int _{a}^{b}f \, dx =\int _{a}^{b}f^{+} \, dx -\int _{a}^{b}f^{-} \, dx. 
+\int _{a}^{b}f \, dx =\int _{a}^{b}f^{+} \, dx -\int _{a}^{b}f^{-} \, dx.
 $${#eq-8e7f5d}
 
 ::: {.callout-note}
@@ -1442,7 +1451,7 @@ $$
 I'(b)&=\frac{d\left( \lim_{ N \to \infty } \int _{0}^{N}\frac{\sin x}{x}e^{-bx} \, dx  \right)}{db} \\
 &=\lim_{ N \to \infty } \frac{d\left( \int _{0}^{N}\frac{\sin x}{x}e^{-bx} \, dx  \right)}{db} \\
 &=\lim_{ N \to \infty } \int _{0}^{N}\frac{d\left( \frac{\sin x}{x}e^{-bx} \right)}{db} \, dx \\
-&=\int _{0}^{\infty}\frac{d\left( \frac{\sin x}{x}e^{-bx} \right)}{db} \, dx 
+&=\int _{0}^{\infty}\frac{d\left( \frac{\sin x}{x}e^{-bx} \right)}{db} \, dx
 \end{align}
 $$
 

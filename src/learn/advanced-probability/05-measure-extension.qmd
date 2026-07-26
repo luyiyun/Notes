@@ -80,6 +80,7 @@ $$
 ## $\pi$-class 的扩张
 
 设 $\mathcal{T}$ 是一个 $\pi$-class，若 $\sigma(\mathcal{T})$ 上的测度 $\mu,\nu$ 满足下面两个条件：
+
 1. $\forall A\in\mathcal{T}\implies \mu(A)=\nu(A)$;
 2. 存在两两不交的 $\{ A_{n}\in\mathcal{T},n=1,2,\dots \}$，使 $\bigcup_{n=1}^{\infty}A_{n}=X$ 且 $\mu(A_{n})<\infty$；
 
@@ -165,7 +166,7 @@ $$
 要证明一个 $\sigma(\mathcal{E})$ 满足某种条件，一种常用的证明思路是：首先去构造一个满足该条件的集合，然后证明其是一个 $\sigma$-field 并且包含 $\mathcal{E}$，自然其包含 $\sigma(\mathcal{E})$，也就是说 $\sigma(\mathcal{E})$ 中的所有元素都有这个性质。
 
 :::
-# 基于半环的扩张（测度扩张定理）
+# 基于半环的扩张
 
 现在我们可以去证明测度扩张定理了，其表明，我们只需要将 $\mathcal{E}$ 限制为 semi-ring，则我们预想中的测度扩张就可以实现。
 
@@ -454,7 +455,7 @@ $$
 
 :::
 ::: {.proof}
-因为 field 中包含全集 $\Omega$，因此根据 @thm-measure-extension-2，我们有
+因为 field 中包含全集 $\Omega$，因此根据 @cor-measure-extension-2，我们有
 
 $$
 \forall C\in\sigma(\mathcal{A})\implies \mu(A)=\tau(A).
