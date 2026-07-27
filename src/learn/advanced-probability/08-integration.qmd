@@ -1337,7 +1337,7 @@ $$
 
 ## Lebesgue 积分
 
-对于定义在 $(\mathbb{R},\mathcal{B},m)$ 上的可测函数 $f$，其中 $m$ 是 Lebesgue 测度，按照 @def-inte-func （或 @def-inte-func-general）得到的积分
+对于定义在 $(\mathbb{R},\mathcal{B},m)$ 上的可测函数 $f$，其中 $m$ 是 Lebesgue 测度，按照 @def-general-inte-func （或 @def-inte-func-general）得到的积分
 
 $$
 \begin{align}

@@ -26,6 +26,7 @@ _site/
 
 # 可能存在的codex文件
 *.log
+/_codex_notes.md
 
 
 # quarto相关文件

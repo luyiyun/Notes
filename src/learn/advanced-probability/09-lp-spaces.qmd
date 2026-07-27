@@ -29,7 +29,7 @@ Lp 空间的出现是分析学从具体函数向量空间化的关键一步，�
 设 $(X,\mathcal{F},\mu)$ 是一个测度空间，$1\leq p<\infty$，定义
 
 $$
-L_{p}(X,\mathcal{F},\mu):=\left\{  f|f measurable, \int _{X}
+L_{p}(X,\mathcal{F},\mu):=\left\{  f|f\ \text{measurable}, \int _{X}
 \left| f \right| ^{p} \, d\mu  <\infty\right \},
 $$
 
@@ -47,11 +47,9 @@ $$
 
 :::
 
-# 性质
+$L_{p}$ 空间中的函数存在一些值得讨论的性质，特别是一些不等式，我们接下来详细讨论一下。
 
-$L_{p}$ 空间中的函数存在一些值得讨论的性质，特别是一些不等式。
-
-## 线性封闭性
+# 线性封闭性
 
 首先我们需要证明两个引理。
 
@@ -69,13 +67,11 @@ $$
 
 ::: {.proof}
 当 $a=0$ 或 $b=0$ 或 $p=1$ 的时候，结论显然成立。我们现在只需要去证明其他的情况即可。
-首先，我们来证明 $a,b\in\mathbb{R}^{+}$，不等式 [eq-lp-convex-auxiliary](#eq-lp-convex-auxiliary) 成立。
+首先，我们来证明 $a,b\in\mathbb{R}^{+}$，不等式 @eq-lp-convex-auxiliary 成立。
 
 $$
 2^{p-1}[x^{p}+(1-x)^{p}]\geq 1,\forall x \in (0,1)
-$$
-
-<span id="eq-lp-convex-auxiliary"></span>
+$${#eq-lp-convex-auxiliary}
 
 这个是容易证明的，只需要使用基础的微积分就可以解决。先对函数
 
@@ -87,11 +83,9 @@ $$
 
 $$
 f'(x)=2^{p-1}p[x^{p-1}-(1-x)^{p-1}].
-$$
+$${#eq-lp-convex-auxiliary-derivative}
 
-<span id="eq-lp-convex-derivative"></span>
-
-我们来分析 [eq-lp-convex-derivative](#eq-lp-convex-derivative)，当 $x$ 较小（接近 0）的时候，$f'(x)<0$，当 $x$ 较大（接近 1）的时候，$f'(x)>0$，所以 $f(x)$ 在 $(0,1)$ 中存在一个极小值，是 $x=0.5$ 的时候。此时，我们有 $f(1/2)=1$。不等式 [eq-lp-convex-auxiliary](#eq-lp-convex-auxiliary) 得到证明。
+我们来分析 @eq-lp-convex-auxiliary-derivative，当 $x$ 较小（接近 0）的时候，$f'(x)<0$，当 $x$ 较大（接近 1）的时候，$f'(x)>0$，所以 $f(x)$ 在 $(0,1)$ 中存在一个极小值，是 $x=0.5$ 的时候。此时，我们有 $f(1/2)=1$。不等式 @eq-lp-convex-auxiliary 得到证明。
 
 因此，对于任何 $a,b\in\mathbb{R}^{+}$，我们有
 
@@ -137,11 +131,11 @@ $$
 
 $$
 \begin{align}
-\int \left| af+bg \right|^{p}  \, d\mu \leq 
-2^{p-1}\left[ 
+\int \left| af+bg \right|^{p}  \, d\mu \leq
+2^{p-1}\left[
 \int \left| af \right|^{p} \, d\mu+\int \left| bg \right|^{p}  \, d\mu
 \right] \leq
-2^{p-1}\left[ 
+2^{p-1}\left[
 |a|^{p}\int \left| f \right|^{p} \, d\mu+|b|^{p}\int \left| g \right|^{p}  \, d\mu
 \right]
 <\infty.
@@ -150,9 +144,9 @@ $$
 
 :::
 
-## 积分不等式
+# 积分不等式
 
-### Holder 不等式
+## Holder 不等式
 
 同样，首先我们先需要证明一个引理。
 
@@ -175,17 +169,13 @@ $$
 
 $$
 \left[ \frac{a}{b} \right]^{1/p}\leq \frac{1}{p}\frac{a}{b}+\frac{1}{q}.
-$$
+$${#eq-young-ratio-form}
 
-<span id="eq-young-ratio-form"></span>
-
-令 $\alpha=\frac{1}{p}$，证明不等式 [eq-young-ratio-form](#eq-young-ratio-form) 等价于证明 $\forall x \in\mathbb{R}^{+}$ 有
+令 $\alpha=\frac{1}{p}$，证明不等式 @eq-young-ratio-form 等价于证明 $\forall x \in\mathbb{R}^{+}$ 有
 
 $$
 x^{\alpha}\leq 1+\alpha(x-1).
-$$
-
-<span id="eq-young-tangent-bound"></span>
+$${#eq-young-tangent-bound}
 
 我们可以使用基本微积分的方式来证明上式：
 令 $f(x)=x^{\alpha}-\alpha(x-1)$，可以得到其导函数和二次导函数有
@@ -197,7 +187,7 @@ $$
 \end{align}
 $$
 
-注意，这里的 $\alpha>1$。容易知道，$\forall a\in\mathbb{R}^{+},f''(x)>0$，$f(x)$ 是一个凸函数，有一个极小值。这个极小值是 $x=1$，此时 $f(1)=1$。这就证明了不等式 [eq-young-tangent-bound](#eq-young-tangent-bound)，并且等号当且仅当 $x=1$ 时成立。利用我们前面的论述，引理得证。
+注意，这里的 $\alpha>1$。容易知道，$\forall a\in\mathbb{R}^{+},f''(x)>0$，$f(x)$ 是一个凸函数，有一个极小值。这个极小值是 $x=1$，此时 $f(1)=1$。这就证明了不等式 @eq-young-tangent-bound，并且等号当且仅当 $x=1$ 时成立。利用我们前面的论述，引理得证。
 :::
 
 下面，我们来证明下面的 Holder 不等式。
@@ -243,11 +233,10 @@ $$
 
 $$
 \lVert fg \rVert \leq \lVert f \rVert _{p}\lVert g \rVert _{q}.
-$$
+$${#eq-holder-integral-bound}
 
-<span id="eq-holder-integral-bound"></span>
 
-注意到，由不等式 [eq-holder-normalized-bound](#eq-holder-normalized-bound) 可以推知
+注意到，由不等式 @eq-holder-integral-bound 可以推知
 
 $$
 \frac{1}{p}\frac{\lvert f \rvert ^{p}}{\lVert f \rVert _{p}^{p}}+
@@ -256,7 +245,7 @@ $$
 \ a.e.
 $$
 
-根据前面的性质，我们可以知道，不等式 [eq-holder-integral-bound](#eq-holder-integral-bound) 中等式成立当且仅当 [eq-holder-normalized-bound](#eq-holder-normalized-bound) 等式成立。有根据 @lem-young-inequality，等号成立的充分比较条件为
+根据前面的性质，我们可以知道，不等式 @eq-holder-integral-bound 中等式成立当且仅当 @eq-holder-normalized-bound 等式成立。有根据 @lem-young-inequality，等号成立的充分比较条件为
 
 $$
 \left( \frac{\lvert f \rvert }{\lVert f \rVert }_{p} \right)^{p}=
@@ -264,9 +253,7 @@ $$
 \iff
 \lVert g \rVert ^{q}_{q}\lvert f \rvert ^{p}=
 \lVert f \rVert _{p}^{p}\lvert g \rvert ^{q},
-$$
-
-<span id="eq-holder-equality-condition"></span>
+$${#eq-holder-equality-condition}
 
 考虑到 $fg=0$ a.e.的情况，这个条件就是定理中所描述的情况。我们可以简单证明一下，首先，容易知道
 
@@ -285,12 +272,12 @@ $$
 =\frac{\lvert g \rvert ^{q}}{\lVert g \rVert ^{q}_{q}},
 $$
 
-也就是式 [eq-holder-equality-condition](#eq-holder-equality-condition)。
+也就是式 @eq-holder-equality-condition。
 :::
 
 Holder 不等式的重要性不言而喻，更加重要的是要意识到什么时候去使用它。后面我们会知道，$L_{p}$ 其实是一个范数空间，所以涉及到**两个函数相乘的范数**或**两个函数范数乘积**时，@thm-holder-inequality 可能会起到作用。
 
-### Cauchy-Schwarz 不等式
+## Cauchy-Schwarz 不等式
 
 根据 @thm-holder-inequality, 我们可以得到另外一个使用非常多的不等式, 即
 
@@ -315,9 +302,9 @@ $$
 ::: {.proof}
 令 $p=q=2$, 然后利用 Holder 不等式即可.
 :::
-该不等式的一个重要作用是去证明 @thm-covariance-inequality.
+该不等式的一个重要作用是去证明 [协方差不等式](./18-moments.qmd#thm-covariance-inequality).
 
-### Liapounov 不等式
+## Liapounov 不等式
 
 根据 @thm-holder-inequality, 我们还可以得到另外一个重要的不等式, 其描述了上标变化时的行为.
 
@@ -337,7 +324,7 @@ $$
 对随机变量 $\lvert f \rvert^{r}$ 和 $1$, 以及 $p=\frac{s}{r},q=1 / \left( 1 - \frac{1}{p} \right)$ 应用 Holder 不等式.
 :::
 
-### Minkowski 不等式
+## Minkowski 不等式
 
 我们可以使用 @thm-holder-inequality 直接得到 minkowski 不等式。
 
@@ -348,7 +335,6 @@ $$
 设 $1\leq p<\infty$，则对于任何 $f,g\in L_{p}$，有
 
 $$
-
 \lVert f+g \rVert _{p}\leq \lVert f \rVert _{p}+
 \lVert g \rVert _{p}.
 $$
@@ -373,18 +359,16 @@ $$
 $$
 \begin{align}
 \lVert f+g \rVert _{p}^{p}&=
-\int _{x}\lvert f+g \rvert ^{p} \, d\mu \\ 
+\int _{x}\lvert f+g \rvert ^{p} \, d\mu \\
 &\leq \int _{X}\lvert f \rvert \lvert f+g \rvert ^{p-1} \, d\mu
 +\int _{X}\lvert g \rvert \lvert f+g \rvert ^{p-1} \, d\mu \\
 &\leq \lVert f \rVert _{p}\lVert \lvert f+g \rvert ^{p-1} \rVert _{q}
 +\lVert g \rVert _{p}\lVert \lvert f+g \rvert ^{p-1} \rVert _{q} \\
 &=(\lVert f \rVert _{p}+\lVert g \rVert _{p})\lVert f+g \rVert _{p}^{p-1}
 \end{align}
-$$
+$${#eq-minkowski-holder-step}
 
-<span id="eq-minkowski-holder-step"></span>
-
-上述第三行使用到了 @thm-holder-inequality。当 $\lVert f+g \rVert_{p}=0$ 时， @thm-minkowski-inequality 显然成立，并且等号成立当且仅当 $f=g=0$ a.e.。当 $\lVert f+g \rVert_{p}>0$ 时，则 [eq-minkowski-holder-step](#eq-minkowski-holder-step) 式两端可以同时除以 $\lVert f+g \rVert_{p}^{p-1}$，从而得到 @thm-minkowski-inequality。等号当且仅当 [eq-minkowski-holder-step](#eq-minkowski-holder-step) 中两个不等号中等号成立。这意味着：
+上述第三行使用到了 @thm-holder-inequality。当 $\lVert f+g \rVert_{p}=0$ 时， @thm-minkowski-inequality 显然成立，并且等号成立当且仅当 $f=g=0$ a.e.。当 $\lVert f+g \rVert_{p}>0$ 时，则 @eq-minkowski-holder-step 式两端可以同时除以 $\lVert f+g \rVert_{p}^{p-1}$，从而得到 @thm-minkowski-inequality。等号当且仅当 @eq-minkowski-holder-step 中两个不等号中等号成立。这意味着：
 (1) $fg\geq 0$ a.e.；
 (2) $\exists$ 不全为 0 的 $a,b\geq 0$ 和不全为 0 的 $c,d\geq 0$，满足
 
@@ -397,7 +381,7 @@ $$
 :::
 当遇到两个函数**加和的范数**或**范数的加和**时，可以考虑 @thm-minkowski-inequality。此外，可以知道，该不等式其实是**三角不等式**（$\lvert a+b \rvert\leq \lvert a \rvert+\lvert b \rvert$）的推广。而三角不等式是范数定义的重要部分。 @thm-minkowski-inequality 可以轻松推广到超过两个随机变量的情况.
 
-### Essen-Bahr 不等式
+## Essen-Bahr 不等式
 
 其不止将 @thm-minkowski-inequality 推广到了超过两个随机变量的情况, 并且得到了更紧的形式.
 
@@ -422,7 +406,7 @@ $$
 略
 :::
 
-### Jensen 不等式
+## Jensen 不等式
 
 ::: {#thm-jensen-inequality}
 
@@ -443,9 +427,7 @@ $$
 
 $$
 g(x)\geq g(y)+a_{y}(x-y)^{T}, \forall x \in A.
-$$
-
-<span id="eq-convex-supporting-hyperplane"></span>
+$${#eq-convex-supporting-hyperplane}
 
 又因为
 
@@ -459,9 +441,8 @@ $$
 \mathbb{E}(g(f))\geq g(\mathbb{E}f).
 $$
 
-其中 $g(\mathbb{E}f)$ 的积分存在性由 @thm-integrable-exists 保证.
 
-如果 $f$ 是 strict convex, 则式 [eq-convex-supporting-hyperplane](#eq-convex-supporting-hyperplane) 中的 $\geq$ 变为 $>$, 则加上 @prp-order (3), 就完成了最后的证明.
+如果 $f$ 是 strict convex, 则式 @eq-convex-supporting-hyperplane 中的 $\geq$ 变为 $>$, 则加上 [序关系性质](08-integration.qmd#thm-order) (3), 就完成了最后的证明.
 
 :::
 
@@ -541,12 +522,18 @@ $$
 :::
 注意到，@thm-holder-minkowski-linfty 中没有关于等式成立的条件。
 
-## 线性赋范空间
+# 线性赋范空间
 
 根据上面得到的一些定理，我们实际上可以认识到，$L_{p}$ 实际上是一个具有特定代数和拓扑性质的结构。
 
 ::: {.callout-note}
 下面在证明中使用到了等价类的概念，如果不严格地来说，可以不使用这个概念，直接认为 $f=g\ a.e.$ 蕴含 $f,g$ 在 $L_{p}$ 中是相等的即可。当然这实际上是隐式地使用了等价类。
+:::
+
+## 定义
+
+::: {#thm-lp-linear-closure}
+
 **Theorem: 线性空间**
 $\forall 1\leq p\leq \infty$， $L_{p}$ 是一个实数域上的线性空间。
 
@@ -590,11 +577,12 @@ $$
 容易证明，这个定义是 well-defined。
 
 这需要我们证明以下三个条件：
+
 (1) $\lVert \tilde{f} \rVert_{p}\geq 0;\quad \lVert \tilde{f} \rVert_{p}=0\iff \tilde{f}=\tilde{0}\text{或}f=0\ a.e.$；
 (2) $\lVert a\tilde{f} \rVert_{p}=\lvert a \rvert\lVert \tilde{f} \rVert_{p},\forall a\in \mathbb{R}$；
 (3) 三角不等式。
 
-(1) 和 (2) 的证明是容易的，(3) 直接使用 @thm-minkowski-inequality 和 @thm-holder-minkowski-linfty 的结论即可。
+其中，(1) 和 (2) 的证明是容易的，(3) 直接使用 @thm-minkowski-inequality 和 @thm-holder-minkowski-linfty 的结论即可。
 :::
 
 ## 完备性
@@ -687,7 +675,7 @@ $$
 $$
 \begin{align}
 \left( \frac{a}{a+b} \right)^{p}+\left( \frac{b}{a+b} \right)^{p}\geq 1
-\implies 
+\implies
 (a+b)^{p}\leq a^{p}+b^{p} \implies
 \lvert a+b \rvert ^{p}\leq \lvert a \rvert ^{p}+\lvert b \rvert ^{p}.
 \end{align}
@@ -721,10 +709,11 @@ $$
 为什么不加 $1/p$ 次幂？这会带来什么样的影响？
 
 :::
-注意，当 $1\leq p\leq \infty$ 时，我们可以通过范数来诱导一个距离。所以当 $0<p\leq \infty$ 时，$L_{p}$ 都是一个距离空间，我可以讨论其上的拓扑性质。最**显然的一个结论是：在这个距离下，$L_{p}$ 是完备的。因此，$0<p<1$ 时，$L_{p}$ 是一个完备的距离空间；$1\leq p\leq \infty$ 时，$L_{p}$ 是一个 Banach 空间。**相关的信息将在 [19_收敛理论](19-convergence-theory.qmd) 中进一步进行讨论。
+注意，当 $1\leq p\leq \infty$ 时，我们可以通过范数来诱导一个距离。所以当 $0<p\leq \infty$ 时，$L_{p}$ 都是一个距离空间，我可以讨论其上的拓扑性质。最**显然的一个结论是：在这个距离下，$L_{p}$ 是完备的。因此，$0<p<1$ 时，$L_{p}$ 是一个完备的距离空间；$1\leq p\leq \infty$ 时，$L_{p}$ 是一个 Banach 空间。**相关的信息将在 [收敛理论](19-convergence-theory.qmd) 中进一步进行讨论。
 
 ::: {.callout-important title="不等式逐步证明方法"}
 这一节中证明了多个不等式，这些不等式的证明方法存在一些共性，我将其称为**不等式逐步证明方法**，总结如下。
+
 1. 我们首先可以想一想，当将结论集中在一个子集中时，是否可以将结论推广至全集。比如，我们可以先假设结论在 $\mathbb{R}^{+}$ 上成立，看看是否可以在此基础上推广至 $\mathbb{R}$。这样，我们就可以把问题集中在这个子集（$\mathbb{R}^{+}$）上解决，降低了问题的复杂度。
 2. 在上一步的基础上，我们查看一下是否可以削减变元的数量，比如将两个变元（$a,b$）修改为一个变元（$x$）。这样，我们实际上等价于在证明只含有一个变量的函数的不等式。
 3. 在上一步的基础上，我们就可以利用简单微积分的知识来进行证明这个函数一个变量的函数的不等式。然后反向推导到第一层，完成整个证明。

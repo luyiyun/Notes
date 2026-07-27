@@ -17,13 +17,14 @@ order: 10
 # 介绍
 
 前面学习了积分，那自然就会考虑其对立的另一个运算——微分。后面我们会知道，在测度论中引入微分概念不止这么简单，其至少有如下的好处：
+
 - 完备了理论，在了解了微分和积分的概念后，概率论中几乎所有的概念都可以得到严格的数学定义；
 - 和微积分中类似，我们可以通过导数来对函数（这里是可测函数或随机变量）进行细致地分析，这引入了 Jordan 分解和 Lebesgue 分解；
-- 通过 R-N 导数，我们可以精确地定义条件概率。
+- 通过 R-N 导数，我们可以精确地定义**条件概率**。
 
 为了能够有更加宽广的视野，我们将从**符号测度**而非测度入手。
 
-# 符号测度的定义
+# 定义
 
 如同微积分中的那样，我们寻求一个积分运算的逆运算。比如，我们可以将积分运算看做是一个集合运算
 
@@ -57,7 +58,7 @@ $$
 设 $(X,\mathcal{F},\mu)$ 是一个测度空间，$f$ 是该测度空间上**积分存在**的可测函数，则
 
 $$
-\phi(A)=\int _{A}f \, d\mu 
+\phi(A)=\int _{A}f \, d\mu
 $$
 
 是 $(X,\mathcal{F})$ 上的一个符号测度。
@@ -65,10 +66,10 @@ $$
 :::
 
 ::: {.proof}
-第一条由 @prp-inte-exists (4) 得到，第二条由 @cor-measurable-seperate 得到。
+第一条由 [积分存在的性质](08-integration.qmd#prp-inte-exists) (4) 得到，第二条由 [可测分割](08-integration.qmd#cor-measurable-seperate) 得到。
 :::
 
-# 符号测度的性质
+# 性质
 
 符号测度是测度的推广，所以在符号测度上成立的命题，在测度上依然成立；但在测度上成立的命题则不一定在符号测度中成立，所以我们需要重新探索符号测度的性质。（我们会发现，因为符号测度定义太过宽泛，其成立的性质明显要少很多）
 
@@ -109,11 +110,12 @@ $$
 若 $\phi(A)=\infty$，则 $\phi(A\cup B)=\infty$，负责会出现无意义的计算；若 $\phi(B)=-\infty$，则 $\phi(A\cup B)=-\infty$，出现矛盾。
 :::
 
-::: {.callout-note title="约定"}
+::: {#nte-agreement .callout-note}
+
+## 符号测度的约定
 为了方便起见，我们将约定所遇到的所有符号测度均满足 $-\infty<\phi(A)\leq \infty,\quad \forall A\in\mathcal{F}$。
 
 :::
-<span id="appoint-signed-measure"></span>
 
 ::: {#prp-signed-control}
 
@@ -145,7 +147,7 @@ $\phi$ 是可测空间 $(X,\mathcal{F})$ 上的符号测度，若 $\{ A_{n},n=1,
 
 $$
 \left\lvert  \phi\left( \bigcup_{n=1}^{\infty}A_{n} \right)  \right\rvert <\infty,
- $$
+$$
 
 成立，当且仅当
 
@@ -164,7 +166,6 @@ A_{n},\quad&\phi(A_{n})>0, \\
 \emptyset,&\phi(A_{n})\leq 0,
 \end{matrix}
 \right.\quad
-
 A_{n}^{-}=\left\{
 \begin{matrix}
 \emptyset,\quad&\phi(A_{n})>0, \\
@@ -183,26 +184,24 @@ $$
 
 $$
 \begin{align}
-\sum\limits_{n=1}^{\infty}\lvert \phi(A_{n}) \rvert 
+\sum\limits_{n=1}^{\infty}\lvert \phi(A_{n}) \rvert
 &=\sum\limits_{n=1}^{\infty}[\phi(A_{n}^{+})+\lvert \phi(A_{n}^{-}) \rvert ] \\
 &=\sum\limits_{n=1}^{\infty}\phi(A_{n}^{+})+\sum\limits_{n=1}^{\infty}\lvert \phi(A_{n}^{-}) \rvert \\
 &=\left\lvert  \sum\limits_{n=1}^{\infty}\phi(A_{n}^{+})  \right\rvert +
 \left\lvert  \sum\limits_{n=1}^{\infty}\phi(A_{n}^{-})  \right\rvert \\
 &=\left\lvert  \phi\left( \bigcup_{n=1}^{\infty}A_{n}^{+} \right)  \right\rvert +
-\left\lvert  \phi\left( \bigcup_{n=1}^{\infty}A_{n}^{-} \right)  \right\rvert 
+\left\lvert  \phi\left( \bigcup_{n=1}^{\infty}A_{n}^{-} \right)  \right\rvert
 \end{align}
 $$
 
 其中第一行的结论来自于 $A_{n}^{+},A_{n}^{-}$ 的定义，倒数第二行来自于符号测度的可列可加性。
 
-(1) 若 $\left\lvert  \phi\left( \bigcup_{n=1}^{\infty}A_{n} \right)  \right\rvert <\infty$ 成立，根据 @prp-signed-control ，可知以下内容成立
+**(1)** 若 $\left\lvert  \phi\left( \bigcup_{n=1}^{\infty}A_{n} \right)  \right\rvert <\infty$ 成立，根据 @prp-signed-control ，可知以下内容成立
 
 $$
 \left\lvert  \phi\left( \bigcup_{n=1}^{\infty}A_{n}^{+} \right)  \right\rvert<\infty,\quad
 \left\lvert  \phi\left( \bigcup_{n=1}^{\infty}A_{n}^{-} \right)  \right\rvert <\infty,
-$$
-
-<span id="b75466"></span>
+$${#eq-signed-control-1}
 
 所以，我们有
 
@@ -210,11 +209,11 @@ $$
 \sum\limits_{n=1}^{\infty}\lvert \phi(A_{n}) \rvert <\infty.
 $$
 
-(2) 若 $\sum\limits_{n=1}^{\infty}\lvert \phi(A_{n}) \rvert <\infty$ 成立，则容易得到式 [b75466](#b75466) 成立，再根据有限可加性，可以得到
+**(2)** 若 $\sum\limits_{n=1}^{\infty}\lvert \phi(A_{n}) \rvert <\infty$ 成立，则容易得到式 @eq-signed-control-1 成立，再根据有限可加性，可以得到
 
 $$
 \begin{align}
-\left\lvert  \phi\left( \bigcup_{n=1}^{\infty}A_{n} \right)  \right\rvert 
+\left\lvert  \phi\left( \bigcup_{n=1}^{\infty}A_{n} \right)  \right\rvert
 &=\left\lvert  \phi\left( \bigcup_{n=1}^{\infty}A_{n}^{+} \right)+
 \phi\left( \bigcup_{n=1}^{\infty}A_{n}^{-} \right)
 \right\rvert \\
@@ -277,13 +276,11 @@ $$
 
 $$
 \phi(A_{0})\geq 0,\quad \phi^{*}(A\setminus A_{0})>\epsilon_{0}.
-$$
-
-<span id="5af11d"></span>
+$${#eq-abserdity-conclusion}
 
 因为这个 $A_{0}$ 的任意性，所以我们就选择其为 $\emptyset$，因为 $\phi(\emptyset)=0$，所以可知 $\phi^{*}(A\setminus \emptyset)=\phi^{*}(A)>\epsilon_{0}$。
 
-由 $\phi^{*}$ 的定义可知，存在 $B_{1}\in\mathcal{F},B_{1}\subset A_{0},\phi(B_{1})>\epsilon_{0}$。又根据反证法的结论 [5af11d](#5af11d)，得到
+由 $\phi^{*}$ 的定义可知，存在 $B_{1}\in\mathcal{F},B_{1}\subset A_{0},\phi(B_{1})>\epsilon_{0}$。又根据反证法的结论 @eq-abserdity-conclusion，得到
 
 $$
 \phi^{*}(A\setminus B_{1})>\epsilon_{0}.
@@ -301,7 +298,7 @@ $$
 B\subset A,B\in\mathcal{F},\phi(B)=\sum\limits_{n=1}^{\infty}\phi(B_{n})=\infty.
 $$
 
-根据命题 @prp-signed-control，这蕴含 $\lvert \phi(A) \rvert=\infty$。但是引理的条件是 $\phi(A)<\infty$，所以 $\phi(A)=-\infty$，但这与我们之前的 [约定](#517e57)。
+根据命题 @prp-signed-control，这蕴含 $\lvert \phi(A) \rvert=\infty$。但是引理的条件是 $\phi(A)<\infty$，所以 $\phi(A)=-\infty$，但这与我们之前的 @nte-agreement 中的约定矛盾。
 :::
 
 ::: {#lem-full-neg-subset}
@@ -501,7 +498,7 @@ $$
 :::
 
 ::: {.proof}
-令 $\phi^{+}(A)=\phi(A\cap X^{+}),\phi^{-}=-\phi(A\cap X^{-})$，则根据 Hahn 分解，$\phi=\phi^{+}-\phi^{-}$ 成立，并且容易证明两者都是测度。又根据约定 [约定](#appoint-signed-measure)，$\phi^{-}$ 是有限的。现在我们只需要证明 $\phi^{+}=\phi^{*},\phi^{-}=(-\phi)^{*}$ 即可。
+令 $\phi^{+}(A)=\phi(A\cap X^{+}),\phi^{-}=-\phi(A\cap X^{-})$，则根据 Hahn 分解，$\phi=\phi^{+}-\phi^{-}$ 成立，并且容易证明两者都是测度。又根据 @nte-agreement，$\phi^{-}$ 是有限的。现在我们只需要证明 $\phi^{+}=\phi^{*},\phi^{-}=(-\phi)^{*}$ 即可。
 
 $\forall A\in\mathcal{F}$，对于 $A$ 的任意子集 $B\in\mathcal{F}$，我们有
 
