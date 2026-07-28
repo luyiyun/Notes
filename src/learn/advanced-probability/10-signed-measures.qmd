@@ -530,3 +530,61 @@ $$
 假设 $\phi^{+},\phi^{-}$ 是符号测度 $\phi$ 的 Jordan 分解，$\phi^{+}$ 和 $\phi^{-}$ 分别叫做 $\phi$ 的上变差和下变差，而 $\lvert \phi \rvert=\phi^{+}+\phi^{-}$ 叫做 $\phi$ 的全变差。**上变差、下变差和全变差都是测度**。
 
 :::
+
+::: {.callout-note title="全变差的直觉与数学意义"}
+
+符号测度 $\phi(A)$ 记录的是集合 $A$ 上正、负质量相互抵消后的**净质量**，而全变差 $\lvert\phi\rvert(A)$ 记录的是忽略正负号之后的**总质量**。例如，在 $X=\{a,b\}$ 上定义
+
+$$
+\phi(\{a\})=1,\qquad \phi(\{b\})=-1,
+$$
+
+则 $\phi(X)=0$，但 $\phi$ 显然不是零测度；其正、负质量只是恰好抵消。相应地，
+
+$$
+\lvert\phi\rvert(X)=\phi^{+}(X)+\phi^{-}(X)=1+1=2.
+$$
+
+全变差还可以等价地表示为
+
+$$
+\lvert\phi\rvert(A)
+=\sup_{\{A_i\}}\sum_i\lvert\phi(A_i)\rvert,
+$$
+
+其中上确界遍历 $A$ 的所有有限可测分割。这一表达式说明：将 $A$ 划分得足够细以避免局部的正负抵消后，所有局部变化绝对值之和的上确界就是全变差。
+
+如果符号测度由可测函数 $f$ 诱导，即
+
+$$
+\phi(A)=\int_A f\,d\mu,
+$$
+
+那么
+
+$$
+\phi^{+}(A)=\int_A f^{+}\,d\mu,\qquad
+\phi^{-}(A)=\int_A f^{-}\,d\mu,\qquad
+\lvert\phi\rvert(A)=\int_A\lvert f\rvert\,d\mu.
+$$
+
+因此，全变差可以看作 $\int_A\lvert f\rvert\,d\mu$ 在符号测度层面的推广。它具有以下几个重要作用：
+
+- **排除抵消现象**：$\phi(A)=0$ 可能只是正负质量恰好抵消；而 $\lvert\phi\rvert(A)=0$ 当且仅当对每个可测子集 $B\subseteq A$ 都有 $\phi(B)=0$。
+- **衡量符号测度的大小**：全变差范数定义为 $\lVert\phi\rVert_{\mathrm{TV}}=\lvert\phi\rvert(X)$。
+- **控制积分**：对于适当的可测函数 $g$，有
+  $$
+  \left\lvert\int_X g\,d\phi\right\rvert
+  \leq \int_X\lvert g\rvert\,d\lvert\phi\rvert.
+  $$
+- **刻画集中区域**：在绝对连续、奇异性和 Lebesgue 分解中，使用 $\lvert\phi\rvert$ 可以保证讨论的是正、负质量真正消失或集中的区域，而不是净值偶然为零的区域。
+
+从序关系看，$\lvert\phi\rvert$ 还是满足
+
+$$
+\lvert\phi(A)\rvert\leq \lvert\phi\rvert(A),\qquad \forall A\in\mathcal{F},
+$$
+
+的最小正测度。简言之，$\phi$ 衡量净质量，而 $\lvert\phi\rvert$ 衡量不允许正负抵消时的总质量。
+
+:::
