@@ -489,7 +489,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">修改于</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">2026年7月26日</p>
+      <p class="date-modified">2026年7月28日</p>
     </div>
   </div>
     
@@ -611,20 +611,20 @@ A\in\mathcal{F},\nu(A)=0,\forall B\subset A\implies B\in\mathcal{F}
 <div id="thm-measure-prop" class="theorem">
 <p><span class="theorem-title"><strong>定理 2 (测度的性质)</strong></span> <span class="math inline">\((\Omega,\mathcal{F},\nu)\)</span> 是一个 measure space，则 <span class="math inline">\(\nu\)</span> 有以下性质</p>
 <ol type="1">
-<li><p>可减性, 即若<span class="math inline">\(A,B\in \mathcal{F},A\subset B,\nu(A)&lt;\infty\)</span>，则有 <span class="math display">\[
+<li><p><strong>可减性</strong>, 即若<span class="math inline">\(A,B\in \mathcal{F},A\subset B,\nu(A)&lt;\infty\)</span>，则有 <span class="math display">\[
   \begin{align}
   \nu(B\setminus A)=\nu(B)-\nu(A).
   \end{align}
   \]</span></p></li>
-<li><p>有限可加性, 即若<span class="math inline">\(A_{i}\in\mathcal{F},i=1,2,\dots,N\)</span>两两不交，则有 <span class="math display">\[
+<li><p><strong>有限可加性</strong>, 即若<span class="math inline">\(A_{i}\in\mathcal{F},i=1,2,\dots,N\)</span>两两不交，则有 <span class="math display">\[
   \nu(\cup_{i=1}^{N}A_{i})=\sum_{i=1}^{N}\nu(A_{i}).
   \]</span></p></li>
-<li><p>单调性，即 <span class="math display">\[
+<li><p><strong>单调性</strong>，即 <span class="math display">\[
   A\subset B\implies \nu(A)\leq \nu(B).
   \]</span></p></li>
-<li><p>半可列可加性,即 <span class="math display">\[A_{i},i=1,2,\dots\implies \nu(\cup_{i=1}^{\infty}A_{i})\leq \sum\limits_{i=1}^{\infty}\nu(A_{i}).\]</span></p></li>
-<li><p>上连续性, 即若<span class="math inline">\(A_{n}\downarrow A\)</span> 且 <span class="math inline">\(\nu(A_{1})&lt;\infty\)</span>，则有 <span class="math display">\[\nu(A)=\lim_{ n \to \infty }v(A_{n})=\cap_{n=1}^{\infty}A_n.\]</span></p></li>
-<li><p>下连续性, 若<span class="math inline">\(A_{n}\uparrow A\)</span>，则有 <span class="math display">\[\nu(A)=\lim_{ n \to \infty }v(A_{n})=\cup_{n=1}^{\infty}A_n\]</span></p></li>
+<li><p><strong>半可列可加性</strong>,即 <span class="math display">\[A_{i},i=1,2,\dots\implies \nu(\cup_{i=1}^{\infty}A_{i})\leq \sum\limits_{i=1}^{\infty}\nu(A_{i}).\]</span></p></li>
+<li><p><strong>上连续性</strong>, 即若<span class="math inline">\(A_{n}\downarrow A\)</span> 且 <span class="math inline">\(\nu(A_{1})&lt;\infty\)</span>，则有 <span class="math display">\[\nu(A)=\lim_{ n \to \infty }v(A_{n})=\cap_{n=1}^{\infty}A_n.\]</span></p></li>
+<li><p><strong>下连续性</strong>, 若<span class="math inline">\(A_{n}\uparrow A\)</span>，则有 <span class="math display">\[\nu(A)=\lim_{ n \to \infty }v(A_{n})=\cup_{n=1}^{\infty}A_n\]</span></p></li>
 </ol>
 </div>
 <div class="proof">

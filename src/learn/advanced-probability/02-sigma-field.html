@@ -493,7 +493,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">修改于</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">2026年7月26日</p>
+      <p class="date-modified">2026年7月28日</p>
     </div>
   </div>
     
@@ -520,7 +520,13 @@ window.Quarto = {
 </ol>
 <p><span class="math inline">\((\Omega, \mathcal{F})\)</span> 则称之为一个 measurable space。</p>
 </div>
-<p>注意到，以上的三个条件有许多等价形式： * 我们可以使用 <span class="math inline">\(\Omega\)</span> 和<strong>差集的封闭性</strong>来替换 2。 * 只要保证了差集的封闭性，我们可以使用互斥集合可列并来替代条件 3。 * 只要存在补运算的封闭性，根据 DeMorgan’s Law，我们可以将可列交运算修改为可列并运算。 根据以上的替换，可以有很多很多的等价定义方法。以下使我们列举的四组等价定义：</p>
+<p>注意到，以上的三个条件有许多等价形式：</p>
+<ul>
+<li>我们可以使用 <span class="math inline">\(\Omega\)</span> 和<strong>差集的封闭性</strong>来替换 2。</li>
+<li>只要保证了差集的封闭性，我们可以使用互斥集合可列并来替代条件 3。</li>
+<li>只要存在补运算的封闭性，根据 DeMorgan’s Law，我们可以将可列交运算修改为可列并运算。</li>
+</ul>
+<p>根据以上的替换，可以有很多很多的等价定义方法。以下使我们列举的四组等价定义：</p>
 <div id="def-02-sigma-field-2" class="theorem definition">
 <p><span class="theorem-title"><strong>定义 2 (<span class="math inline">\(\sigma\)</span>-field 的等价定义)</strong></span> &nbsp;</p>
 <ol type="1">
@@ -547,7 +553,12 @@ window.Quarto = {
 <li><span class="math inline">\(A_{i}\in\mathcal{F},i=1,2,\dots\implies\cap A_{i}\in\mathcal{F}\)</span></li>
 </ol>
 </div>
-<p>针对一个 sample space，我们可以构造出非常多的 <span class="math inline">\(\sigma\)</span>-field，以下是几个常见的例子： * 对于任何一个集合，都会存在两个 <strong>trivial <span class="math inline">\(\sigma\)</span>-field</strong>：Power set 和 <span class="math inline">\(\{ \emptyset,\Omega \}\)</span>。 * 另外一个常被用来辅助理解 <span class="math inline">\(\sigma\)</span>-field 的例子是：<span class="math inline">\(\{ \emptyset,A,A^c,\Omega \}\)</span>，其中 <span class="math inline">\(A\subset\Omega\)</span> 并且 <span class="math inline">\(A\neq\Omega\)</span>。 * 在后续的文章中，最常被提及的 <span class="math inline">\(\sigma\)</span> -field 应该是 <a href="#def-borel-sigma-field" class="quarto-xref">定义&nbsp;7</a>，其使用 <span class="math inline">\(\mathcal{B}\)</span> 表示。它是定义在实数轴 <span class="math inline">\(\mathbb{R}\)</span> 上的一个 <span class="math inline">\(\sigma\)</span> -field，其生成自 <span class="math inline">\(\mathbb{R}\)</span> 上的区间或开集。在我们介绍完 <a href="#02-sigma-field-sigma-域的生成">Sigma 域的生成</a> 后，我们会更清晰地知道它是一个怎样的对象。</p>
+<p>针对一个 sample space，我们可以构造出非常多的 <span class="math inline">\(\sigma\)</span>-field，以下是几个常见的例子：</p>
+<ul>
+<li>对于任何一个集合，都会存在两个 <strong>trivial <span class="math inline">\(\sigma\)</span>-field</strong>：Power set 和 <span class="math inline">\(\{ \emptyset,\Omega \}\)</span>。</li>
+<li>另外一个常被用来辅助理解 <span class="math inline">\(\sigma\)</span>-field 的例子是：<span class="math inline">\(\{ \emptyset,A,A^c,\Omega \}\)</span>，其中 <span class="math inline">\(A\subset\Omega\)</span> 并且 <span class="math inline">\(A\neq\Omega\)</span>。</li>
+<li>在后续的文章中，最常被提及的 <span class="math inline">\(\sigma\)</span> -field 应该是 <a href="#def-borel-sigma-field" class="quarto-xref">定义&nbsp;7</a>，其使用 <span class="math inline">\(\mathcal{B}\)</span> 表示。它是定义在实数轴 <span class="math inline">\(\mathbb{R}\)</span> 上的一个 <span class="math inline">\(\sigma\)</span> -field，其生成自 <span class="math inline">\(\mathbb{R}\)</span> 上的区间或开集。在我们介绍完 <a href="#02-sigma-field-sigma-域的生成">Sigma 域的生成</a> 后，我们会更清晰地知道它是一个怎样的对象。</li>
+</ul>
 <p>我们还可以将 sample space 限制在一个子集来定义一个 measurable space，</p>
 <div id="def-02-sigma-field-3" class="theorem definition">
 <p><span class="theorem-title"><strong>定义 3 (子集上的测度空间)</strong></span> 令 <span class="math inline">\(C \subset\Omega\)</span> 并且 <span class="math inline">\(C\in\mathcal{F}\)</span>，则 <span class="math inline">\(\mathcal{F}_{C}=\{ C\cap A|A\in\mathcal{F} \}\)</span> 是定义在 <span class="math inline">\(C\)</span> 上的 <span class="math inline">\(\sigma\)</span>-field，<span class="math inline">\((C,\mathcal{F}_{C})\)</span> 构成了一个 <strong>measurable space</strong>，称为 <strong><span class="math inline">\(\sigma\)</span>-field on <span class="math inline">\(C\)</span></strong>。</p>

@@ -455,7 +455,7 @@ window.Quarto = {
   <ul>
   <li><a href="#引言" id="toc-引言" class="nav-link active" data-scroll-target="#引言">引言</a></li>
   <li><a href="#测度扩张的定义" id="toc-测度扩张的定义" class="nav-link" data-scroll-target="#测度扩张的定义">测度扩张的定义</a></li>
-  <li><a href="#基于半环的扩张测度扩张定理" id="toc-基于半环的扩张测度扩张定理" class="nav-link" data-scroll-target="#基于半环的扩张测度扩张定理">基于半环的扩张（测度扩张定理）</a></li>
+  <li><a href="#基于半环的扩张" id="toc-基于半环的扩张" class="nav-link" data-scroll-target="#基于半环的扩张">基于半环的扩张</a></li>
   <li><a href="#基于域的扩张" id="toc-基于域的扩张" class="nav-link" data-scroll-target="#基于域的扩张">基于域的扩张</a></li>
   <li><a href="#测度空间的完全化" id="toc-测度空间的完全化" class="nav-link" data-scroll-target="#测度空间的完全化">测度空间的完全化</a></li>
   </ul>
@@ -490,7 +490,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">修改于</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">2026年7月26日</p>
+      <p class="date-modified">2026年7月28日</p>
     </div>
   </div>
     
@@ -539,7 +539,11 @@ window.Quarto = {
 <p>思考上面这个例子，可以发现关键在于 <span class="math inline">\(\mathcal{E}\)</span> 的结构，如果能够对其进行一些限制，则可能实现我们预想中的测度扩张。</p>
 <p>首先， 我们需要证明一个引理</p>
 <div id="lem-pi-class-extension" class="theorem lemma">
-<p><span class="theorem-title"><strong>引理 1 (<span class="math inline">\(\pi\)</span>-class 的扩张)</strong></span> 设 <span class="math inline">\(\mathcal{T}\)</span> 是一个 <span class="math inline">\(\pi\)</span>-class，若 <span class="math inline">\(\sigma(\mathcal{T})\)</span> 上的测度 <span class="math inline">\(\mu,\nu\)</span> 满足下面两个条件： 1. <span class="math inline">\(\forall A\in\mathcal{T}\implies \mu(A)=\nu(A)\)</span>; 2. 存在两两不交的 <span class="math inline">\(\{ A_{n}\in\mathcal{T},n=1,2,\dots \}\)</span>，使 <span class="math inline">\(\bigcup_{n=1}^{\infty}A_{n}=X\)</span> 且 <span class="math inline">\(\mu(A_{n})&lt;\infty\)</span>；</p>
+<p><span class="theorem-title"><strong>引理 1 (<span class="math inline">\(\pi\)</span>-class 的扩张)</strong></span> 设 <span class="math inline">\(\mathcal{T}\)</span> 是一个 <span class="math inline">\(\pi\)</span>-class，若 <span class="math inline">\(\sigma(\mathcal{T})\)</span> 上的测度 <span class="math inline">\(\mu,\nu\)</span> 满足下面两个条件：</p>
+<ol type="1">
+<li><span class="math inline">\(\forall A\in\mathcal{T}\implies \mu(A)=\nu(A)\)</span>;</li>
+<li>存在两两不交的 <span class="math inline">\(\{ A_{n}\in\mathcal{T},n=1,2,\dots \}\)</span>，使 <span class="math inline">\(\bigcup_{n=1}^{\infty}A_{n}=X\)</span> 且 <span class="math inline">\(\mu(A_{n})&lt;\infty\)</span>；</li>
+</ol>
 <p>则 <span class="math inline">\(\forall A\in\sigma(\mathcal{T})\implies\mu(A)=\nu(A)\)</span>。</p>
 </div>
 <div class="proof">
@@ -614,8 +618,8 @@ window.Quarto = {
 </div>
 </div>
 </section>
-<section id="基于半环的扩张测度扩张定理" class="level1">
-<h1>基于半环的扩张（测度扩张定理）</h1>
+<section id="基于半环的扩张" class="level1">
+<h1>基于半环的扩张</h1>
 <p>现在我们可以去证明测度扩张定理了，其表明，我们只需要将 <span class="math inline">\(\mathcal{E}\)</span> 限制为 semi-ring，则我们预想中的测度扩张就可以实现。</p>
 <div id="thm-measure-extension" class="theorem">
 <p><span class="theorem-title"><strong>定理 1 (测度扩张定理)</strong></span> 对于 semi-ring <span class="math inline">\(\mathcal{L}\)</span> 上的 measure <span class="math inline">\(\mu\)</span>，存在 <span class="math inline">\(\sigma(\mathcal{L})\)</span> 上的测度 <span class="math inline">\(\tau\)</span> 使得</p>
@@ -829,7 +833,7 @@ B\in\mathcal{A},\tau(A\Delta B)=\tau(A\setminus B)+\tau(B\setminus A)&lt;\epsilo
 \]</span></p>
 </div>
 <div class="proof">
-<p><span class="proof-title"><em>证明</em>. </span>因为 field 中包含全集 <span class="math inline">\(\Omega\)</span>，因此根据 <strong>?@thm-measure-extension-2</strong>，我们有</p>
+<p><span class="proof-title"><em>证明</em>. </span>因为 field 中包含全集 <span class="math inline">\(\Omega\)</span>，因此根据 <a href="#cor-measure-extension-2" class="quarto-xref">推论&nbsp;1</a>，我们有</p>
 <p><span class="math display">\[
 \forall C\in\sigma(\mathcal{A})\implies \mu(A)=\tau(A).
 \]</span></p>

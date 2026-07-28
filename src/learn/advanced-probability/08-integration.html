@@ -454,15 +454,15 @@ window.Quarto = {
    
   <ul>
   <li><a href="#几乎处处成立" id="toc-几乎处处成立" class="nav-link active" data-scroll-target="#几乎处处成立">几乎处处成立</a></li>
-  <li><a href="#定义" id="toc-定义" class="nav-link" data-scroll-target="#定义">定义</a>
+  <li><a href="#积分的定义" id="toc-积分的定义" class="nav-link" data-scroll-target="#积分的定义">积分的定义</a>
   <ul class="collapse">
   <li><a href="#非负简单函数的积分" id="toc-非负简单函数的积分" class="nav-link" data-scroll-target="#非负简单函数的积分">非负简单函数的积分</a></li>
   <li><a href="#非负可测函数的积分" id="toc-非负可测函数的积分" class="nav-link" data-scroll-target="#非负可测函数的积分">非负可测函数的积分</a></li>
   <li><a href="#一般可测函数的积分" id="toc-一般可测函数的积分" class="nav-link" data-scroll-target="#一般可测函数的积分">一般可测函数的积分</a></li>
   </ul></li>
-  <li><a href="#性质" id="toc-性质" class="nav-link" data-scroll-target="#性质">性质</a>
+  <li><a href="#一般积分的性质" id="toc-一般积分的性质" class="nav-link" data-scroll-target="#一般积分的性质">一般积分的性质</a>
   <ul class="collapse">
-  <li><a href="#积分存在和可积性的相关性质" id="toc-积分存在和可积性的相关性质" class="nav-link" data-scroll-target="#积分存在和可积性的相关性质">积分存在和可积性的相关性质</a></li>
+  <li><a href="#积分存在和可积性性质" id="toc-积分存在和可积性性质" class="nav-link" data-scroll-target="#积分存在和可积性性质">积分存在和可积性性质</a></li>
   <li><a href="#线性性质" id="toc-线性性质" class="nav-link" data-scroll-target="#线性性质">线性性质</a></li>
   <li><a href="#序关系性质" id="toc-序关系性质" class="nav-link" data-scroll-target="#序关系性质">序关系性质</a></li>
   <li><a href="#绝对连续性" id="toc-绝对连续性" class="nav-link" data-scroll-target="#绝对连续性">绝对连续性</a></li>
@@ -508,7 +508,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">修改于</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">2026年7月26日</p>
+      <p class="date-modified">2026年7月28日</p>
     </div>
   </div>
     
@@ -525,8 +525,8 @@ window.Quarto = {
 <p>对于测度空间 <span class="math inline">\(X,\mathcal{F},\mu\)</span> 上的 <span class="math inline">\(X\)</span> 的一个元素 <span class="math inline">\(x\)</span> 的命题，若存在 <span class="math inline">\((X,\mathcal{F},\mu)\)</span> 上的一个零测集 <span class="math inline">\(N\)</span> ，使得该命题对所有 <span class="math inline">\(x \in N^{c}\)</span> 成立，则称该命题<strong>几乎处处成立</strong> (almost everywhere) ，记作 <strong>a.e.</strong>。</p>
 <p>若该测度空间是一个概率空间，则几乎处处成立也被称为<strong>几乎必然成立</strong> (almost surely)，记作 <strong>a.s.</strong>。</p>
 </section>
-<section id="定义" class="level1">
-<h1>定义</h1>
+<section id="积分的定义" class="level1">
+<h1>积分的定义</h1>
 <p>我们使用 <a href="../../../src/learn/advanced-probability/07-measurable-functions.html#typical-method">典型方法</a> 来定义积分，整个过程分为三个步骤。</p>
 <section id="非负简单函数的积分" class="level2">
 <h2 class="anchored" data-anchor-id="非负简单函数的积分">非负简单函数的积分</h2>
@@ -693,23 +693,29 @@ f_{n}\uparrow &amp;\implies A_{n}(\alpha)\uparrow \\
 <li>这里讨论的一般可测函数，既可以是广义可测函数，也可以是 Borel 函数。</li>
 <li>一般可测函数的积分并不总是存在的，因此，我们需要定义两个前置条件。</li>
 </ul>
-<div id="def-inte-func" class="theorem definition">
+<div id="def-integable-func-exist" class="theorem definition">
 <p><span class="theorem-title"><strong>定义 4 (积分存在)</strong></span> 测度空间 <span class="math inline">\((X,\mathcal{F},\mu)\)</span> 上的可测函数 <span class="math inline">\(f\)</span> 若满足</p>
 <p><span class="math display">\[
 \min\left\{  \int _{X}f^{+} \, d\mu,\int _{X}f^{-} \, d\mu    \right\} &lt; \infty,
 \]</span></p>
-<p>则称其<strong>积分存在</strong>或<strong>积分有意义</strong>（<strong>exists</strong>）。 <strong>Definition: 可积性</strong> 若 <span class="math inline">\(f\)</span> 满足</p>
+<p>则称其<strong>积分存在</strong>或<strong>积分有意义</strong>（<strong>exists</strong>）。</p>
+</div>
+<div id="def-integable" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 5 (可积性)</strong></span> 若 <span class="math inline">\(f\)</span> 满足</p>
 <p><span class="math display">\[
 \max\left\{  \int _{X}f^{+} \, d\mu,\int _{X}f^{-} \, d\mu    \right\} &lt; \infty,
 \]</span></p>
-<p>则称 <span class="math inline">\(f\)</span> 是<strong>可积的</strong>（<strong>integrable</strong>）。 <strong>Definition: 一般可测函数的积分</strong> 当测度空间 <span class="math inline">\((X,\mathcal{F},\mu)\)</span> 上的可测函数 <span class="math inline">\(f\)</span> 积分存在时，定义</p>
+<p>则称 <span class="math inline">\(f\)</span> 是<strong>可积的</strong>（<strong>integrable</strong>）。</p>
+</div>
+<div id="def-general-inte-func" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 6 (一般可测函数的积分)</strong></span> 当测度空间 <span class="math inline">\((X,\mathcal{F},\mu)\)</span> 上的可测函数 <span class="math inline">\(f\)</span> 积分存在时，定义</p>
 <p><span class="math display">\[
 \int _{X}f^{+} \, d\mu-\int _{X}f^{-} \, d\mu
 \]</span></p>
 <p>为 <span class="math inline">\(f\)</span> 的积分，记为 <span class="math inline">\(\int _{X}f \, d\mu\)</span>。容易知道，<strong>积分有限当且仅当函数可积</strong>。</p>
 </div>
 <div id="def-08-integration-8" class="theorem definition">
-<p><span class="theorem-title"><strong>定义 5 (集合上的积分)</strong></span> <span class="math inline">\(\forall A\in\mathcal{F}\)</span> ，若 <span class="math inline">\(fI_{A}\)</span> 积分存在，则定义</p>
+<p><span class="theorem-title"><strong>定义 7 (集合上的积分)</strong></span> <span class="math inline">\(\forall A\in\mathcal{F}\)</span> ，若 <span class="math inline">\(fI_{A}\)</span> 积分存在，则定义</p>
 <p><span class="math display">\[
 \int _{X}fI_{A} \, d\mu
 \]</span></p>
@@ -720,10 +726,10 @@ f_{n}\uparrow &amp;\implies A_{n}(\alpha)\uparrow \\
 </div>
 </section>
 </section>
-<section id="性质" class="level1">
-<h1>性质</h1>
-<section id="积分存在和可积性的相关性质" class="level2">
-<h2 class="anchored" data-anchor-id="积分存在和可积性的相关性质">积分存在和可积性的相关性质</h2>
+<section id="一般积分的性质" class="level1">
+<h1>一般积分的性质</h1>
+<section id="积分存在和可积性性质" class="level2">
+<h2 class="anchored" data-anchor-id="积分存在和可积性性质">积分存在和可积性性质</h2>
 <p>根据上面的定义，我们知道，讨论函数的积分，需要先讨论函数积分是否存在。因此，这里我们将先去讨论一下函数积分存在（可积）相关的一些性质和重要结论。</p>
 <div id="prp-inte-exists" class="theorem proposition">
 <p><span class="theorem-title"><strong>命题 3 (积分存在 (可积) 的性质)</strong></span> 设 <span class="math inline">\(f,g\)</span> 是测度空间 <span class="math inline">\((X,\mathcal{F},\mu)\)</span> 上的可测函数，则</p>
@@ -805,7 +811,7 @@ f=g\ a.e.\implies f\geq g,g\leq f\ a.\mathbf{e}
 </div>
 <p><a href="#prp-inte-exists" class="quarto-xref">命题&nbsp;3</a> (6) 表达了一个非常重要的观点：<strong>任意涂改一个可测函数在零测集上的值不会影响积分的存在性、可积性和积分值</strong>。因此根据这个，我们可以将积分的定义进行扩充。</p>
 <div id="def-inte-func-general" class="theorem definition">
-<p><span class="theorem-title"><strong>定义 6 (广义上的积分)</strong></span> 若 <span class="math inline">\(f\)</span> 是一个 a.e.定义的可测函数（可以在某个零测集上的没有定义），另外还有一个函数 <span class="math inline">\(\tilde{f}\)</span> 满足 <span class="math inline">\(\mu(f\neq \tilde{f})=0\)</span>，若 <span class="math inline">\(\tilde{f}\)</span> 的积分存在，则我们就认为 <span class="math inline">\(f\)</span> 积分存在，并将积分定义为</p>
+<p><span class="theorem-title"><strong>定义 8 (广义上的积分)</strong></span> 若 <span class="math inline">\(f\)</span> 是一个 a.e.定义的可测函数（可以在某个零测集上的没有定义），另外还有一个函数 <span class="math inline">\(\tilde{f}\)</span> 满足 <span class="math inline">\(\mu(f\neq \tilde{f})=0\)</span>，若 <span class="math inline">\(\tilde{f}\)</span> 的积分存在，则我们就认为 <span class="math inline">\(f\)</span> 积分存在，并将积分定义为</p>
 <p><span class="math display">\[
 \int _{X}f \, d\mu :=\int _{X}\tilde{f} \, d\mu.
 \]</span></p>
@@ -819,7 +825,7 @@ f\geq g\ a.e.,
 \]</span></p>
 <p>并且 <span class="math inline">\(f,g\)</span> 其中之一<strong>可积</strong>, 则另外一个一定<strong>积分存在</strong>, 并且有</p>
 <p><span class="math display">\[
-\int f \, d\mu\geq \int g \, d\mu.  
+\int f \, d\mu\geq \int g \, d\mu.
 \]</span></p>
 </div>
 <div class="proof">
@@ -830,7 +836,7 @@ f\geq g\ a.e.,
 \]</span></p>
 <p>因此有</p>
 <p><span class="math display">\[
-\int g^{+} \, d\mu\leq \int \lvert f \rvert  \, d\mu&lt;\infty,  
+\int g^{+} \, d\mu\leq \int \lvert f \rvert  \, d\mu&lt;\infty,
 \]</span></p>
 <p>这就已经证明了 <span class="math inline">\(g\)</span> 一定积分存在.</p>
 <p>若 <span class="math inline">\(g\)</span> 可积, 则有</p>
@@ -1132,7 +1138,7 @@ g_{n}\uparrow f,
 </div>
 <p>基于该定理，我们还可以得到一个常用的推论。这个推论涉及到一个新的概念：可测分割（注意，之前在定义简单函数时我们使用到的是 <a href="07-measureable-functions.qmd#def-finite-measurable-partition">有限可测分割</a> ，可测分割是其可数推广）。</p>
 <div id="def-08-integration-16" class="theorem definition">
-<p><span class="theorem-title"><strong>定义 7 (可测分割)</strong></span> 两两不交的集合序列 <span class="math inline">\(\{ A_{n}\in\mathcal{F},n=1,2,\dots \}\)</span> 若满足 <span class="math inline">\(\bigcup_{n=1}^{\infty}A_{n}=X\)</span>，则称其为是可测空间 <span class="math inline">\((X,\mathcal{F})\)</span> 的一个可列可测分割，简称为<strong>可测分割</strong>。</p>
+<p><span class="theorem-title"><strong>定义 9 (可测分割)</strong></span> 两两不交的集合序列 <span class="math inline">\(\{ A_{n}\in\mathcal{F},n=1,2,\dots \}\)</span> 若满足 <span class="math inline">\(\bigcup_{n=1}^{\infty}A_{n}=X\)</span>，则称其为是可测空间 <span class="math inline">\((X,\mathcal{F})\)</span> 的一个可列可测分割，简称为<strong>可测分割</strong>。</p>
 </div>
 <p>由 <a href="#thm-mct" class="quarto-xref">定理&nbsp;4</a> 可以得到下面的推论：</p>
 <div id="cor-measurable-seperate" class="theorem corollary">
@@ -1288,7 +1294,7 @@ f_{n}\geq-g\ a.e.,\quad f_{n}\leq g\ a.e.,
 \mathop{\lim\inf}_{ n \to \infty } \int _{X}f_{n} \, d\mu \\
 &amp;\leq \mathop{\lim\sup}_{ n \to \infty } \int _{X}f_{n} \, d\mu\leq
 \int _{X}\mathop{\lim\sup}_{ n \to \infty } f_{n} \, d\mu=
-\int _{X}\lim_{ n \to \infty } f_{n} \, d\mu=\int _{X}f \, d\mu  
+\int _{X}\lim_{ n \to \infty } f_{n} \, d\mu=\int _{X}f \, d\mu
 \end{align}
 \]</span></p>
 <p>因此 a.e.的情况得到证明。<span class="math inline">\(\mu\)</span> 的情况只需要找到 <span class="math inline">\(\{ f_{n} \}\)</span> 的 a.e.收敛的子列即可。</p>
@@ -1297,7 +1303,7 @@ f_{n}\geq-g\ a.e.,\quad f_{n}\leq g\ a.e.,
 <div id="cor-fct" class="theorem corollary">
 <p><span class="theorem-title"><strong>推论 3 (有界收敛定理)</strong></span> 设 <span class="math inline">\(\{ f_{n},n=1,2,\dots \}\)</span> 和 <span class="math inline">\(f\)</span> 是<strong>有限</strong>测度空间 <span class="math inline">\((X,\mathcal{F},\mu)\)</span> 上的可测函数。若存在 <span class="math inline">\(M&gt;0\)</span> 使得 <span class="math inline">\(\left| f_{n} \right|\leq M\)</span> a.e.对每个 <span class="math inline">\(n\)</span> 成立并且 <span class="math inline">\(f_{n}\overset{ a.e. }{ \longrightarrow }f\)</span> 或 <span class="math inline">\(f_{n}\overset{ \mu }{ \longrightarrow }f\)</span>，则</p>
 <p><span class="math display">\[
-\lim_{ n \to \infty } \int _{X}f_{n} \, d\mu=\int _{X}f \, d\mu.  
+\lim_{ n \to \infty } \int _{X}f_{n} \, d\mu=\int _{X}f \, d\mu.
 \]</span></p>
 </div>
 </section>
@@ -1309,7 +1315,7 @@ f_{n}\geq-g\ a.e.,\quad f_{n}\leq g\ a.e.,
 <ol type="1">
 <li>令 <span class="math inline">\(\nu=\mu \circ g^{-1}\)</span>，则 <span class="math inline">\((Y,\mathcal{T},\nu)\)</span> 是一个测度空间；</li>
 <li>对于 <span class="math inline">\((Y,\mathcal{T},\nu)\)</span> 上的任何可测函数 <span class="math inline">\(f\)</span>，只要等式 <span class="math display">\[
-  \int _{Y}f \, d\nu =\int _{X}f\circ g \, d\mu,  
+  \int _{Y}f \, d\nu =\int _{X}f\circ g \, d\mu,
   \]</span> 之一端有意义，就一定成立。</li>
 </ol>
 </div>
@@ -1495,7 +1501,7 @@ f\left( x,\theta+1 / n \right)-f(x,\theta)
 </ul>
 <p>以上这些性质导致 Riemann 积分在很多时候并不十分好用，<strong>因此才会发展测度论和实变函数论以扩展积分理论，而概率理论的公理化反而是一个副产品</strong>。扩展积分理论的最重要产物就是 Lebesgue 积分，其能够解决上面的这些问题。Lebesgue 积分的定义如下。</p>
 <div id="def-08-integration-25" class="theorem definition">
-<p><span class="theorem-title"><strong>定义 8 (Lebesgue 积分)</strong></span> 对于定义在 <span class="math inline">\((\mathbb{R},\mathcal{B},m)\)</span> 上的可测函数 <span class="math inline">\(f\)</span>，其中 <span class="math inline">\(m\)</span> 是 Lebesgue 测度，按照 <a href="#def-inte-func" class="quarto-xref">定义&nbsp;4</a> （或 <a href="#def-inte-func-general" class="quarto-xref">定义&nbsp;6</a>）得到的积分</p>
+<p><span class="theorem-title"><strong>定义 10 (Lebesgue 积分)</strong></span> 对于定义在 <span class="math inline">\((\mathbb{R},\mathcal{B},m)\)</span> 上的可测函数 <span class="math inline">\(f\)</span>，其中 <span class="math inline">\(m\)</span> 是 Lebesgue 测度，按照 <a href="#def-general-inte-func" class="quarto-xref">定义&nbsp;6</a> （或 <a href="#def-inte-func-general" class="quarto-xref">定义&nbsp;8</a>）得到的积分</p>
 <p><span class="math display">\[
 \begin{align}
 &amp;\int _{\mathbb{R}}f \, dx  :=\int _{\mathbb{R}}f \, dm \\
@@ -1510,7 +1516,7 @@ f\left( x,\theta+1 / n \right)-f(x,\theta)
 <p><span class="theorem-title"><strong>定理 10 (Lebesgue vs Riemann)</strong></span> Riemann 可积函数一定（在对应的闭区间上） Lebesgue 可积，并且两者的积分值相同。</p>
 </div>
 <div class="proof">
-<p><span class="proof-title"><em>证明</em>. </span>首先，根据 Riemann 可积的充要条件可知，Riemann 可积函数 <span class="math inline">\(f\)</span> 一定有界且 a.e. 连续。根据 <a href="../../../src/learn/advanced-probability/07-measurable-functions.html#continue-func-measurable">7_可测函数</a> 可知 <span class="math inline">\(f\)</span>a.e. 可测，因此，就可以根据 <a href="#def-inte-func-general" class="quarto-xref">定义&nbsp;6</a> 来定义 Lebesgue 积分。</p>
+<p><span class="proof-title"><em>证明</em>. </span>首先，根据 Riemann 可积的充要条件可知，Riemann 可积函数 <span class="math inline">\(f\)</span> 一定有界且 a.e. 连续。根据 <a href="../../../src/learn/advanced-probability/07-measurable-functions.html#continue-func-measurable">7_可测函数</a> 可知 <span class="math inline">\(f\)</span>a.e. 可测，因此，就可以根据 <a href="#def-inte-func-general" class="quarto-xref">定义&nbsp;8</a> 来定义 Lebesgue 积分。</p>
 <p>因为 <span class="math inline">\(f\)</span> 有界（假设 <span class="math inline">\(\lvert f \rvert&lt;M\)</span>），所以在闭区间 <span class="math inline">\(A\)</span> 上的积分 <span class="math inline">\(\int_{A}\lvert f \rvert  \, dx\)</span> 一定存在且 <span class="math inline">\(\leq Mm(A)\)</span>，这就意味着 <span class="math inline">\(f\)</span> Lebesgue 可积。</p>
 <p><strong>对于非负函数</strong>，根据 Riemann 积分的相关理论，对于闭区间 <span class="math inline">\([a,b]\)</span>，以及上面的任何一个分割 <span class="math inline">\(T\)</span>，我们可以定义上、下达布和</p>
 <p><span class="math display">\[

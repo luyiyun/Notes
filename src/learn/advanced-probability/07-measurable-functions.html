@@ -499,7 +499,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">修改于</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">2026年7月26日</p>
+      <p class="date-modified">2026年7月28日</p>
     </div>
   </div>
     
@@ -918,11 +918,8 @@ f(x),&amp;f(x)&gt;0 \\
 </ol>
 </div>
 <div class="proof">
-<p><span class="proof-title"><em>证明</em>. </span></p>
-<ol type="1">
-<li>1 的证明比较简单，略。</li>
-<li>我们构造这样的可测函数列</li>
-</ol>
+<p><span class="proof-title"><em>证明</em>. </span><strong>(1)</strong> 1 的证明比较简单，略。</p>
+<p><strong>(2)</strong> 我们构造这样的可测函数列</p>
 <p><span class="math display">\[
 f_{n}=\sum\limits_{k=0}^{n2^{n}-1} \frac{k}{2^{n}}I_{\left\{  \frac{k}{2^{n}}\leq f&lt;\frac{k+1}{2^{n}}  \right\}}+nI_{\{ f\geq n \}}
 \]</span></p>
@@ -938,12 +935,10 @@ f_{n}=\sum\limits_{k=0}^{n2^{n}-1} \frac{k}{2^{n}}I_{\left\{  \frac{k}{2^{n}}\le
 0\leq f(x)-f_{n}(x)\leq 1/2^{n},\quad \forall x \in X，
 \]</span></p>
 <p>即 <span class="math inline">\(f_{n}\uparrow f\)</span> 是一致成立的。</p>
-<ol start="3" type="1">
-<li>我们利用 <span class="math inline">\(f=f^{+}-f^{-}\)</span>，然后分别找到 <span class="math inline">\(f^{+}\)</span> 和 <span class="math inline">\(f^{-}\)</span> 的简单函数列 <span class="math inline">\(\{ f^{+}_{n} \}\)</span> 和 <span class="math inline">\(\{ f^{-}_{n} \}\)</span>，则有 <span class="math inline">\(f_{n}=f_{n}^{+}-f_{n}^{-}\)</span> 是简单函数，并且 <span class="math inline">\(f_{n}\to f\)</span>。并且也容易证明，当 <span class="math inline">\(f\)</span> 有界时，<span class="math inline">\(f^{+},f^{-}\)</span> 也有界，进而可以证明收敛是一致成立的。</li>
-</ol>
+<p><strong>(3)</strong> 我们利用 <span class="math inline">\(f=f^{+}-f^{-}\)</span>，然后分别找到 <span class="math inline">\(f^{+}\)</span> 和 <span class="math inline">\(f^{-}\)</span> 的简单函数列 <span class="math inline">\(\{ f^{+}_{n} \}\)</span> 和 <span class="math inline">\(\{ f^{-}_{n} \}\)</span>，则有 <span class="math inline">\(f_{n}=f_{n}^{+}-f_{n}^{-}\)</span> 是简单函数，并且 <span class="math inline">\(f_{n}\to f\)</span>。并且也容易证明，当 <span class="math inline">\(f\)</span> 有界时，<span class="math inline">\(f^{+},f^{-}\)</span> 也有界，进而可以证明收敛是一致成立的。</p>
 </div>
 <p>以上定理非常重要，因为其提供了一种证明关于可测函数的命题的统一方法论，可以称之为<strong>典型方法</strong>。</p>
-<div class="callout callout-style-default callout-important callout-titled" title="典型方法">
+<div id="typical-method" class="callout callout-style-default callout-important callout-titled" title="典型方法">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
@@ -962,7 +957,6 @@ f_{n}=\sum\limits_{k=0}^{n2^{n}-1} \frac{k}{2^{n}}I_{\left\{  \frac{k}{2^{n}}\le
 </ol>
 </div>
 </div>
-<p><span id="typical-method"></span></p>
 <p>在下一节中，<a href="#thm-composite-func" class="quarto-xref">定理&nbsp;9</a> 的证明就是典型方法的一个例子。</p>
 </section>
 <section id="复合函数" class="level2">
@@ -986,10 +980,14 @@ f_{n}=\sum\limits_{k=0}^{n2^{n}-1} \frac{k}{2^{n}}I_{\left\{  \frac{k}{2^{n}}\le
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/composite-mapping-20260514-181034.png" class="img-fluid figure-img"></p>
-<figcaption>复合可测映射</figcaption>
+<div id="fig-composite-func" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-composite-func-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://rong-piclist-oss.oss-cn-beijing.aliyuncs.com/assets/composite-mapping-20260514-181034.png" class="img-fluid figure-img" style="width:50.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-composite-func-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;1 复合可测映射
+</figcaption>
 </figure>
 </div>
 <ul>
@@ -1183,7 +1181,7 @@ P(\{ f&lt;x \})=P(\{ t\in X| t\leq F(x) \})=F(x).
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>以上证明过程中所构造的随机变量涉及到统计中非常重要的一种采样方法：逆分布函数采样。</p>
+<p>以上证明过程中所构造的随机变量涉及到统计中非常重要的一种采样方法：<strong>逆分布函数采样</strong>。</p>
 </div>
 </div>
 
