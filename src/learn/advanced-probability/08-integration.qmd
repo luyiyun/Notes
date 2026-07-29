@@ -1076,7 +1076,7 @@ $$
 
 :::
 
-::: {.callout-note title="$f_{n}\overset{a.e.}{\longrightarrow}f$ 和 $f_{n}\overset{ \mu }{ \longrightarrow }f$ 的概念将在 [19_收敛理论](19-convergence-theory.qmd) 进行详细介绍。"}
+::: {.callout-note title="$f_{n}\overset{a.e.}{\longrightarrow}f$ 和 $f_{n}\overset{ \mu }{ \longrightarrow }f$ 的概念将在 [20_收敛理论](20-convergence-theory.qmd) 进行详细介绍。"}
 
 :::
 ::: {.proof}

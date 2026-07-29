@@ -471,7 +471,7 @@ $$
 但这与 $\phi(X)=1$ 存在矛盾。
 :::
 
-@thm-rn 对于概率论的最重要的贡献在于更加严谨地定义了**随机变量的概率密度函数**。我们利用 [诱导测度和分布](07-measurable-functions.qmd#def-rv-dist)，基于随机变量将各种各样的原始概率空间限制在其诱导测度空间中，诱导测度作为 $\phi$，通用的 Lebesgue 测度或 counting 测度作为 $\mu$，应用 @thm-rn，得到 R-N 导数，就是该随机变量的概率密度函数。更加详细的介绍请见 [统计分布与密度函数](17-statistical-distributions-and-density-functions.qmd)。
+@thm-rn 对于概率论的最重要的贡献在于更加严谨地定义了**随机变量的概率密度函数**。我们利用 [诱导测度和分布](07-measurable-functions.qmd#def-rv-dist)，基于随机变量将各种各样的原始概率空间限制在其诱导测度空间中，诱导测度作为 $\phi$，通用的 Lebesgue 测度或 counting 测度作为 $\mu$，应用 @thm-rn，得到 R-N 导数，就是该随机变量的概率密度函数。更加详细的介绍请见 [统计分布与密度函数](18-statistical-distributions-and-density-functions.qmd)。
 
 # R-N 导数的性质
 

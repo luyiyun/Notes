@@ -28,7 +28,7 @@ tags:
   - delta-method
 date: 2024-05-17 15:25
 date-modified: last-modified
-order: 19
+order: 20
 ---
 
 # 引言 {#19-convergence-theory-引言}
@@ -1318,13 +1318,13 @@ $$
 $$
 :::
 
-接下来了, 我们将就一个例子来讨论 @thm-ui-under-distribution-convergence 的用途之一, 这个例子基于 [15_独立和条件期望](15-independence-and-conditional-expectation.qmd#exam-prediction).
+接下来了, 我们将就一个例子来讨论 @thm-ui-under-distribution-convergence 的用途之一, 这个例子基于 [16_独立和条件期望](16-independence-and-conditional-expectation.qmd#exam-prediction).
 
 ::: {#exm-prediction-2}
 
 ## 预测问题 (续)
 
-假设现在我们希望使用 $n$ 个随机变量组成的随机向量 $Y=(Y_{1},\dots,Y_{n})$ 来预测随机变量 $X$. 根据 [15_独立和条件期望](15-independence-and-conditional-expectation.qmd#exam-prediction) 中的结论, 若 $\mathbb{E}X^{2}<\infty$, 在均方误差的角度下, 最优预测器是
+假设现在我们希望使用 $n$ 个随机变量组成的随机向量 $Y=(Y_{1},\dots,Y_{n})$ 来预测随机变量 $X$. 根据 [16_独立和条件期望](16-independence-and-conditional-expectation.qmd#exam-prediction) 中的结论, 若 $\mathbb{E}X^{2}<\infty$, 在均方误差的角度下, 最优预测器是
 $$
 X_{n}=\mathbb{E}(X|Y_{1},\dots,Y_{n}). 
 $$
@@ -1954,7 +1954,7 @@ $$
 
 <span id="eq-levy-tightness-bound"></span>
 
-其中第二行使用到了 [1.5 乘积空间和高维随机变量](13-finite-product-spaces.qmd#9068d0).
+其中第二行使用了 [Fubini 定理](13-finite-product-spaces.qmd#thm-fubini) 交换积分次序。
 
 因为 $\phi_{X}(t)$ 在 $0$ 点连续, 并且 $\phi_{X}(0)=1$, 所以对于任意的 $\epsilon>0$, 我们都可以找到一个 $u>0$ 使得
 $$
@@ -1980,12 +1980,12 @@ $$
 $$
 也就是说 $\{ P_{X_{n}} \}$ 是 tight.
 
-利用 @prp-tightness-bounded-in-probability (1), 对于任意弱收敛的子列 $\{ P_{X_{n_{j}}} \}$ ,其会收敛到一个概率分布 $P$, 然后利用已经证明的条件的必要性可知这个 $P$ 的 ch. f.是 $\phi_{X}$. 由 [17_统计分布与密度函数](17-statistical-distributions-and-density-functions.qmd#b8ee09) 可知, $P=P_{X}$. 再根据 @prp-tightness-bounded-in-probability (2) 可知
+利用 @prp-tightness-bounded-in-probability (1), 对于任意弱收敛的子列 $\{ P_{X_{n_{j}}} \}$ ,其会收敛到一个概率分布 $P$, 然后利用已经证明的条件的必要性可知这个 $P$ 的 ch. f.是 $\phi_{X}$. 由 [18_统计分布与密度函数](18-statistical-distributions-and-density-functions.qmd#b8ee09) 可知, $P=P_{X}$. 再根据 @prp-tightness-bounded-in-probability (2) 可知
 $$
 X_{n}\overset{ d }{ \longrightarrow }X.
 $$
 
-接下来, 我们来证明 $k$ 维的情况. 其实根据上面的过程, 我们发现我们只需要证明 $P_{X_{n}}$ 的 tightness 即可, 其后续使用的定理和思路可以完美推广至 $k$ 维的情况. 我们令 $Y_{nj},Y_{j}$ 分别是 $X_{n},X$ 的第 $j$ 个分量. 由 [17_统计分布与密度函数](17-statistical-distributions-and-density-functions.qmd#615f98) (4), 可知
+接下来, 我们来证明 $k$ 维的情况. 其实根据上面的过程, 我们发现我们只需要证明 $P_{X_{n}}$ 的 tightness 即可, 其后续使用的定理和思路可以完美推广至 $k$ 维的情况. 我们令 $Y_{nj},Y_{j}$ 分别是 $X_{n},X$ 的第 $j$ 个分量. 由 [18_统计分布与密度函数](18-statistical-distributions-and-density-functions.qmd#615f98) (4), 可知
 $$
 \phi_{Y_{nj}}\to \phi_{Y_{j}},\quad \forall j=1,\dots,k.
 $$
@@ -2021,7 +2021,7 @@ $$
 :::
 
 ::: {.proof}
-根据 [17_统计分布与密度函数](17-statistical-distributions-and-density-functions.qmd#615f98) (4), 我们可知
+根据 [18_统计分布与密度函数](18-statistical-distributions-and-density-functions.qmd#615f98) (4), 我们可知
 $$
 \phi_{\mathbf{c}^{T}X_{n}}(u)=\phi_{X_{n}}(c^{T}u),\quad
 \phi_{\mathbf{c}^{T}X}(u)=\phi_{X}(c^{T}u).
@@ -2052,7 +2052,7 @@ $$
 :::
 
 ::: {.proof}
-根据 [17_统计分布与密度函数](17-statistical-distributions-and-density-functions.qmd#615f98), 求解 ch. f.的展开式, 得到
+根据 [18_统计分布与密度函数](18-statistical-distributions-and-density-functions.qmd#615f98), 求解 ch. f.的展开式, 得到
 $$
 \phi_{X_{1}}(t)=\phi_{X_{1}}(0)+i \mu t+o(\lvert t \rvert ),\quad
 \lvert t \rvert \to0,

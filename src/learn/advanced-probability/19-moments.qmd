@@ -14,7 +14,7 @@ tags:
   - t分布
 date: 2024-06-13 00:35
 date-modified: last-modified
-order: 18
+order: 19
 ---
 
 在本节中，我们讨论随机变量的另外两种“特征”：矩和特征函数（矩母函数）。
@@ -82,7 +82,7 @@ $$
 
 ## 随机向量的均值和方差
 
-对于随机向量 $X=(X_{1},\dots,X_{n})$, 我们定义其**均值**就是他的 @def-vector-integrate
+对随机向量 $X=(X_1,\ldots,X_n)$，其**均值**按[随机向量积分](15-random-vectors.qmd#def-vector-integrate)逐分量定义：
 $$
 \mathbb{E}X=(\mathbb{E}X_{1},\dots,\mathbb{E}X_{n}).
 $$
@@ -102,7 +102,7 @@ $$
 :::
 # 常见分布的均值和方差
 
-接下来, 我们根据 [17_统计分布与密度函数](17-statistical-distributions-and-density-functions.qmd) 中的定义, 计算几个常见统计分布的均值和方差.
+接下来, 我们根据 [18_统计分布与密度函数](18-statistical-distributions-and-density-functions.qmd) 中的定义, 计算几个常见统计分布的均值和方差.
 
 ::: {#lem-18-moments-4}
 
@@ -116,7 +116,7 @@ $$
 
 :::
 ::: {.proof}
-由 [17_统计分布与密度函数](17-statistical-distributions-and-density-functions.qmd#17-statistical-distributions-and-density-functions-卡方分布) 中的密度函数可知
+由 [18_统计分布与密度函数](18-statistical-distributions-and-density-functions.qmd#17-statistical-distributions-and-density-functions-卡方分布) 中的密度函数可知
 $$
 \mathbb{E}(Y^{-s})
 =\frac{1}{\Gamma\left( \frac{n}{2} \right)2^{n/2}}
@@ -231,7 +231,7 @@ $$
 
 :::
 ::: {.proof}
-根据 [17_统计分布与密度函数](17-statistical-distributions-and-density-functions.qmd#17-statistical-distributions-and-density-functions-f-分布) 的定义, 可设
+根据 [18_统计分布与密度函数](18-statistical-distributions-and-density-functions.qmd#17-statistical-distributions-and-density-functions-f-分布) 的定义, 可设
 $$
 Y=\frac{U/n}{V/m}=\frac{mU}{nV},
 \quad U\sim \chi^{2}_{n},\ V\sim \chi^{2}_{m},
@@ -301,7 +301,7 @@ $$
 
 :::
 ::: {.proof}
-根据 [17_统计分布与密度函数](17-statistical-distributions-and-density-functions.qmd#17-statistical-distributions-and-density-functions-t-分布) 的定义, 可设
+根据 [18_统计分布与密度函数](18-statistical-distributions-and-density-functions.qmd#17-statistical-distributions-and-density-functions-t-分布) 的定义, 可设
 $$
 Y=\frac{Z}{\sqrt{V/n}},
 \quad Z\sim N(0,1),\ V\sim \chi^{2}_{n},
@@ -1386,7 +1386,7 @@ $$
 :::
 
 ::: {.proof}
-根据 [17_统计分布与密度函数](17-statistical-distributions-and-density-functions.qmd#17-statistical-distributions-and-density-functions-卡方分布) 中的定义, 可设
+根据 [18_统计分布与密度函数](18-statistical-distributions-and-density-functions.qmd#17-statistical-distributions-and-density-functions-卡方分布) 中的定义, 可设
 $$
 X=Z_{1}^{2}+\cdots+Z_{n}^{2},
 \quad Z_{1},\dots,Z_{n}\overset{\text{i.i.d.}}{\sim}N(0,1).
@@ -1447,7 +1447,7 @@ $$
 :::
 
 ::: {.proof}
-根据 [17_统计分布与密度函数](17-statistical-distributions-and-density-functions.qmd#17-statistical-distributions-and-density-functions-f-分布) 中的密度函数, 记
+根据 [18_统计分布与密度函数](18-statistical-distributions-and-density-functions.qmd#17-statistical-distributions-and-density-functions-f-分布) 中的密度函数, 记
 $$
 \alpha=\frac{n}{2},\quad \beta=\frac{m}{2},
 \quad c=\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}
@@ -1521,7 +1521,7 @@ $$
 :::
 
 ::: {.proof}
-由 [17_统计分布与密度函数](17-statistical-distributions-and-density-functions.qmd#17-statistical-distributions-and-density-functions-t-分布) 中的密度函数可知, 当 $\lvert x \rvert\to\infty$ 时,
+由 [18_统计分布与密度函数](18-statistical-distributions-and-density-functions.qmd#17-statistical-distributions-and-density-functions-t-分布) 中的密度函数可知, 当 $\lvert x \rvert\to\infty$ 时,
 $$
 f_{X}(x)\sim C\lvert x \rvert^{-(n+1)}.
 $$
@@ -1530,7 +1530,7 @@ $$
 \psi_{X}(t)=\infty,\quad t\neq 0.
 $$
 
-接下来求特征函数. 根据 [17_统计分布与密度函数](17-statistical-distributions-and-density-functions.qmd#17-statistical-distributions-and-density-functions-t-分布) 的定义, 可设
+接下来求特征函数. 根据 [18_统计分布与密度函数](18-statistical-distributions-and-density-functions.qmd#17-statistical-distributions-and-density-functions-t-分布) 的定义, 可设
 $$
 X=\frac{Z}{\sqrt{ V/n }},
 \quad Z\sim N(0,1),\ V\sim \chi_{n}^{2},

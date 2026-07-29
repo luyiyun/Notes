@@ -207,7 +207,7 @@ $$
 ::: {.callout-important title="通过 R-N 导数构造随机变量"}
 [Radon–Nikodym 定理](11-radon-nikodym-derivative.qmd#thm-rn)提供了一种构造随机变量的方式，这样构造的随机变量自动满足一些条件，比如**其积分等于某个设定好的符号测度**。
 
-以上证明过程中就涉及到这样的方法，之后我们还会看到，[条件期望](15-independence-and-conditional-expectation.qmd#def-condi-expectation)也是通过类似的方式定义的。
+以上证明过程中就涉及到这样的方法，之后我们还会看到，[条件期望](16-independence-and-conditional-expectation.qmd#def-condi-expectation)也是通过类似的方式定义的。
 
 使用该方法时需要注意，我们需要构造出两个测度。测度的构造可能非常 trival，比如 $\phi$ 可能是由 $\mu$ 来构造出来的。
 

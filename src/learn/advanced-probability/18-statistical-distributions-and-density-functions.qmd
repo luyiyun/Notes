@@ -13,7 +13,7 @@ tags:
   - Cochran定理
 date: 2024-06-13 00:35
 date-modified: last-modified
-order: 17
+order: 18
 ---
 
 为了方便期间，我们将使用与之前不同的约定符号。比如使用 $\Omega$ 表示样本空间，使用 $X$ 来表示随机变量等。
@@ -47,7 +47,7 @@ $$
 - 常见的离散型随机变量的分布有：均匀分布、二项分布、泊松分布、几何分布、超几何分布、负二项分布、对数分布等。
 - 常见的连续型随机变量的分布有：均匀分布、正态分布、指数分布、卡方分布、Gamma 分布、Beta 分布、柯西分布、t 分布、F 分布、对数正态分布、Weibull 分布、双指数分布、帕累托分布、Logistic 分布等。
 
-接着, 我们还探索了多维随机变量的联合概率密度函数与边缘概率密度函数之间的关系 (@prp-comb-margin-density), 以及独立随机变量的概率密度函数的关系 (@prp-indepent-denisty). 此时, 可以说初等概率论中的大部分相关结论, 我们已经基于测度论视角对其进行了重建.
+接着，我们还探索了多维随机变量的[联合概率密度函数与边缘概率密度函数之间的关系](15-random-vectors.qmd#prp-comb-margin-density)，以及独立随机变量的概率密度函数关系 (@prp-indepent-denisty)。此时，可以说初等概率论中的大部分相关结论已经在测度论框架下得到重建。
 
 # 密度变换
 
@@ -97,7 +97,7 @@ $$
 $$
 f_{Z}(x_{1},y)=f_{X}(x_{1},y-x_{1}),
 $$
-因为 $g$ 的 Jacobian 是 1. 继续利用 @prp-comb-margin-density, 我们得到
+因为 $g$ 的 Jacobian 是 $1$。继续利用[联合密度与边缘密度的关系](15-random-vectors.qmd#prp-comb-margin-density)，得到
 $$
 f_{Y}(y)=\int f_{X}(x_{1},y-x_{1}) \, dx_{1} .
 $$

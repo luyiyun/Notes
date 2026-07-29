@@ -9,7 +9,7 @@ tags:
   - 待定
 date: 2026-02-12 15:44
 date-modified: last-modified
-order: 16
+order: 17
 ---
 
 现在, 我们来介绍两个非常重要的, 具有依赖关系的随机变量序列. 因为具有依赖关系, 所以它们都需要依赖于条件期望或条件概率来进行定义.
@@ -119,7 +119,7 @@ $$
 = \sigma(\mathcal{G}).
 $$
 
-> 可以通过 @thm-multi-sigma-generate-1 和 @thm-multi-sigma-generate-2 得到以上结论。
+> 可以通过[随机向量生成 $\sigma$ 代数的递归性质](15-random-vectors.qmd#thm-multi-sigma-generate-1)和[$\pi$ 系生成性质](15-random-vectors.qmd#thm-multi-sigma-generate-2)得到以上结论。
 
 因此，我们只需要证明下式即可。
 
