@@ -4,23 +4,6 @@
     "items": []
   },
   {
-    "listing": "/src/learn/prml/index.html",
-    "items": [
-      "/src/learn/prml/06-kernel-methods.html",
-      "/src/learn/prml/07-sparse-kernel-machines.html",
-      "/src/learn/prml/08-graphical-models.html",
-      "/src/learn/prml/09-mixture-models-and-em.html",
-      "/src/learn/prml/10-approximate-inference.html"
-    ]
-  },
-  {
-    "listing": "/src/learn/index.html",
-    "items": [
-      "/src/learn/prml/index.html",
-      "/src/learn/advanced-probability/index.html"
-    ]
-  },
-  {
     "listing": "/src/learn/advanced-probability/index.html",
     "items": [
       "/src/learn/advanced-probability/01-introduction.html",
@@ -37,11 +20,29 @@
       "/src/learn/advanced-probability/12-lebesgue-decomposition.html",
       "/src/learn/advanced-probability/13-finite-product-spaces.html",
       "/src/learn/advanced-probability/14-infinite-product-spaces.html",
-      "/src/learn/advanced-probability/15-independence-and-conditional-expectation.html",
-      "/src/learn/advanced-probability/16-markov-chains-and-martingales.html",
-      "/src/learn/advanced-probability/17-statistical-distributions-and-density-functions.html",
-      "/src/learn/advanced-probability/18-moments.html",
-      "/src/learn/advanced-probability/19-convergence-theory.html"
+      "/src/learn/advanced-probability/15-random-vectors.html",
+      "/src/learn/advanced-probability/16-independence-and-conditional-expectation.html",
+      "/src/learn/advanced-probability/17-markov-chains-and-martingales.html",
+      "/src/learn/advanced-probability/18-statistical-distributions-and-density-functions.html",
+      "/src/learn/advanced-probability/19-moments.html",
+      "/src/learn/advanced-probability/20-convergence-theory.html"
+    ]
+  },
+  {
+    "listing": "/src/learn/index.html",
+    "items": [
+      "/src/learn/prml/index.html",
+      "/src/learn/advanced-probability/index.html"
+    ]
+  },
+  {
+    "listing": "/src/learn/prml/index.html",
+    "items": [
+      "/src/learn/prml/06-kernel-methods.html",
+      "/src/learn/prml/07-sparse-kernel-machines.html",
+      "/src/learn/prml/08-graphical-models.html",
+      "/src/learn/prml/09-mixture-models-and-em.html",
+      "/src/learn/prml/10-approximate-inference.html"
     ]
   }
 ]

@@ -8,7 +8,7 @@
 
 <meta name="author" content="荣志炜">
 
-<title>Lebesgue 分解 – Rong’s Notes</title>
+<title>随机向量 – Rong’s Notes</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -147,7 +147,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/index.html">高等概率论</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/12-lebesgue-decomposition.html">Lebesgue 分解</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/index.html">高等概率论</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/15-random-vectors.html">随机向量</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
@@ -270,7 +270,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../src/learn/advanced-probability/12-lebesgue-decomposition.html" class="sidebar-item-text sidebar-link active">
+  <a href="../../../src/learn/advanced-probability/12-lebesgue-decomposition.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Lebesgue 分解</span></a>
   </div>
 </li>
@@ -288,7 +288,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../src/learn/advanced-probability/15-random-vectors.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../src/learn/advanced-probability/15-random-vectors.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">随机向量</span></a>
   </div>
 </li>
@@ -465,21 +465,14 @@ window.Quarto = {
     <h2 id="toc-title">目录</h2>
    
   <ul>
-  <li><a href="#背景" id="toc-背景" class="nav-link active" data-scroll-target="#背景">背景</a></li>
-  <li><a href="#绝对连续性和奇异性" id="toc-绝对连续性和奇异性" class="nav-link" data-scroll-target="#绝对连续性和奇异性">绝对连续性和奇异性</a></li>
-  <li><a href="#lebesgure-分解定理" id="toc-lebesgure-分解定理" class="nav-link" data-scroll-target="#lebesgure-分解定理">Lebesgure 分解定理</a></li>
-  <li><a href="#12-lebesgue-decomposition-随机变量分类" id="toc-12-lebesgue-decomposition-随机变量分类" class="nav-link" data-scroll-target="#12-lebesgue-decomposition-随机变量分类">随机变量分类</a>
+  <li><a href="#引言" id="toc-引言" class="nav-link active" data-scroll-target="#引言">引言</a></li>
+  <li><a href="#随机向量" id="toc-随机向量" class="nav-link" data-scroll-target="#随机向量">随机向量</a>
   <ul class="collapse">
-  <li><a href="#随机变量的分解" id="toc-随机变量的分解" class="nav-link" data-scroll-target="#随机变量的分解">随机变量的分解</a></li>
-  <li><a href="#连续性随机变量" id="toc-连续性随机变量" class="nav-link" data-scroll-target="#连续性随机变量">连续性随机变量</a></li>
-  <li><a href="#离散型随机变量" id="toc-离散型随机变量" class="nav-link" data-scroll-target="#离散型随机变量">离散型随机变量</a></li>
-  <li><a href="#奇异型随机变量" id="toc-奇异型随机变量" class="nav-link" data-scroll-target="#奇异型随机变量">奇异型随机变量</a>
-  <ul class="collapse">
-  <li><a href="#构造背景cantor-集" id="toc-构造背景cantor-集" class="nav-link" data-scroll-target="#构造背景cantor-集">1. 构造背景：Cantor 集</a></li>
-  <li><a href="#随机变量的构造-投硬币法" id="toc-随机变量的构造-投硬币法" class="nav-link" data-scroll-target="#随机变量的构造-投硬币法">2. 随机变量的构造 (投硬币法)</a></li>
-  <li><a href="#验证奇异性" id="toc-验证奇异性" class="nav-link" data-scroll-target="#验证奇异性">3. 验证奇异性</a></li>
-  </ul></li>
-  <li><a href="#混合型随机变量" id="toc-混合型随机变量" class="nav-link" data-scroll-target="#混合型随机变量">混合型随机变量</a></li>
+  <li><a href="#定义和可测性" id="toc-定义和可测性" class="nav-link" data-scroll-target="#定义和可测性">定义和可测性</a></li>
+  <li><a href="#随机向量生成的-sigma-代数" id="toc-随机向量生成的-sigma-代数" class="nav-link" data-scroll-target="#随机向量生成的-sigma-代数">随机向量生成的 <span class="math inline">\(\sigma\)</span> 代数</a></li>
+  <li><a href="#积分" id="toc-积分" class="nav-link" data-scroll-target="#积分">积分</a></li>
+  <li><a href="#分布" id="toc-分布" class="nav-link" data-scroll-target="#分布">分布</a></li>
+  <li><a href="#密度" id="toc-密度" class="nav-link" data-scroll-target="#密度">密度</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -487,9 +480,9 @@ window.Quarto = {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/index.html">高等概率论</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/12-lebesgue-decomposition.html">Lebesgue 分解</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/index.html">高等概率论</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/15-random-vectors.html">随机向量</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Lebesgue 分解</h1>
+<h1 class="title">随机向量</h1>
 </div>
 
 
@@ -506,7 +499,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">发布于</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">2024年5月4日</p>
+      <p class="date">2025年11月28日</p>
     </div>
   </div>
   
@@ -524,204 +517,188 @@ window.Quarto = {
 </header>
 
 
-<section id="背景" class="level1">
-<h1>背景</h1>
-<p>计算 R-N 导数一个非常重要的条件是<strong>绝对连续性</strong>，但是并不是所有的符号测度和测度满足这样的性质。本节的内容主要讲述了这样的一个结论：<strong>对于任意一个 <span class="math inline">\(\sigma\)</span> 有限符号测度，我们都可以将其分成两个部分，一个部分满足绝对连续性，另一个部分满足奇异性。</strong></p>
+<section id="引言" class="level1">
+<h1>引言</h1>
+<p><a href="../../../src/learn/advanced-probability/13-finite-product-spaces.html">有限乘积空间</a>主要研究定义域为乘积空间的实值可测函数</p>
+<p><span class="math display">\[
+g:\left(\prod_{k=1}^{n}X_k,\bigotimes_{k=1}^{n}\mathcal F_k\right)\longrightarrow\mathbb R.
+\]</span></p>
+<p>随机向量则沿着相反的方向出现：它把一个抽象样本点映到高维欧氏空间，</p>
+<p><span class="math display">\[
+f=(f_1,\ldots,f_n):(\Omega,\mathcal F)\longrightarrow
+(\mathbb R^n,\mathcal B(\mathbb R^n)).
+\]</span></p>
+<p>二者的联系来自分布测度。若 <span class="math inline">\(h:\mathbb R^n\to\mathbb R\)</span> 可测且相应积分存在，则变量代换公式给出</p>
+<p><span class="math display">\[
+\int_\Omega h(f_1,\ldots,f_n)\,dP
+=\int_{\mathbb R^n}h(x_1,\ldots,x_n)\,d(P\circ f^{-1}).
+\]</span></p>
+<p>因此，随机向量的可测性、积分、联合分布、边缘分布与密度，都可以在有限乘积空间的框架下统一讨论。本章先保存从原第 13 章拆出的相关内容，后续再作系统整理。</p>
 </section>
-<section id="绝对连续性和奇异性" class="level1">
-<h1>绝对连续性和奇异性</h1>
-<p>首先，我们将首先定义<strong>奇异性</strong>。</p>
-<div id="def-singular" class="theorem definition">
-<p><span class="theorem-title"><strong>定义 1 (符号测度的奇异性)</strong></span> 对于可测空间 <span class="math inline">\((X,\mathcal{F})\)</span> 上的符号测度 <span class="math inline">\(\phi\)</span> 和 <span class="math inline">\(\psi\)</span>，两者被称为<strong>相互奇异的</strong>，如果满足</p>
+<section id="随机向量" class="level1">
+<h1>随机向量</h1>
+<p>在 <a href="../../../src/learn/advanced-probability/13-finite-product-spaces.html#13-finite-product-spaces-乘积空间上的测度">乘积空间上的测度</a> 中我们提到, 乘积测度空间上的很多内容我们不需要过多讨论 (比如定义积分), 其本质上和前面定义的内容是兼容的.但是, 对于随机向量这是不兼容的, 我们需要重新构建这方面的内容.</p>
+<section id="定义和可测性" class="level2">
+<h2 class="anchored" data-anchor-id="定义和可测性">定义和可测性</h2>
+<div id="def-13-finite-product-spaces-30" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 1 (随机向量)</strong></span> 对于概率测度空间 <span class="math inline">\((\Omega,\mathcal{F}),P\)</span>, 我们定义可测映射</p>
 <p><span class="math display">\[
-\exists N\in\mathcal{F}\implies \lvert \phi \rvert (N^{c})=\lvert \psi \rvert (N)=0.
+f:(\Omega,\mathcal{F}) \to (\mathbb{R}^{n},\mathcal{B}^{n})
 \]</span></p>
-<p>其中 <span class="math inline">\(\lvert \phi \rvert,\lvert \psi \rvert\)</span> 表示符号测度的 <a href="../../../src/learn/advanced-probability/10-signed-measures.html#def-total-variation">全变差</a>。记作 <span class="math inline">\(\phi\perp \psi\)</span>。</p>
+<p>为<strong>随机向量</strong>. 此外, 令</p>
+<p><span class="math display">\[
+f_{k}=f\circ\pi_{k},\quad k=1,\dots,n,
+\]</span></p>
+<p>其中 <span class="math inline">\(\pi_{k}\)</span> 是 <span class="math inline">\(\mathbb{R}^{n}\)</span> 到第 <span class="math inline">\(k\)</span> 个 <span class="math inline">\(\mathbb{R}\)</span> 的投影, 则称 <span class="math inline">\(f_{k}\)</span> 是 <span class="math inline">\(f\)</span> 的第 <span class="math inline">\(k\)</span> 个<strong>分量</strong>. 容易证明, <span class="math inline">\(f=(f_{1},\dots,f_{k})\)</span>.</p>
 </div>
-<p>奇异性是通过符号测度的全变差进行定义的，但是，我们也可以直接使用符号测度本身来进行验证。下面是奇异性的等价定义。</p>
-<div id="lem-singular-2" class="theorem lemma">
-<p><span class="theorem-title"><strong>引理 1 (奇异性的等价定义)</strong></span> 对于任意符号测度 <span class="math inline">\(\phi,\psi\)</span>，<span class="math inline">\(\phi \perp \psi\)</span> 当且仅当</p>
+<p>利用<a href="../../../src/learn/advanced-probability/13-finite-product-spaces.html#prp-project">投影的性质</a>，容易证明</p>
+<div id="thm-vector-measurable" class="theorem">
+<p><span class="theorem-title"><strong>定理 1 (值域为乘积空间的映射的可测性判定)</strong></span> 设 <span class="math inline">\((\Omega,\mathcal{T})\)</span> 和 <span class="math inline">\(\{ (X_{k},\mathcal{F}_{k}),k=1,\dots,n \}\)</span> 是可测空间，<span class="math inline">\(f=(f_{1},\dots,f_{n})\)</span> 是 <span class="math inline">\(\Omega\)</span> 到 <span class="math inline">\(\prod\limits_{k=1}^{n}X_{k}\)</span> 的一个映射。则 <span class="math inline">\(f\)</span> 是 <span class="math inline">\((\Omega,\mathcal{T})\)</span> 到 <span class="math inline">\(\left( \prod\limits_{k=1}^{n}X_{k},\prod\limits_{k=1}^{n}\mathcal{F}_{k} \right)\)</span> 的可测映射<strong>当且仅当</strong>对于每个 <span class="math inline">\(k=1,\dots,n\)</span>，<span class="math inline">\(f_{k}\)</span> 是 <span class="math inline">\((\Omega,\mathcal{T})\)</span> 到 <span class="math inline">\((X_{k},\mathcal{F}_{k})\)</span> 的可测映射。</p>
+<p>并且有这样的关系（该关系不依赖于可测性）：</p>
 <p><span class="math display">\[
-\exists N\in\mathcal{F},\forall A\in\mathcal{F},
-\phi(A\cap N^{c})=\psi(A\cap N)=0.
+\sigma(f)=\sigma((f_{1},\dots,f_{n}))=\sigma\left( \bigcup_{i=1}^{n}\sigma(f_{i}) \right),
 \]</span></p>
-</div>
-<div class="proof">
-<p><span class="proof-title"><em>证明</em>. </span>首先，我们证明必要性。若 <span class="math inline">\(\phi \perp \psi\)</span>，则取 <span class="math inline">\(N\in\mathcal{F}\)</span> ，有</p>
+<p>如果用 <span class="math inline">\(X\)</span> 表示随机变量，则是</p>
 <p><span class="math display">\[
-\lvert \phi \rvert (N^{c})=0
-\implies
-\phi^{\pm}(N^{c})=0\implies
-\phi^{\pm}(A\cap N^{c})=0\implies \phi(A\cap N^{c})=0.
-\]</span></p>
-<p>同理可以证明对于 <span class="math inline">\(\lvert \psi \rvert\)</span> 成立。</p>
-<p>接下来，我们证明充分性。取 <span class="math inline">\(N\in\mathcal{F}\)</span> 有</p>
-<p><span class="math display">\[
-\phi(A\cap N^{c})=\psi(A\cap N)=0,
-\]</span></p>
-<p>取 <span class="math inline">\(\phi\)</span> 的 Hahn 分解 <span class="math inline">\(\{ X^{+},X^{-} \}\)</span>，则</p>
-<p><span class="math display">\[
-\phi(X^{+}\cap N^{c})=\phi(X^{-}\cap N^{c})=0\implies
-\phi^{\pm}(N^{c})=0\implies
-\lvert \phi \rvert (N^{c})=0,
-\]</span></p>
-<p><span class="math inline">\(\psi\)</span> 的情况可以得到类似证明。</p>
-</div>
-<p>类似奇异性，我们也可以将绝对连续性推广到两个符号测度上。</p>
-<div id="def-12-lebesgue-decomposition-3" class="theorem definition">
-<p><span class="theorem-title"><strong>定义 2 (绝对连续性的推广)</strong></span> 若两个符号测度 <span class="math inline">\(\phi\)</span> 和 <span class="math inline">\(\psi\)</span> 满足 <span class="math inline">\(\lvert \phi \rvert\ll \lvert \psi \rvert\)</span>，则称 <strong><span class="math inline">\(\phi\)</span> 对 <span class="math inline">\(\psi\)</span> 绝对连续</strong>，记作 <span class="math inline">\(\phi\ll \psi\)</span>。</p>
-</div>
-<p>下面的引理说明，绝对连续和独立性是两个对立的概念。</p>
-<div id="lem-12-lebesgue-decomposition-4" class="theorem lemma">
-<p><span class="theorem-title"><strong>引理 2 (绝对连续和独立性)</strong></span> 设 <span class="math inline">\(\phi\)</span> 和 <span class="math inline">\(\psi\)</span> 都是符号测度，若 <span class="math inline">\(\phi\ll \psi\)</span> 且 <span class="math inline">\(\phi \perp \psi\)</span>，则</p>
-<p><span class="math display">\[
-\phi\equiv0
+\sigma(X_{1},\dots,X_{n})=\sigma\left( \bigcup_{i=1}^{n}\sigma(X_{i}) \right).
 \]</span></p>
 </div>
 <div class="proof">
-<p><span class="proof-title"><em>证明</em>. </span>取 <span class="math inline">\(N\in\mathcal{F}\)</span> 满足 <span class="math inline">\(\lvert \phi \rvert(N^{c})=\lvert \psi \rvert(N)=0\)</span>，则 <span class="math inline">\(\forall A\in\mathcal{F}\)</span>，</p>
-<p><span class="math display">\[
-\lvert \phi \rvert (A\cap N^{c})\leq \lvert \phi \rvert (N^{c})=0.
-\]</span></p>
-<p>根据绝对连续性，又有</p>
-<p><span class="math display">\[
-\lvert \psi \rvert (N)=0\implies
-\lvert \psi \rvert (A\cap N)=0\implies
-\lvert \phi \rvert (A\cap N)=0,
-\]</span></p>
-<p>从而得到</p>
-<p><span class="math display">\[
-\lvert \phi \rvert (A)=\lvert \phi \rvert (A\cap N^{c})+
-\lvert \phi \rvert (A\cap N)=0,\quad\forall A\in\mathcal{F},
-\]</span></p>
-<p>等价于 <span class="math inline">\(\phi\equiv0\)</span>。</p>
-</div>
-</section>
-<section id="lebesgure-分解定理" class="level1">
-<h1>Lebesgure 分解定理</h1>
-<p>接下来，我们将证明 <a href="#thm-leb-decomp" class="quarto-xref">定理&nbsp;1</a>。我们将其分为 3 个步骤进行，对应下面的三个命题。</p>
-<div id="prp-leb-decomp-finite" class="theorem proposition">
-<p><span class="theorem-title"><strong>命题 1 (Proposition)</strong></span> 对于有限测度空间 <span class="math inline">\((X,\mathcal{F},\mu)\)</span> 上的<strong>有限测度</strong> <span class="math inline">\(\phi\)</span>，存在<strong>有限测度</strong> <span class="math inline">\(\phi_{c}\)</span> 和 <span class="math inline">\(\phi_{s}\)</span> 使得下面的分解成立：</p>
-<p><span class="math display">\[
-\phi=\phi_{c}+\phi_{s};\quad
-\phi_{c}\ll \mu;\quad
-\phi_{s}\perp \mu.
-\]</span></p>
-</div>
-<div class="proof">
-<p><span class="proof-title"><em>证明</em>. </span>注意到，<span class="math inline">\(\phi\ll \mu+\phi\)</span>，所以 <span class="math inline">\(\frac{d\phi}{d(\mu+\phi)}\)</span> 存在，并且 <span class="math inline">\(\forall A\in\mathcal{F}\)</span> 有</p>
-<p><span class="math display">\[
-0\leq \int _{A}\frac{d\phi}{d(\mu+\phi)} \, d(\mu+\phi)=\phi(A)\leq \mu(A)+\phi(A)=\int _{A}1 \, d(\mu+\phi),
-\]</span></p>
-<p>这意味着</p>
-<p><span class="math display">\[
-0\leq \frac{d\phi}{d(\mu+\phi)}\leq 1,\ a.e..
-\]</span></p>
-<p>令 <span class="math inline">\(N=\left\{  x \in X|\frac{d\phi}{d(\mu+\phi)}(x)=1  \right\}\)</span>，则 <span class="math inline">\(\forall A\in\mathcal{F}\)</span>，令</p>
-<p><span class="math display">\[
-\phi_{c}(A)=\phi(A\cap N^{c}),\quad
-\phi_{s}(A)=\phi(A\cap N).
-\]</span></p>
-<p>显然，<span class="math inline">\(\phi_{c}\)</span> 和 <span class="math inline">\(\phi_{s}\)</span> 是两个有限测度。现在我们来证明以上两个测度命题的条件。</p>
-<p><span class="math inline">\(\phi=\phi_{c}+\phi_{s}\)</span> 显然成立。假设 <span class="math inline">\(A\in\mathcal{F},\mu(A)=0\)</span>，则</p>
-<p><span class="math display">\[
+<p><span class="proof-title"><em>证明</em>. </span><span class="math display">\[
 \begin{align}
-\int _{A\cap N^{c}}\left[ 1-\frac{d\phi}{d(\mu+\phi)} \right] \, d(\mu+\phi)
-=(\mu+\phi)(A\cap N^{c})-\phi(A\cap N^{c})=\mu(A\cap N^{c})=0,
+f^{-1}\left( \prod\limits_{k=1}^{n}\mathcal{F}_{k} \right)
+&amp;=f^{-1}\sigma\left( \bigcup_{k=1}^{n}\pi_{k}^{-1}\mathcal{F}_{k} \right) \\
+&amp;=\sigma\left( f^{-1}\left( \bigcup_{k=1}^{n}\pi_{k}^{-1}\mathcal{F}_{k} \right) \right) \\
+&amp;=\sigma\left( \bigcup_{k=1}^{n}f^{-1}(\pi_{k}^{-1}\mathcal{F}_{k}) \right) \\
+&amp;=\sigma\left( \bigcup_{k=1}^{n}(\pi_{k}\circ f)^{-1}\mathcal{F}_{k} \right)\\
+&amp;=\sigma\left( \bigcup_{k=1}^{n}f_{k}^{-1}\mathcal{F}_{k} \right).
 \end{align}
 \]</span></p>
-<p>但是根据 <span class="math inline">\(N\)</span> 的定义，我们知道 <span class="math inline">\(A\cap N^{c}\)</span> 上 <span class="math inline">\(\frac{d\phi}{d(\mu+\phi)}&lt;1\)</span> a.e.，这意味着 <span class="math inline">\(1-\frac{d\phi}{d(\mu+\phi)}&gt;0\)</span> a.e.，这意味着 <span class="math inline">\((\mu+\phi)(A\cap N^{c})=0\)</span>，从而有</p>
+<p>由上述关系可以知道，若 <span class="math inline">\(f_{i}\)</span> 可测，则 <span class="math inline">\(f\)</span> 可测。</p>
+<p>反过来，若 <span class="math inline">\(f\)</span> 是可测映射，由于投影可测，再结合<a href="../../../src/learn/advanced-probability/07-measurable-functions.html#thm-composite-func">复合映射的可测性</a>，可知所有 <span class="math inline">\(f_i\)</span> 都可测。</p>
+<p>证毕.</p>
+</div>
+<p>换句话说, <strong><span class="math inline">\(f=(f_{1},\dots,f_{n})\)</span> 是 <span class="math inline">\(n\)</span> 维随机向量当且仅当 <span class="math inline">\(f_{k},k=1,\dots,n\)</span> 都是随机变量</strong>。</p>
+</section>
+<section id="随机向量生成的-sigma-代数" class="level2">
+<h2 class="anchored" data-anchor-id="随机向量生成的-sigma-代数">随机向量生成的 <span class="math inline">\(\sigma\)</span> 代数</h2>
+<p>有时候，我们会关注随机向量生成的 <span class="math inline">\(\sigma\)</span> 代数，这里我们进行更加细致地讨论。根据 <a href="#thm-vector-measurable" class="quarto-xref">定理&nbsp;1</a>，我们知道</p>
 <p><span class="math display">\[
-\phi_{c}(A)=\phi(A\cap N^{c})\leq (\mu+\phi)(A\cap N^{c})=0,
+\sigma(X_{1},\dots,X_{n})=\sigma\left( \bigcup_{i=1}^{n}\sigma(X_{i}) \right).
 \]</span></p>
-<p>这就证明了绝对连续性。</p>
-<p>此外，我们有</p>
-<p><span class="math display">\[
-\phi(N)=\int _{N}\frac{d\phi}{d(\mu+\phi)} \, d(\mu+\phi)=
-\int _{N}1 \, d(\mu+\phi)=\mu(N)+\phi(N),
-\]</span></p>
-<p>即 <span class="math inline">\(\mu(N)=0\)</span>。此外，还有</p>
-<p><span class="math display">\[
-\phi_{s}(N^{c})=\phi(N^{c}\cap N)=\phi(\emptyset)=0.
-\]</span></p>
-<p>独立性得到验证。</p>
-</div>
-<div class="callout callout-style-default callout-important callout-titled" title="通过 R-N 导数构造随机变量">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">重要</span>通过 R-N 导数构造随机变量
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><a href="../../../src/learn/advanced-probability/11-radon-nikodym-derivative.html#thm-rn">Radon–Nikodym 定理</a>提供了一种构造随机变量的方式，这样构造的随机变量自动满足一些条件，比如<strong>其积分等于某个设定好的符号测度</strong>。</p>
-<p>以上证明过程中就涉及到这样的方法，之后我们还会看到，<a href="../../../src/learn/advanced-probability/16-independence-and-conditional-expectation.html#def-condi-expectation">条件期望</a>也是通过类似的方式定义的。</p>
-<p>使用该方法时需要注意，我们需要构造出两个测度。测度的构造可能非常 trival，比如 <span class="math inline">\(\phi\)</span> 可能是由 <span class="math inline">\(\mu\)</span> 来构造出来的。</p>
-</div>
-</div>
-<div id="prp-leb-decomp-sigma-finite" class="theorem proposition">
-<p><span class="theorem-title"><strong>命题 2 (<span class="math inline">\(\sigma\)</span> 有限测度的 Lebesgue 分解定理)</strong></span> 对于测度空间 <span class="math inline">\((X,\mathcal{F},\mu)\)</span> 上的 <strong><span class="math inline">\(\sigma\)</span> 有限测度</strong> <span class="math inline">\(\phi\)</span>，存在 <strong><span class="math inline">\(\sigma\)</span> 有限测度</strong> <span class="math inline">\(\phi_{c}\)</span> 和 <span class="math inline">\(\phi_{s}\)</span> 使得下面的分解成立：</p>
-<p><span class="math display">\[
-\phi=\phi_{c}+\phi_{s};\quad
-\phi_{c}\ll \mu;\quad
-\phi_{s}\perp \mu.
+<p>所以，有时候我们需要证明某个集合系 <span class="math inline">\(\mathcal{G}\)</span> 是 <span class="math inline">\(\sigma(X_{1},\dots,X_{n})\)</span>，只需要证明两点就可以：</p>
+<ol type="1">
+<li><span class="math inline">\(\mathcal{G}\supset\bigcup_{i=1}^{n}\sigma(X_{i})\)</span>；</li>
+<li><span class="math inline">\(\mathcal{G}\)</span> 是一个 <span class="math inline">\(\sigma\)</span> 代数。</li>
+</ol>
+<p>但是有时候，以上两点不是特别容易用，所以我们有如下几个命题。</p>
+<div id="thm-multi-sigma-generate-1" class="theorem">
+<p><span class="theorem-title"><strong>定理 2 (递归生成 <span class="math inline">\(\sigma\)</span> 代数)</strong></span> <span class="math display">\[
+\sigma(X_{1},\dots,X_{n})=\sigma((X_{1},\dots,X_{n-1}),X_{n})
+=\sigma(\sigma(X_{1},\dots,X_{n-1})\cup\sigma(X_{n}))
 \]</span></p>
 </div>
 <div class="proof">
-<p><span class="proof-title"><em>证明</em>. </span>去 <span class="math inline">\((X,\mathcal{F})\)</span> 上的一个可测分割 <span class="math inline">\(\{ A_{n} \}\)</span>，使之<strong>同时</strong>满足</p>
+<p><span class="proof-title"><em>证明</em>. </span>因为 <span class="math inline">\(\sigma(X_{i})\subset\sigma(X_{1},\dots,X_{n-1}),\forall i\leq n-1\)</span>，所以有</p>
 <p><span class="math display">\[
-\phi(A_{n})&lt;\infty,\quad \mu(A_{n})&lt;\infty,
+\sigma(X_{1},\dots,X_{n})\subset\sigma((X_{1},\dots,X_{n-1}),X_{n}).
 \]</span></p>
-<p>则对于 <span class="math inline">\((A_{n},A_{n}\cap \mathcal{F})\)</span> 运用 <a href="#prp-leb-decomp-finite" class="quarto-xref">命题&nbsp;1</a>，得到有限测度 <span class="math inline">\(\phi_{nc},\psi_{nc}\)</span> 满足</p>
+<p>又因为 <span class="math inline">\(\sigma(X_{1},\dots,X_{n-1})\subset\sigma(X_{1},\dots,X_{n})\)</span> 和 <span class="math inline">\(\sigma(X_{n})\subset\sigma(X_{1},\dots,X_{n})\)</span>，所以有</p>
 <p><span class="math display">\[
-\phi=\phi_{nc}+\psi_{ns},\quad
-\phi_{nc}\ll \mu,\quad
-\phi_{ns}\perp \mu.
+\sigma((X_{1},\dots,X_{n-1}),X_{n})\subset\sigma(X_{1},\dots,X_{n}).
 \]</span></p>
-<p><span class="math inline">\(\forall A\in\mathcal{F}\)</span>， 令</p>
-<p><span class="math display">\[
-\phi_{c}(A)=\sum\limits_{n=1}^{\infty}\phi_{nc}(A\cap A_{n}),\quad
-\phi_{s}(A)=\sum\limits_{n=1}^{\infty}\phi_{ns}(A\cap A_{n}).
-\]</span></p>
-<p>容易证明，以上满足命题的内容。（取 <span class="math inline">\(N=\bigcup_{n=1}^{\infty}N_{n}\)</span>）</p>
 </div>
-<div id="thm-leb-decomp" class="theorem">
-<p><span class="theorem-title"><strong>定理 1 (Lebesgue 分解)</strong></span> 对于 <strong><span class="math inline">\(\sigma\)</span> 有限</strong>测度空间 <span class="math inline">\((X,\mathcal{F},\mu)\)</span> 上的 <strong><span class="math inline">\(\sigma\)</span> 有限符号测度</strong> <span class="math inline">\(\phi\)</span>，存在 <strong><span class="math inline">\(\sigma\)</span> 有限符号测度</strong> <span class="math inline">\(\phi_{c}\)</span> 和 <span class="math inline">\(\phi_{s}\)</span> 使得下面的分解成立，并且<strong>这个分解是唯一的</strong>：</p>
+<div id="thm-multi-sigma-generate-2" class="theorem">
+<p><span class="theorem-title"><strong>定理 3 (<span class="math inline">\(\pi\)</span> 系生成 <span class="math inline">\(\sigma\)</span> 代数)</strong></span> 令 <span class="math inline">\(\mathcal{G}=\{ A_{1}\cap A_{2} |A_{1}\in\sigma(X_{1}),A_{2}\in\sigma(X_{2})\}\)</span>，则有</p>
 <p><span class="math display">\[
-\phi=\phi_{c}+\phi_{s};\quad
-\phi_{c}\ll \mu;\quad
-\phi_{s}\perp \mu.
+\sigma(\mathcal{G})=\sigma(X_{1},X_{2}).
 \]</span></p>
 </div>
 <div class="proof">
-<p><span class="proof-title"><em>证明</em>. </span>我们首先证明存在性。基于 <a href="../../../src/learn/advanced-probability/10-signed-measures.html#thm-jordan-decomp">Jordan 分解定理</a>得到 <span class="math inline">\(\phi=\phi^{+}-\phi^{-}\)</span>，并且其中 <span class="math inline">\(\phi^{+}\)</span> 是 <span class="math inline">\(\sigma\)</span> 有限测度，<span class="math inline">\(\phi^{-}\)</span> 是<strong>有限测度</strong>。利用 <a href="#prp-leb-decomp-sigma-finite" class="quarto-xref">命题&nbsp;2</a>，我们可以得到 <span class="math inline">\(\phi^{+}_{c},\phi^{+}_{s},\phi^{-}_{c},\phi^{-}_{s}\)</span>，满足</p>
+<p><span class="proof-title"><em>证明</em>. </span>显然 <span class="math inline">\(\sigma(\mathcal{G})\subset\sigma(X_{1},X_{2})\)</span>，现在我们来证明反方向。</p>
+<p>令 <span class="math inline">\(A_{2}=\Omega\)</span>，则可知</p>
 <p><span class="math display">\[
-\begin{align}
-&amp;\phi^{+}=\phi^{+}_{s}+\phi^{+}_{c},\quad
-\phi^{+}_{c}\ll \mu,\quad
-\phi^{+}_{s}\perp \mu; \\
-&amp;\phi^{-}=\phi^{-}_{s}+\phi^{-}_{c},\quad
-\phi^{-}_{c}\ll \mu,\quad
-\phi^{-}_{s}\perp \mu.
-\end{align}
+\sigma(X_{1})\subset\sigma(\mathcal{G}),
 \]</span></p>
-<p>其中 <span class="math inline">\(\phi^{+}_{c},\phi^{+}_{s}\)</span> 是 <span class="math inline">\(\sigma\)</span> 有限测度，<span class="math inline">\(\phi^{-}_{c},\phi^{-}_{s}\)</span> 是有限测度。进一步，我们构造两个符号测度</p>
+<p>令 <span class="math inline">\(A_{1}=\Omega\)</span>，则可知</p>
 <p><span class="math display">\[
-\phi_{s}=\phi^{+}_{s}-\phi^{-}_{s},\quad
-\phi_{c}=\phi^{+}_{c}-\phi^{-}_{c},
+\sigma(X_{2})\subset\sigma(\mathcal{G}),
 \]</span></p>
-<p>不难证明，前两个式子是成立的。</p>
-<p>设 <span class="math inline">\(N_{\pm}\in\mathcal{F}\)</span> 是使 <span class="math inline">\(\phi^{\pm}_{s}(N_{\pm}^c)=\mu(N_{\pm})=0\)</span> 成立的集合。令 <span class="math inline">\(N=N_{+}\cup N_{-}\)</span>，则 <span class="math inline">\(\mu(N)=0\)</span>。此外，有</p>
+<p>因此有 <span class="math inline">\(\sigma(\mathcal{G})\subset\sigma(X_{1},X_{2})\)</span>。问题得证。</p>
+</div>
+</section>
+<section id="积分" class="level2">
+<h2 class="anchored" data-anchor-id="积分">积分</h2>
+<p>注意到 <a href="../../../src/learn/advanced-probability/08-integration.html">8_积分</a> 中定义的积分本质上是函数值的权重和, 但对于随机向量, 函数值是一个向量, 因此相应的积分结果也应该是向量. 这里, 我们直接给出随机向量积分的定义.</p>
+<div id="def-vector-integrate" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 2 (随机向量的积分)</strong></span> 对于随机向量 <span class="math inline">\(f=(f_{1},\dots,f_{n})\)</span>, 其积分被定义为</p>
 <p><span class="math display">\[
-\phi_{s}^{\pm}(N^{c})=\phi_{s}^{\pm}(N_{+}^{c}\cap N_{-}^{c})\leq \phi_{s}^{\pm}(N_{\pm}^{c})=0,
+\int f =\left( \int f_{1},\dots,\int f_{n} \right).
 \]</span></p>
-<p>因此，<span class="math inline">\(\forall A\in\mathcal{F}\)</span>，有 <span class="math inline">\(\phi_{s}^{\pm}(A\cap N^{c})=0\)</span>，自然有</p>
+<p>当位于概率测度空间中时, 积分也被称为期望, 表示为</p>
 <p><span class="math display">\[
-\phi_{s}(A\cap N^{c})=\phi^{+}_{s}(A\cap N^{c})-\phi^{-}_{s}(A\cap N^{c})=0,
+\mathbb{E}f=(\mathbb{E}f_{1},\dots,\mathbb{E}f_{n}).
 \]</span></p>
-<p>根据 <a href="#lem-singular-2" class="quarto-xref">引理&nbsp;1</a>，奇异性得证。</p>
+</div>
+<p>这样的推广是合理的, 相当于我们在积分定义时将<strong>其中所用到的标量加法和乘法</strong>扩展至<strong>线性空间中的向量加法和数乘</strong>。</p>
+</section>
+<section id="分布" class="level2">
+<h2 class="anchored" data-anchor-id="分布">分布</h2>
+<p>在前面的学习中知道, 我们可以使用分布的概念来描述随机变量 (及测度) 所包含的信息. 分布的概念一般包含两层函数: <strong>随机变量诱导的测度</strong>及<strong>分布函数</strong>. <strong>随机向量</strong>也可以如此.</p>
+<p>对于<strong>随机向量</strong><span class="math inline">\(f=(f_{1},\dots,f_{n})\)</span>，它是一个普通概率空间 <span class="math inline">\((X,\mathcal{F},P)\to(\mathbb{R}^{n},\mathcal{B}^{n})\)</span> 的可测映射。其对应的诱导测度空间是 <span class="math inline">\((\mathbb{R}^{n},\mathcal{B}^{n},Pf^{-1})\)</span>, 这是一个典型的<strong>乘积测度空间</strong>, 因此刚才关于乘积测度空间上的内容便有了用武之地.</p>
+<p>与 <a href="../../../src/learn/advanced-probability/06-distribution-function.html">分布函数</a> 中类似, 我们可以从两个方向来定义分布函数.</p>
+<p>首先，是从<strong>分布函数</strong>应该满足的性质开始 (测度空间未知, 通过分布函数来生成测度)。这里直接沿用<a href="../../../src/learn/advanced-probability/13-finite-product-spaces.html#def-multi-dist-func">多维分布函数</a>的定义。</p>
+<p>其次，是从<strong>随机变量的诱导测度</strong>出发 (定义测度相关联的分布函数):</p>
+<div id="def-n-dist-rv" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 3 (随机向量的分布函数)</strong></span> 设 <span class="math inline">\(f=(f_{1},\dots,f_{n})\)</span> 是 <span class="math inline">\((X,\mathcal{F},P)\)</span> 上的随机向量，则对每个 <span class="math inline">\((x_{1},\dots,x_{n})\in\mathbb{R}^{n}\)</span>，令</p>
+<p><span class="math display">\[
+F(x_{1},\dots,x_{n})=P(f_{1}\leq x_{1},\dots,f_{n}\leq x_{n}),
+\]</span></p>
+<p>则 <span class="math inline">\(F\)</span> 称为随机向量 <span class="math inline">\(f\)</span> 的<strong>分布函数</strong>，或称为 <span class="math inline">\(n\)</span> 个随机变量 <span class="math inline">\(f_{1},\dots,f_{n}\)</span> 的<strong>联合分布函数</strong>，记作 <span class="math inline">\(f\sim F\)</span>。</p>
+</div>
+<p>虽然两个定义从不同的角度出发得到, 但是两者实际上是相同的对象. 我们有如下的定理:</p>
+<div id="thm-13-finite-product-spaces-36" class="theorem">
+<p><span class="theorem-title"><strong>定理 4 (n 元分布函数对应定理（Correspondence Theorem）)</strong></span> &nbsp;</p>
+<ol type="1">
+<li><span class="math inline">\(n\)</span> 维随机向量 <span class="math inline">\(f\)</span> 的分布函数是一个 <span class="math inline">\(n\)</span> 元分布函数。</li>
+<li>任意一个给定的 <span class="math inline">\(n\)</span> 元分布函数，一定存在一个概率空间 <span class="math inline">\((X,\mathcal{F},P)\)</span>，在其上定义有随机向量 <span class="math inline">\(f\sim F\)</span>。</li>
+</ol>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>证明</em>. </span>（1）由概率测度的下连续性和有界性，可以验证<a href="../../../src/learn/advanced-probability/13-finite-product-spaces.html#def-high-dim-distribution">多维准分布函数</a>的右连续性以及<a href="../../../src/learn/advanced-probability/13-finite-product-spaces.html#def-multi-dist-func">多维分布函数</a>的边界条件。因此，只需再证明 <strong>n 重差分非负性</strong>。</p>
+<p>为了证明这个，我们可以应用 <a href="#thm-inclusion-exclusion" class="quarto-xref">定理&nbsp;5</a>，或者使用<strong>差分算子</strong>来进行讨论。下面我们使用第二种方案。</p>
+<p>定义针对第 <span class="math inline">\(i\)</span> 个坐标的差分算子 <span class="math inline">\(\Delta_i\)</span> 为：</p>
+<p><span class="math display">\[
+\Delta_{a_i, b_i} F(x_1, \dots, x_n) = F(x_1, \dots, b_i, \dots, x_n) - F(x_1, \dots, a_i, \dots, x_n)
+\]</span></p>
+<p>这其实就是 <span class="math inline">\(P(X \in \dots \times (a_i, b_i] \times \dots)\)</span>，只考虑第 <span class="math inline">\(i\)</span> 个维度的限制。现在，我们考虑 <span class="math inline">\(n\)</span> 维矩形</p>
+<p><span class="math display">\[
+R = (a_1, b_1] \times \dots \times (a_n, b_n].
+\]</span></p>
+<p>随机向量 <span class="math inline">\(X\)</span> 落在 <span class="math inline">\(R\)</span> 中的事件，就是所有分量 <span class="math inline">\(X_i\)</span> 都落在 <span class="math inline">\((a_i, b_i]\)</span> 中。这就相当于对分布函数 <span class="math inline">\(F\)</span> 在所有 <span class="math inline">\(n\)</span> 个维度上依次做差分：</p>
+<p><span class="math display">\[
+\begin{aligned}
+P(a &lt; X \le b) &amp;= P(a_1 &lt; X_1 \le b_1, \dots, a_n &lt; X_n \le b_n) \\
+&amp;= \Delta_{a_n, b_n} \left( \dots \left( \Delta_{a_1, b_1} F(x_1, \dots, x_n) \right) \dots \right)
+\end{aligned}
+\]</span></p>
+<p><strong>让我们展开这个差分运算。</strong> 每个算子 <span class="math inline">\(\Delta_{a_i, b_i}\)</span> 都是两项之差：(代入 <span class="math inline">\(b_i\)</span>) - (代入 <span class="math inline">\(a_i\)</span>)。如果你把 <span class="math inline">\(n\)</span> 个这样的算子乘起来（即连续作用）, 就会得到</p>
+<p><span class="math display">\[
+\prod_{i=1}^n (\text{代入 } b_i - \text{代入 } a_i)
+\]</span></p>
+<p>展开这个括号，你会得到 <span class="math inline">\(2^n\)</span> 项。每一项都是 <span class="math inline">\(F\)</span> 在某个点 <span class="math inline">\(c\)</span> 的值，其中 <span class="math inline">\(c\)</span> 的第 <span class="math inline">\(i\)</span> 个分量要么是 <span class="math inline">\(b_i\)</span>，要么是 <span class="math inline">\(a_i\)</span>。 * 如果选择了“代入 <span class="math inline">\(b_i\)</span>”，该项系数贡献一个正号 <span class="math inline">\((+1)\)</span>。 * 如果选择了“代入 <span class="math inline">\(a_i\)</span>”，该项系数贡献一个负号 <span class="math inline">\((-1)\)</span>。</p>
+<p>因此，对于任意一个顶点 <span class="math inline">\(c\)</span>，如果它有 <span class="math inline">\(k\)</span> 个分量取自 <span class="math inline">\(a\)</span>（即 <span class="math inline">\(n(c)=k\)</span>），那么它的总符号就是 <span class="math inline">\(k\)</span> 个 <span class="math inline">\((-1)\)</span> 相乘，即 <span class="math inline">\((-1)^k\)</span>。这就推导出了定义中的公式：</p>
+<p><span class="math display">\[
+P(a &lt; X \le b) = \sum_{c \in C} (-1)^{n(c)} F(c)
+\]</span></p>
+<p>而根据概率测度的非负性，可知上面这个式子是 <span class="math inline">\(\geq 0\)</span> 的。</p>
+<p>（2）利用<a href="../../../src/learn/advanced-probability/13-finite-product-spaces.html#prp-n-dist-semi-ring-measure">矩形增量定义的预测度</a>，可以先在半开矩形半环上定义测度，再利用<a href="../../../src/learn/advanced-probability/05-measure-extension.html#thm-measure-extension">测度扩张定理</a>得到唯一扩张。容易验证所得概率测度满足 <a href="#def-n-dist-rv" class="quarto-xref">定义&nbsp;3</a> 中的公式。</p>
+</div>
+<p>因为<strong>随机向量可以表示为多个随机变量的组合</strong>, 那么自然的一个问题是: 这些<strong>随机变量的分布</strong>与<strong>随机向量的分布</strong>之间是否存在联系? 为了能够去探讨这个问题, 我们需要先定义<strong>边缘分布</strong> (也就是分量的分布).</p>
+<div id="def-margin-dist" class="theorem definition">
+<p><span class="theorem-title"><strong>定义 4 (边缘分布函数)</strong></span> 设 <span class="math inline">\(f=(f_{1},\dots,f_{n})\)</span> 是 <span class="math inline">\((X,\mathcal{F},P)\)</span> 上的随机向量，对任意给定的指标 <span class="math inline">\(i_{1},\dots,i_{k},k\leq n\)</span>，则称 <span class="math inline">\((f_{i_{1}},\dots,f_{i_{k}})\)</span> 的联合分布函数叫做 <strong><span class="math inline">\(f\)</span> 的第 <span class="math inline">\(i_{1},\dots,i_{k}\)</span> 个分量的边缘分布函数</strong>。特别的，第 <span class="math inline">\(i\)</span> 个分量 <span class="math inline">\(f_{i}\)</span> 的边缘分布函数记作 <span class="math inline">\(F_{i}\)</span>（<span class="math inline">\(=Pf_{i}^{-1}((-\infty,x])\)</span>）。</p>
+</div>
+<p>结合 <a href="../../../src/learn/advanced-probability/13-finite-product-spaces.html#13-finite-product-spaces-多维-l-s-测度">多维 L-S 测度</a> 中的讨论可以知道, 正常情况下使用 <span class="math inline">\(\{ F_{i},i=1,\dots,n \}\)</span> 是无法确定 <span class="math inline">\(F\)</span> 的，除非是在<strong>独立</strong>这一特殊的条件下，这个将在<a href="../../../src/learn/advanced-probability/16-independence-and-conditional-expectation.html#thm-indepent-distribution">独立性的分布刻画</a>中讨论。</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -732,366 +709,68 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>注意，这里我们不能使用 <a href="#def-singular" class="quarto-xref">定义&nbsp;1</a> 来证明，因为其中依赖于全变差，而全变差依赖于 Jordan 分解，<strong>所以我们必须先证明 <span class="math inline">\(\phi^{+}_{s},\phi^{-}_{s}\)</span> 是 Jordan 分解</strong>才行，这显然不是很容易。</p>
-<p>使用 <a href="#lem-singular-2" class="quarto-xref">引理&nbsp;1</a> 则不需要考虑这个问题，其只涉及到符号测度本身，所以这也是这个引理的关键用途。</p>
+<p>这里有一个非常容易混淆的点。<strong>一维测度的乘积来确定高维测度</strong>这样的内容在本章的内容中出现了两次： - 通过一维测度空间中的测度来生成高维测度空间中的测度； - 通过边缘分布来确定联合分布。</p>
+<p>这提示两者之间存在联系：根据<a href="../../../src/learn/advanced-probability/16-independence-and-conditional-expectation.html#thm-indepent-distribution">独立性的分布刻画</a>，当<strong>独立性成立</strong>时，联合分布恰好等于边缘分布的乘积。</p>
 </div>
 </div>
-<p>其次，我们来证明唯一性。假设存在两个分解，使用 <span class="math inline">\(\phi_{c1},\phi_{s1}\)</span> 和 <span class="math inline">\(\phi_{c2},\phi_{s2}\)</span> 来表示。现在我们来证明</p>
+<div id="thm-inclusion-exclusion" class="theorem">
+<p><span class="theorem-title"><strong>定理 5 (容斥原理)</strong></span> （集合论形式）设 <span class="math inline">\(A_1, A_2, \dots, A_n\)</span> 为有限集合，则这 <span class="math inline">\(n\)</span> 个集合的并集的元素个数为：</p>
 <p><span class="math display">\[
-\phi_{c1}=\phi_{c2},\quad
-\phi_{s1}=\phi_{s2}.
+\left| \bigcup_{i=1}^n A_i \right| = \sum_{1 \le i \le n} |A_i| - \sum_{1 \le i &lt; j \le n} |A_i \cap A_j| + \sum_{1 \le i &lt; j &lt; k \le n} |A_i \cap A_j \cap A_k| - \dots + (-1)^{n-1} |A_1 \cap \dots \cap A_n|
 \]</span></p>
-<p>我们来假设 <span class="math inline">\(N_{1},N_{2}\)</span> 分别是两个分解中验证独立性成立的集合，因此有</p>
-<p><span id="eq-lebesgue-decomposition-singular-support"><span class="math display">\[
-\mu(N_{i})=0,\quad
-\phi_{si}(A\cap N_{i}^{c})=0,\quad
-\forall i=1,2,\quad \forall A\in\mathcal{F},
-\tag{1}\]</span></span></p>
-<p>取 <span class="math inline">\(N=N_{1}\cup N_{2}\)</span>，则 <span class="math inline">\(\mu(N)=0\)</span>，并且由绝对连续性知道 <span class="math inline">\(\phi_{ci}(A\cap N)=0,\forall A\in\mathcal{F}\)</span>。并且有</p>
+<p>（概率论形式）设 <span class="math inline">\((\Omega, \mathcal{F}, P)\)</span> 为概率空间，<span class="math inline">\(A_1, A_2, \dots, A_n \in \mathcal{F}\)</span> 为一系列事件。则这些事件中至少有一个发生的概率（即并集的概率）为：</p>
 <p><span class="math display">\[
-\begin{align}
-&amp;\phi_{s1}(A\cap N^{c})=\phi_{s1}((A\cap N_{2}^{c})\cap N_{1}^{c})=0,\\
-&amp;\phi_{s2}(A\cap N^{c})=\phi_{s2}((A\cap N_{1}^{c})\cap N_{2}^{c})=0.
-\end{align}
+P\left( \bigcup_{i=1}^n A_i \right) = \sum_{1 \le i \le n} P(A_i) - \sum_{1 \le i &lt; j \le n} P(A_i \cap A_j) + \dots + (-1)^{n-1} P\left( \bigcap_{i=1}^n A_i \right)
 \]</span></p>
-<p>这是由式 <a href="#eq-lebesgue-decomposition-singular-support" class="quarto-xref">式&nbsp;1</a> 得到的。这样，我们就有</p>
-<p><span class="math display">\[
-\begin{align}
-\phi_{c1}(A)&amp;=\phi_{c1}(A\cap N)+\phi_{c1}(A\cap N^{c}) \\
-&amp;=\phi_{c1}(A\cap N^{c}) \\
-&amp;=\phi_{c1}(A\cap N^{c}) + \phi_{s1}(A\cap N^{c}) \\
-&amp;=\phi(A\cap N^{c}) \\
-&amp;=\phi_{c2}(A\cap N^{c}) + \phi_{s2}(A\cap N^{c}) \\
-&amp;=\phi_{c2}(A\cap N^{c}) \\
-&amp;=\phi_{c2}(A\cap N)+\phi_{c2}(A\cap N^{c}) \\
-&amp;=\phi_{c2}(A),
-\end{align}
-\]</span></p>
-<p><span class="math display">\[
-\begin{align}
-\phi_{s1}(A)&amp;=\phi_{s1}(A\cap N)+\phi_{s1}(A\cap N^{c}) \\
-&amp;=\phi_{s1}(A\cap N) \\
-&amp;=\phi_{s1}(A\cap N) + \phi_{c1}(A\cap N) \\
-&amp;=\phi(A\cap N) \\
-&amp;=\phi_{c2}(A\cap N) + \phi_{s2}(A\cap N) \\
-&amp;=\phi_{s2}(A\cap N) \\
-&amp;=\phi_{s2}(A\cap N)+\phi_{s2}(A\cap N^{c}) \\
-&amp;=\phi_{s2}(A).
-\end{align}
-\]</span></p>
-<p>问题得证。</p>
 </div>
-<p>尽管不常用到，但是我们可以进一步将以上定理中的 <span class="math inline">\(\mu\)</span> 推广至符号测度。</p>
-<div id="cor-12-lebesgue-decomposition-7" class="theorem corollary">
-<p><span class="theorem-title"><strong>推论 1 (Lebesgue 分解的推广)</strong></span> 对于可测空间 <span class="math inline">\((X,\mathcal{F})\)</span> 上 <strong><span class="math inline">\(\sigma\)</span> 有限符号测度</strong> <span class="math inline">\(\phi,\psi\)</span>，存在 <strong><span class="math inline">\(\sigma\)</span> 有限符号测度</strong> <span class="math inline">\(\phi_{c}\)</span> 和 <span class="math inline">\(\phi_{s}\)</span> 使得下面的分解成立，并且<strong>这个分解是唯一的</strong>：</p>
+</section>
+<section id="密度" class="level2">
+<h2 class="anchored" data-anchor-id="密度">密度</h2>
+<p>仿照一维情形，可以直接应用 <a href="../../../src/learn/advanced-probability/11-radon-nikodym-derivative.html#thm-rn">Radon–Nikodym 定理</a>定义高维密度。假设对随机向量 <span class="math inline">\(f=(f_1,\ldots,f_n)\)</span>，存在 <span class="math inline">\((\mathbb R^n,\mathcal B^n)\)</span> 上的 <span class="math inline">\(\sigma\)</span> 有限测度 <span class="math inline">\(\mu\)</span> 使</p>
 <p><span class="math display">\[
-\phi=\phi_{c}+\phi_{s};\quad
-\phi_{c}\ll \psi;\quad
-\phi_{s}\perp \psi.
+Pf^{-1}\ll \mu.
 \]</span></p>
+<p>此时，由 <a href="../../../src/learn/advanced-probability/11-radon-nikodym-derivative.html#thm-rn">Radon–Nikodym 定理</a>存在可测函数 <span class="math inline">\(\frac{dPf^{-1}}{d\mu}: (\mathbb{R}^{n},\mathcal{B}^{n})\to(\mathbb{R},\mathcal{B})\)</span>，满足</p>
+<p><span class="math display">\[
+\int _{A}\frac{dPf^{-1}}{d\mu} \, d\mu=Pf^{-1}(A)=P(f\in A),\quad
+\forall A\in\mathcal{B^{n}}.
+\]</span></p>
+<p>可测函数 <span class="math inline">\(\frac{dPf^{-1}}{d\mu}\)</span> 被称为 <strong><span class="math inline">\(f\)</span> 相对于 <span class="math inline">\(\mu\)</span> 的密度函数</strong>，可见，<strong>其是一个输入 <span class="math inline">\(n\)</span> 个值，输出 1 个值的函数</strong>。当然, 我们也可以去定义<strong>单个随机变量的边缘概率密度</strong>, 也就是其<strong>边缘分布的 R-N 导数</strong>。相关导数规则见 <a href="../../../src/learn/advanced-probability/11-radon-nikodym-derivative.html#prp-rn">Radon–Nikodym 导数的性质</a>。</p>
+<p>下面, 我们将证明下面的一个推论, 其描述了<strong>联合概率密度</strong>和<strong>边缘概率密度</strong>之间的关系.</p>
+<div id="prp-comb-margin-density" class="theorem proposition">
+<p><span class="theorem-title"><strong>命题 1 (联合密度和边缘密度)</strong></span> 若 <span class="math inline">\(p(x,y)\)</span> 是 <span class="math inline">\(n\)</span> 和 <span class="math inline">\(m\)</span> 维随机向量 <span class="math inline">\(X,Y\)</span> 相对于 <span class="math inline">\(\lambda \times \mu\)</span> 的联合概率密度函数, 则有</p>
+<p><span class="math display">\[
+\int p(x,y) \, \lambda(dx)=\frac{PY^{-1}(dy)}{\mu(dy)}\ a.s.,
+\]</span></p>
+<p>和</p>
+<p><span class="math display">\[
+\int p(x,y) \, \mu(dy)=\frac{PX^{-1}(dx)}{\lambda(dx)}\ a.s..
+\]</span></p>
+<p>此外, 该结论可以推广至有限维联合概率密度.</p>
 </div>
 <div class="proof">
-<p><span class="proof-title"><em>证明</em>. </span>因为 <span class="math inline">\(\mu\)</span> 的全变差是一个测度，所以直接借助 <a href="#thm-leb-decomp" class="quarto-xref">定理&nbsp;1</a> 即可得到结论。</p>
-</div>
-</section>
-<section id="12-lebesgue-decomposition-随机变量分类" class="level1">
-<h1>随机变量分类</h1>
-<section id="随机变量的分解" class="level2">
-<h2 class="anchored" data-anchor-id="随机变量的分解">随机变量的分解</h2>
-<p>就像我们之前说道的，<a href="#thm-leb-decomp" class="quarto-xref">定理&nbsp;1</a> 的重要意义在于将（符号）测度分解为不同的部分。这样，我们就可以根据不同部分的比例来对测度进行分类。这就解释了在初等概率论中随机变量的分类问题。</p>
-<p>假设我们有一个概率空间 <span class="math inline">\((X,\mathcal{F},P)\)</span>，<span class="math inline">\(f\)</span> 是其中的一个随机变量，利用 <a href="../../../src/learn/advanced-probability/07-measurable-functions.html#thm-inverse-image"><span class="math inline">\(\sigma\)</span>-field 的原像</a>，我们可以得到一个<strong>有限测度空间</strong> <span class="math inline">\((\mathbb{R},\mathcal{B},Pf^{-1})\)</span>，我们也知道一个在 <span class="math inline">\((\mathbb{R},\mathcal{B})\)</span> 上的 <span class="math inline">\(\sigma\)</span> 有限测度——Lebesgue 测度（这里我们使用 <span class="math inline">\(m\)</span> 表示）。利用 <a href="#thm-leb-decomp" class="quarto-xref">定理&nbsp;1</a>，我们得到：</p>
-<p><span class="math display">\[
-Pf^{-1}=\mu_{1}+\mu_{s},\quad
-\mu_{1}\ll m,\quad
-\mu_{s}\perp m.
-\]</span></p>
-<p>然后，我们对 <span class="math inline">\(\mu_{s}\)</span> 进一步进行分解，取出其中单点测度大于 0 的部分：</p>
+<p><span class="proof-title"><em>证明</em>. </span><span class="math inline">\(\forall B\in\mathcal{B}^{m}\)</span>，利用 <a href="../../../src/learn/advanced-probability/11-radon-nikodym-derivative.html#prp-rn">Radon–Nikodym 导数的性质</a> 有</p>
 <p><span class="math display">\[
 \begin{align}
-&amp;D=\{ x \in\mathbb{R}|\mu_{s}(\{ x \})&gt;0 \}; \\
-&amp;\mu_{2}(A)=\mu_{s}(A\cap D),\quad\forall A\in\mathcal{F}; \\
-&amp;\mu_{3}=\mu_{s}-\mu_{2}.
+PY^{-1}(B)=\int _{B} PY^{-1}(dy)
+=\int _{B}\frac{PY^{-1}(dy)}{\mu(dy)} \, \mu(dy),
 \end{align}
 \]</span></p>
-<p>这样，我们就得到了一个<strong>三测度分解</strong>：</p>
-<p><span class="math display">\[
-Pf^{-1}=\mu_{1}+\mu_{2}+\mu_{3},
-\]</span></p>
-<p>并且我们有下面的结论：</p>
-<ul>
-<li><strong><span class="math inline">\(\mu_{1},\mu_{2},\mu_{3}\)</span> 都是有限测度</strong>；</li>
-<li><strong><span class="math inline">\(D\)</span> L 可测，且至多可数</strong>。</li>
-</ul>
-<div class="proof">
-<p><span class="proof-title"><em>证明</em>. </span>我们来证明 <span class="math inline">\(D\)</span> 至多可数。令</p>
-<p><span class="math display">\[
-D_{i}=\left\{  x | \frac{1}{2^{i}}&lt;\mu_{s}(\{ x \})\leq\frac{1}{2^{i-1}}  \right\},i=1,2,\dots
-\]</span></p>
-<p>显然 <span class="math inline">\(\#D_{i}&lt;\infty\)</span> (不然，利用可列可加性，<span class="math inline">\(\mu_{s}(D_{i})=\infty\)</span> )，并且 <span class="math inline">\(\bigcup_{i=1}^{\infty}D_{i}=D\)</span>，因此 <span class="math inline">\(D\)</span> 至多可数。</p>
-<p>在已知 <span class="math inline">\(D\)</span> 至多可数的前提下，其 <span class="math inline">\(L\)</span> 可测是容易证明的。</p>
-</div>
-<p>因为是有限测度，所以我们还可以进行一下归一化：令 <span class="math inline">\(\alpha_{i}=\mu_{i}(\mathbb{R})\)</span>，令</p>
-<p><span class="math display">\[
-\tilde{\mu}_{i}=\left\{\begin{matrix}
-\mu_{i}/\mu_{i}(\mathbb{R}),&amp;\mu_{i}(\mathbb{R})&gt;0, \\
-\nu,&amp;\mu_{i}(\mathbb{R})=0,
-\end{matrix}\right.
-\]</span></p>
-<p>其中 <span class="math inline">\(\nu\)</span> 是任意一个概率测度（其系数 <span class="math inline">\(\alpha_{i}=0\)</span>，所以不会造成任何影响，只是用来占位用）。因此，分解式可以整理为下面的形式</p>
-<p><span class="math display">\[
-Pf^{-1}=\alpha_{1}\tilde{\mu}_{1}+\alpha_{2}\tilde{\mu}_{2}+\alpha_{3}\tilde{\mu}_{3},
-\]</span></p>
-<p>并且有下面的结论：</p>
-<ul>
-<li><span class="math inline">\(\tilde{\mu}_{i}\)</span> 都是概率测度；</li>
-<li><span class="math inline">\(\alpha_{i}\geq 0\)</span> 且 <span class="math inline">\(\alpha_{1}+\alpha_{2}+\alpha_{3}=1\)</span>；</li>
-<li>当 <span class="math inline">\(\alpha_{1}&gt;0\)</span> 时，<span class="math inline">\(\tilde{\mu}_{1}\ll m\)</span>；<span class="math inline">\(\alpha_{2}&gt;0\)</span> 时，<span class="math inline">\(\tilde{\mu}_{2}(D)=1\)</span>；<span class="math inline">\(\alpha_{3}&gt;0\)</span> 时，<span class="math inline">\(\tilde{\mu}_{3}\perp m\)</span>，并且 <span class="math inline">\(\forall x \in\mathbb{R},\tilde{\mu}_{3}(\{ x \})=0\)</span>。</li>
-</ul>
-<p>现在，我们就可以根据这个来进行分类。</p>
-<ul>
-<li>当 <span class="math inline">\(\alpha_{1}=1\)</span> 时，<span class="math inline">\(Pf^{-1}\)</span> 只有第一部分 <span class="math inline">\(\tilde{\mu}_{1}\)</span>，此时称 <span class="math inline">\(f\)</span> 是一个<strong>连续型随机变量</strong>。</li>
-<li>当 <span class="math inline">\(\alpha_{2}=1\)</span> 时，<span class="math inline">\(Pf^{-1}\)</span> 只有第二部分 <span class="math inline">\(\tilde{\mu}_{2}\)</span>，此时称 <span class="math inline">\(f\)</span> 是一个<strong>离散型随机变量</strong>。</li>
-<li>当 <span class="math inline">\(\alpha_{3}=1\)</span> 时，<span class="math inline">\(Pf^{-1}\)</span> 只有第三部分 <span class="math inline">\(\tilde{\mu}_{3}\)</span>，此时称 <span class="math inline">\(f\)</span> 是一个<strong>奇异型随机变量</strong>。</li>
-<li>更多情况下，是以上三种随机变量的混合。</li>
-</ul>
-<p>现在，我们针对这 3 种特殊的随机变量进行讨论。</p>
-</section>
-<section id="连续性随机变量" class="level2">
-<h2 class="anchored" data-anchor-id="连续性随机变量">连续性随机变量</h2>
-<p>此时，</p>
-<p><span class="math display">\[
-Pf^{-1}=\tilde{\mu}_{1} \ll m,
-\]</span></p>
-<p>因此，可以根据 <a href="../../../src/learn/advanced-probability/11-radon-nikodym-derivative.html#thm-rn">Radon–Nikodym 定理</a>得到一个 Lebesgue 可测函数 <span class="math inline">\(p=\frac{d(Pf^{-1})}{dm}\)</span>，我们称之为<strong>概率密度函数 (probability density function, pdf)</strong>，满足下面的关系：</p>
-<p><span class="math display">\[
-P(f\in A)=(Pf^{-1})(A)=\tilde{\mu}_{1}(A)=\int _{A}p \, dm,\quad
-\forall A\in\mathcal{B}.
-\]</span></p>
-<p>特殊地，当 <span class="math inline">\(A=(a,b]\)</span> 是一个区间时，有</p>
-<p><span class="math display">\[
-P(a&lt;f\leq b)=\int _{a}^{b}p \, dm,
-\]</span></p>
-<p>注意，以上是一个 Lebesgue 积分，而根据 <a href="../../../src/learn/advanced-probability/08-integration.html#thm-08-integration-26">Lebesgue 与 Riemann 积分的关系</a>中讨论的内容我们知道，在很多情况下，其可以被替换为 Riemann 积分。这时候，我们得到了初等概率论中对于连续性随机变量的做法。</p>
-<p>根据 <a href="../../../src/learn/advanced-probability/08-integration.html#thm-inte-by-subs">换元积分法</a>的内容，我们有</p>
-<p><span class="math display">\[
-\mathbb{E}(g\circ f)=\int g\circ f \, dP =\int g(x) \, d(Pf^{-1})=
-\int g(x)\frac{d(Pf^{-1})}{dm}\, dm=\int g(x)p(x) \, dm,
-\]</span></p>
-<p>其中第 2 个等号根据 <a href="../../../src/learn/advanced-probability/08-integration.html#thm-inte-by-subs">换元积分法</a>，第三个等号根据 <a href="../../../src/learn/advanced-probability/11-radon-nikodym-derivative.html#prp-rn">R-N 导数的性质</a>（1）。如果我们将 Lebesgue 积分换成 Riemann 积分后，就是我们初等概率论中学习的随机变量函数的期望计算公式。</p>
-</section>
-<section id="离散型随机变量" class="level2">
-<h2 class="anchored" data-anchor-id="离散型随机变量">离散型随机变量</h2>
-<p>此时，</p>
-<p><span class="math display">\[
-Pf^{-1}=\tilde{\mu}_{2},
-\]</span></p>
-<p>并且存在一个至多可列集 <span class="math inline">\(D=\{ x_{1},x_{2},\dots \}\subset \mathbb{R}\)</span>，<span class="math inline">\(Pf^{-1}(D)=1\)</span>。</p>
-<p>然后，我们可以定义</p>
-<p><span class="math display">\[
-p_{n}:=P(f=x_{n})=\tilde{\mu}_{2}(\{ x_{n} \}),\quad n=1,2,\dots
-\]</span></p>
-<p>已知了 <span class="math inline">\({p_{n}}\)</span> 之后，我们就完全确定了概率测度 <span class="math inline">\(Pf^{-1}\)</span>，其就称为<strong>离散型随机变量的概率分布</strong>。这与初等概率论中的做法非常相似。</p>
-<p>注意到，此时 <span class="math inline">\(Pf^{-1}\perp m\)</span>，因此不存在 <span class="math inline">\(\frac{dPf^{-1}}{dm}\)</span>。但是，我们其实可以将 <span class="math inline">\(m\)</span> 替换为另外的一个测度，从而实现 R-N 导数的计算，从而也得到一个“概率密度函数”。</p>
-<p>我们定义测度 <span class="math inline">\(n\)</span> 满足</p>
+<p>此外, 我们还有</p>
 <p><span class="math display">\[
 \begin{align}
-&amp;n({x})=1,\quad \forall x \in D;\quad n(D^{c})=0.
+PY^{-1}(B)&amp;=P(X,Y)^{-1}(\mathbb{R}^{n}\times B) \\
+&amp;=
+\int _{\mathbb{R}^{n}\times B}p(x,y) \, (\lambda \times \mu)(dxdy) \\
+&amp;=\int _{B}\mu(dy)\int _{\mathbb{R}^{n}}f(x,y)\lambda(dx),
 \end{align}
 \]</span></p>
-<p>（实际上，我们可以按照 <a href="../../../src/learn/advanced-probability/06-distribution-function.html#prp-dist2measure">准分布函数到测度</a>中的方式先定义一个准分布函数，进而去定义一个 <span class="math inline">\((\mathbb{R},\mathcal{B})\)</span> 上的测度，满足上述性质。） 我们姑且称之为<strong>计数测度</strong>。不难证明 <span class="math inline">\(\tilde{\mu}_{2}\ll n\)</span>，所以我们可以去计算</p>
+<p>其中最后一行使用了 <a href="../../../src/learn/advanced-probability/13-finite-product-spaces.html#thm-fubini">Fubini 定理</a>。联立两个等式，得到</p>
 <p><span class="math display">\[
-\begin{align}
-Pf^{-1}(\{ x \})=\int _{\{ x \}} \frac{d(Pf^{-1})}{dn}\, dn
-=\frac{d(Pf^{-1})}{dn}(x)n(\{ x \})=
-\left\{\begin{matrix}
-\frac{d(Pf^{-1})}{dn}(x),&amp;x \in D, \\
-0,&amp;x \not\in D.
-\end{matrix}\right.
-\end{align}
+\int p(x,y) \, \lambda(dx)=\frac{PY^{-1}(dy)}{\mu(dy)}\ a.s..
 \]</span></p>
-<p>根据我们之前的讨论，我们可以得到</p>
-<p><span class="math display">\[
-\frac{d(Pf^{-1})}{dn}(x)=\left\{\begin{matrix}
-p_{n},&amp;x=x_{n} \in D, \\
-h(x),&amp;x \not\in D,
-\end{matrix}\right.
-\]</span></p>
-<p>其中 <span class="math inline">\(h(x)\)</span> 是任意一个 <span class="math inline">\((\mathbb{R},\mathcal{B})\)</span> 上的随机变量。容易知道，<span class="math inline">\(\frac{d(Pf^{-1})}{dn}(x)\)</span> 对于 <span class="math inline">\(n\)</span> 来说 a.e. 唯一确定（对于 <span class="math inline">\(n\)</span> 来讲，<span class="math inline">\(D^{c}\)</span> 是 0 测度集）。</p>
-<p>我们惊喜地发现，我们之前定义的<strong>概率分布</strong>就是<strong>相对于计数测度的概率密度函数</strong>，不过我们依然习惯称之为<strong>概率分布 (probability mass function, pmf)</strong>。</p>
-<p>此时，积分运算为</p>
-<p><span class="math display">\[
-\mathbb{E}(g\circ f)=\int g\circ f \, dP=\int g(x) \, d(Pf^{-1})
-=\int g(x)\frac{d(Pf^{-1})}{dn} \, dn
-=\sum\limits_{n=1}^{\infty}g(x_{n})p_{n},
-\]</span></p>
-<p>可见与初等概率论中学习的内容一致。</p>
-</section>
-<section id="奇异型随机变量" class="level2">
-<h2 class="anchored" data-anchor-id="奇异型随机变量">奇异型随机变量</h2>
-<p>最经典、最著名的例子是基于 <strong>Cantor 集（康托尔集）</strong> 构造的随机变量，其累积分布函数（CDF）被称为 <strong>Cantor 函数</strong>（也称为“魔鬼阶梯”，Devil’s Staircase）。</p>
-<section id="构造背景cantor-集" class="level3">
-<h3 class="anchored" data-anchor-id="构造背景cantor-集">1. 构造背景：Cantor 集</h3>
-<p>首先回顾 <strong>Cantor 集</strong> <span class="math inline">\(C\)</span> 的构造（三分集）：</p>
-<ol type="1">
-<li>取区间 <span class="math inline">\([0, 1]\)</span>，去掉中间的开区间 <span class="math inline">\((1/3, 2/3)\)</span>。</li>
-<li>对剩下的两个闭区间 <span class="math inline">\([0, 1/3]\)</span> 和 <span class="math inline">\([2/3, 1]\)</span>，分别去掉中间的 <span class="math inline">\(1/3\)</span>。</li>
-<li>无限重复此过程。</li>
-</ol>
-<p>剩下的点集即为 Cantor 集 <span class="math inline">\(C\)</span>。其具有如下两个性质：</p>
-<ul>
-<li><strong>Lebesgue 测度为 0</strong>：<span class="math inline">\(m(C) = 0\)</span>。</li>
-<li><strong>不可数</strong>：<span class="math inline">\(C\)</span> 中的点与实数一样多（势为 <span class="math inline">\(\aleph_1\)</span>）。</li>
-</ul>
-</section>
-<section id="随机变量的构造-投硬币法" class="level3">
-<h3 class="anchored" data-anchor-id="随机变量的构造-投硬币法">2. 随机变量的构造 (投硬币法)</h3>
-<p>我们可以通过一个概率过程来定义这个随机变量 <span class="math inline">\(X\)</span>。假设有一枚均匀的硬币，抛掷结果记为 <span class="math inline">\(Z_n\)</span>，其中 <span class="math inline">\(n=1,2,\dots\)</span>：</p>
-<p><span class="math display">\[
-P(Z_n = 0) = \frac{1}{2}, \quad P(Z_n = 1) = \frac{1}{2}
-\]</span></p>
-<p>各次抛掷相互独立。定义随机变量 <span class="math inline">\(X\)</span> 为：</p>
-<p><span class="math display">\[
-X = \sum_{n=1}^{\infty} \frac{2Z_n}{3^n}
-\]</span></p>
-<p>这个公式实际上是在确定 <span class="math inline">\(X\)</span> 的 <strong>三进制小数表示</strong>。</p>
-<ul>
-<li><span class="math inline">\(Z_n\)</span> 决定了第 <span class="math inline">\(n\)</span> 位的数字。</li>
-<li>如果 <span class="math inline">\(Z_n=0\)</span>，该位是 0；如果 <span class="math inline">\(Z_n=1\)</span>，该位是 <span class="math inline">\(2\)</span>。</li>
-<li>因为三进制表示中只包含 0 和 2，从来没有 1，这正是 Cantor 集元素的特征。</li>
-</ul>
-<p>因此，<span class="math inline">\(X\)</span> 的取值范围（支撑集）几乎必然落在 Cantor 集 <span class="math inline">\(C\)</span> 上。</p>
-</section>
-<section id="验证奇异性" class="level3">
-<h3 class="anchored" data-anchor-id="验证奇异性">3. 验证奇异性</h3>
-<p>我们要验证 <span class="math inline">\(X\)</span> 对应的概率测度 <span class="math inline">\(\mu_X = PX^{-1}\)</span> 满足奇异型随机变量的定义（即上述 <span class="math inline">\(\alpha_3=1\)</span> 的情况）。我们需要验证三点：</p>
-<ol type="1">
-<li><strong><span class="math inline">\(\mu_X\)</span> 是无原子的，即非离散</strong>。</li>
-<li><strong><span class="math inline">\(\mu_X\)</span> 与 Lebesgue 测度 <span class="math inline">\(m\)</span> 奇异（<span class="math inline">\(\mu_X \perp m\)</span>）</strong>。</li>
-<li><strong><span class="math inline">\(\mu_X\)</span> 并非绝对连续（即没有概率密度函数）</strong>。</li>
-</ol>
-<div class="proof">
-<p><span class="proof-title"><em>证明</em>. </span><strong>我们首先来验证其非离散性。</strong></p>
-<p>对于任意一点 <span class="math inline">\(x \in [0, 1]\)</span>，要使 <span class="math inline">\(X=x\)</span>，必须是每一次投硬币的结果 <span class="math inline">\(Z_n\)</span> 都完全符合 <span class="math inline">\(x\)</span> 的三进制展开。 由于 <span class="math inline">\(P(Z_n) = 1/2\)</span>，我们要匹配一个无限长的特定序列，其概率为：</p>
-<p><span class="math display">\[
-P(X=x) = \lim_{n \to \infty} \left(\frac{1}{2}\right)^n = 0
-\]</span></p>
-<p>因此，<span class="math inline">\(\forall x, \mu_X(\{x\}) = 0\)</span>。<strong>它没有离散部分 (<span class="math inline">\(\alpha_2=0\)</span>)</strong>。</p>
-<p><strong>然后我们来验证与 L 测度奇异。</strong></p>
-<p>由构造可知，<span class="math inline">\(X\)</span> 的取值几乎必然落在 Cantor 集 <span class="math inline">\(C\)</span> 上，即：</p>
-<p><span class="math display">\[
-\mu_X(C) = P(X \in C) = 1
-\]</span></p>
-<p>然而，我们知道 Cantor 集的 Lebesgue 测度是 0：</p>
-<p><span class="math display">\[
-m(C) = 0
-\]</span></p>
-<p>根据 <a href="#def-singular" class="quarto-xref">定义&nbsp;1</a>，取 <span class="math inline">\(N=C\)</span>，则 <span class="math inline">\(\mu_X(N^c)=0\)</span> 且 <span class="math inline">\(m(N)=0\)</span>。即 <span class="math inline">\(\mu_X \perp m\)</span>。</p>
-<p><strong>最后我们来验证其非绝对连续。</strong></p>
-<p>如果 <span class="math inline">\(\mu_X\)</span> 绝对连续，则必须存在密度函数 <span class="math inline">\(f\)</span>，使得 <span class="math inline">\(F_X(x) = \int_{-\infty}^x f(t)dt\)</span>。让我们看 <span class="math inline">\(X\)</span> 的分布函数 <span class="math inline">\(F_X(x)\)</span>（即 Cantor 函数）：</p>
-<ul>
-<li>在 Cantor 集被挖去的区间上（比如 <span class="math inline">\((1/3, 2/3)\)</span>），<span class="math inline">\(X\)</span> 取不到值，所以 <span class="math inline">\(F_X(x)\)</span> 是<strong>常数</strong>（平的）。</li>
-<li>这些被挖去的区间的总长度是 1 (因为 <span class="math inline">\(m(C^c)=1\)</span>)。</li>
-<li>这意味着 <span class="math inline">\(F_X'(x) = 0\)</span> 在几乎所有点（a.e. <span class="math inline">\(m\)</span>）都成立。</li>
-</ul>
-<p>如果存在密度函数 <span class="math inline">\(f(x)\)</span>，则 <span class="math inline">\(f(x) = F_X'(x) = 0\)</span> a.e.。那么积分应该是：</p>
-<p><span class="math display">\[
-\int_0^1 f(x) dm = \int_0^1 0 \, dm = 0
-\]</span></p>
-<p>但实际上这是一个概率分布，总概率必须是 1：</p>
-<p><span class="math display">\[
-F_X(1) - F_X(0) = 1
-\]</span></p>
-<p><strong>矛盾</strong>。这说明它没有概率密度函数。<strong>它没有绝对连续部分 (<span class="math inline">\(\alpha_1=0\)</span>)</strong>。</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
+<p>使用类似的方法可以得到另外一个等式的结果.</p>
 </div>
-<div class="callout-title-container flex-fill">
-注记
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>实际上，我们已知其与 L 测度奇异，就可以知道其相对于 L 测度非绝对连续。</p>
-</div>
-</div>
-</div>
-<p>对于这个 Cantor 分布的随机变量 <span class="math inline">\(X\)</span>：</p>
-<ol type="1">
-<li><strong>连续性</strong>：它的 CDF <span class="math inline">\(F_X(x)\)</span> 是连续函数（没有跳跃）。</li>
-<li><strong>导数为 0</strong>：它的 CDF 在几乎所有点导数都为 0。</li>
-<li><strong>增长性</strong>：尽管导数几乎处处为 0，它却顽强地从 0 增加到了 1。</li>
-</ol>
-<p>这就是一个纯粹的<strong>奇异型随机变量</strong> (<span class="math inline">\(\alpha_3=1\)</span>)。</p>
-<div class="callout callout-style-default callout-note callout-titled" title="Abstract: Cantor 函数 (Devil's Staircase)">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">注记</span>Abstract: Cantor 函数 (Devil’s Staircase)
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>这是一个连续但非绝对连续的函数。它把 [0,1] 区间上的测度集中在了一个“看不见”的集合（Cantor 集）上。</p>
-<ul>
-<li>如果你站在 <span class="math inline">\(m\)</span> (Lebesgue) 测度的角度看，这个随机变量落在任何 <span class="math inline">\(m\)</span> 测度大于 0 的集合上的概率都是 0（除去那个测度为 0 的 Cantor 集）。</li>
-<li>如果你站在 <span class="math inline">\(Pf^{-1}\)</span> (概率) 测度的角度看，<span class="math inline">\(m\)</span> 测度简直“太大了”，充满了无数概率为 0 的“废地”。</li>
-</ul>
-</div>
-</div>
-</section>
-</section>
-<section id="混合型随机变量" class="level2">
-<h2 class="anchored" data-anchor-id="混合型随机变量">混合型随机变量</h2>
-<p>这里我们介绍一个混合了连续型和离散型的随机变量分布。</p>
-<p>假设存在一个 <span class="math inline">\((\Omega,\mathcal{F},P)\)</span> 上的随机变量 <span class="math inline">\(X\)</span>, 其 c.d.f 是 <span class="math inline">\(F_{X}\)</span>, 并且存在一个 <span class="math inline">\(c\in\mathbb{R}\)</span> 使得 <span class="math inline">\(F_{X}(c)&lt;1\)</span>. 此外, 其相对于 <span class="math inline">\(L\)</span> 测度还存在有一个 p.d.f <span class="math inline">\(f_{X}\)</span>. 基于此, 我们创建一个新的随机变量</p>
-<p><span class="math display">\[
-Y=\min\{ X,c \},
-\]</span></p>
-<p>我们可以知道 <span class="math inline">\(Y\)</span> 的 c.d.f 是</p>
-<p><span class="math display">\[
-F_{Y}(x)=\left\{\begin{matrix}
-1,&amp;x\geq c \\
-F_{X}(x),&amp;x&lt;c.
-\end{matrix}\right.
-\]</span></p>
-<p>这个 <span class="math inline">\(c.d.f\)</span> 在 <span class="math inline">\(c\)</span> 点存在一个间断点, 因此 <span class="math inline">\(PY^{-1}\not\ll L\)</span> 测度, 也就是无法得到一个相对于 <span class="math inline">\(L\)</span> 测度的 p.d.f; 同样, 也很容易证明 <span class="math inline">\(Y\)</span> 不是一个离散型随机变量.</p>
-<p>其实, 我们很容易得到下面的结果:</p>
-<p><span class="math display">\[
-\begin{align}
-F_{Y}(x)&amp;=[F_{X}(x)I_{X&lt;c}(x)+cI_{X\geq c}]+(1-c)I_{x\geq c} \\
-&amp;=c\left[ \frac{1}{c}F_{X}(x)I_{X&lt;c}(x)+I_{X\geq c} \right]
-+(1-c)I_{X\geq c},
-\end{align}
-\]</span></p>
-<p>据此我们可以得到:</p>
-<p><span class="math display">\[
-PY^{-1}=c\mu_{1}+(1-c)\mu_{2}
-\]</span></p>
-<p>其中 <span class="math inline">\(\mu_{1}\)</span> 是分布函数为 <span class="math inline">\(\frac{1}{c}F_{X}(x)I_{X&lt;c}(x)+I_{X\geq c}\)</span> 的概率测度, 其相对于 <span class="math inline">\(L\)</span> 测度有 p.d.f</p>
-<p><span class="math display">\[
-f_{1}=f_{X}I_{X&lt;c}.
-\]</span></p>
-<p>而</p>
-<p><span class="math display">\[
-\mu_{2}(A)=\left\{\begin{matrix}1, c \in B \\ 0, c \not\in B\end{matrix}\right.,
-\quad
-\forall B\in\mathcal{B}.
-\]</span></p>
-<p>显然, <span class="math inline">\(\mu_{2}\)</span> 是一个离散分布, 其对应的 <span class="math inline">\(D=\{ x \}\)</span>, 并且有 <span class="math inline">\(p(x)=1\)</span>.</p>
-<p>但是我们需要注意, <strong>将其视为一个混合分布是相对于 <span class="math inline">\(L\)</span> 测度而言的, 相对于其他的 <span class="math inline">\(\sigma\)</span> 有限测度, 可能会有不同的结果</strong>. 比如, 我们很容易知道</p>
-<p><span class="math display">\[
-PY^{-1}\ll m+\mu_{2},
-\]</span></p>
-<p>其中 <span class="math inline">\(m\)</span> 是 <span class="math inline">\(L\)</span> 测度, 因此我们有</p>
-<p><span class="math display">\[
-\frac{dPY^{-1}}{d(m+\mu_{2})}=\left\{\begin{matrix}
-0, &amp;x&gt; c; \\
-1-F_{X}(c),&amp;x=c; \\
-f_{X}(x),&amp;x&lt;c.
-\end{matrix}\right.
-\]</span></p>
 
 
 </section>

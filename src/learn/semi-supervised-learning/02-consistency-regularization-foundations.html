@@ -6,9 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="以用户旧笔记 LCMM模型.md 为主材料，整理 hlme/LCMM/GMM 的随机效应、类别成员模型、边际似然、后验分类和 R 应用流程。">
+<meta name="description" content="承接半监督学习的结构假设，说明如何将真实后验的平滑性转化为模型预测的一致性约束，并为早期代表性方法建立统一起点。">
 
-<title>hlme：从 GBTM 到 LCMM/GMM – Rong's Notes</title>
+<title>一致性正则化（一）：扰动稳定性与自集成 – Rong’s Notes</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -26,41 +26,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 /* CSS for citations */
 div.csl-bib-body { }
@@ -201,7 +166,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/trajectory-mixture-models/00-series-index.html">Trajectory Mixture Models</a></li><li class="breadcrumb-item"><a href="../../../src/learn/trajectory-mixture-models/04-hlme-growth-mixture-models.html"><code>hlme</code>：从 GBTM 到 LCMM/GMM</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/semi-supervised-learning/01-concepts-assumptions-and-theory.html">Semi Supervised Learning</a></li><li class="breadcrumb-item"><a href="../../../src/learn/semi-supervised-learning/02-consistency-regularization-foundations.html">一致性正则化（一）：扰动稳定性与自集成</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
@@ -436,7 +401,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../src/learn/semi-supervised-learning/02-consistency-regularization-foundations.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../src/learn/semi-supervised-learning/02-consistency-regularization-foundations.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">一致性正则化（一）：扰动稳定性与自集成</span></a>
   </div>
 </li>
@@ -471,7 +436,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../src/learn/trajectory-mixture-models/04-hlme-growth-mixture-models.html" class="sidebar-item-text sidebar-link active">
+  <a href="../../../src/learn/trajectory-mixture-models/04-hlme-growth-mixture-models.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><code>hlme</code>：从 GBTM 到 LCMM/GMM</span></a>
   </div>
 </li>
@@ -519,43 +484,12 @@ window.Quarto = {
     <h2 id="toc-title">目录</h2>
    
   <ul>
-  <li><a href="#引言" id="toc-引言" class="nav-link active" data-scroll-target="#引言">引言</a></li>
-  <li><a href="#材料范围与证据地图" id="toc-材料范围与证据地图" class="nav-link" data-scroll-target="#材料范围与证据地图">材料范围与证据地图</a></li>
-  <li><a href="#从-gbtm-到-lcmm新增了什么" id="toc-从-gbtm-到-lcmm新增了什么" class="nav-link" data-scroll-target="#从-gbtm-到-lcmm新增了什么">从 GBTM 到 LCMM：新增了什么？</a>
+  <li><a href="#从结构假设到预测稳定性" id="toc-从结构假设到预测稳定性" class="nav-link active" data-scroll-target="#从结构假设到预测稳定性">从结构假设到预测稳定性</a>
   <ul class="collapse">
-  <li><a href="#gbtmlcga-的简化" id="toc-gbtmlcga-的简化" class="nav-link" data-scroll-target="#gbtmlcga-的简化">GBTM/LCGA 的简化</a></li>
-  <li><a href="#hlme-的新增层次" id="toc-hlme-的新增层次" class="nav-link" data-scroll-target="#hlme-的新增层次"><code>hlme()</code> 的新增层次</a></li>
+  <li><a href="#预测一致性" id="toc-预测一致性" class="nav-link" data-scroll-target="#预测一致性">预测一致性</a></li>
+  <li><a href="#一种正则化" id="toc-一种正则化" class="nav-link" data-scroll-target="#一种正则化">一种正则化</a></li>
+  <li><a href="#双月数据中的直觉" id="toc-双月数据中的直觉" class="nav-link" data-scroll-target="#双月数据中的直觉">双月数据中的直觉</a></li>
   </ul></li>
-  <li><a href="#类别成员模型" id="toc-类别成员模型" class="nav-link" data-scroll-target="#类别成员模型">类别成员模型</a></li>
-  <li><a href="#类别内线性混合模型" id="toc-类别内线性混合模型" class="nav-link" data-scroll-target="#类别内线性混合模型">类别内线性混合模型</a>
-  <ul class="collapse">
-  <li><a href="#固定效应与类别特异效应" id="toc-固定效应与类别特异效应" class="nav-link" data-scroll-target="#固定效应与类别特异效应">固定效应与类别特异效应</a></li>
-  <li><a href="#随机效应" id="toc-随机效应" class="nav-link" data-scroll-target="#随机效应">随机效应</a></li>
-  </ul></li>
-  <li><a href="#边际正态似然" id="toc-边际正态似然" class="nav-link" data-scroll-target="#边际正态似然">边际正态似然</a></li>
-  <li><a href="#后验分类概率" id="toc-后验分类概率" class="nav-link" data-scroll-target="#后验分类概率">后验分类概率</a></li>
-  <li><a href="#r-应用流程paquid-蓝图" id="toc-r-应用流程paquid-蓝图" class="nav-link" data-scroll-target="#r-应用流程paquid-蓝图">R 应用流程：<code>paquid</code> 蓝图</a>
-  <ul class="collapse">
-  <li><a href="#多起点搜索" id="toc-多起点搜索" class="nav-link" data-scroll-target="#多起点搜索">多起点搜索</a></li>
-  </ul></li>
-  <li><a href="#输出解释框架" id="toc-输出解释框架" class="nav-link" data-scroll-target="#输出解释框架">输出解释框架</a>
-  <ul class="collapse">
-  <li><a href="#模型与数据摘要" id="toc-模型与数据摘要" class="nav-link" data-scroll-target="#模型与数据摘要">模型与数据摘要</a></li>
-  <li><a href="#收敛诊断" id="toc-收敛诊断" class="nav-link" data-scroll-target="#收敛诊断">收敛诊断</a></li>
-  <li><a href="#class-membership-model" id="toc-class-membership-model" class="nav-link" data-scroll-target="#class-membership-model">Class-membership model</a></li>
-  <li><a href="#longitudinal-model" id="toc-longitudinal-model" class="nav-link" data-scroll-target="#longitudinal-model">Longitudinal model</a></li>
-  </ul></li>
-  <li><a href="#与其他模型的边界" id="toc-与其他模型的边界" class="nav-link" data-scroll-target="#与其他模型的边界">与其他模型的边界</a></li>
-  <li><a href="#注意事项与常见误区" id="toc-注意事项与常见误区" class="nav-link" data-scroll-target="#注意事项与常见误区">注意事项与常见误区</a>
-  <ul class="collapse">
-  <li><a href="#cep-进入不同位置含义不同" id="toc-cep-进入不同位置含义不同" class="nav-link" data-scroll-target="#cep-进入不同位置含义不同"><code>CEP</code> 进入不同位置，含义不同</a></li>
-  <li><a href="#类别编号没有自然意义" id="toc-类别编号没有自然意义" class="nav-link" data-scroll-target="#类别编号没有自然意义">类别编号没有自然意义</a></li>
-  <li><a href="#bic-不能单独决定报告模型" id="toc-bic-不能单独决定报告模型" class="nav-link" data-scroll-target="#bic-不能单独决定报告模型">BIC 不能单独决定报告模型</a></li>
-  <li><a href="#随机效应越大类别越不一定清晰" id="toc-随机效应越大类别越不一定清晰" class="nav-link" data-scroll-target="#随机效应越大类别越不一定清晰">随机效应越大，类别越不一定清晰</a></li>
-  </ul></li>
-  <li><a href="#小结" id="toc-小结" class="nav-link" data-scroll-target="#小结">小结</a></li>
-  <li><a href="#思考题" id="toc-思考题" class="nav-link" data-scroll-target="#思考题">思考题</a></li>
-  <li><a href="#参考来源" id="toc-参考来源" class="nav-link" data-scroll-target="#参考来源">参考来源</a></li>
   <li><a href="#bibliography" id="toc-bibliography" class="nav-link" data-scroll-target="#bibliography">参考文献</a></li>
   </ul>
 </nav>
@@ -563,15 +497,14 @@ window.Quarto = {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/trajectory-mixture-models/00-series-index.html">Trajectory Mixture Models</a></li><li class="breadcrumb-item"><a href="../../../src/learn/trajectory-mixture-models/04-hlme-growth-mixture-models.html"><code>hlme</code>：从 GBTM 到 LCMM/GMM</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/semi-supervised-learning/01-concepts-assumptions-and-theory.html">Semi Supervised Learning</a></li><li class="breadcrumb-item"><a href="../../../src/learn/semi-supervised-learning/02-consistency-regularization-foundations.html">一致性正则化（一）：扰动稳定性与自集成</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><code>hlme</code>：从 GBTM 到 LCMM/GMM</h1>
-<p class="subtitle lead">Latent Class Linear Mixed Models</p>
+<h1 class="title">一致性正则化（一）：扰动稳定性与自集成</h1>
 </div>
 
 <div>
   <div class="description">
-    以用户旧笔记 LCMM模型.md 为主材料，整理 hlme/LCMM/GMM 的随机效应、类别成员模型、边际似然、后验分类和 R 应用流程。
+    承接半监督学习的结构假设，说明如何将真实后验的平滑性转化为模型预测的一致性约束，并为早期代表性方法建立统一起点。
   </div>
 </div>
 
@@ -582,7 +515,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">发布于</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">2026年6月9日</p>
+      <p class="date">2026年7月26日</p>
     </div>
   </div>
   
@@ -600,584 +533,98 @@ window.Quarto = {
 </header>
 
 
-<section id="引言" class="level1">
-<h1>引言</h1>
-<p>GBTM/LCGA 把人群异质性主要压缩成离散类别：给定类别后，个体围绕类别平均轨迹的偏离通常只通过残差表达。<code>hlme()</code> 拟合的 latent class linear mixed model 则多了一层结构：同一类别内部仍然允许个体有随机截距、随机斜率等连续差异。</p>
-<p>因此，<code>hlme()</code> 可以看作从 GBTM 走向 growth mixture model (GMM) 或 LCMM 的入口。它回答的问题不再只是“总体能否分成几条典型轨迹”，还包括：</p>
-<ol type="1">
-<li>不同类别的平均轨迹是否不同？</li>
-<li>同一类别内部个体是否仍有连续变异？</li>
-<li>基线协变量是否解释类别归属概率？</li>
-<li>后验分类是否足够清楚，可以支持报告和后续分析？</li>
-</ol>
-<p><code>lcmm</code> companion paper 把 <code>hlme()</code> 定位为 latent class linear mixed model / heterogeneous linear mixed model 的实现，并说明整个包使用 maximum likelihood 与 modified Marquardt 类型算法估计 <span class="citation" data-cites="proustlima2017lcmm">(<a href="#ref-proustlima2017lcmm" role="doc-biblioref">Proust-Lima 等 2017年</a>)</span>。本篇先聚焦高斯纵向结局；非正态、有界或有序结局留到第 5 篇 <code>lcmm()</code>。</p>
-</section>
-<section id="材料范围与证据地图" class="level1">
-<h1>材料范围与证据地图</h1>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>来源</th>
-<th>类型</th>
-<th>本篇作用</th>
-<th>限制</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>[用户旧笔记: LCMM]</code></td>
-<td>用户提供材料</td>
-<td>提供 LCMM 总体框架、类别成员模型、类别内混合效应模型、边际正态似然、<code>paquid</code> 示例和输出解释方向</td>
-<td>当前仓库未包含旧 Obsidian 原文，只能以现有草稿和系列审计为锚点</td>
-</tr>
-<tr class="even">
-<td>Muthen and Shedden (1999)</td>
-<td>方法背景</td>
-<td>提供 finite mixture with mixture outcomes 的 EM 背景 <span class="citation" data-cites="muthen1999finite">(<a href="#ref-muthen1999finite" role="doc-biblioref">Muthén 和 Shedden 1999年</a>)</span></td>
-<td>本篇只用作混合模型估计直觉，不把 <code>hlme()</code> 说成纯 EM</td>
-</tr>
-<tr class="odd">
-<td>Proust-Lima et al.&nbsp;(2017)</td>
-<td>官方方法论文</td>
-<td>校准 <code>lcmm</code> 函数族、<code>hlme()</code> 角色、最大似然和 Marquardt 估计 <span class="citation" data-cites="proustlima2017lcmm">(<a href="#ref-proustlima2017lcmm" role="doc-biblioref">Proust-Lima 等 2017年</a>)</span></td>
-<td>具体参数名以后续官方文档版本为准</td>
-</tr>
-<tr class="even">
-<td><code>lcmm</code> 官方 <code>hlme()</code> 文档</td>
-<td>官方实现资料</td>
-<td>校准 <code>fixed</code>、<code>mixture</code>、<code>random</code>、<code>classmb</code>、<code>ng</code>、<code>nwg</code>、<code>idiag</code> 等接口</td>
-<td>文档可能随包版本更新</td>
-</tr>
-<tr class="odd">
-<td>Herle et al.&nbsp;(2020)</td>
-<td>实践综述</td>
-<td>提醒 GBTM/LCGA/GMM 的假设和解释风险 <span class="citation" data-cites="herle2020typical">(<a href="#ref-herle2020typical" role="doc-biblioref">Herle 等 2020年</a>)</span></td>
-<td>不是 <code>lcmm</code> 专用教程</td>
-</tr>
-</tbody>
-</table>
-<div class="callout callout-style-default callout-caution callout-titled" title="需人工复核">
+<section id="从结构假设到预测稳定性" class="level1">
+<h1>从结构假设到预测稳定性</h1>
+<p><a href="../../../src/learn/semi-supervised-learning/01-concepts-assumptions-and-theory.html">第一章</a>说明了判别式半监督学习面对的根本困难：无标签数据能够帮助估计输入的边际分布 <span class="math inline">\(P_X\)</span>，而分类器真正需要学习的是条件分布 <span class="math inline">\(P_{Y\mid X}\)</span>。即使已经完整掌握 <span class="math inline">\(P_X\)</span>，也不能在没有附加联系的情况下唯一确定 <span class="math inline">\(P_{Y\mid X}\)</span>。因此，</p>
+<p><span class="math display">\[
+P_X
+\;\not\Longrightarrow\;
+P_{Y\mid X}.
+\]</span></p>
+<p>要使无标签数据影响分类器，学习算法必须进一步引入额外的约束，比如<strong>输入空间中的哪些变化不应引起标签机制的明显变化</strong>。第一章介绍的平滑性、聚类、低密度分离和流形假设，分别从局部邻近、高密度连通性、边界位置和内在几何出发，建立这种结构—标签联系。本章将考察如何把其中的平滑性要求转化为可训练的模型约束。</p>
+<section id="预测一致性" class="level2">
+<h2 class="anchored" data-anchor-id="预测一致性">预测一致性</h2>
+<p>在 <span class="math inline">\(K\)</span> 类分类问题中，记真实后验概率向量为</p>
+<p><span class="math display">\[
+\boldsymbol{\eta}(x)
+=
+\left(
+P(Y=1\mid X=x),\ldots,P(Y=K\mid X=x)
+\right).
+\]</span></p>
+<p>设 <span class="math inline">\(x'\)</span> 是与 <span class="math inline">\(x\)</span> 相关的另一个输入，并假定从 <span class="math inline">\(x\)</span> 到 <span class="math inline">\(x'\)</span> 的变化不改变任务语义。<strong>平滑性</strong>要求可以表示为</p>
+<p><span class="math display">\[
+\boldsymbol{\eta}(x')
+\approx
+\boldsymbol{\eta}(x).
+\]</span></p>
+<p>这里的关键并不是 <span class="math inline">\(x'\)</span> 在原始坐标中必须与 <span class="math inline">\(x\)</span> 足够接近，而是二者在当前任务下应当具有相同或相近的类别语义。例如，如果数据集中存在低维流形，那么有意义的邻近关系可能沿流形成立，而不是由环境空间中的欧氏距离决定。</p>
+<p>真实后验 <span class="math inline">\(\boldsymbol{\eta}\)</span> 不可直接观测，学习算法因而无法直接检验上述关系。令</p>
+<p><span class="math display">\[
+f_\theta:\mathcal X\longrightarrow\Delta^{K-1}
+\]</span></p>
+<p>表示参数为 <span class="math inline">\(\theta\)</span> 的概率分类器。一致性正则化将对真实后验的结构假设转写为对模型预测的要求：</p>
+<p><span class="math display">\[
+f_\theta(x')
+\approx
+f_\theta(x).
+\]</span></p>
+<div class="callout callout-style-default callout-note callout-titled" title="Key Idea 1：把结构假设转写为函数约束">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">注意</span>需人工复核
+<span class="screen-reader-only">注记</span>Key Idea 1：把结构假设转写为函数约束
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>用户提供的图片目录当前为空，因此本篇没有迁移旧笔记截图或软件输出图片。若后续补入 <code>summary()</code>、<code>postprob()</code> 或轨迹图截图，应把对应解释补入本篇并更新覆盖审计。</p>
+<p>一致性正则化的基本思想是：<strong>如果两个输入之间的变化被认为不改变任务语义，那么模型对二者的预测也应保持一致</strong>。它以模型输出的稳定性近似真实后验的平滑性，从而把关于 <span class="math inline">\(P_X\)</span> 与 <span class="math inline">\(P_{Y\mid X}\)</span> 关系的抽象假设转化为可以参与训练的约束 <span class="citation" data-cites="yang2023survey">(<a href="#ref-yang2023survey" role="doc-biblioref">Yang 等 2023年</a>)</span>。</p>
 </div>
 </div>
+<p>这个约束能够用于无标签样本，是因为它关心的是<strong>两个预测之间的关系</strong>，而不是预测与真实类别之间的关系。对于一个没有标签的 <span class="math inline">\(x\)</span>，虽然无法计算通常的监督分类损失，但仍然可以考察模型在相关输入 <span class="math inline">\(x\)</span> 和 <span class="math inline">\(x'\)</span> 上是否给出相近结果。无标签数据由此提供了施加稳定性约束的位置。</p>
 </section>
-<section id="从-gbtm-到-lcmm新增了什么" class="level1">
-<h1>从 GBTM 到 LCMM：新增了什么？</h1>
-<section id="gbtmlcga-的简化" class="level2">
-<h2 class="anchored" data-anchor-id="gbtmlcga-的简化">GBTM/LCGA 的简化</h2>
-<p>在基础 GBTM/LCGA 中，给定类别 <span class="math inline">\(g\)</span> 后，连续结局可以写成：</p>
+<section id="一种正则化" class="level2">
+<h2 class="anchored" data-anchor-id="一种正则化">一种正则化</h2>
+<p>少量有标签样本只能直接约束分类器在有限输入点上的输出。对于高容量模型，可能存在许多都能正确拟合这些标签、但在样本之间具有不同变化方式的预测函数。有些函数在无标签样本附近变化平缓，另一些函数则可能在相邻位置剧烈振荡；仅靠监督经验风险，二者未必能够被区分。</p>
+<p><strong>一致性约束进一步排除对任务无关变化过度敏感的候选函数</strong>。其作用可以概括为</p>
 <p><span class="math display">\[
-Y_{ij}\mid C_i=g
-=
-X_i(t_{ij})^\top\beta_g+\epsilon_{ij},
-\qquad
-\epsilon_{ij}\sim\mathcal N(0,\sigma_g^2).
+\text{拟合有标签样本}
+\quad+\quad
+\text{在无标签数据附近保持预测稳定}.
 \]</span></p>
-<p>类别内部没有随机截距或随机斜率。若两个个体属于同一类，它们共享同一条类别平均轨迹，只是每次观测有残差波动。</p>
+<p>因此，一致性正则化并没有为无标签样本凭空补上真实类别，而是在多个能够拟合有标签数据的模型中，偏好局部更加稳定的预测函数。它在优化时通常会表现为目标函数中的一个附加项，但从建模目的看，其核心作用是<strong>限制预测函数的形态</strong>。这也延续了第一章的结论：一个项在数学上写成“损失”，并不妨碍它在学习过程中发挥正则化作用。</p>
 </section>
-<section id="hlme-的新增层次" class="level2">
-<h2 class="anchored" data-anchor-id="hlme-的新增层次"><code>hlme()</code> 的新增层次</h2>
-<p><code>hlme()</code> 给类别内部加入随机效应。给定类别 <span class="math inline">\(g\)</span>，可以写：</p>
+<section id="双月数据中的直觉" class="level2">
+<h2 class="anchored" data-anchor-id="双月数据中的直觉">双月数据中的直觉</h2>
+<p>再次考虑第一章的双月数据。少量有标签点负责确定两条月牙的类别语义，大量无标签点则描绘出月牙的弯曲结构。如果选取的局部变化能够沿着同一条月牙移动，一致性约束便会要求模型在这些相邻位置保持预测稳定。这样的局部稳定性可以逐步覆盖月牙上的高密度区域，使分类器不容易在其中产生剧烈振荡。</p>
+<p>但一致性约束并不会自动知道哪一种邻近关系具有标签意义。如果错误地把来自两条不同月牙的点视为应当保持一致，模型就会受到错误约束。因此，真正的逻辑顺序不是从输入结构直接推出类别，而是</p>
 <p><span class="math display">\[
-Y_{ij\mid C_i=g}
-=
-X_{L1i}(t_{ij})^\top\beta
-+X_{L2i}(t_{ij})^\top\nu_g
-+Z_i(t_{ij})^\top u_{ig}
-+\epsilon_{ij}.
-\]</span></p>
-<p>其中：</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>部分</th>
-<th>含义</th>
-<th><code>hlme()</code> 参数</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><span class="math inline">\(X_{L1i}(t)^\top\beta\)</span></td>
-<td>所有类别共享的固定效应</td>
-<td><code>fixed</code> 中未放入 <code>mixture</code> 的项</td>
-</tr>
-<tr class="even">
-<td><span class="math inline">\(X_{L2i}(t)^\top\nu_g\)</span></td>
-<td>类别特异固定效应，定义不同平均轨迹</td>
-<td><code>mixture</code></td>
-</tr>
-<tr class="odd">
-<td><span class="math inline">\(Z_i(t)^\top u_{ig}\)</span></td>
-<td>类别内个体随机效应</td>
-<td><code>random</code></td>
-</tr>
-<tr class="even">
-<td><span class="math inline">\(\epsilon_{ij}\)</span></td>
-<td>残差或测量误差</td>
-<td>residual error</td>
-</tr>
-<tr class="odd">
-<td><span class="math inline">\(P(C_i=g\mid X_{ci})\)</span></td>
-<td>类别成员概率</td>
-<td><code>classmb</code></td>
-</tr>
-</tbody>
-</table>
-<p>随机效应通常假设为正态：</p>
-<p><span class="math display">\[
-u_{ig}\sim \mathcal N(0,B_g).
-\]</span></p>
-<p>如果各类别共享随机效应协方差矩阵，则 <span class="math inline">\(B_g=B\)</span>；如果允许类别间随机效应方差按比例变化，可以使用类似 <code>nwg = TRUE</code> 的结构，让不同类别有不同随机效应尺度。</p>
-<div class="callout callout-style-default callout-important callout-titled" title="LCMM 与 GBTM 的最小差异">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">重要</span>LCMM 与 GBTM 的最小差异
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>教学上最直观的分界是 <code>random</code>。GBTM/LCGA 主要用离散类别解释个体差异；<code>hlme()</code>/GMM 同时用离散类别和类别内随机效应解释差异。前者更简洁，后者更能表达“同一类内部仍然有连续差异”。</p>
-</div>
-</div>
-</section>
-</section>
-<section id="类别成员模型" class="level1">
-<h1>类别成员模型</h1>
-<p><code>hlme()</code> 中的类别成员模型仍然是多项逻辑回归。令 <span class="math inline">\(X_{ci}\)</span> 为基线协变量，类别概率为：</p>
-<p><span class="math display">\[
-\pi_{ig}
-=
-P(C_i=g\mid X_{ci})
-=
-\frac{
-\exp(\zeta_{0g}+X_{ci}^{\top}\zeta_{1g})
-}{
-\sum_{\ell=1}^{G}
-\exp(\zeta_{0\ell}+X_{ci}^{\top}\zeta_{1\ell})
+\boxed{
+P_X\text{ 揭示输入结构}
+\;\longrightarrow\;
+\text{假定某些变化与标签机制相容}
+\;\longrightarrow\;
+\text{要求模型预测在这些变化下保持一致}
 }.
 \]</span></p>
-<p>为识别，通常设置参考类别 <span class="math inline">\(G\)</span>：</p>
-<p><span class="math display">\[
-\zeta_{0G}=0,
-\qquad
-\zeta_{1G}=\mathbf 0.
-\]</span></p>
-<p>于是相对于参考类别：</p>
-<p><span class="math display">\[
-\log\frac{\pi_{ig}}{\pi_{iG}}
-=
-\zeta_{0g}+X_{ci}^{\top}\zeta_{1g}.
-\]</span></p>
-<p>在 <code>hlme()</code> 中，这部分由 <code>classmb = ~ ...</code> 指定。它解释的是“谁更可能属于哪一个潜在类别”，不是“协变量如何改变给定类别内的纵向均值”。如果一个协变量既可能影响类别归属，也可能影响类别内水平，需要分别考虑是否放进 <code>classmb</code> 与 <code>fixed</code>。</p>
-</section>
-<section id="类别内线性混合模型" class="level1">
-<h1>类别内线性混合模型</h1>
-<section id="固定效应与类别特异效应" class="level2">
-<h2 class="anchored" data-anchor-id="固定效应与类别特异效应">固定效应与类别特异效应</h2>
-<p>假设时间变量为 <span class="math inline">\(\mathrm{age65}=(\mathrm{age}-65)/10\)</span>。一个二次轨迹模型可以写成：</p>
-<p><span class="math display">\[
-Y_{ij\mid C_i=g}
-=
-(\beta_0+\nu_{0g})
-+(\beta_1+\nu_{1g})\mathrm{age65}_{ij}
-+(\beta_2+\nu_{2g})\mathrm{age65}_{ij}^2
-+Z_i(t_{ij})^\top u_{ig}
-+\epsilon_{ij}.
-\]</span></p>
-<p>这里 <span class="math inline">\(\beta\)</span> 是共同部分，<span class="math inline">\(\nu_g\)</span> 是类别偏移。若 <code>mixture = ~ age65 + I(age65^2)</code>，则线性和二次时间趋势可以随类别不同；若 <code>mixture = ~ age65</code>，则只允许线性斜率类别特异，二次项共享。</p>
-<div class="callout callout-style-default callout-warning callout-titled" title="容易混淆处">
+<div class="callout callout-style-default callout-warning callout-titled" title="一致性不能凭空产生类别语义">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">警告</span>容易混淆处
+<span class="screen-reader-only">警告</span>一致性不能凭空产生类别语义
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><code>fixed</code> 定义纵向模型里有哪些候选固定效应；<code>mixture</code> 指定这些固定效应中哪些允许类别特异。通常 <code>mixture</code> 中的变量也应出现在 <code>fixed</code> 中，否则模型语义会很难解释。</p>
+<p>一致性约束只规定哪些预测应当彼此接近，并不单独决定这些预测应当属于哪一个类别。有标签数据仍然负责定义任务和类别语义；无标签数据则在结构假设成立时，帮助约束预测函数应当怎样在输入空间中变化。</p>
 </div>
 </div>
-</section>
-<section id="随机效应" class="level2">
-<h2 class="anchored" data-anchor-id="随机效应">随机效应</h2>
-<p>若设置：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>random <span class="ot">=</span> <span class="er">~</span> age65</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
-<p>则个体可以有随机截距和随机年龄斜率：</p>
-<p><span class="math display">\[
-Z_i(t_{ij})^\top u_{ig}
-=
-b_{0ig}+b_{1ig}\mathrm{age65}_{ij}.
-\]</span></p>
-<p>随机效应协方差矩阵为：</p>
-<p><span class="math display">\[
-B_g
-=
-\begin{pmatrix}
-\sigma_{b0,g}^{2} &amp; \sigma_{b01,g}\\
-\sigma_{b01,g} &amp; \sigma_{b1,g}^{2}
-\end{pmatrix}.
-\]</span></p>
-<p>这个矩阵表达同一类别中个体之间的连续差异：有些人整体水平更高，有些人下降更快，有些人的初始水平和下降速度相关。</p>
-<p>如果随机效应方差很大，类别平均轨迹就不应该被解释成类别内所有个体的典型路径。它只是类别条件平均，类别内部仍然有宽广的个体分布。</p>
-</section>
-</section>
-<section id="边际正态似然" class="level1">
-<h1>边际正态似然</h1>
-<p><code>hlme()</code> 的 likelihood 需要把随机效应积分掉。对个体 <span class="math inline">\(i\)</span>，给定类别 <span class="math inline">\(g\)</span> 后，把重复测量写成向量：</p>
-<p><span class="math display">\[
-y_i=(Y_{i1},\ldots,Y_{in_i})^\top.
-\]</span></p>
-<p>若纵向模型是线性高斯 mixed model，则：</p>
-<p><span class="math display">\[
-y_i\mid C_i=g,u_{ig}
-\sim
-\mathcal N(X_{ig}\beta_g+Z_i u_{ig},\sigma^2 I_{n_i}),
-\]</span></p>
-<p><span class="math display">\[
-u_{ig}\sim\mathcal N(0,B_g).
-\]</span></p>
-<p>对 <span class="math inline">\(u_{ig}\)</span> 积分后：</p>
-<p><span class="math display">\[
-y_i\mid C_i=g
-\sim
-\mathcal N(X_{ig}\beta_g,V_{ig}),
-\]</span></p>
-<p>其中：</p>
-<p><span class="math display">\[
-V_{ig}
-=
-Z_iB_gZ_i^\top+\sigma^2 I_{n_i}.
-\]</span></p>
-<p>类别条件密度为：</p>
-<p><span class="math display">\[
-f_g(y_i;\theta_g)
-=
-(2\pi)^{-n_i/2}
-|V_{ig}|^{-1/2}
-\exp\left[
--\frac{1}{2}
-(y_i-X_{ig}\beta_g)^\top
-V_{ig}^{-1}
-(y_i-X_{ig}\beta_g)
-\right].
-\]</span></p>
-<p>边际个体 likelihood 是类别混合：</p>
-<p><span class="math display">\[
-L_i(\theta)
-=
-\sum_{g=1}^{G}
-\pi_{ig} f_g(y_i;\theta_g).
-\]</span></p>
-<p>总 log-likelihood 为：</p>
-<p><span class="math display">\[
-\ell(\theta)
-=
-\sum_{i=1}^{N}
-\log L_i(\theta)
-=
-\sum_{i=1}^{N}
-\log
-\left[
-\sum_{g=1}^{G}
-\pi_{ig} f_g(y_i;\theta_g)
-\right].
-\]</span></p>
-<p>这条公式解释了为什么 LCMM/GMM 比普通 mixed model 难估计：随机效应积分带来 <span class="math inline">\(f_g\)</span>，潜在类别求和又包在对数里面。第 1 篇 <a href="../../../src/learn/trajectory-mixture-models/01-general-trajectory-mixture-models.html">一般框架</a> 已经说明 EM 直觉、梯度和 Marquardt 实现的通用结构。</p>
-</section>
-<section id="后验分类概率" class="level1">
-<h1>后验分类概率</h1>
-<p>拟合完成后，个体 <span class="math inline">\(i\)</span> 属于类别 <span class="math inline">\(g\)</span> 的后验概率为：</p>
-<p><span class="math display">\[
-\hat p_{ig}
-=
-P(C_i=g\mid y_i,X_i,\hat\theta)
-=
-\frac{
-\hat\pi_{ig} f_g(y_i;\hat\theta_g)
-}{
-\sum_{\ell=1}^{G}
-\hat\pi_{i\ell}f_\ell(y_i;\hat\theta_\ell)
-}.
-\]</span></p>
-<p>most likely class 是：</p>
-<p><span class="math display">\[
-\hat C_i=\arg\max_g\hat p_{ig}.
-\]</span></p>
-<p>但是 <span class="math inline">\(\hat C_i\)</span> 不是观测到的真实类别。<code>postprob()</code> 或类似输出通常要关注：</p>
-<ol type="1">
-<li>每个 most likely class 的人数和比例。</li>
-<li>各类别的平均后验概率。</li>
-<li>posterior classification table 的对角线是否高。</li>
-<li>有多少个体最大后验概率低于 0.7 或 0.8。</li>
-</ol>
-<div class="callout callout-style-default callout-warning callout-titled" title="硬分类风险">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">警告</span>硬分类风险
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>在 <code>hlme()</code> 中，随机效应已经允许类别内连续差异；如果再把 most likely class 当作真实标签，后续回归会同时忽略随机效应不确定性和类别分类不确定性。报告时至少应说明后验概率分布。</p>
-</div>
-</div>
-</section>
-<section id="r-应用流程paquid-蓝图" class="level1">
-<h1>R 应用流程：<code>paquid</code> 蓝图</h1>
-<p>下面的代码是教学蓝图，展示 <code>hlme()</code> 的常见工作流。实际变量名、预处理和初始值应以当前 <code>lcmm</code> 官方 vignette 和数据版本为准。</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lcmm)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(paquid)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>paquid<span class="sc">$</span>age65 <span class="ot">&lt;-</span> (paquid<span class="sc">$</span>age <span class="sc">-</span> <span class="dv">65</span>) <span class="sc">/</span> <span class="dv">10</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>paquid<span class="sc">$</span>normMMSE <span class="ot">&lt;-</span> <span class="fu">normMMSE</span>(paquid<span class="sc">$</span>MMSE)</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">hlme</span>(</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">fixed =</span> normMMSE <span class="sc">~</span> <span class="fu">poly</span>(age65, <span class="at">degree =</span> <span class="dv">2</span>, <span class="at">raw =</span> <span class="cn">TRUE</span>) <span class="sc">+</span> CEP,</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">random =</span> <span class="sc">~</span> <span class="fu">poly</span>(age65, <span class="at">degree =</span> <span class="dv">2</span>, <span class="at">raw =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">subject =</span> <span class="st">"ID"</span>,</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">ng =</span> <span class="dv">1</span>,</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> paquid</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>m2 <span class="ot">&lt;-</span> <span class="fu">hlme</span>(</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">fixed =</span> normMMSE <span class="sc">~</span> <span class="fu">poly</span>(age65, <span class="at">degree =</span> <span class="dv">2</span>, <span class="at">raw =</span> <span class="cn">TRUE</span>) <span class="sc">+</span> CEP,</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">mixture =</span> <span class="sc">~</span> <span class="fu">poly</span>(age65, <span class="at">degree =</span> <span class="dv">2</span>, <span class="at">raw =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">random =</span> <span class="sc">~</span> <span class="fu">poly</span>(age65, <span class="at">degree =</span> <span class="dv">2</span>, <span class="at">raw =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">classmb =</span> <span class="sc">~</span> CEP,</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">subject =</span> <span class="st">"ID"</span>,</span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">ng =</span> <span class="dv">2</span>,</span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> paquid,</span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">B =</span> m1</span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
-<p>这段代码可以拆成几个解释点：</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>代码部分</th>
-<th>作用</th>
-<th>解释</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>normMMSE &lt;- normMMSE(MMSE)</code></td>
-<td>量表标准化/正态化</td>
-<td>让 MMSE 更接近高斯 longitudinal outcome</td>
-</tr>
-<tr class="even">
-<td><code>age65 &lt;- (age - 65) / 10</code></td>
-<td>时间中心化与缩放</td>
-<td>截距对应 65 岁，每单位约 10 年</td>
-</tr>
-<tr class="odd">
-<td><code>ng = 1</code></td>
-<td>单类别模型</td>
-<td>作为普通 mixed model 和多类别初始值</td>
-</tr>
-<tr class="even">
-<td><code>fixed</code></td>
-<td>总体纵向结构</td>
-<td>定义模型包含哪些固定效应</td>
-</tr>
-<tr class="odd">
-<td><code>mixture</code></td>
-<td>类别特异固定效应</td>
-<td>指定哪些时间项随类别变化</td>
-</tr>
-<tr class="even">
-<td><code>random</code></td>
-<td>个体随机效应</td>
-<td>指定类别内连续异质性</td>
-</tr>
-<tr class="odd">
-<td><code>classmb</code></td>
-<td>类别成员模型</td>
-<td>指定哪些协变量解释类别概率</td>
-</tr>
-<tr class="even">
-<td><code>B = m1</code></td>
-<td>初始值</td>
-<td>用单类别模型初始化多类别模型</td>
-</tr>
-</tbody>
-</table>
-<section id="多起点搜索" class="level2">
-<h2 class="anchored" data-anchor-id="多起点搜索">多起点搜索</h2>
-<p>混合模型 likelihood 往往多峰。实际工作中，不应只依赖一个初始值。<code>lcmm</code> 工作流常用 <code>gridsearch()</code> 从多个随机起点运行短迭代，再把较好的起点继续优化：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>m2_grid <span class="ot">&lt;-</span> <span class="fu">gridsearch</span>(</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">rep =</span> <span class="dv">50</span>,</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">maxiter =</span> <span class="dv">30</span>,</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">minit =</span> m1,</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">hlme</span>(</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">fixed =</span> normMMSE <span class="sc">~</span> <span class="fu">poly</span>(age65, <span class="at">degree =</span> <span class="dv">2</span>, <span class="at">raw =</span> <span class="cn">TRUE</span>) <span class="sc">+</span> CEP,</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">mixture =</span> <span class="sc">~</span> <span class="fu">poly</span>(age65, <span class="at">degree =</span> <span class="dv">2</span>, <span class="at">raw =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">random =</span> <span class="sc">~</span> <span class="fu">poly</span>(age65, <span class="at">degree =</span> <span class="dv">2</span>, <span class="at">raw =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">classmb =</span> <span class="sc">~</span> CEP,</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">subject =</span> <span class="st">"ID"</span>,</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">ng =</span> <span class="dv">2</span>,</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> paquid</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
-<p>报告时应写清楚 <code>rep</code>、<code>maxiter</code>、初始模型、最终 log-likelihood，以及是否存在未收敛或收敛到较差局部极值的模型。</p>
-</section>
-</section>
-<section id="输出解释框架" class="level1">
-<h1>输出解释框架</h1>
-<p><code>summary(m2)</code> 一类输出可以按四块阅读。</p>
-<section id="模型与数据摘要" class="level2">
-<h2 class="anchored" data-anchor-id="模型与数据摘要">模型与数据摘要</h2>
-<p>首先检查 subjects、observations、latent classes、parameters 和 log-likelihood。这里要确认：</p>
-<ul>
-<li>个体数和观测数是否符合数据预处理后的样本。</li>
-<li><code>ng</code> 是否为计划中的类别数。</li>
-<li>参数数量是否随类别数、随机效应和 <code>classmb</code> 合理增加。</li>
-<li>log-likelihood 是否可与其他模型比较。</li>
-</ul>
-</section>
-<section id="收敛诊断" class="level2">
-<h2 class="anchored" data-anchor-id="收敛诊断">收敛诊断</h2>
-<p><code>lcmm</code> 输出通常包含迭代次数和收敛状态。三类收敛准则尤其重要：</p>
-<ol type="1">
-<li>参数变化是否足够小。</li>
-<li>log-likelihood 变化是否足够小。</li>
-<li>second derivatives / Hessian 相关准则是否满足。</li>
-</ol>
-<p>若模型停止但 Hessian 不合格，参数标准误、置信区间和 Wald 检验可能不可靠。第 1 篇 <a href="../../../src/learn/trajectory-mixture-models/01-general-trajectory-mixture-models.html">一般框架</a> 已经解释 Hessian、局部最优和 Marquardt 诊断的通用含义。</p>
-</section>
-<section id="class-membership-model" class="level2">
-<h2 class="anchored" data-anchor-id="class-membership-model">Class-membership model</h2>
-<p>类别成员模型输出的是相对于参考类别的 log-odds。若 <code>classmb = ~ CEP</code>，则某个系数 <span class="math inline">\(\hat\zeta\)</span> 可以转成 odds ratio：</p>
-<p><span class="math display">\[
-\mathrm{OR}=\exp(\hat\zeta).
-\]</span></p>
-<p>但解释必须加上“相对于参考类别”和“在模型定义的潜在类别中”。不能说“CEP 导致某类轨迹”，只能说在该模型下 CEP 与更高或更低的类别成员概率相关。</p>
-</section>
-<section id="longitudinal-model" class="level2">
-<h2 class="anchored" data-anchor-id="longitudinal-model">Longitudinal model</h2>
-<p>纵向部分要分别看：</p>
-<ul>
-<li>哪些时间项类别特异。</li>
-<li>类别平均轨迹在观测时间范围内如何变化。</li>
-<li><code>fixed</code> 中的协变量是否仍有类别内关联。</li>
-<li>随机效应方差协方差是否很大。</li>
-<li>残差标准误是否合理。</li>
-</ul>
-<p>如果类别平均轨迹差异很小，但随机效应方差巨大，模型更像是在描述连续异质性，而不是清晰亚型。反过来，如果随机效应很小、类别轨迹差异明显，它更接近 GBTM/LCGA 的解释。</p>
-</section>
-</section>
-<section id="与其他模型的边界" class="level1">
-<h1>与其他模型的边界</h1>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>模型</th>
-<th>关键假设</th>
-<th>何时适合</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>GBTM/LCGA</td>
-<td>类别内无随机效应</td>
-<td>想得到简洁典型轨迹，且类内连续异质性不强</td>
-</tr>
-<tr class="even">
-<td><code>hlme()</code>/GMM</td>
-<td>类别内有随机效应，高斯纵向结局</td>
-<td>连续结局近似高斯，且同类内部仍有个体差异</td>
-</tr>
-<tr class="odd">
-<td><code>lcmm()</code></td>
-<td>latent process + link function</td>
-<td>结局非高斯、有界、有序或观测尺度不线性</td>
-</tr>
-<tr class="even">
-<td><code>multlcmm()</code></td>
-<td>多 marker 共享 latent process</td>
-<td>多个纵向指标共同测量一个潜在状态</td>
-</tr>
-<tr class="odd">
-<td><code>Jointlcmm()</code></td>
-<td>纵向轨迹 + 生存结局</td>
-<td>轨迹过程与 time-to-event 结局需要联合建模</td>
-</tr>
-</tbody>
-</table>
-<p>这个边界表提示了一个实践原则：不要把所有问题都交给 <code>hlme()</code>。若结局分布明显不合适，加入随机效应不能自动修复 link function 或量表边界问题；若有多个 marker，单个 <code>hlme()</code> 也不能表达共同潜在过程。</p>
-</section>
-<section id="注意事项与常见误区" class="level1">
-<h1>注意事项与常见误区</h1>
-<section id="cep-进入不同位置含义不同" class="level2">
-<h2 class="anchored" data-anchor-id="cep-进入不同位置含义不同"><code>CEP</code> 进入不同位置，含义不同</h2>
-<p>如果 <code>CEP</code> 出现在 <code>fixed</code> 中，它解释给定类别和随机效应结构后的纵向结局差异；如果出现在 <code>classmb</code> 中，它解释类别归属概率差异。两者不能合并成一句话。</p>
-</section>
-<section id="类别编号没有自然意义" class="level2">
-<h2 class="anchored" data-anchor-id="类别编号没有自然意义">类别编号没有自然意义</h2>
-<p><code>class1</code>、<code>class2</code> 的编号由估计结果决定，可能发生 label switching。报告时应按轨迹形状重命名，例如“稳定高水平”“快速下降”“低水平缓慢下降”。</p>
-</section>
-<section id="bic-不能单独决定报告模型" class="level2">
-<h2 class="anchored" data-anchor-id="bic-不能单独决定报告模型">BIC 不能单独决定报告模型</h2>
-<p>类别数选择应结合 BIC/AIC、类别比例、后验分类质量、轨迹可解释性、收敛状态和理论问题。一个 BIC 最低但有 1% 极小类别的模型，可能只是异常点或模型误设的结果。</p>
-</section>
-<section id="随机效应越大类别越不一定清晰" class="level2">
-<h2 class="anchored" data-anchor-id="随机效应越大类别越不一定清晰">随机效应越大，类别越不一定清晰</h2>
-<p>LCMM/GMM 的优势是允许类内差异，但这也意味着类别平均轨迹只是条件平均。如果类内随机斜率很大，同一类别内部可能包含多种实际路径。</p>
-</section>
-</section>
-<section id="小结" class="level1">
-<h1>小结</h1>
-<p><code>hlme()</code> 是从 GBTM/LCGA 走向 LCMM/GMM 的关键一步。它保留潜在类别结构，同时引入类别内随机效应，让模型能够把异质性拆成“类间平均轨迹差异”和“类内连续个体差异”两层。</p>
-<p>从公式上看，核心变化是类别条件密度 <span class="math inline">\(f_g(y_i;\theta_g)\)</span> 从简单条件独立观测分布变成 mixed model 的边际正态密度。从实践上看，核心变化是报告时必须同时解释类别轨迹、随机效应、后验分类和收敛诊断。</p>
-</section>
-<section id="思考题" class="level1">
-<h1>思考题</h1>
-<ol type="1">
-<li>LCMM 中随机效应越强，潜在类别解释是否越弱？有没有例外？</li>
-<li>如果两个类别的平均轨迹很像，但随机效应方差不同，应不应该保留两个类别？</li>
-<li>同一个协变量放进 <code>fixed</code>、<code>mixture</code> 和 <code>classmb</code> 时，分别回答什么问题？</li>
-<li>为什么 <code>ng = 1</code> 模型通常是多类别模型的重要初始化来源？</li>
-</ol>
-</section>
-<section id="参考来源" class="level1">
-<h1>参考来源</h1>
-<p>本篇依据用户旧笔记中的 LCMM 框架，结合 <code>lcmm</code> companion paper、finite mixture 估计背景和轨迹模型解释综述整理 <span class="citation" data-cites="proustlima2017lcmm muthen1999finite herle2020typical">(<a href="#ref-proustlima2017lcmm" role="doc-biblioref">Proust-Lima 等 2017年</a>; <a href="#ref-muthen1999finite" role="doc-biblioref">Muthén 和 Shedden 1999年</a>; <a href="#ref-herle2020typical" role="doc-biblioref">Herle 等 2020年</a>)</span>。</p>
+<p>至此，我们已经把第一章的结构假设转化为模型层面的稳定性要求。要让这一原则成为完整的训练目标，还需要回答几个具体问题：相关输入怎样获得、用于比较的两个预测怎样产生、预测差异怎样度量，以及梯度应当怎样作用于它们。这些问题构成下一部分的主线。</p>
 
 
+</section>
 </section>
 <section id="bibliography" class="level1 unnumbered">
 
@@ -1185,14 +632,8 @@ P(C_i=g\mid y_i,X_i,\hat\theta)
 </section>
 
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">参考文献</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
-<div id="ref-herle2020typical" class="csl-entry" role="listitem">
-Herle, Moritz, Nadia Micali, Mohamed Abdulkadir, 等. 2020年. <span>《Identifying Typical Trajectories in Longitudinal Data: Modelling Strategies and Interpretations》</span>. <em>European Journal of Epidemiology</em> 35: 205～22. <a href="https://doi.org/10.1007/s10654-020-00615-6">https://doi.org/10.1007/s10654-020-00615-6</a>.
-</div>
-<div id="ref-muthen1999finite" class="csl-entry" role="listitem">
-Muthén, Bengt, 和 Kerby Shedden. 1999年. <span>《Finite Mixture Modeling with Mixture Outcomes Using the <span>EM</span> Algorithm》</span>. <em>Biometrics</em> 55 (2): 463～69. <a href="https://doi.org/10.1111/j.0006-341X.1999.00463.x">https://doi.org/10.1111/j.0006-341X.1999.00463.x</a>.
-</div>
-<div id="ref-proustlima2017lcmm" class="csl-entry" role="listitem">
-Proust-Lima, Cécile, Viviane Philipps, 和 Benoit Liquet. 2017年. <span>《Estimation of Extended Mixed Models Using Latent Classes and Latent Processes: The <span>R</span> Package <span>lcmm</span>》</span>. <em>Journal of Statistical Software</em> 78 (2): 1～56. <a href="https://doi.org/10.18637/jss.v078.i02">https://doi.org/10.18637/jss.v078.i02</a>.
+<div id="ref-yang2023survey" class="csl-entry" role="listitem">
+Yang, Xiangli, Zixing Song, Irwin King, 和 Zenglin Xu. 2023年. <span>《A Survey on Deep Semi-Supervised Learning》</span>. <em>IEEE Transactions on Knowledge and Data Engineering</em> 35 (9): 8934～54. <a href="https://doi.org/10.1109/TKDE.2022.3220219">https://doi.org/10.1109/TKDE.2022.3220219</a>.
 </div>
 </div></section></div></main> <!-- /main -->
 <script>

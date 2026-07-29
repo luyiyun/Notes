@@ -147,7 +147,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/index.html">高等概率论</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/18-moments.html">矩</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/index.html">高等概率论</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/19-moments.html">矩</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
@@ -288,31 +288,37 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../src/learn/advanced-probability/15-independence-and-conditional-expectation.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../src/learn/advanced-probability/15-random-vectors.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">随机向量</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/16-independence-and-conditional-expectation.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">独立和条件期望</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../src/learn/advanced-probability/16-markov-chains-and-martingales.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../src/learn/advanced-probability/17-markov-chains-and-martingales.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">马尔可夫链与鞅</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../src/learn/advanced-probability/17-statistical-distributions-and-density-functions.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../src/learn/advanced-probability/18-statistical-distributions-and-density-functions.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">统计分布与密度函数</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../src/learn/advanced-probability/18-moments.html" class="sidebar-item-text sidebar-link active">
+  <a href="../../../src/learn/advanced-probability/19-moments.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">矩</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../src/learn/advanced-probability/19-convergence-theory.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../src/learn/advanced-probability/20-convergence-theory.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">收敛理论</span></a>
   </div>
 </li>
@@ -372,6 +378,12 @@ window.Quarto = {
   <div class="sidebar-item-container"> 
   <a href="../../../src/learn/semi-supervised-learning/01-concepts-assumptions-and-theory.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">基本概念、核心假设与理论基础</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/semi-supervised-learning/02-consistency-regularization-foundations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">一致性正则化（一）：扰动稳定性与自集成</span></a>
   </div>
 </li>
       </ul>
@@ -492,7 +504,7 @@ window.Quarto = {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/index.html">高等概率论</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/18-moments.html">矩</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/index.html">高等概率论</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/19-moments.html">矩</a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title">矩</h1>
 </div>
@@ -518,7 +530,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">修改于</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">2026年7月28日</p>
+      <p class="date-modified">2026年7月29日</p>
     </div>
   </div>
     
@@ -561,7 +573,7 @@ window.Quarto = {
 <p>在各种矩中, 最重要的是两个: - 一阶矩, 即期望, 也称为<strong>均值 (mean)</strong>, 其标记了随机变量分布的中心位置; - 二阶中心距, 即<strong>方差 (variance)</strong>, 其标记了随机变量分布离散性质. 其平方根被称作<strong>标准差 (standard deviation)</strong>, 也是非常重要的数字特征.</p>
 <p>我们可以进一步将以上两者推广到随机向量上.</p>
 <div id="def-18-moments-3" class="theorem definition">
-<p><span class="theorem-title"><strong>定义 2 (随机向量的均值和方差)</strong></span> 对于随机向量 <span class="math inline">\(X=(X_{1},\dots,X_{n})\)</span>, 我们定义其<strong>均值</strong>就是他的 <strong>?@def-vector-integrate</strong> <span class="math display">\[
+<p><span class="theorem-title"><strong>定义 2 (随机向量的均值和方差)</strong></span> 对随机向量 <span class="math inline">\(X=(X_1,\ldots,X_n)\)</span>，其<strong>均值</strong>按<a href="../../../src/learn/advanced-probability/15-random-vectors.html#def-vector-integrate">随机向量积分</a>逐分量定义： <span class="math display">\[
 \mathbb{E}X=(\mathbb{E}X_{1},\dots,\mathbb{E}X_{n}).
 \]</span> 方差的定义被扩展为<strong>方差 - 协方差矩阵</strong>: <span class="math display">\[
 Var(X)=\mathbb{E}[(X-\mathbb{E}X)(X-\mathbb{E}X)]^{T}.
@@ -573,14 +585,14 @@ Var(Y)=cVar(X)c^{T}.
 </section>
 <section id="常见分布的均值和方差" class="level1">
 <h1>常见分布的均值和方差</h1>
-<p>接下来, 我们根据 <a href="../../../src/learn/advanced-probability/17-statistical-distributions-and-density-functions.html">17_统计分布与密度函数</a> 中的定义, 计算几个常见统计分布的均值和方差.</p>
+<p>接下来, 我们根据 <a href="../../../src/learn/advanced-probability/18-statistical-distributions-and-density-functions.html">18_统计分布与密度函数</a> 中的定义, 计算几个常见统计分布的均值和方差.</p>
 <div id="lem-18-moments-4" class="theorem lemma">
 <p><span class="theorem-title"><strong>引理 2 (卡方分布的负次矩公式)</strong></span> 若 <span class="math inline">\(Y\sim \chi^{2}_{n}\)</span>, 则对任意 <span class="math inline">\(s&lt;n/2\)</span>, 有 <span class="math display">\[
 \mathbb{E}(Y^{-s})=\frac{\Gamma\left( \frac{n}{2}-s \right)}{2^{s}\Gamma\left( \frac{n}{2} \right)}.
 \]</span> 当 <span class="math inline">\(s\geq n/2\)</span> 时, 上式积分在 <span class="math inline">\(0\)</span> 点附近发散, 因而 <span class="math inline">\(\mathbb{E}(Y^{-s})=\infty\)</span>.</p>
 </div>
 <div class="proof">
-<p><span class="proof-title"><em>证明</em>. </span>由 <a href="../../../src/learn/advanced-probability/17-statistical-distributions-and-density-functions.html#17-statistical-distributions-and-density-functions-卡方分布">17_统计分布与密度函数</a> 中的密度函数可知 <span class="math display">\[
+<p><span class="proof-title"><em>证明</em>. </span>由 <a href="../../../src/learn/advanced-probability/18-statistical-distributions-and-density-functions.html#17-statistical-distributions-and-density-functions-卡方分布">18_统计分布与密度函数</a> 中的密度函数可知 <span class="math display">\[
 \mathbb{E}(Y^{-s})
 =\frac{1}{\Gamma\left( \frac{n}{2} \right)2^{n/2}}
 \int_{0}^{\infty}y^{\frac{n}{2}-s-1}e^{-y/2}\,dy.
@@ -657,7 +669,7 @@ Var(Y)=
 \]</span></p>
 </div>
 <div class="proof">
-<p><span class="proof-title"><em>证明</em>. </span>根据 <a href="../../../src/learn/advanced-probability/17-statistical-distributions-and-density-functions.html#17-statistical-distributions-and-density-functions-f-分布">17_统计分布与密度函数</a> 的定义, 可设 <span class="math display">\[
+<p><span class="proof-title"><em>证明</em>. </span>根据 <a href="../../../src/learn/advanced-probability/18-statistical-distributions-and-density-functions.html#17-statistical-distributions-and-density-functions-f-分布">18_统计分布与密度函数</a> 的定义, 可设 <span class="math display">\[
 Y=\frac{U/n}{V/m}=\frac{mU}{nV},
 \quad U\sim \chi^{2}_{n},\ V\sim \chi^{2}_{m},
 \]</span> 且 <span class="math inline">\(U,V\)</span> 相互独立.</p>
@@ -706,7 +718,7 @@ Var(Y)=
 \]</span></p>
 </div>
 <div class="proof">
-<p><span class="proof-title"><em>证明</em>. </span>根据 <a href="../../../src/learn/advanced-probability/17-statistical-distributions-and-density-functions.html#17-statistical-distributions-and-density-functions-t-分布">17_统计分布与密度函数</a> 的定义, 可设 <span class="math display">\[
+<p><span class="proof-title"><em>证明</em>. </span>根据 <a href="../../../src/learn/advanced-probability/18-statistical-distributions-and-density-functions.html#17-statistical-distributions-and-density-functions-t-分布">18_统计分布与密度函数</a> 的定义, 可设 <span class="math display">\[
 Y=\frac{Z}{\sqrt{V/n}},
 \quad Z\sim N(0,1),\ V\sim \chi^{2}_{n},
 \]</span> 且 <span class="math inline">\(Z,V\)</span> 相互独立.</p>
@@ -1453,7 +1465,7 @@ P_{X}=P_{Y}.
 \]</span></p>
 </div>
 <div class="proof">
-<p><span class="proof-title"><em>证明</em>. </span>根据 <a href="../../../src/learn/advanced-probability/17-statistical-distributions-and-density-functions.html#17-statistical-distributions-and-density-functions-卡方分布">17_统计分布与密度函数</a> 中的定义, 可设 <span class="math display">\[
+<p><span class="proof-title"><em>证明</em>. </span>根据 <a href="../../../src/learn/advanced-probability/18-statistical-distributions-and-density-functions.html#17-statistical-distributions-and-density-functions-卡方分布">18_统计分布与密度函数</a> 中的定义, 可设 <span class="math display">\[
 X=Z_{1}^{2}+\cdots+Z_{n}^{2},
 \quad Z_{1},\dots,Z_{n}\overset{\text{i.i.d.}}{\sim}N(0,1).
 \]</span> 先考虑 <span class="math inline">\(Y=Z_{1}^{2}\)</span>. 当 <span class="math inline">\(t&lt;1/2\)</span> 时, <span class="math display">\[
@@ -1494,7 +1506,7 @@ U\left( \frac{n}{2},1-\frac{m}{2},-\frac{im}{n}t \right),\quad t\in\mathbb{R},
 \]</span> 其中 <span class="math inline">\(U(a,b,z)\)</span> 是 Tricomi 合流超几何函数.</p>
 </div>
 <div class="proof">
-<p><span class="proof-title"><em>证明</em>. </span>根据 <a href="../../../src/learn/advanced-probability/17-statistical-distributions-and-density-functions.html#17-statistical-distributions-and-density-functions-f-分布">17_统计分布与密度函数</a> 中的密度函数, 记 <span class="math display">\[
+<p><span class="proof-title"><em>证明</em>. </span>根据 <a href="../../../src/learn/advanced-probability/18-statistical-distributions-and-density-functions.html#17-statistical-distributions-and-density-functions-f-分布">18_统计分布与密度函数</a> 中的密度函数, 记 <span class="math display">\[
 \alpha=\frac{n}{2},\quad \beta=\frac{m}{2},
 \quad c=\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}
 \left( \frac{n}{m} \right)^{\alpha},
@@ -1543,12 +1555,12 @@ K_{n/2}(\sqrt{ n }\lvert t \rvert),\quad t\in\mathbb{R},
 \]</span> 其中 <span class="math inline">\(K_{\nu}\)</span> 是第二类修正 Bessel 函数.</p>
 </div>
 <div class="proof">
-<p><span class="proof-title"><em>证明</em>. </span>由 <a href="../../../src/learn/advanced-probability/17-statistical-distributions-and-density-functions.html#17-statistical-distributions-and-density-functions-t-分布">17_统计分布与密度函数</a> 中的密度函数可知, 当 <span class="math inline">\(\lvert x \rvert\to\infty\)</span> 时, <span class="math display">\[
+<p><span class="proof-title"><em>证明</em>. </span>由 <a href="../../../src/learn/advanced-probability/18-statistical-distributions-and-density-functions.html#17-statistical-distributions-and-density-functions-t-分布">18_统计分布与密度函数</a> 中的密度函数可知, 当 <span class="math inline">\(\lvert x \rvert\to\infty\)</span> 时, <span class="math display">\[
 f_{X}(x)\sim C\lvert x \rvert^{-(n+1)}.
 \]</span> 因此当 <span class="math inline">\(t&gt;0\)</span> 时, <span class="math inline">\(e^{tx}f_{X}(x)\)</span> 在 <span class="math inline">\(+\infty\)</span> 处不可积; 当 <span class="math inline">\(t&lt;0\)</span> 时, <span class="math inline">\(e^{tx}f_{X}(x)\)</span> 在 <span class="math inline">\(-\infty\)</span> 处不可积. 所以 <span class="math display">\[
 \psi_{X}(t)=\infty,\quad t\neq 0.
 \]</span></p>
-<p>接下来求特征函数. 根据 <a href="../../../src/learn/advanced-probability/17-statistical-distributions-and-density-functions.html#17-statistical-distributions-and-density-functions-t-分布">17_统计分布与密度函数</a> 的定义, 可设 <span class="math display">\[
+<p>接下来求特征函数. 根据 <a href="../../../src/learn/advanced-probability/18-statistical-distributions-and-density-functions.html#17-statistical-distributions-and-density-functions-t-分布">18_统计分布与密度函数</a> 的定义, 可设 <span class="math display">\[
 X=\frac{Z}{\sqrt{ V/n }},
 \quad Z\sim N(0,1),\ V\sim \chi_{n}^{2},
 \]</span> 且 <span class="math inline">\(Z,V\)</span> 相互独立. 因此 <span class="math display">\[

@@ -147,7 +147,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/index.html">高等概率论</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/15-independence-and-conditional-expectation.html">独立和条件期望</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/index.html">高等概率论</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/16-independence-and-conditional-expectation.html">独立和条件期望</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
@@ -288,31 +288,37 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../src/learn/advanced-probability/15-independence-and-conditional-expectation.html" class="sidebar-item-text sidebar-link active">
+  <a href="../../../src/learn/advanced-probability/15-random-vectors.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">随机向量</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/16-independence-and-conditional-expectation.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">独立和条件期望</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../src/learn/advanced-probability/16-markov-chains-and-martingales.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../src/learn/advanced-probability/17-markov-chains-and-martingales.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">马尔可夫链与鞅</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../src/learn/advanced-probability/17-statistical-distributions-and-density-functions.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../src/learn/advanced-probability/18-statistical-distributions-and-density-functions.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">统计分布与密度函数</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../src/learn/advanced-probability/18-moments.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../src/learn/advanced-probability/19-moments.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">矩</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../src/learn/advanced-probability/19-convergence-theory.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../src/learn/advanced-probability/20-convergence-theory.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">收敛理论</span></a>
   </div>
 </li>
@@ -372,6 +378,12 @@ window.Quarto = {
   <div class="sidebar-item-container"> 
   <a href="../../../src/learn/semi-supervised-learning/01-concepts-assumptions-and-theory.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">基本概念、核心假设与理论基础</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/semi-supervised-learning/02-consistency-regularization-foundations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">一致性正则化（一）：扰动稳定性与自集成</span></a>
   </div>
 </li>
       </ul>
@@ -489,7 +501,7 @@ window.Quarto = {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/index.html">高等概率论</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/15-independence-and-conditional-expectation.html">独立和条件期望</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/index.html">高等概率论</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/16-independence-and-conditional-expectation.html">独立和条件期望</a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title">独立和条件期望</h1>
 </div>
@@ -515,7 +527,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">修改于</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">2026年7月28日</p>
+      <p class="date-modified">2026年7月29日</p>
     </div>
   </div>
     
@@ -705,10 +717,10 @@ P\left( \bigcap_{k=1}^{n}A_{t_{k}}\right)=
 <p><span class="math display">\[
 \sigma((f_{1},f_{2},\dots))=\sigma\left( \bigcup_{i=1}^{\infty}\sigma(f_{i}) \right),
 \]</span></p>
-<p><strong>?@thm-vector-measurable</strong> 的证明过程中有该式。而 <span class="math inline">\(\sigma(g(f_{1},\dots))\)</span> 得到的是 <span class="math inline">\(\sigma((f_{1},\dots))\)</span> 的子集，因此自然也是独立的。</p>
+<p><a href="../../../src/learn/advanced-probability/15-random-vectors.html#thm-vector-measurable">随机向量的分量可测性判定</a>的证明中已经得到该式。而 <span class="math inline">\(\sigma(g(f_{1},\dots))\)</span> 是 <span class="math inline">\(\sigma((f_{1},\dots))\)</span> 的子集，因此自然也是独立的。</p>
 </div>
 <p>以上推论告诉我们，<strong>对于相互独立的随机变量，将其任意分割成多个组，然后对每个组进行任意的变换得到的新的随机变量，依然是相互独立的。</strong></p>
-<p><a href="#thm-independent-pi-class" class="quarto-xref">定理&nbsp;1</a> 提示我们，对于随机变量的独立性的判定，可以仅通过分布函数 <span class="math inline">\(F\)</span> 进行（这里涉及到 <strong>?@def-n-dist-rv</strong> 和 <strong>?@def-margin-dist</strong> 之间的关系）。也就是下面的一系列等价条件：</p>
+<p><a href="#thm-independent-pi-class" class="quarto-xref">定理&nbsp;1</a> 提示我们，对于随机变量的独立性判定，可以只通过分布函数 <span class="math inline">\(F\)</span> 进行；这里使用了<a href="../../../src/learn/advanced-probability/15-random-vectors.html#def-n-dist-rv">联合分布函数</a>与<a href="../../../src/learn/advanced-probability/15-random-vectors.html#def-margin-dist">边缘分布函数</a>之间的关系。也就是下面的一系列等价条件：</p>
 <div id="thm-indepent-distribution" class="theorem">
 <p><span class="theorem-title"><strong>定理 2 (分布函数独立)</strong></span> 概率空间 <span class="math inline">\((X,\mathcal{F},P)\)</span> 上的随机变量族 <span class="math inline">\(\{ f_{t},t\in T \}\)</span>，以 <span class="math inline">\(F_{t},t\in T\)</span> 表示对应的分布函数族，则下列命题<strong>等价</strong>： (1) <span class="math inline">\(\{ f_{t},t\in T \}\)</span> 相互独立；</p>
 <ol start="2" type="1">
@@ -753,7 +765,7 @@ P(f_{t_{1}},\dots,f_{t_{n}})^{-1}\left( \prod\limits_{i=1}^{n}A_{i} \right)
 Pf^{-1}\left( \prod\limits_{i=1}^{n}A_{i} \right)
 =\prod\limits_{i=1}^{n}Pf_{t_{k}}^{-1}(A_{i}),
 \]</span></p>
-<p>也就是说 <span class="math inline">\(Pf^{-1}\)</span> 是 <span class="math inline">\(\{ Pf_{t_{k}}^{-1} \}\)</span> 的乘积测度，则直接使用 <strong>?@thm-fubini-plus</strong> 就可以得到我们的结论。而这实际上是 (2) 的结论，也就是说我们<strong>现在需要证明 (3)-&gt;(2)</strong>。(3) 的条件实际上是在说 <span class="math inline">\(Pf^{-1}\)</span> 和 <span class="math inline">\(\prod\limits_{k=1}^{n}Pf_{t_{k}}^{-1}\)</span> 在 <span class="math inline">\(\pi\)</span> -class <span class="math inline">\(\{ (-\infty, (x_{1},\dots,x_{n})] \}\)</span> 是相同的，容易证明两者在 <a href="../../../src/learn/advanced-probability/13-finite-product-spaces.html#95c889">高维区间</a> 构成的半环 <span class="math inline">\(\mathcal{L}_{\mathbb{R}^{n}}=\{ ((a_{1},\dots,a_{n}), (b_{1},\dots,b_{n})] \}\)</span> 上也相等，直接根据 1.1 测度空间和概率空间 (<code>1.1 测度空间和概率空间#^3c25cf</code>)，可以知道两者在 <span class="math inline">\(\mathcal{B}^{n}=\sigma(\mathcal{L}_{\mathbb{R}^{n}})\)</span> 上也相等。</p>
+<p>也就是说 <span class="math inline">\(Pf^{-1}\)</span> 是 <span class="math inline">\(\{ Pf_{t_{k}}^{-1} \}\)</span> 的乘积测度，则直接使用 <strong>?@thm-fubini-plus</strong> 就可以得到我们的结论。而这实际上是 (2) 的结论，也就是说我们<strong>现在需要证明 (3)-&gt;(2)</strong>。(3) 的条件实际上是在说 <span class="math inline">\(Pf^{-1}\)</span> 和 <span class="math inline">\(\prod\limits_{k=1}^{n}Pf_{t_{k}}^{-1}\)</span> 在 <span class="math inline">\(\pi\)</span> -class <span class="math inline">\(\{ (-\infty, (x_{1},\dots,x_{n})] \}\)</span> 是相同的，容易证明两者在 <a href="../../../src/learn/advanced-probability/13-finite-product-spaces.html#def-high-dim-interval">高维区间</a> 构成的半环 <span class="math inline">\(\mathcal{L}_{\mathbb{R}^{n}}=\{ ((a_{1},\dots,a_{n}), (b_{1},\dots,b_{n})] \}\)</span> 上也相等，直接根据 1.1 测度空间和概率空间 (<code>1.1 测度空间和概率空间#^3c25cf</code>)，可以知道两者在 <span class="math inline">\(\mathcal{B}^{n}=\sigma(\mathcal{L}_{\mathbb{R}^{n}})\)</span> 上也相等。</p>
 <p>(4)-&gt;(1)：<span class="math inline">\(\forall A_{k} \in\mathcal{B},k=1,\dots,n\)</span>，令</p>
 <p><span class="math display">\[
 g=I_{\prod\limits_{k=1}^{n}A_{k}}=\prod\limits_{k=1}^{n}I_{A_{k}},
@@ -814,7 +826,7 @@ f^{-1}(A)=g^{-1}(A)\implies P (f^{-1}(A)\cap g^{-1}(A))
 =P(f^{-1}(A)) \neq P(f^{-1}(A))^{2},
 \]</span></p>
 <p>显然，此时<strong>独立</strong>在大部分情况下都是不成立的。</p>
-<p>若是 <span class="math inline">\(Pf^{-1}=Pg^{-1}\)</span>，则独立是有可能成立的。比如，在 Borel 乘积测度空间中 <span class="math inline">\((\mathbb{R}^{n},\mathcal{B}^{n},P^{n})\)</span>，对于其上所有的 <a href="../../../src/learn/advanced-probability/13-finite-product-spaces.html#1f2abf">投影</a> <span class="math inline">\(\pi_{i}\)</span> ，此时，容易证明其满足 <a href="#thm-indepent-distribution" class="quarto-xref">定理&nbsp;2</a> (2) ，因此满足独立的定义。而其分布函数是 <span class="math inline">\(P^{n}\pi_{k}^{-1}=P\)</span> 是一样的。</p>
+<p>若是 <span class="math inline">\(Pf^{-1}=Pg^{-1}\)</span>，则独立是有可能成立的。比如，在 Borel 乘积测度空间中 <span class="math inline">\((\mathbb{R}^{n},\mathcal{B}^{n},P^{n})\)</span>，对于其上所有的 <a href="../../../src/learn/advanced-probability/13-finite-product-spaces.html#def-project">投影</a> <span class="math inline">\(\pi_{i}\)</span> ，此时，容易证明其满足 <a href="#thm-indepent-distribution" class="quarto-xref">定理&nbsp;2</a> (2) ，因此满足独立的定义。而其分布函数是 <span class="math inline">\(P^{n}\pi_{k}^{-1}=P\)</span> 是一样的。</p>
 <p>从 <a href="#thm-indepent-distribution" class="quarto-xref">定理&nbsp;2</a> (2) 和 (3) 可以知道，独立对分布函数的限制在于<strong>边缘分布函数与联合分布函数之间的乘积关系</strong>；同分布则要求<strong>边缘分布函数之间要相同</strong>。这两个要求是可以共存的。</p>
 </div>
 </div>
@@ -1910,7 +1922,7 @@ f(x,y)=p(x|y)p(y).
 {\int p(x,y)\lambda(dx) }PY^{-1}(dy),
 \end{align}
 \]</span></p>
-<p>其中, 第一行是因为给定值的条件期望的定义, 第三行是因为 Fubini 定理, 最后一行是因为 <strong>?@prp-comb-margin-density</strong> 的结论。</p>
+<p>其中，第一行来自给定值条件期望的定义，第三行使用 Fubini 定理，最后一行使用<a href="../../../src/learn/advanced-probability/15-random-vectors.html#prp-comb-margin-density">联合密度与边缘密度的关系</a>。</p>
 </div>
 <p>与初等概率论中一致, 我们可能还会使用 <span class="math inline">\(f_{X}(x),f_{Y}(y),f_{X,Y}(x,y),f_{X|Y}(x,y)\)</span> 来分别表示 <span class="math inline">\(X,Y\)</span> 的边缘密度函数, 联合密度函数以及条件密度函数. 当 <span class="math inline">\(f_{X}(x)\)</span> 或 <span class="math inline">\(f_{Y}(y)\)</span> 不等于 0 时, 根据以上内容,我们有</p>
 <p><span class="math display">\[
