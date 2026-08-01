@@ -40,3 +40,7 @@ resources/coverage
 resources/audits/*
 
 _codes/
+
+
+# skills相关文件
+!.agents/skills
