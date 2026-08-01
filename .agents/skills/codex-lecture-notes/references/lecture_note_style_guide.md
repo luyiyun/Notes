@@ -11,7 +11,7 @@ Develop a new series through the full learning-first workflow:
 1. Propose and confirm the learning directory in conversation.
 2. Teach and discuss the confirmed units one at a time.
 3. After the user requests full note assembly, propose and confirm a detailed final outline.
-4. Create or update `series_index.qmd` only after that confirmation when it adds value or the repository requires it.
+4. Create or update the repository-appropriate series index only after that confirmation when it adds value or the repository requires it. Use `index.qmd` for a Quarto directory landing page when that is the local convention; use `series_index.qmd` only when the repository already establishes that pattern.
 5. Write one `chapter_<slug>.qmd` at a time unless the user explicitly requests a batch.
 
 For an ongoing task, allow staged assembly: propose and confirm an outline for only the discussed units, write that batch, update `_codex_notes.md`, and then continue with the next eligible learning unit. Do not regenerate the complete learning directory or pull future units into the current batch.
@@ -22,29 +22,35 @@ Keep the source-backed coverage rules from the main skill. Lecture style changes
 
 ## Series Index
 
-After the detailed final outline is confirmed, use `series_index.qmd` to make the course-like plan explicit when the repository or topic benefits from a persistent series index:
+After the detailed final outline is confirmed, use the repository-appropriate index page to state the research scope and provide navigation when the topic benefits from a persistent series index.
+
+Treat the index as a concise academic overview rather than a substitute for the first formal chapter:
+
+- Introduce the topic through a representative research task, but describe it in precise, objective prose.
+- Use conventional academic section names such as `问题背景`, `研究历史`, and `目录`. Avoid rhetorical, conversational, metaphorical, or promotional headings such as `从一道……开始`, `一条由……推动的……`, or `讲义地图`.
+- Keep the problem background and historical development concise. Move formal definitions, notation, assumptions, models, derivations, algorithms, and the complete research workflow to the first chapter or the relevant specialist chapter.
+- Prefer one compact directory table for the full series. When the series has multiple units, group chapters in the first column with row spans when the output format supports them; keep the chapter-summary column to one short sentence or noun phrase.
+- Do not add standalone `论文状态` or `建议路线` sections by default. Record publication status in the relevant chapter, citation, or local source note; add alternative reading routes only when the user explicitly requests them or they are essential to the course design.
+
+A concise default structure is:
 
 ```markdown
-# 主题标题
+# 问题背景
 
-## 主题定位
+用若干自然段说明研究对象、代表性任务与系列范围，并将详细理论内容指向正式章节。
 
-## 先修知识
+# 研究历史
 
-## 学习目标
+概述关键理论传统与方法演进；仅保留理解目录结构所需的历史信息。
 
-## 讲义目录
+# 目录
 
-| 章 | 标题 | 内容精要 | 关键概念 | 主要材料 |
-|---:|---|---|---|---|
-| 1 | ... | 1-2 个自然段 | ... | ... |
-
-## 建议附录
-
-## 参考来源说明
+| 单元 | 讲义 | 内容概要 |
+|---|---|---|
+| 第一单元 | [01 章节标题](01-topic.qmd) | 一句简短概述。 |
 ```
 
-Each chapter synopsis should be 1-2 substantive paragraphs. State the core question, why the chapter belongs in the series, the main concepts or results, and the intended transition to later chapters. Do not collapse this into a bare bullet list.
+Use row spans or the project's supported table extension when several chapters belong to the same unit. Keep detailed chapter motivation, concepts, results, and transitions in the chapter itself rather than expanding the index into multiple parallel summaries.
 
 ## Chapter Rhythm
 

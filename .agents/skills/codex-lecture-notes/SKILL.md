@@ -22,7 +22,7 @@ Load only the resources needed for the selected route:
 
 - Read `references/note_style_guide.md` before detailed teaching, outline design, substantive drafting, restructuring, or style-sensitive revision.
 - Read `references/source_search_protocol.md` before searching, selecting external sources, or comparing evidence. Do not load it for purely local wording, structure, formatting, or project-maintenance tasks.
-- Read `references/lecture_note_style_guide.md` when designing learning units, a lecture-note series, staged chapter assembly, `series_index.qmd`, or chapter components.
+- Read `references/lecture_note_style_guide.md` when designing learning units, a lecture-note series, staged chapter assembly, a series index page, or chapter components.
 - Read `references/quarto_qmd_conventions.md` before designing a QMD outline, modifying `.qmd`, integrating a note into a Quarto project, or validating a render.
 - Use `assets/codex-notes-template.md` only when initializing project state.
 

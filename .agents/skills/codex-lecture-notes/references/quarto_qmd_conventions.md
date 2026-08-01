@@ -7,7 +7,7 @@ Use this guide when producing or editing Quarto `.qmd` notes, especially for not
 - If the user provides a concrete `.qmd`, edit that file.
 - If the task is a new note in an existing Quarto project, follow the repository's folder, filename, `order`, bibliography, and link conventions.
 - Use English folder and file names in kebab-case for note files.
-- Use `series_index.qmd` and `chapter_<slug>.qmd` for new research-series work unless the repository has a stronger naming convention.
+- Use `index.qmd` for a Quarto directory landing page when that is the repository convention. Use `series_index.qmd` only when the project already adopts that filename, and use `chapter_<slug>.qmd` only when no stronger chapter-naming convention exists.
 - Use `chapter_notes.qmd` only when no target file, project convention, or user-specified filename exists.
 - Preserve existing YAML front matter unless a change is needed for the task.
 - For series notes, inspect the index and adjacent files before choosing titles, `order`, and links.
@@ -51,7 +51,7 @@ When migrating from Obsidian, convert `created` to `date` and replace `updated` 
 - When the edited content is only part of a larger note, prefer natural paragraphs, bold lead-ins, and purposeful callouts over fragmented headings.
 - Keep headings descriptive and close to the user's materials while allowing a clearer synthesized structure.
 - Make headings advance a smooth explanatory main line. Avoid top-level source-inventory headings or source-category headings.
-- In `series_index.qmd`, use headings for topic positioning, prerequisites, learning objectives, table of contents, appendices, and reference-source notes.
+- In a series index page, prefer concise academic headings such as `问题背景`, `研究历史`, and `目录`; add prerequisites, learning objectives, appendices, or source notes only when they materially improve navigation. Avoid rhetorical or metaphorical labels.
 - In chapter files, use headings for motivating questions, definitions and notation, results, derivations or algorithms, examples and figures, remarks, summary, exercises, and references.
 
 ## Series Notes
@@ -60,6 +60,8 @@ When editing a note in a series:
 
 - Reuse notation, background, and scope from the series index instead of repeating it.
 - Create or update the series index only after the detailed final outline is confirmed.
+- Keep the index concise and navigational. Place detailed definitions, notation, models, derivations, algorithms, and the complete research workflow in the first formal chapter or the relevant specialist chapter.
+- Prefer one compact directory table for the series; use its first column to group units with row spans when supported, and keep content summaries brief.
 - Update relative links if files are renamed or moved.
 - Keep `order` contiguous when the series depends on numeric ordering.
 - Check adjacent notes for references such as "上一篇", "第 3 篇", or explicit filenames.

@@ -6,6 +6,8 @@ Use this guide when planning, drafting, or revising Chinese Quarto lecture notes
 
 - Write in Chinese.
 - Use a style close to rigorous technical lecture notes: patient, motivating, mathematically explicit when needed, and organized around concepts rather than source order.
+- Prefer precise, objective STEM prose. Keep motivating tasks in the exposition, but avoid conversational scene-setting, direct appeals to the reader, rhetorical questions used in place of analysis, and metaphorical or promotional wording.
+- Use concise, conventional academic headings that identify the section's subject, such as `问题背景`, `研究历史`, `基本定义`, `模型设定`, `估计方法`, `数值结果`, and `目录`. Put narrative transitions in prose rather than headings such as `从一道……开始`, `一条由……推动的……`, or `讲义地图`.
 - Avoid excessive colloquial language.
 - Avoid empty AI-style generalizations such as "这些材料主要介绍了若干重要内容" without concrete content.
 - Keep the source author's concept boundaries, distinctions, and reasoning order whenever possible.
