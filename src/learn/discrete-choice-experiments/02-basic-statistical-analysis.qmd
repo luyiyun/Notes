@@ -1,0 +1,988 @@
+---
+title: "基础统计分析"
+description: "从备选项层长表出发，系统介绍属性编码、设计矩阵、随机效用、多项 Logit、似然估计、统计检验与结果解释。"
+draft: false
+tags:
+  - 离散选择实验
+  - 设计矩阵
+  - 随机效用
+  - 多项 Logit
+  - 最大似然
+  - 可识别性
+date: 2026-07-31
+date-modified: last-modified
+order: 2
+---
+
+获得 DCE 选择数据后，需要把任务内的方案比较转化为可识别的统计表示，在明确行为与分布假设后建立选择概率模型，并据此完成参数估计、统计推断和结果解释。本章围绕这条分析链条介绍 DCE 的基础统计方法及其方法学原理。
+
+# 数据表示与设计矩阵
+
+问卷中的属性通常包含百分比、金额和文字类别，不能原样代入统计模型。基础分析首先要把原始长表转换为一组定义明确的数值列，再检查这些列在任务内部能否提供彼此独立的方案对比。这一步得到两个相关但不同的对象：备选项层的长表设计矩阵 $\mathbf X$，以及用于检查结构性识别的任务内对比矩阵 $\mathbf D$。
+
+## 长表的统计结构
+
+设受访者记为 $n$，其第 $t$ 道选择任务中的备选项记为 $j\in C_{nt}$。一行数据对应一个 $(n,t,j)$ 组合。长表中的变量可以分为四类：
+
+| 变量类型 | 示例 | 分析作用 |
+|---|---|---|
+| 标识变量 | 受访者、任务、备选项 | 重建受访者、选择时点和选择集 |
+| 选择结果 | `chosen` | 标记该任务中实际被选中的备选项 |
+| 备选项变量 | 疗效、风险、费用、给药方式 | 构造随方案变化的解释变量 |
+| 个体或任务变量 | 年龄、病情、任务顺序 | 描述受访者或任务；通常需要与方案变量交互 |
+
+任务编号必须与受访者编号联合使用。不同受访者都可能回答“任务 1”，因此**真正唯一的选择时点是 $(n,t)$**，而不是单独的 $t$。令 $y_{ntj}=1$ 表示备选项 $j$ 被选中，否则为 0；强制选择任务应满足
+
+$$
+\sum_{j\in C_{nt}}y_{ntj}=1.
+$$
+
+正式编码前至少应检查：
+
+- $(n,t,j)$ 是否唯一；
+- 每道任务的实际可选方案是否完整；
+- 选择变量是否恰有一个 1；
+- 属性值是否与问卷版本一致；
+- 被设置为不可选的方案是否被正确排除。
+
+若任务允许多选、排序或连续评分，就不再是这里讨论的单次离散选择数据结构。
+
+## 属性变量变换
+
+连续属性通常可以直接转成数值，但**单位和基准应当服务于解释**。沿用上一章的治疗选择例子，定义
+
+$$
+\begin{aligned}
+x_{\mathrm{eff}}
+&=\frac{\text{改善概率}-55}{10},\\
+x_{\mathrm{risk}}
+&=\text{风险百分点},\\
+x_{\mathrm{cost}}
+&=\frac{\text{费用}}{100}.
+\end{aligned}
+$$
+
+再用 $\mathrm{ASC}_{\mathrm{active}}$ 区分实验治疗与维持现状。第一道任务可以转换为：
+
+| 备选项 | 被选中 | $\mathrm{ASC}_{\mathrm{active}}$ | $x_{\mathrm{eff}}$ | $x_{\mathrm{risk}}$ | $x_{\mathrm{cost}}$ |
+|---|---:|---:|---:|---:|---:|
+| 治疗 A | 1 | 1 | 1.5 | 5 | 8 |
+| 治疗 B | 0 | 1 | 0 | 1 | 2 |
+| 维持现状 | 0 | 0 | $-1.5$ | 0 | 0 |
+
+针对**连续型变量**，这种缩放不会改变模型能够表达的选择概率，但会改变系数单位。$x_{\mathrm{cost}}$ 的系数对应费用增加 100 元，而不是增加 1 元；把疗效中心化在 55% 还可以使 ASC 对应一个更明确的属性基准。分析报告必须给出单位、中心化基准和任何非线性变换。
+
+针对**分类属性**，不能仅用任意整数 $1,2,3$ 表示，因为这种写法强加了等距且线性的顺序。而应该使用**哑变量变换**。设给药方式有口服、注射和输液三个水平，常用编码如下：
+
+| 水平 | Dummy：注射 | Dummy：输液 | Effects：注射 | Effects：输液 |
+|---|---:|---:|---:|---:|
+| 口服 | 0 | 0 | $-1$ | $-1$ |
+| 注射 | 1 | 0 | 1 | 0 |
+| 输液 | 0 | 1 | 0 | 1 |
+
+这里有两种方案：
+
+- 采用 **dummy coding** 时，口服是参照水平，注射和输液系数分别表示相对口服的效用差。参照水平的贡献被规范为 0，但这不表示口服“没有效用”；它只是把效用原点放在口服水平。
+- 采用 **effects coding** 时，三个水平的效用贡献之和被约束为 0。表中只估计注射和输液两个系数，口服水平由
+    $$
+    \beta_{\mathrm{oral}}
+    =-\beta_{\mathrm{inj}}-\beta_{\mathrm{inf}}
+    $$
+    恢复。此时各水平系数表示相对属性水平平均效用的偏离。
+
+Dummy coding 与 effects coding 是同一组水平差异的不同坐标系；在效用空间和约束等价时，它们应给出相同的水平间差异和预测概率，选择主要取决于解释目的，而不是哪种编码“包含更多信息”。[Hauber et al. (2016)](https://doi.org/10.1016/j.jval.2016.04.004)
+
+::: {.callout-warning title="维持现状不能被默认编码为口服"}
+若维持现状没有给药方式，将它在两个 dummy 列上都编码为 0，会在形式上使其与口服共享给药方式贡献。研究者必须明确选择：把“无治疗”定义为一个真实水平；只让给药方式变量对实验治疗生效并加入治疗 ASC；或为维持现状建立独立效用规格。哪种方式合理取决于该备选项在真实决策中的含义。
+:::
+
+**备选项特定常数**（alternative-specific constant，ASC）表示没有被已纳入属性解释的平均方案差异。在无标签的“治疗 A／治疗 B／维持现状”任务中，可以对两个实验治疗共同设置 $\mathrm{ASC}_{\mathrm{active}}$；若 A、B 是具有实质含义的固定标签，则可能需要分别设置 ASC。
+
+交互项用于表示非加性效应。例如，$x_{\mathrm{risk}}x_{\mathrm{eff}}$ 允许风险效应随疗效变化；$\mathrm{Age}_n x_{ntj,\mathrm{risk}}$ 则允许风险偏好随年龄变化。年龄本身在同一人的同一道任务中对所有备选项完全相同，单独加入 $\mathrm{Age}_n$ 会在任务内比较中相消。个体变量必须与方案属性、备选项标签或 ASC 交互，才能影响条件选择概率。
+
+## 设计矩阵
+
+将一个备选项的编码变量写成行向量 $\mathbf x_{ntj}^{\mathsf T}$，同一道任务的所有方案堆叠为
+
+$$
+\mathbf X_{nt}
+=
+\begin{pmatrix}
+\mathbf x_{nt1}^{\mathsf T}\\
+\mathbf x_{nt2}^{\mathsf T}\\
+\vdots\\
+\mathbf x_{ntJ}^{\mathsf T}
+\end{pmatrix}.
+$$
+
+若上一表的列顺序为
+
+$$
+(\mathrm{ASC}_{\mathrm{active}},
+x_{\mathrm{eff}},
+x_{\mathrm{risk}},
+x_{\mathrm{cost}}),
+$$
+
+则相应的长表设计矩阵是
+
+$$
+\mathbf X_{nt}
+=
+\begin{pmatrix}
+1&1.5&5&8\\
+1&0&1&2\\
+0&-1.5&0&0
+\end{pmatrix}.
+$$
+
+$\mathbf X_{nt}$ 保留了全部备选项及其选择集结构，是多项选择模型实际组织数据的主要形式。
+
+## 任务内对比
+
+为了看清实验提供了哪些可区分的信息，可以选择一个参照方案并取任务内行差。以维持现状为参照：
+
+$$
+\begin{aligned}
+\mathbf D_{nt}
+&=
+\begin{pmatrix}
+\mathbf x_{nt,A}-\mathbf x_{nt,SQ}\\
+\mathbf x_{nt,B}-\mathbf x_{nt,SQ}
+\end{pmatrix}\\
+&=
+\begin{pmatrix}
+1&3&5&8\\
+1&1.5&1&2
+\end{pmatrix}.
+\end{aligned}
+$$
+
+两行分别描述**治疗 A** 和**治疗 B** 相对**维持现状**的属性变化。一个含 $J$ 个备选项的任务最多提供 $J-1$ 个线性独立的方案对比。更换参照项会改变 $\mathbf D_{nt}$ 的具体写法，却不会改变它张成的对比空间。**因此正式估计通常继续保留完整的 $\mathbf X_{nt}$，而 $\mathbf D$ 主要用于解释二选一模型和检查结构性识别**。
+
+## 参数识别
+
+把全部任务的独立对比堆叠为
+
+$$
+\mathbf D
+=
+\begin{pmatrix}
+\mathbf D_{11}\\
+\mathbf D_{12}\\
+\vdots\\
+\mathbf D_{NT_N}
+\end{pmatrix}.
+$$
+
+在效用参数化以及必要的位置、尺度约束已经确定后，若模型包含 $K$ 个自由效应，**结构性识别**首先要求
+
+$$
+\operatorname{rank}(\mathbf D)=K.
+$$
+
+若存在非零向量 $\mathbf a$ 使 $\mathbf D\mathbf a=\mathbf0$，数据只能识别某些参数组合，不能区分沿 $\mathbf a$ 方向变化的参数值。这个条件可以具体理解为：
+
+- 某属性若在每道任务内部都相同，其对比列恒为 0，不能估计；
+- 两个属性若始终按固定比例共同变化，只能估计它们的一个线性组合；
+- 非线性项和交互项会增加参数维数，问卷必须提供相应的独立变化；
+- 重复发放同一个秩亏设计只能增加重复观测，不能恢复缺失的对比方向。
+
+必须进一步区分三种问题：
+
+1. **结构性不可识别**是 $\mathbf D$ 精确秩亏，目标参数根本无法分开；
+2. **弱识别或低精度**是矩阵形式上满秩但列近似共线，信息矩阵接近奇异；
+3. **有限样本分离**则是某些属性组合几乎完美预测选择，使极大似然系数持续增大。
+
+增加受访者可能改善后两类问题的判断或精度，但不能修复第一类问题。
+
+::: {.callout-important title="先检查任务内对比，再讨论统计效率"}
+编码只是在选定的效用空间中建立坐标，不会创造问卷没有提供的信息。实验设计应先保证目标模型的任务内对比矩阵具有所需秩，再在给定任务数、现实约束和认知负担下提高信息量或 D-efficiency。[Johnson et al. (2013)](https://www.ispor.org/docs/default-source/resources/outcomes-research-guidelines-index/piis1098301512041629.pdf?sfvrsn=d9c2e90c_0)
+:::
+
+至此，长表已经被转换为可以进入选择模型的统计表示；下一步需要说明任务内属性对比如何通过随机效用理论转化为选择概率。
+
+# 随机效用理论
+
+设计矩阵描述可观测的方案差异，随机效用理论则通过潜在效用排序把这些差异与实际选择联系起来。
+
+## 效用最大化
+
+令 $Y_{nt}$ 表示受访者 $n$ 在第 $t$ 道任务中的选择，$C_{nt}$ 表示该任务实际可选的方案集合。研究者没有观察到受访者对每个方案的效用 $U_{ntj}$，只观察到其中哪个方案取得最大效用。效用最大化的选择规则写为
+
+$$
+Y_{nt}=i
+\quad\Longleftrightarrow\quad
+U_{nti}\ge U_{ntj},\qquad \forall j\in C_{nt}.
+$$
+
+若效用的联合分布连续，两个方案效用完全相同的概率为 0；否则还需要明确平局时的选择规则。将潜在效用分解为
+
+$$
+U_{ntj}
+=V(\mathbf x_{ntj},\mathbf z_n;\boldsymbol\theta)
++\varepsilon_{ntj},
+$$
+
+其中，$\mathbf x_{ntj}$ 是随方案变化的属性及其变换，$\mathbf z_n$ 是个体特征，$V(\cdot)$ 是研究者设定的**代表性效用**或**系统效用**，$\varepsilon_{ntj}$ 是没有被这一代表性效用函数解释的部分。后者可以包含研究者未观测到的偏好因素、变量测量误差、模型未能表达的行为过程以及个体与时点间的变化。
+
+## 选择概率
+
+记同一道任务的随机项向量为
+
+$$
+\boldsymbol\varepsilon_{nt}
+=(\varepsilon_{nt1},\ldots,\varepsilon_{ntJ})^{\mathsf T},
+$$
+
+在该联合分布存在密度时，记其条件联合密度为
+$f(\boldsymbol\varepsilon_{nt}\mid\mathbf X_{nt},\mathbf z_n;\boldsymbol\psi)$。这里暂不施加随机项与观测变量独立的假设。方案 $i$ 的**条件选择概率**可以写成
+
+$$
+\begin{aligned}
+P_{nti}(\boldsymbol\theta,\boldsymbol\psi)
+&=\Pr(Y_{nt}=i\mid\mathbf X_{nt},\mathbf z_n)\\
+&=\int
+\mathbf 1\!\left\{
+V_{nti}+\varepsilon_{nti}
+\ge V_{ntj}+\varepsilon_{ntj},\ \forall j\in C_{nt}
+\right\}
+f(\boldsymbol\varepsilon_{nt}\mid\mathbf X_{nt},\mathbf z_n;\boldsymbol\psi)
+\,\mathrm d\boldsymbol\varepsilon_{nt},
+\end{aligned}
+$$
+
+其中 $V_{ntj}=V(\mathbf x_{ntj},\mathbf z_n;\boldsymbol\theta)$。这个积分把一个潜在的效用排序事件转化为可观测选择的概率，也说明了离散选择模型的统计本质：**给定代表性效用和随机项的联合分布，对所有会使方案 $i$ 成为效用最大者的随机项取值求概率**。不同的函数形式与分布假设会产生不同的选择概率，而随机效用理论本身并未预先指定其中某一种形式。[Train (2009), Chapter 2](https://eml.berkeley.edu/books/choice2nd/Ch02_p9-33.pdf)
+
+::: {.callout-important title="随机不等于随意作答"}
+这里的“随机”是相对于研究者所掌握的信息而言的。受访者可能基于明确但未被研究者观测的理由作出选择，研究者因而只能对选择作概率陈述。疲劳、误解或随机点击也可能影响随机项，却不是随机效用模型对所有不确定性的唯一解释。
+:::
+
+## 模型假设
+
+效用最大化和分解式 $U=V+\varepsilon$ 只给出了选择模型的基本框架，还不足以唯一确定选择概率。特别是，$\varepsilon=U-V$ 只是相对于既定 $V$ 得到的未解释部分；“未解释”并不自动意味着它与观测变量独立。要得到可以估计的统计模型，还需要明确代表性效用、随机项和参数结构方面的假设。
+
+**代表性效用的函数形式。** 一般可以写成
+
+$$
+V_{ntj}
+=g(\mathbf x_{ntj},\mathbf z_n;\boldsymbol\theta).
+$$
+
+最常用的基础假设是**代表性效用对参数线性**：
+
+$$
+V_{ntj}
+=\mathbf x_{ntj}^{\mathsf T}\boldsymbol\beta.
+$$
+
+这是为了估计和解释而加入的函数形式假设，不是随机效用理论自身的结论。$\mathbf x_{ntj}$ 可以包含中心化或缩放后的连续属性、分类属性的编码列、非线性基函数和交互项，因此“对参数线性”并不要求效用与原始属性之间必然呈简单直线关系。但是，如果设计矩阵只包含各属性的主效应，这一模型就同时假定这些效应在研究范围内可加且斜率不变；需要表达阈值、边际效用递减或属性协同时，应相应地扩展 $\mathbf x_{ntj}$ 或采用非线性的 $g(\cdot)$。
+
+**随机项与观测变量的关系。** 若在期望存在时将代表性效用定义为
+
+$$
+V_{ntj}
+=\operatorname E(U_{ntj}\mid\mathbf X_{nt},\mathbf z_n),
+$$
+
+则可以得到**条件均值假设**
+
+$$
+\operatorname E(\varepsilon_{ntj}\mid\mathbf X_{nt},\mathbf z_n)=0.
+$$
+
+条件均值为零仍弱于统计独立。例如，$\varepsilon_{ntj}=\sigma(\mathbf z_n)\widetilde\varepsilon_{ntj}$ 可以具有零条件均值，但其方差随个体特征变化。更强的假设是随机项的整个条件分布不随观测变量改变：
+
+$$
+F_{\boldsymbol\varepsilon}
+(\mathbf e\mid\mathbf X_{nt},\mathbf z_n)
+=F_{\boldsymbol\varepsilon}(\mathbf e).
+$$
+
+在正确实施的随机化 DCE 中，实验分配的属性与未观测效用因素相独立通常较为可信；但这并不能自动排除函数形式遗漏、个体间异方差或重复任务相关。若只要求实验属性外生、同时允许随机项分布随个体特征变化，则可以采用较弱的假设
+
+$$
+F_{\boldsymbol\varepsilon}
+(\mathbf e\mid\mathbf X_{nt},\mathbf z_n)
+=F_{\boldsymbol\varepsilon}(\mathbf e\mid\mathbf z_n).
+$$
+
+因此，前面的选择概率使用条件密度
+$f(\boldsymbol\varepsilon_{nt}\mid\mathbf X_{nt},\mathbf z_n)$，是为了保留一般情形；只有加入分布独立假设后，它才可以简化为不含 $\mathbf X_{nt}$ 和 $\mathbf z_n$ 的密度。
+
+**随机项的分布与依赖结构。** 除了与观测变量的关系，还必须说明每个随机项的边缘分布和尺度、同一道任务中不同方案随机项之间的相关性，以及同一受访者多道任务之间是否条件独立。这些假设共同决定选择概率的具体形式、方案之间的替代关系，以及重复回答应如何进入似然和不确定性估计。
+
+**参数的总体结构。** 基础模型通常假定所有受访者共享同一个 $\boldsymbol\theta$ 或 $\boldsymbol\beta$。若允许参数随受访者变化，还需规定个体参数的分布、它与 $\mathbf z_n$ 的关系及参数间相关性；一部分未观测偏好异质性由此从 $\varepsilon_{ntj}$ 转入随机参数。
+
+因此，随机效用理论只规定效用最大化和潜在效用分解。代表性效用的函数形式、随机项的外生性与联合分布、任务间依赖以及参数是否同质，才共同确定一个可估计的选择模型；多项 Logit 是其中一种特定组合。
+
+## 位置、尺度与识别
+
+选择模型通过潜在效用的排序生成观测选择，因此效用的共同原点和计量单位不属于选择数据能够确定的经验量。对同一道任务中的所有方案施加共同正仿射变换
+
+$$
+U_{ntj}'=a_{nt}+b_{nt}U_{ntj},
+\qquad b_{nt}>0,
+$$
+
+任意两个方案的效用差满足
+
+$$
+U_{nti}'-U_{ntj}'
+=b_{nt}(U_{nti}-U_{ntj}).
+$$
+
+共同平移量 $a_{nt}$ 在差值中抵消，正缩放倍数 $b_{nt}$ 保持差值符号不变，因而
+
+$$
+U_{nti}>U_{ntj}
+\quad\Longleftrightarrow\quad
+U_{nti}'>U_{ntj}'.
+$$
+
+变换前后的最大效用方案及其选择概率完全相同。该结论要求同一个变换作用于任务内所有方案，且 $b_{nt}$ 为正；方案特定的变换可能改变排序，负缩放则会反转排序。[Train (2009), Sections 2.4--2.5](https://eml.berkeley.edu/books/choice2nd/Ch02_p9-33.pdf)
+
+这种观测等价性意味着，**同一组选择概率对应无穷多个效用表示**。**统计模型必须对效用位置和尺度施加规范化约束，才能得到唯一的参数化**。规范化发生在模型设定中，而不是对原始选择数据或不可观测效用进行预处理。
+
+**位置规范化。** 共同平移不改变任务内效用差，因此所有方案共享的效用水平不能估计。含有 $J$ 个固定标签方案时，可以选定参照方案 $r$ 并令其备选项特定常数满足
+
+$$
+\mathrm{ASC}_r=0,
+$$
+
+只估计其余 $J-1$ 个 ASC；采用 ASC 和为零等约束也会得到等价的效用差和选择概率。相应地，模型不包含一个对任务内所有方案都相同的普通截距。
+
+**尺度规范化。** 设线性效用模型为
+
+$$
+U_{ntj}
+=\mathbf x_{ntj}^{\mathsf T}\boldsymbol\beta
++\sigma\widetilde\varepsilon_{ntj},
+\qquad \sigma>0.
+$$
+
+将全部效用除以 $\sigma$ 得到
+
+$$
+\frac{U_{ntj}}{\sigma}
+=\mathbf x_{ntj}^{\mathsf T}
+\frac{\boldsymbol\beta}{\sigma}
++\widetilde\varepsilon_{ntj}.
+$$
+
+两种表示产生相同选择，因此数据识别的是规范化系数
+
+$$
+\boldsymbol\beta^*
+=\frac{\boldsymbol\beta}{\sigma},
+$$
+
+而不是彼此分离的 $\boldsymbol\beta$ 与 $\sigma$。多项 Logit 通常把第一类极值随机项的尺度固定为 1，并直接估计 $\boldsymbol\beta^*$；Probit 则通常固定一个效用差的方差或施加等价的协方差约束。费用以 1 元还是 100 元为单位属于解释变量的计量选择，会改变相应系数的数值单位，但不会替代潜在效用的尺度规范化。
+
+实际分析需要报告参照方案、ASC 与属性编码约束以及随机项尺度规范化。估计系数表示系统效用相对于固定随机效用尺度的作用，跨模型或跨样本比较原始系数时必须考虑尺度差异。位置与尺度规范化只解决效用表示不唯一的问题，不能修复设计矩阵的秩亏。
+
+# 多项 Logit
+
+随机效用理论将选择概率表示为随机效用联合分布上的积分，但一般情况下这个积分没有简单的解析形式。**多项 Logit（multinomial logit，MNL）**通过对随机项施加**独立同分布的第一类极值假设**，将一般选择概率化为闭式的 softmax 函数，是 DCE 基础分析中最常用的起点。
+
+## 模型假设
+
+MNL 沿用随机效用分解
+
+$$
+U_{ntj}=V_{ntj}+\varepsilon_{ntj},
+$$
+
+并假定**给定 $\mathbf X_{nt}$ 和 $\mathbf z_n$ 后，同一道任务内各方案的随机项相互独立、服从相同的单位尺度第一类极值分布**：
+
+$$
+\varepsilon_{ntj}
+\mid\mathbf X_{nt},\mathbf z_n
+\overset{\mathrm{iid}}{\sim}
+\operatorname{EV}_1(0,1),
+\qquad j\in C_{nt}.
+$$
+
+该分布也称 **Gumbel 分布**，其累积分布函数与密度分别为
+
+$$
+F(e)=\exp[-\exp(-e)]
+$$
+
+和
+
+$$
+f(e)=\exp(-e)\exp[-\exp(-e)].
+$$
+
+单位尺度 Gumbel 分布的方差为 $\pi^2/6$，这一设定同时完成效用尺度规范化；其共同位置在方案效用差中抵消。若保留一般尺度 $\sigma$，概率中的代表性效用应写为 $V_{ntj}/\sigma$。[Train (2009), Chapter 3](https://eml.berkeley.edu/books/choice2nd/Ch03_p34-75.pdf)
+
+上述 IID 假设约束同一道任务内不同方案的随机项；单次选择概率的推导不要求同一受访者的不同任务相互独立，也不要求代表性效用对参数线性。基础分析采用线性参数化时，只需在推导所得的概率中代入 $V_{ntj}=\mathbf x_{ntj}^{\mathsf T}\boldsymbol\beta$。
+
+## 选择概率
+
+固定一个选择任务并暂时省略下标 $(n,t)$。方案 $i$ 被选择的事件为
+
+$$
+V_i+\varepsilon_i
+>
+V_j+\varepsilon_j,
+\qquad \forall j\ne i,
+$$
+
+等价地，
+
+$$
+\varepsilon_j
+<
+\varepsilon_i+V_i-V_j,
+\qquad \forall j\ne i.
+$$
+
+先给定 $\varepsilon_i=s$。对任一竞争方案 $j$，
+
+$$
+\Pr(\varepsilon_j<s+V_i-V_j)
+=
+F(s+V_i-V_j).
+$$
+
+任务内随机项相互独立，因此所有不等式同时成立的条件概率为
+
+$$
+\Pr(Y=i\mid\varepsilon_i=s)
+=
+\prod_{j\ne i}
+F(s+V_i-V_j).
+$$
+
+再对尚未观测的 $\varepsilon_i$ 积分：
+
+$$
+P_i
+=
+\int_{-\infty}^{\infty}
+\left[
+\prod_{j\ne i}
+F(s+V_i-V_j)
+\right]
+f(s)\,\mathrm ds.
+$$
+
+代入 Gumbel 分布函数与密度并合并指数项，可以得到
+
+$$
+P_i
+=
+\int_{-\infty}^{\infty}
+e^{-s}
+\exp\left[
+-e^{-s}
+\sum_j e^{V_j-V_i}
+\right]
+\,\mathrm ds.
+$$
+
+求和中可以包含 $j=i$，因为 $e^{V_i-V_i}=1$ 正好对应密度 $f(s)$ 中的 $\exp[-e^{-s}]$。令
+
+$$
+A_i=\sum_j e^{V_j-V_i},
+\qquad
+q=e^{-s},
+\qquad
+\mathrm dq=-e^{-s}\mathrm ds.
+$$
+
+当 $s$ 从 $-\infty$ 增加到 $\infty$ 时，$q$ 从 $\infty$ 减小到 0，因此
+
+$$
+\begin{aligned}
+P_i
+&=\int_0^\infty e^{-A_iq}\,\mathrm dq\\
+&=\frac{1}{A_i}\\
+&=\frac{1}{\sum_j e^{V_j-V_i}}\\
+&=\frac{e^{V_i}}{\sum_j e^{V_j}}.
+\end{aligned}
+$$
+
+恢复受访者和任务下标，MNL 选择概率为
+
+$$
+P_{nti}
+=
+\frac{\exp(V_{nti})}
+{\sum_{j\in C_{nt}}\exp(V_{ntj})}.
+$$
+
+分母将同一选择集内所有方案的指数化代表性效用归一化，因而 $0<P_{nti}<1$ 且 $\sum_iP_{nti}=1$。在线性代表性效用下，
+
+$$
+P_{nti}(\boldsymbol\beta)
+=
+\frac{
+\exp(\mathbf x_{nti}^{\mathsf T}\boldsymbol\beta)
+}{
+\sum_{j\in C_{nt}}
+\exp(\mathbf x_{ntj}^{\mathsf T}\boldsymbol\beta)
+}.
+$$
+
+这一推导说明，softmax 不是任意选择的概率函数，而是效用最大化与 IID 共同尺度 Gumbel 随机项结合后的结果。[McFadden (1974)](https://escholarship.org/uc/item/0p99072q)
+
+在 DCE 文献中，解释变量主要随方案变化时，这个模型也常称为 **conditional logit**。这里的 conditional logit 与多项 Logit 使用同一个选择概率式，不应仅凭名称与匹配病例—对照研究中的 conditional logistic regression 混同。
+
+## 二项情形
+
+若 $C_{nt}=\{A,B\}$，则
+
+$$
+\begin{aligned}
+P_{ntA}
+&=
+\frac{e^{V_{ntA}}}
+{e^{V_{ntA}}+e^{V_{ntB}}}\\
+&=
+\frac{1}
+{1+\exp[-(V_{ntA}-V_{ntB})]}.
+\end{aligned}
+$$
+
+因此，
+
+$$
+\log
+\frac{P_{ntA}}{1-P_{ntA}}
+=
+V_{ntA}-V_{ntB}.
+$$
+
+若 $V_{ntj}=\mathbf x_{ntj}^{\mathsf T}\boldsymbol\beta$，则
+
+$$
+\log
+\frac{P_{ntA}}{1-P_{ntA}}
+=
+(\mathbf x_{ntA}-\mathbf x_{ntB})^{\mathsf T}
+\boldsymbol\beta.
+$$
+
+二项 DCE 因而可以表示为**方案属性差上的 logistic 回归**。其概率形式也可以从分布角度理解：**两个独立同分布 Gumbel 随机项之差服从 logistic 分布**。服从 Gumbel 分布的是各方案的随机项，而不是假定每个方案的随机项本身服从 logistic 分布。
+
+## 无关备选项独立性
+
+MNL 中任意两个方案 $i$ 和 $j$ 的概率比为
+
+$$
+\frac{P_{nti}}{P_{ntj}}
+=
+\exp(V_{nti}-V_{ntj}),
+$$
+
+其对数形式为
+
+$$
+\log\frac{P_{nti}}{P_{ntj}}
+=
+V_{nti}-V_{ntj}.
+$$
+
+在给定代表性效用后，这个概率比不包含选择集中的其他方案。该性质称为**无关备选项独立性**（independence from irrelevant alternatives，IIA）：加入或移除其他方案时，原有两个方案的相对概率保持不变。
+
+IIA 来源于独立、同分布、共同尺度的第一类极值随机项这一完整假设组合，而不能仅归因于误差独立。例如，独立正态误差导出 Probit，并不产生相同的概率比结构。若两个治疗方案共享未观测的给药便利性或品牌印象，它们之间的随机效用可能相关；此时新增一个与原方案高度相似的方案，MNL 仍会按固定比例从所有原方案分流，可能无法表达相似方案之间更强的替代关系。
+
+::: {.callout-warning title="IIA 是模型结构假设"}
+删除方案后比较参数的 Hausman–McFadden 检验是经典诊断方法，但有限样本、选择集改变和协方差差分非正定都可能使结果不稳定。[Hausman and McFadden (1984)](https://doi.org/10.2307/1910997) IIA 的判断还应结合方案之间的实质相似性、可能遗漏的共同因素、预测表现以及更灵活模型下的替代模式。
+:::
+
+# 参数估计与统计推断
+
+选择概率描述了给定属性和模型参数时各方案被选择的可能性。要由实际回答反推未知参数，还需要把每道任务的观测选择转化为似然，并明确不同任务如何组合、重复回答如何影响不确定性，以及研究假设如何转化为参数约束。
+
+## 样本似然
+
+使用前文定义的选择指示变量 $y_{ntj}$，任务 $(n,t)$ 的似然贡献为
+
+$$
+L_{nt}(\boldsymbol\beta)
+=\prod_{j\in C_{nt}}
+P_{ntj}(\boldsymbol\beta)^{y_{ntj}}.
+$$
+
+由于只有实际被选方案的指示变量等于 1，上式恰好等于模型赋给实际选择的概率 $P_{nt,y_{nt}}(\boldsymbol\beta)$。乘积只是多类别结果的紧凑写法，并不表示同一道任务中的方案行是相互独立的 Bernoulli 观测。
+
+若给定观测协变量和共同参数后，同一受访者的任务选择满足条件独立，则受访者 $n$ 的选择序列似然为
+
+$$
+L_n(\boldsymbol\beta)
+=\prod_{t=1}^{T_n}L_{nt}(\boldsymbol\beta).
+$$
+
+进一步假定不同受访者相互独立，全样本似然为
+
+$$
+L(\boldsymbol\beta)
+=\prod_{n=1}^{N}L_n(\boldsymbol\beta)
+=\prod_{n=1}^{N}
+\prod_{t=1}^{T_n}
+\prod_{j\in C_{nt}}
+P_{ntj}(\boldsymbol\beta)^{y_{ntj}}.
+$$
+
+取对数后，乘积转化为求和：
+
+$$
+\ell(\boldsymbol\beta)
+=\sum_{n=1}^{N}\sum_{t=1}^{T_n}
+\sum_{j\in C_{nt}}
+y_{ntj}\log P_{ntj}(\boldsymbol\beta).
+$$
+
+对于线性代表性效用的 MNL，代入 softmax 概率可得
+
+$$
+\ell(\boldsymbol\beta)
+=\sum_{n,t}
+\left[
+\mathbf x_{nt,y_{nt}}^{\mathsf T}\boldsymbol\beta
+-\log\left\{
+\sum_{j\in C_{nt}}
+\exp(\mathbf x_{ntj}^{\mathsf T}\boldsymbol\beta)
+\right\}
+\right].
+$$
+
+第一项是实际被选方案的代表性效用，第二项通过 log-sum-exp 将其与选择集中的全部方案比较。实际选择的预测概率越小，相应的对数似然惩罚越大；因此，最大化对数似然等价于在全部任务上最小化多类别 log loss。
+
+任务间条件独立是把任务概率相乘为受访者联合概率所需的附加假设，并不来自单道任务的 MNL 概率推导。如果同一人的回答仍存在相关性，上述乘积不再是完整的受访者联合似然，但可以作为工作独立似然或复合似然用于估计。此时，参数估计和不确定性估计所需的条件必须分别讨论。
+
+## 最大似然估计
+
+最大似然估计量定义为
+
+$$
+\widehat{\boldsymbol\beta}
+=\arg\max_{\boldsymbol\beta}\ell(\boldsymbol\beta).
+$$
+
+对线性效用 MNL，得分向量为
+
+$$
+\begin{aligned}
+\mathbf s(\boldsymbol\beta)
+&=\frac{\partial\ell(\boldsymbol\beta)}
+{\partial\boldsymbol\beta}\\
+&=\sum_{n,t}
+\left[
+\mathbf x_{nt,y_{nt}}
+-\sum_{j\in C_{nt}}
+P_{ntj}(\boldsymbol\beta)\mathbf x_{ntj}
+\right].
+\end{aligned}
+$$
+
+每道任务的得分比较两个量：**实际被选方案的属性向量，以及模型按当前选择概率计算的属性期望**。内部最优点的一阶条件
+
+$$
+\mathbf s(\widehat{\boldsymbol\beta})=\mathbf0
+$$
+
+表示这些差异在全样本中达到平衡。换言之，MLE 调整参数，使模型预测的选择所对应的属性总量与实际选择所体现的属性总量相匹配。
+
+对任务 $(n,t)$，令 $\mathbf X_{nt}$ 的每一行对应一个方案，$\mathbf p_{nt}$ 为该任务的选择概率向量，则 Hessian 为
+
+$$
+\mathbf H(\boldsymbol\beta)
+=-\sum_{n,t}\mathbf X_{nt}^{\mathsf T}
+\left[
+\operatorname{diag}(\mathbf p_{nt})
+-\mathbf p_{nt}\mathbf p_{nt}^{\mathsf T}
+\right]
+\mathbf X_{nt}.
+$$
+
+方括号内是多类别选择指示变量的条件协方差矩阵，因而为半正定矩阵；Hessian 相应为半负定矩阵，所以线性效用 MNL 的对数似然是凹函数。若施加必要的规范化约束后，任务内属性对比能够识别目标参数且不存在完全分离，通常可以得到唯一的有限极大值。负 Hessian 汇总了这些属性对比所提供的信息，模型型协方差估计相应写为
+
+$$
+\widehat{\operatorname{Var}}_{\mathrm{model}}
+(\widehat{\boldsymbol\beta})
+=\left[-\mathbf H(\widehat{\boldsymbol\beta})\right]^{-1}.
+$$
+
+这一协方差公式依赖完整似然及其条件独立假设。数值优化可以采用 Newton--Raphson、Fisher scoring 或准 Newton 方法；软件报告“收敛”只表示满足了停止准则，不等于模型设定和参数识别均无问题。[Train (2009), Chapter 8](https://eml.berkeley.edu/books/choice2.html)
+
+## 重复任务
+
+同一受访者的多次回答可能共享未观测偏好、理解方式、疲劳程度和回答策略，因此基础推断通常在受访者层面聚类。
+
+若工作似然对应的估计方程在真实参数或目标参数处满足
+
+$$
+\operatorname E[\mathbf s_n(\boldsymbol\beta_0)]=\mathbf0,
+$$
+
+并且不同受访者相互独立，则可以允许同一受访者内部的任务得分以未知形式相关。令任务得分为 $\mathbf s_{nt}(\boldsymbol\beta)$，受访者总得分为
+
+$$
+\mathbf s_n(\widehat{\boldsymbol\beta})
+=\sum_{t=1}^{T_n}
+\mathbf s_{nt}(\widehat{\boldsymbol\beta}),
+$$
+
+并记
+
+$$
+\widehat{\mathbf A}
+=-\mathbf H(\widehat{\boldsymbol\beta}),
+\qquad
+\widehat{\mathbf B}
+=\sum_{n=1}^{N}
+\mathbf s_n\mathbf s_n^{\mathsf T}.
+$$
+
+受访者层聚类 sandwich 协方差的基本形式为
+
+$$
+\widehat{\operatorname{Var}}_{\mathrm{CR}}
+(\widehat{\boldsymbol\beta})
+=\widehat{\mathbf A}^{-1}
+\widehat{\mathbf B}
+\widehat{\mathbf A}^{-1}.
+$$
+
+中间的 $\widehat{\mathbf B}$ 先在受访者内部汇总任务得分，再计算跨受访者的变异，因而保留了任意的受访者内得分相关。实际软件通常还会应用有限样本修正。受访者数量较少时，常规聚类渐近近似可能偏乐观，需要采用适当的小样本修正、按受访者重抽样的 bootstrap，或直接建立能够描述跨任务依赖的层级模型。[Cameron and Miller (2015)](https://doi.org/10.3368/jhr.50.2.317)
+
+::: {.callout-important title="聚类稳健标准误不等于异质性模型"}
+聚类稳健协方差只调整 $\widehat{\boldsymbol\beta}$ 的抽样不确定性，不改变参数点估计和预测概率，也不估计个体偏好分布。如果简单 MNL 的选择概率因未观测偏好异质性而设定错误，稳健标准误不能使其系数自动成为总体平均偏好。持续的个体差异和跨任务相关需要 mixed logit、潜在类别或层级贝叶斯模型显式描述。
+:::
+
+## 假设检验
+
+统计检验首先要求把研究问题写成参数约束。一般原假设可以表示为
+
+$$
+H_0:\ \mathbf r(\boldsymbol\beta)=\mathbf0,
+$$
+
+其中 $\mathbf r(\boldsymbol\beta)$ 包含 $q$ 个约束。单个系数检验可以写为 $H_0:\beta_k=0$；具有 $K$ 个水平的分类属性通常对应 $K-1$ 个编码系数，因此“该属性整体没有作用”需要联合检验全部 $K-1$ 个系数。交互作用也应根据其编码方式联合检验相关参数，而不能只依据其中一个系数的显著性判断整个交互结构。
+
+**Wald 检验。** 设
+
+$$
+\mathbf G(\boldsymbol\beta)
+=\frac{\partial\mathbf r(\boldsymbol\beta)}
+{\partial\boldsymbol\beta^{\mathsf T}},
+$$
+
+则 Wald 统计量为
+
+$$
+W
+=\mathbf r(\widehat{\boldsymbol\beta})^{\mathsf T}
+\left[
+\mathbf G(\widehat{\boldsymbol\beta})
+\widehat{\mathbf V}
+\mathbf G(\widehat{\boldsymbol\beta})^{\mathsf T}
+\right]^{-1}
+\mathbf r(\widehat{\boldsymbol\beta}),
+$$
+
+其中 $\widehat{\mathbf V}$ 可以是模型型协方差，也可以是受访者层聚类稳健协方差。Wald 检验只需估计无约束模型，但在小样本、参数接近边界或非线性变换高度偏斜时可能不稳定。
+
+**似然比检验。** 若约束模型嵌套于无约束模型，分别记其最大化对数似然为 $\ell_R$ 和 $\ell_U$，则
+
+$$
+LR=2(\ell_U-\ell_R).
+$$
+
+似然比检验需要同时估计约束和无约束模型，并依赖完整似然及相应的正则条件。
+
+**Score 检验。** Score 检验只估计约束模型，并在约束估计量 $\widetilde{\boldsymbol\beta}$ 处检查释放参数后是否存在明显的似然上升方向；存在干扰参数时，需要使用调整后的有效得分和信息矩阵。
+
+在原假设成立且满足常规正则条件时，Wald、似然比和 Score 统计量都渐近服从自由度为 $q$ 的卡方分布。三者在大样本下渐近等价，但所需模型拟合和有限样本表现不同：
+
+| 检验 | 需要估计的模型 | 核心比较 | 典型用途 |
+|---|---|---|---|
+| Wald | 无约束模型 | 参数估计值与原假设约束之间的距离 | 单个系数、分类属性或交互项的联合检验 |
+| 似然比 | 约束模型和无约束模型 | 解除约束后对数似然的改善 | 嵌套模型比较 |
+| Score | 约束模型 | 从原假设出发是否存在显著的改进方向 | 检验待加入的变量或复杂扩展 |
+
+非嵌套模型不能直接使用普通似然比检验，边界参数也可能使常规卡方近似失效。若任务乘积只是工作独立似然而非完整似然，聚类稳健协方差可用于 Wald 检验，但不会自动使普通似然比检验具有受访者内相关稳健性；此时需要相应的稳健检验、复合似然调整或按受访者 bootstrap。
+
+# 基础分析工作流
+
+DCE 的基础分析依次包括分析准备、模型选择、结果解释、模型诊断和软件实现。
+
+## 分析准备
+
+分析开始前，应完成前述长表结构、属性编码和任务内对比检查。在查看结果前，还需确定连续属性函数形式、交互项、主要目标量和推断单位，并预先规定缺失处理、排除规则、敏感性分析、受访者层聚类方式以及估计任务与验证任务的划分。
+
+## 模型选择
+
+MNL 通常作为基础模型，用于核对数据编码、效用方向、平均属性效应和似然计算。模型扩展应对应明确的研究问题或失效机制，而不应仅由样本内拟合改善驱动。
+
+| 研究问题或数据结构 | 基础处理或扩展方向 |
+|---|---|
+| 估计总体平均属性效应 | 包含主要属性和必要 ASC 的 MNL |
+| 偏好随已观测个体特征变化 | 属性或方案标签与个体特征的交互 |
+| 属性效应具有预先设定的非线性 | 分段函数、多项式或样条 |
+| 存在连续的未观测偏好差异 | Mixed Logit |
+| 人群可能由若干偏好类型构成 | 潜在类别模型 |
+| 相似方案共享未观测因素 | Nested Logit 或 Probit |
+| 同一人的任务选择具有持续相关 | Panel Mixed Logit 或其他层级模型 |
+| 系数差异可能混合误差尺度差异 | 尺度异质性模型 |
+
+基础分析可先估计包含主要属性和必要 ASC 的 MNL，再依据研究问题加入交互项、非线性项或更复杂的随机效用结构。偏好异质性与相关随机效用模型见[偏好异质性的分析模型](03-preference-heterogeneity-models.qmd)，支付意愿、福利和更复杂的预测验证见[目标量与诊断](04-estimands-diagnostics-and-behavioral-complications.qmd)。
+
+## 结果解释
+
+DCE 的分析结果不能只停留在系数表。基础模型通常需要进一步给出偏好权重、属性的相对重要性、属性之间的边际替代率以及研究情景下的选择概率。这四类结果分别描述效用方向、属性范围内的效用变化、属性之间的权衡和完整选择集中的行为预测，不能相互替代。[Hauber et al. (2016)](https://doi.org/10.1016/j.jval.2016.04.004)
+
+**偏好权重。** 设属性 $k$ 对代表性效用的贡献为 $v_k(x_k)$。分类属性水平 $r$ 的偏好权重记为 $w_{kr}=v_k(r)$；连续属性采用线性形式时，系数 $\beta_k$ 表示 $x_k$ 每增加一个计量单位所产生的规范化效用变化。正的权重差表示相应水平更受偏好，负的权重差表示相对不受偏好，但权重的绝对零点和共同尺度没有直接行为含义。
+
+在 dummy（reference）coding 下，分类水平系数表示相对于参照水平的效用差；在 effects coding 下，省略水平由前述和为零约束恢复。若连续属性 $x_k$ 增加 $\Delta x_k$，方案 $i$ 相对于方案 $j$ 的优势比变化为 $\exp(\widehat\beta_k\Delta x_k)$；这一结果是方案间的相对比较，而不是无条件选择比例。
+
+**相对重要性。** 在研究预先规定的属性水平范围 $\mathcal X_k$ 内，属性 $k$ 能够产生的最大效用变化为
+
+$$
+R_k
+=\max_{x\in\mathcal X_k}\widehat v_k(x)
+-\min_{x\in\mathcal X_k}\widehat v_k(x).
+$$
+
+分类属性可直接使用各水平偏好权重的极差；若连续属性在线性模型中的研究范围为 $[a_k,b_k]$，则 $R_k=|\widehat\beta_k|(b_k-a_k)$。把各属性的效用极差标准化，可以得到百分比形式的相对重要性：
+
+$$
+RI_k
+=\frac{R_k}{\sum_{h=1}^{K}R_h}\times100\%.
+$$
+
+相对重要性衡量的是**给定水平范围内**各属性能够引起的效用变化，而不是脱离实验范围的固定属性排序。扩大某个属性的水平跨度会提高其 $R_k$，因此只有使用相同属性定义、水平范围和效用模型时，相对重要性才具有可比性。
+
+**边际替代率。** 对两个连续属性 $x_k$ 和 $x_m$，保持代表性效用不变可得到
+
+$$
+\operatorname{MRS}_{k,m}
+=-\frac{\partial V/\partial x_k}
+{\partial V/\partial x_m}.
+$$
+
+在线性效用模型中，该比值化为 $-\widehat\beta_k/\widehat\beta_m$，表示为了补偿 $x_k$ 增加一个单位，属性 $x_m$ 需要改变多少单位。对于分类属性从水平 $r$ 变为 $s$，分子应替换为偏好权重差 $\widehat w_{ks}-\widehat w_{kr}$。当分母属性是连续费用时，这一替代率可解释为边际支付意愿，但其有效性依赖费用系数符号、函数形式、计量单位和不确定性处理。
+
+**情景选择概率。** 给定情景 $s$ 中全部候选方案的属性组合，将估计参数代入每个方案的代表性效用 $\widehat V_{sj}$，MNL 的预测概率为
+
+$$
+\widehat P_{sj}
+=\frac{\exp(\widehat V_{sj})}
+{\sum_{h\in C_s}\exp(\widehat V_{sh})}.
+$$
+
+情景计算必须同时给出完整选择集，并保留方案 ASC、退出项和所有交互项。改变某一方案的属性后，可以报告该方案的概率变化以及其他方案之间的替代。概率是模型条件下的预测量，不应直接解释为未来市场份额；若样本不能代表目标人群，还需要相应的外推或加权依据。
+
+偏好权重可以直接报告估计值、标准误和置信区间；相对重要性、边际替代率和情景选择概率属于参数的非线性函数，应使用 delta method、参数模拟或按受访者 bootstrap 传播参数不确定性。仅报告由点估计计算的派生结果会低估分析中的不确定性。
+
+## 模型诊断
+
+模型诊断需要分别考察数值估计、参数识别、样本内拟合、样本外预测和行为合理性。
+
+**数值与识别。** 在前述结构性秩检查之外，还应报告停止准则，并检查最终梯度、Hessian 的特征值或条件状况、异常大的系数和标准误。稀疏水平、近似共线以及完全或近完全分离都可能造成不稳定估计；复杂或非凸模型还应使用多组合理初值复核结果。
+
+**拟合与模型比较。** 相对截距或等概率空模型的 McFadden 指标为
+
+$$
+\rho^2
+=1-\frac{\ell(\widehat{\boldsymbol\beta})}
+{\ell(\widehat{\boldsymbol\beta}_0)}.
+$$
+
+它表示相对于指定基准模型的对数似然改善比例，不是线性回归中的解释方差。复杂度不同的候选模型还常报告
+
+$$
+\mathrm{AIC}=-2\ell+2K,
+\qquad
+\mathrm{BIC}=-2\ell+K\log M.
+$$
+
+其中 $K$ 是自由参数数目。重复选择数据中 BIC 的有效样本量 $M$ 并非没有争议：任务数与独立受访者数对应不同渐近框架，因此报告 BIC 时必须说明采用的单位。AIC 和 BIC 也不能替代模型假设、行为解释和样本外评价。
+
+**预测检查。** 对每道任务可以计算实际选择的 log loss、最高概率命中率和概率校准。命中率忽略预测置信程度，在备选项数量变化时也不易比较；log loss 与估计目标更加一致。实验预留的 holdout 任务可用于评价任务内预测。若目标是推广到新受访者，训练集和测试集还应按受访者划分，避免同一人的其他任务泄漏到测试集。
+
+**行为合理性。** 应检查费用、风险等属性的效应方向，分类水平效用是否出现难以解释的跳跃，ASC 是否主导全部预测，以及相似方案之间的替代是否符合研究情境。支配任务、完成时间和逐题选择模式可以作为数据质量线索，但不应在看到结果后使用任意规则删除所谓“异常”受访者；预先说明排除规则并报告敏感性分析更便于复核。[Hauber et al. (2016)](https://doi.org/10.1016/j.jval.2016.04.004)
+
+## R 示例
+
+R 中估计基础 DCE 模型常用的接口包括 `survival::clogit()`、`survival::coxph()` 和 `mlogit::mlogit()`。下面分别给出同一效用函数的简化写法。假定长表 `dce_long` 包含 `respondent_id`、`task_id`、`alternative_id`、唯一标识“受访者—任务”组合的 `choice_set`、选择指示变量 `chosen`，以及已经编码的 `benefit`、`risk`、`cost`、`oral` 和 `treatment_asc`。其中 `treatment_asc` 表示实验治疗相对于参照方案的 ASC。
+
+**`clogit()`：条件 Logit。** 每道选择任务构成一个分层，函数直接最大化条件似然。
+
+```r
+library(survival)
+
+fit_clogit <- clogit(
+  chosen ~
+    benefit + risk + cost + oral + treatment_asc +
+    strata(choice_set),
+  data = dce_long,
+  method = "exact"
+)
+
+summary(fit_clogit)
+```
+
+**`coxph()`：精确部分似然。** 将所有方案的时间设为常数，并以选择集分层，即可得到与条件 Logit 相同的似然；`cluster` 参数用于计算受访者层聚类稳健协方差。
+
+```r
+library(survival)
+
+dce_long$constant_time <- 1
+
+fit_coxph <- coxph(
+  Surv(constant_time, chosen) ~
+    benefit + risk + cost + oral + treatment_asc +
+    strata(choice_set),
+  data = dce_long,
+  ties = "exact",
+  cluster = respondent_id,
+  robust = TRUE
+)
+
+summary(fit_coxph)
+```
+
+**`mlogit()`：离散选择专用接口。** `dfidx()` 显式声明选择集、受访者和方案索引；公式中的 `| 0` 关闭自动加入的方案特定截距，因为示例已经通过 `treatment_asc` 指定了 ASC。
+
+```r
+library(mlogit)
+
+dce_mlogit <- dfidx::dfidx(
+  dce_long,
+  choice = "chosen",
+  idx = list(
+    c("choice_set", "respondent_id"),
+    "alternative_id"
+  ),
+  shape = "long"
+)
+
+fit_mlogit <- mlogit(
+  chosen ~ benefit + risk + cost + oral + treatment_asc | 0,
+  data = dce_mlogit
+)
+
+summary(fit_mlogit)
+```
+
+在每个选择集中恰有一个方案被选择，并且三个接口使用相同样本、编码、效用函数和识别约束时，它们估计的是同一个基础 MNL，参数点估计应当一致。`clogit()` 默认给出基于条件似然信息矩阵的协方差；上面的 `coxph()` 示例通过 `cluster = respondent_id` 改用聚类稳健协方差，因此其标准误、置信区间和 Wald 检验不应与另外两个默认输出直接比较。若需要比较推断结果，三个实现还必须采用相同的协方差估计和有限样本修正。[`clogit` 官方文档](https://stat.ethz.ch/R-manual/R-patched/library/survival/html/clogit.html)；[`coxph` 官方文档](https://stat.ethz.ch/R-manual/R-devel/library/survival/html/coxph.html)；[`mlogit` 官方手册](https://cran.r-project.org/web/packages/mlogit/mlogit.pdf)
+
+这些代码只演示基础接口，变量名称、属性编码和 ASC 约束必须替换为实际研究的设计矩阵定义。
+
+# 参考来源
+
+- Bech, M., & Gyrd-Hansen, D. (2005). [Effects coding in discrete choice experiments](https://doi.org/10.1002/hec.984). *Health Economics*, 14(10), 1079–1083.
+- Johnson, F. R., Lancsar, E., Marshall, D., et al. (2013). [Constructing Experimental Designs for Discrete-Choice Experiments](https://www.ispor.org/docs/default-source/resources/outcomes-research-guidelines-index/piis1098301512041629.pdf?sfvrsn=d9c2e90c_0). *Value in Health*, 16(1), 3–13.
+- Cameron, A. C., & Miller, D. L. (2015). [A practitioner's guide to cluster-robust inference](https://doi.org/10.3368/jhr.50.2.317). *Journal of Human Resources*, 50(2), 317–372.
+- Hauber, A. B., González, J. M., Groothuis-Oudshoorn, C. G. M., et al. (2016). [Statistical methods for the analysis of discrete choice experiments](https://doi.org/10.1016/j.jval.2016.04.004). *Value in Health*, 19(4), 300–315.
+- Hausman, J., & McFadden, D. (1984). [Specification tests for the multinomial logit model](https://doi.org/10.2307/1910997). *Econometrica*, 52(5), 1219–1240.
+- McFadden, D. (1974). [Conditional logit analysis of qualitative choice behavior](https://escholarship.org/uc/item/0p99072q). In P. Zarembka (Ed.), *Frontiers in Econometrics*.
+- Croissant, Y. (2026). [`mlogit`: Multinomial Logit Models](https://cran.r-project.org/web/packages/mlogit/mlogit.pdf). R package manual.
+- Therneau, T. (2026). R `survival` package documentation: [Conditional logistic regression](https://stat.ethz.ch/R-manual/R-patched/library/survival/html/clogit.html) and [Cox proportional hazards regression](https://stat.ethz.ch/R-manual/R-devel/library/survival/html/coxph.html).
+- Train, K. E. (2009). [Discrete Choice Methods with Simulation, 2nd ed.](https://eml.berkeley.edu/books/choice2.html). Cambridge University Press.
