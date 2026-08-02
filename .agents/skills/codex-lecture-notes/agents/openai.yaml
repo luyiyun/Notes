@@ -1,4 +1,4 @@
 interface:
   display_name: "Codex 讲义"
-  short_description: "Learn interactively and build stateful Chinese Quarto notes"
-  default_prompt: "Use $codex-lecture-notes to teach this topic interactively, track project-local progress in _codex_notes.md, and write Chinese Quarto notes through the appropriate full, staged, or scoped workflow."
+  short_description: "按确认大纲逐单元写入并维护中文 Quarto 讲义"
+  default_prompt: "Use $codex-lecture-notes to confirm the full heading outline, then confirm each unit outline and write it directly to the target QMD for file-based review."

@@ -6,15 +6,18 @@ Use this guide when producing Chinese Quarto lecture notes with `codex-lecture-n
 
 Default to a lecture-note series, not a one-off summary, when the topic is broad enough to need multiple chapters. A topic may correspond to a series, and each note may correspond to one chapter.
 
-Develop a new series through the full learning-first workflow:
+Develop a new series or comprehensively restructure a note through the outline-first workflow:
 
-1. Propose and confirm the learning directory in conversation.
-2. Teach and discuss the confirmed units one at a time.
-3. After the user requests full note assembly, propose and confirm a detailed final outline.
-4. Create or update the repository-appropriate series index only after that confirmation when it adds value or the repository requires it. Use `index.qmd` for a Quarto directory landing page when that is the local convention; use `series_index.qmd` only when the repository already establishes that pattern.
-5. Write one `chapter_<slug>.qmd` at a time unless the user explicitly requests a batch.
+1. Propose one master QMD outline containing the note or series title, every planned level-1 through level-3 heading, and the writing-unit-to-heading mapping.
+2. Confirm and version that outline once; treat it as the structural authority for later writing.
+3. Before each unit, propose a concise unit writing outline covering its destination, content, derivations, examples, figures, citations, and boundaries.
+4. After the unit outline is confirmed, write it directly to QMD, render it, update `_codex_notes.md`, and let the user review the file.
+5. Create or update the repository-appropriate series index after the relevant master outline is confirmed when it adds value or the repository requires it. Use `index.qmd` when that is the local convention and `series_index.qmd` only when the repository already establishes that pattern.
+6. Write one `chapter_<slug>.qmd` at a time unless the user explicitly requests a batch.
 
-For an ongoing task, allow staged assembly: propose and confirm an outline for only the discussed units, write that batch, update `_codex_notes.md`, and then continue with the next eligible learning unit. Do not regenerate the complete learning directory or pull future units into the current batch.
+Do not add a later final-outline or full-assembly confirmation. For an ongoing task, reuse the confirmed outline and current QMD, confirm only the next unit writing outline, and write that unit directly. Do not regenerate the master outline or pull future units into the current write.
+
+Teach or discuss a unit in conversation only when the user explicitly requests explanation, discussion, or no file write. When the user returns to writing, confirm the concise unit writing outline and then write directly rather than presenting a full prose draft in chat.
 
 For an explicitly bounded summary, transition, caption, terminology correction, or local heading change, use the scoped-revision route from the main skill instead of forcing the full sequence.
 
@@ -22,7 +25,7 @@ Keep the source-backed coverage rules from the main skill. Lecture style changes
 
 ## Series Index
 
-After the detailed final outline is confirmed, use the repository-appropriate index page to state the research scope and provide navigation when the topic benefits from a persistent series index.
+After the relevant master QMD outline is confirmed, use the repository-appropriate index page to state the research scope and provide navigation when the topic benefits from a persistent series index.
 
 Treat the index as a concise academic overview rather than a substitute for the first formal chapter:
 
@@ -66,15 +69,16 @@ A chapter should read like a patient technical lecture. Prefer this progression 
 
 Avoid source-inventory chapters such as `用户材料`, `外部检索资料`, or `资料列表`. Source status belongs inline, in local notes, or in `# 参考来源`.
 
-## Learning Units and Heading Granularity
+## Writing Units and Heading Granularity
 
-Keep teaching granularity separate from writing granularity.
+Keep unit granularity separate from heading granularity.
 
-- Use learning units to control conversational scope and prerequisites.
-- Consolidate several related units into one coherent QMD section when they form a single argument.
-- Do not create a heading for every definition, distinction, example, or teaching turn.
-- Prefer natural paragraphs, bold lead-ins, and purposeful callouts when the material is only one part of a larger chapter.
-- Preserve the mapping between learning units and QMD destinations in `_codex_notes.md`, including skipped, deferred, and renumbered units.
+- Use writing units to control scope, prerequisites, and direct-to-QMD increments.
+- Include every intended heading in the master QMD outline, including planned level-3 headings.
+- Map each unit to one or more adjacent headings; consolidate related units into one coherent section when they form a single argument.
+- Do not create a heading for every definition, distinction, example, or conversational turn.
+- Prefer natural paragraphs, bold lead-ins, and purposeful callouts when the material is only one part of a larger section.
+- Preserve the confirmed hierarchy and unit mapping in `_codex_notes.md`, including skipped, deferred, and renumbered units and every approved outline change.
 
 ## Lecture Components In QMD
 

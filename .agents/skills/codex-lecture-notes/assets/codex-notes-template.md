@@ -35,21 +35,44 @@ Replace "No tasks recorded" with one copy of this block per task:
 - Status: planned
 - Current unit:
 - Last QMD synchronization:
+- Master QMD outline version:
+- Master QMD outline status: not-started
 - Updated:
 
-#### Learning units and QMD mapping
+#### Master QMD outline
 
-| Unit | Learning topic | Status | QMD destination | Notes |
+- Note title:
+- Complete confirmed heading hierarchy:
+
+```text
+# Major section
+## Stable subsection
+### Planned local subsection
+```
+
+#### Writing units and fixed QMD mapping
+
+| Unit | Writing topic | Status | Confirmed target heading(s) | Notes |
 |---|---|---|---|---|
+
+Use unit statuses `planned`, `current`, `discussed`, `confirmed`, `written`, `skipped`, and `deferred`. Here, `confirmed` means that the unit writing outline authorizes a direct QMD write; `written` means the unit was written and its relevant render succeeded; use `discussed` only when the user explicitly requests conversational teaching.
+
+#### Approved master-outline changes
+
+- None recorded.
 
 #### Accepted decisions and corrections
 
 - None recorded.
 
-#### Current writing batch
+#### Current unit writing outline
 
-- Included units:
-- Destination:
+- Unit:
+- Confirmed target heading(s):
+- Planned concepts and claims:
+- Planned formulas, derivations, examples, tables, figures, and citations:
+- Exclusions and deferred material:
+- Preceding and following boundaries:
 - Outline status:
 - Write status:
 

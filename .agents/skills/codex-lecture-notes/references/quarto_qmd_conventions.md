@@ -14,11 +14,15 @@ Use this guide when producing or editing Quarto `.qmd` notes, especially for not
 
 ## Write Gate
 
-- For full learning, do not create or modify QMD during grounding, directory design, teaching, or discussion. Begin writing only after the user requests assembly and confirms the detailed final outline.
-- For staged assembly, write only the units in the user-confirmed batch outline, then return to the learning sequence.
+- For a new note or comprehensive restructuring, do not create or substantively rewrite QMD before the user confirms the master QMD outline containing the complete planned heading hierarchy and unit mapping.
+- Before each unit, confirm its concise unit writing outline. Treat that confirmation as authorization to write the unit directly to QMD; do not require a prose draft, later final outline, batch outline, or assembly trigger.
+- Preserve the confirmed headings exactly. Before changing their names, levels, order, splits, merges, additions, or removals, present and obtain confirmation for a master-outline diff.
+- For a continuing task, reuse the current QMD and confirmed outline. Treat existing written headings as fixed for legacy tasks and confirm only unresolved future structure.
+- If the user explicitly requests conversational teaching or no file write, discuss only the current unit and defer QMD changes until its writing outline is confirmed.
 - For an explicitly bounded local summary, transition, caption, terminology correction, or heading change, treat the request itself as scope confirmation and revise directly after inspecting the surrounding content.
-- For project maintenance, repair Quarto integration or preview problems without requiring learning-directory or final-outline confirmation.
-- Validate the resulting QMD against the confirmation required by the selected route and repository conventions without creating an audit artifact.
+- If a scoped revision changes confirmed heading structure or crosses multiple unit boundaries, obtain confirmation for the corresponding master-outline diff first.
+- For project maintenance, repair Quarto integration or preview problems without requiring a content outline.
+- Validate the resulting QMD against the latest confirmed master and unit outlines and repository conventions without creating an audit artifact.
 
 ## Frontmatter
 
@@ -47,7 +51,8 @@ When migrating from Obsidian, convert `created` to `date` and replace `updated` 
 - Use `#` for major note sections.
 - Use `##` for stable explanatory-note subsections.
 - Use `###` sparingly for local detail.
-- Do not create one QMD heading per conversational learning unit. Consolidate units that form one argument.
+- Include every planned heading in the master QMD outline before substantive writing for a new note or comprehensive restructuring.
+- Do not create one QMD heading per writing unit or conversational turn. Consolidate units that form one argument and record the mapping.
 - When the edited content is only part of a larger note, prefer natural paragraphs, bold lead-ins, and purposeful callouts over fragmented headings.
 - Keep headings descriptive and close to the user's materials while allowing a clearer synthesized structure.
 - Make headings advance a smooth explanatory main line. Avoid top-level source-inventory headings or source-category headings.
@@ -59,7 +64,7 @@ When migrating from Obsidian, convert `created` to `date` and replace `updated` 
 When editing a note in a series:
 
 - Reuse notation, background, and scope from the series index instead of repeating it.
-- Create or update the series index only after the detailed final outline is confirmed.
+- Create or update the series index only after the relevant master QMD outline is confirmed.
 - Keep the index concise and navigational. Place detailed definitions, notation, models, derivations, algorithms, and the complete research workflow in the first formal chapter or the relevant specialist chapter.
 - Prefer one compact directory table for the series; use its first column to group units with row spans when supported, and keep content summaries brief.
 - Update relative links if files are renamed or moved.

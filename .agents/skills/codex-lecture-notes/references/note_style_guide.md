@@ -37,12 +37,12 @@ When notes belong to a series:
 - Identify whether material belongs in the index, general/theory chapter, current note, adjacent notes, appendices, or later software/reporting chapters.
 - Preserve relative links, YAML style, `order`, and naming conventions already used by the site.
 
-When synthesizing a learning dialogue into a note:
+When using a learning dialogue as source material:
 
-- Follow the user-confirmed final outline rather than the chronological order of the chat.
+- Follow the confirmed master QMD outline and the current unit writing outline rather than the chronological order of the chat.
 - Preserve substantive questions and answers, later examples, corrections, distinctions, and source additions.
 - Use the latest accepted formulation when the discussion corrected an earlier statement.
-- Re-read the current QMD before each staged write. Treat user-authored changes as the new baseline and do not restore superseded assistant drafts.
+- Re-read the current QMD before each direct unit write. Treat user-authored changes as the new baseline and do not restore superseded assistant drafts.
 - Keep an earlier misconception only when contrasting it with the corrected view improves learning.
 - Exclude process negotiation and other non-knowledge-bearing dialogue.
 
@@ -61,9 +61,11 @@ Persist durable user preferences in `_codex_notes.md` and apply them across late
 
 Before drafting, choose a single smooth lecture line such as `主题定位 -> 核心问题 -> 关键思想 -> 定义与记号 -> 命题/定理 -> 推导/证明/算法 -> 例子与图表 -> 局限/分歧 -> 小结`. Each section should make the next section feel necessary. Avoid mechanical headings whose only function is to sort sources.
 
+For a new note or comprehensive restructuring, express that lecture line first as a master QMD outline containing the note title and every planned level-1 through level-3 heading. Map each writing unit to one or more adjacent headings. After confirmation, treat the hierarchy and mapping as authoritative: do not add, remove, rename, reorder, split, merge, promote, or demote headings without presenting and confirming an outline diff. User-authored heading edits supersede the stored outline and must be reconciled into state before further writing.
+
 Prefer headings that sound like a lecture or technical note, not file-management metadata. Avoid headings such as `# 本篇定位`, `# 章节说明`, `# 可复用结论`, or `# 可复用结果` unless the source itself uses that language or the user asks for it. These usually expose file-organization intent instead of giving the reader a natural lecture structure. Avoid "...视角" headings when a direct method heading is clearer.
 
-Do not map teaching units one-to-one onto QMD headings. When several units form one conceptual chain, combine them into a smaller number of sections and use natural paragraphs, bold lead-ins, or callouts for local distinctions.
+Do not map writing units one-to-one onto QMD headings by default. When several units form one conceptual chain, map them to a smaller number of coherent sections; when one unit spans adjacent headings, record that mapping explicitly. Use natural paragraphs, bold lead-ins, or callouts for local distinctions that do not need headings.
 
 After inserting or revising content, read the final paragraph before the change and the first paragraph after it. Repair abrupt transitions, duplicated definitions, numbering drift, and premature discussion of later sections.
 
