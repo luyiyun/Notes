@@ -17,11 +17,11 @@ date-modified: last-modified
 order: 14
 ---
 
-# 从统计问题到随机向量
+# 随机向量与统计观测 {#sec-random-vector-intro}
 
-统计学面对的样本往往不是一个孤立的数，而是一次随机试验所产生的完整结果。这个结果可以包含研究对象的身份、观测时间、环境条件以及尚未被记录的潜在因素。若把所有可能的完整结果组成抽象样本空间 $\Omega$，那么一个样本点 $\omega\in\Omega$ 通常远比最终进入数据表的数值复杂。
+## 多维观测的统计结构
 
-实际分析不会直接处理 $\omega$ 的全部细节，而是通过观测映射提取与问题有关的属性。例如，一次健康调查可能记录身高、体重和血压：
+统计学中的一次随机结果 $\omega\in\Omega$ 往往同时具有多个可观测属性，因此只取一个实值的随机变量并不足以表示完整观测。例如，一次健康调查可能同时记录身高、体重和血压：
 
 $$
 X(\omega)
@@ -29,48 +29,33 @@ X(\omega)
 \in\mathbb R^3.
 $$
 
-于是，统计建模中出现了如下三层结构：
+实际建模通常可以写成
 
 $$
-\boxed{
 (\Omega,\mathcal F,P)
 \xrightarrow{\;X\;}
-(\mathcal X,\mathcal A)
+(\mathbb R^d,\mathcal B(\mathbb R^d))
 \xrightarrow{\;T\;}
-(\mathcal T,\mathcal G)
-}.
+(\mathcal T,\mathcal G).
 $$
 
-第一支箭头 $X$ 把抽象随机结果转换为可分析的观测，第二支箭头 $T$ 则按照具体任务对观测进行加工。若 $T$ 计算风险评分、样本均值或其他统计量，那么真正的随机对象是复合映射
+其中，$X$ 把抽象随机结果转换为多维观测；$T$ 是定义在观测空间上的确定性加工规则，例如风险评分或样本统计量。由[复合映射的可测性](07-measurable-functions.qmd#thm-07-measurable-functions-20)，真正定义在原概率空间上的**随机映射**对象是
 
 $$
 T(X)=T\circ X.
 $$
 
-这里需要区分确定性的加工规则 $T$ 与它作用于随机数据后得到的 $T(X)$：**前者是观测空间上的可测映射，后者才是定义在原概率空间上的随机变量或随机向量**。把高维数据映到较低维空间通常可以降低分析复杂度，但这种压缩一般会丢失信息；统计学所追求的是尽可能保留与当前推断目标有关的信息，而不是认为一维对象天然比多维对象包含更多信息。
+[第 13 章](13-finite-product-spaces.qmd)与本章分别处理这条链中的两个环节：
 
-[上一章](13-finite-product-spaces.qmd)与本章分别处理这条建模链中的不同环节：
-
-| 建模环节 | 第 13 章：有限乘积空间 | 第 14 章：随机向量 |
+| 内容 | 第 13 章：有限乘积空间 | 本章：随机向量 |
 |---|---|---|
-| 基本对象 | $\prod_{k=1}^d E_k$ | $X:\Omega\to\prod_{k=1}^d E_k$ |
-| 核心问题 | 多坐标空间中哪些集合可测，怎样在其上定义测度与积分 | 一次随机试验怎样产生多维可测观测 |
-| 典型映射 | $T:\prod_{k=1}^dE_k\to\mathcal T$ | $X:\Omega\to\prod_{k=1}^dE_k$ |
-| 统计学作用 | 提供观测空间，并容纳统计量等数据加工规则 | 把共同定义在一个概率空间上的多个随机变量合成为一个随机对象 |
+| 研究对象 | [乘积可测空间](13-finite-product-spaces.qmd#def-13-finite-product-spaces-6)及其上的测度、积分和映射 | 取值于乘积空间的可测映射 $X$ |
+| 映射方向 | $T:\prod_{k=1}^dE_k\to\mathcal T$ | $X:\Omega\to\prod_{k=1}^dE_k$ |
+| 统计学作用 | 承载多维观测及其后续加工 | 把共同定义在一个概率空间上的多个随机变量组织为一个可直接研究的多维随机对象 |
 
-两章的映射方向不同，却恰好能够复合：
+因此，第 13 章提供随机向量的值域结构，本章则研究样本点如何形成这个空间中的随机对象。但是，需要注意的是，随机向量并不只是从原始样本通向统计量的中间环节。**在多元统计和高维统计中，向量 $X$ 本身、它的联合分布、坐标之间的依赖关系以及概率测度在高维空间中的几何结构，往往就是直接的研究对象**。此时，**$T(X)$ 既可能是用于压缩信息的实值统计量，也可能仍是保留多维结构的向量值统计量**。
 
-$$
-\Omega
-\xrightarrow{\;X\;}
-\prod_{k=1}^dE_k
-\xrightarrow{\;T\;}
-\mathcal T.
-$$
-
-上一章建立中间乘积空间的可测结构，并研究定义在这个空间上的函数；本章则研究样本点如何进入该空间。稍后还会把原概率测度 $P$ 通过 $X$ 送到乘积空间，得到随机向量的联合分布。由此，联合事件、边缘分布、密度以及统计量的期望都可以放在同一框架下讨论。
-
-在经典有限维统计学中，每个属性通常取实数值，因此观测空间常写成
+比如，学习本章后，我们就可以把 $P$ 推前到 $\mathbb R^d$，直接研究随机向量的联合分布、边缘分布、联合密度和依赖结构。经典有限维统计学通常取
 
 $$
 \mathcal X=\mathbb R^d,
@@ -79,21 +64,11 @@ $$
 =\mathcal B(\mathbb R)^{\otimes d}.
 $$
 
-对于 $n$ 个实值观测，完整数据位于 $\mathbb R^n$；对于 $n$ 个 $p$ 维观测，完整数据位于
+这里的 Borel 结构由第 13 章介绍的[乘积 $\sigma$ 代数](13-finite-product-spaces.qmd#def-13-finite-product-spaces-4)给出。当研究问题只依赖随机向量的分布时，还可以直接取 $\Omega=\mathbb R^d$、$X(\omega)=\omega$，把 $(\mathbb R^d,\mathcal B(\mathbb R^d),P_X)$ 作为典范概率空间。此时随机向量不再表现为从另一个复杂样本空间中提取出的中间对象，而是由恒等映射表示的基本随机对象；研究重点直接落在 $\mathbb R^d$ 上的概率测度及其结构。本章集中讨论有限维实值情形；更一般的可测空间值随机元仍沿用[第 7 章](07-measurable-functions.qmd)的一般定义。
 
-$$
-(\mathbb R^p)^n\cong\mathbb R^{np}.
-$$
+## 随机向量及其分量
 
-有时可以直接把观测空间取作样本空间，并令 $X(\omega)=\omega$，这称为**典范表示**。因此，乘积样本空间在数理统计中并不少见，只是在应用叙述中经常被隐含起来。另一方面，分类数据、删失数据、时间序列和函数型数据还会自然落入更一般的有限或无限乘积空间；本章先集中讨论最基础的有限维实随机向量。
-
-::: {.callout-note title="Key Idea：乘积空间承载观测，随机向量产生观测"}
-有限乘积空间回答“多维观测在哪里存在、哪些事件可测、怎样在其上运算”；随机向量回答“随机试验怎样产生这样的多维观测”。统计量再把观测转换为适合具体推断任务的对象。
-:::
-
-# 随机向量
-
-## 定义与逐坐标可测性
+随机向量只是一般随机元在有限维欧氏空间中的专门情形。
 
 ::: {#def-random-vector}
 
@@ -107,20 +82,11 @@ X:(\Omega,\mathcal F)
 (\mathbb R^d,\mathcal B(\mathbb R^d))
 $$
 
-可测，则称 $X$ 为 $d$ 维**随机向量**。
-
-对 $k=1,\ldots,d$，令
+可测，则称 $X$ 为 $d$ 维**随机向量**。沿用第 13 章的[坐标投影](13-finite-product-spaces.qmd#def-project)，定义
 
 $$
-\pi_k:\mathbb R^d\longrightarrow\mathbb R,
-\qquad
-\pi_k(x_1,\ldots,x_d)=x_k
-$$
-
-为第 $k$ 个坐标投影，并定义
-
-$$
-X_k=\pi_k\circ X.
+X_k=\pi_k\circ X,
+\qquad k=1,\ldots,d.
 $$
 
 称 $X_k$ 为 $X$ 的第 $k$ 个**分量**。因此
@@ -131,399 +97,949 @@ $$
 
 :::
 
-复合顺序 $X_k=\pi_k\circ X$ 可以直接通过定义域和值域检查：
+## 逐坐标可测性
 
-$$
-\Omega\xrightarrow{\;X\;}\mathbb R^d
-\xrightarrow{\;\pi_k\;}\mathbb R.
-$$
-
-
-利用[坐标投影的可测性](13-finite-product-spaces.qmd#prp-project)，可以把随机向量的可测性化为逐分量检查。
+第 13 章已经证明，乘积 $\sigma$ 代数是使全部坐标投影可测的最小 $\sigma$ 代数。把这一结论与可测映射的复合性质结合，可得随机向量最常用的判定方法。
 
 ::: {#thm-vector-measurable}
 
-## 值域为有限乘积空间的映射的可测性判定
+## 逐坐标可测性判定
 
-设 $(\Omega,\mathcal T)$ 以及 $(E_k,\mathcal E_k)$，$k=1,\ldots,d$，均为可测空间。令
-
-$$
-X=(X_1,\ldots,X_d):
-\Omega\longrightarrow\prod_{k=1}^dE_k,
-\qquad
-X_k=\pi_k\circ X.
-$$
-
-则
-
-$$
-X:(\Omega,\mathcal T)
-\longrightarrow
-\left(
-\prod_{k=1}^dE_k,
-\bigotimes_{k=1}^d\mathcal E_k
-\right)
-$$
-
-可测，当且仅当每个
-
-$$
-X_k:(\Omega,\mathcal T)\longrightarrow(E_k,\mathcal E_k)
-$$
-
-都可测。
+映射 $X=(X_1,\ldots,X_d):\Omega\to\mathbb R^d$ 是随机向量，当且仅当 $X_1,\ldots,X_d$ 分别是实值随机变量。
 
 :::
 
 ::: {.proof}
-若 $X$ 可测，则每个坐标投影 $\pi_k$ 都可测，所以复合映射
+
+必要性来自[坐标投影的可测性](13-finite-product-spaces.qmd#prp-project)与复合映射的可测性。反过来，若每个 $X_k$ 可测，则对任意 Borel 矩形 $\prod_{k=1}^dA_k$，
 
 $$
-X_k=\pi_k\circ X
+X^{-1}\left(\prod_{k=1}^dA_k\right)
+=\bigcap_{k=1}^dX_k^{-1}(A_k)
+\in\mathcal F.
 $$
 
-可测。
-
-反过来，假设每个 $X_k$ 都可测。对任意可测矩形
-
-$$
-A=\prod_{k=1}^dA_k,
-\qquad A_k\in\mathcal E_k,
-$$
-
-有
-
-$$
-\begin{aligned}
-X^{-1}(A)
-&=\left\{
-\omega:
-X_k(\omega)\in A_k,\ k=1,\ldots,d
-\right\}\\
-&=\bigcap_{k=1}^dX_k^{-1}(A_k)
-\in\mathcal T.
-\end{aligned}
-$$
-
-所有可测矩形生成乘积 $\sigma$ 代数 $\bigotimes_{k=1}^d\mathcal E_k$。而
-
-$$
-\left\{
-B\subseteq\prod_{k=1}^dE_k:
-X^{-1}(B)\in\mathcal T
-\right\}
-$$
-
-本身是一个包含全部可测矩形的 $\sigma$ 代数，因此它包含整个 $\bigotimes_{k=1}^d\mathcal E_k$，故 $X$ 可测。
+由于这些矩形生成 $\mathcal B(\mathbb R^d)$，结论成立。这里使用的生成结构和一般判定原理已分别在[乘积 $\sigma$ 代数](13-finite-product-spaces.qmd#def-13-finite-product-spaces-4)与[可测映射判定定理](07-measurable-functions.qmd#thm-measurable-func-decision)中证明。
 :::
 
-特别地，
+::: {#exm-u-u-square}
+
+## 例子：由 $U$ 构造 $(U,U^2)$
+
+设 $U:(\Omega,\mathcal F)\to(\mathbb R,\mathcal B(\mathbb R))$ 是随机变量，并定义
 
 $$
-\boxed{
-(X_1,\ldots,X_d)\text{ 是随机向量}
-\quad\Longleftrightarrow\quad
-X_1,\ldots,X_d\text{ 分别是随机变量}
-}.
+X=(U,U^2).
 $$
 
-这个结论**把看似需要检查 $\mathcal B(\mathbb R^d)$ 中所有集合的高维可测性问题，化成了有限个熟悉的一维可测性问题**。例如，健康调查中的 $H$、$W$、$B$ 分别是随机变量时，
+函数 $g(u)=u^2$ 连续，因而由[连续函数的可测性](07-measurable-functions.qmd#thm-continue-func-measurable)可知 $U^2=g(U)$ 是随机变量。根据 @thm-vector-measurable，$X$ 是随机向量。这个判定只涉及可测性，不要求 $U$ 与 $U^2$ 独立。
+
+:::
+
+随机向量把多个分量组织成一个可测对象；接下来只需研究这种观测在原样本空间中保留了哪些信息。
+
+# 随机向量的可测信息 {#sec-random-vector-information}
+
+## 生成的 $\sigma$ 代数
+
+第 2 章已经把[生成的 $\sigma$ 代数](02-sigma-field.qmd#def-02-sigma-field-8)定义为包含指定集合系的最小 $\sigma$ 代数，第 7 章又把这一结构用于一般可测映射。对随机向量 $X:(\Omega,\mathcal F)\to(\mathbb R^d,\mathcal B(\mathbb R^d))$，沿用该记号：
 
 $$
-X=(H,W,B)
+\sigma(X)
+:=X^{-1}\bigl(\mathcal B(\mathbb R^d)\bigr)
+=
+\left\{
+X^{-1}(B):
+B\in\mathcal B(\mathbb R^d)
+\right\},
+$$ {#eq-sigma-random-vector}
+
+其最小性直接来自[可测映射的定义](07-measurable-functions.qmd#def-07-measurable-functions-7)和[原像保持 $\sigma$ 代数运算](07-measurable-functions.qmd#thm-inverse-image)，这里不再重复证明。本章只使用它的统计含义：事件 $A\in\sigma(X)$ 当且仅当存在 $B\in\mathcal B(\mathbb R^d)$，使
+
+$$
+A=\{\omega:X(\omega)\in B\}.
 $$
 
-自动构成随机向量。若 $T:\mathbb R^3\to\mathbb R$ 是一个 Borel 可测的风险评分函数，那么 $T(X)$ 又是一个实值随机变量。前一支映射产生多维观测，后一支映射则从观测中提取统计量。
+因此，**$\sigma(X)\subseteq\mathcal F$ 正好表示仅凭观测值 $X(\omega)$ 可以判定的事件。若 $X(\omega_1)=X(\omega_2)$，则 $\sigma(X)$ 中没有事件能够区分这两个样本点。**
 
-到这里，我们已经回答了随机向量何时是一个合法的可测对象。
+## 分量信息的合成
 
-## 随机向量生成的 $\sigma$ 代数
+完整随机向量的信息由各分量的信息共同生成。
 
-有时候，我们会关注随机向量生成的 $\sigma$ 代数，这里我们进行更加细致地讨论。根据 @thm-vector-measurable，我们知道
+::: {#prp-vector-sigma-components}
+
+## 随机向量与分量生成的 $\sigma$ 代数
+
+若 $X=(X_1,\ldots,X_d)$ 是随机向量，则
 
 $$
-\sigma(X_{1},\dots,X_{n})=\sigma\left( \bigcup_{i=1}^{n}\sigma(X_{i}) \right).
+\sigma(X)
+=\sigma(X_1,\ldots,X_d)
+=\sigma\left(
+\bigcup_{k=1}^d\sigma(X_k)
+\right).
 $$
 
-所以，有时候我们需要证明某个集合系 $\mathcal{G}$ 是 $\sigma(X_{1},\dots,X_{n})$，只需要证明两点就可以：
+:::
 
-1. $\mathcal{G}\supset\bigcup_{i=1}^{n}\sigma(X_{i})$；
-2. $\mathcal{G}$ 是一个 $\sigma$ 代数。
+::: {.proof}
+由 $X_k=\pi_k\circ X$ 以及坐标投影的可测性，
 
-但是有时候，以上两点不是特别容易用，所以我们有如下几个命题。
+$$
+\sigma(X_k)\subseteq\sigma(X),
+\qquad k=1,\ldots,d.
+$$
+
+因此 $\mathcal G:=\sigma(\bigcup_{k=1}^d\sigma(X_k))\subseteq\sigma(X)$。反过来，每个 $X_k$ 都关于 $\mathcal G$ 可测，由 @thm-vector-measurable，$X$ 也关于 $\mathcal G$ 可测，故 $\sigma(X)\subseteq\mathcal G$。两个包含方向合并即得结论。
+:::
+
+外层的 $\sigma(\cdot)$ 不能省略，因为 $\bigcup_k\sigma(X_k)$ 通常不对不同分量事件的交封闭。还要注意：若一个 $\sigma$ 代数 $\mathcal H$ 包含所有 $\sigma(X_k)$，只能得到 $\sigma(X)\subseteq\mathcal H$；要证明等号，仍需另证反向包含。
 
 ::: {#thm-multi-sigma-generate-1}
 
 ## 递归生成 $\sigma$ 代数
 
+对 $d\geq 2$，
+
 $$
-\sigma(X_{1},\dots,X_{n})=\sigma((X_{1},\dots,X_{n-1}),X_{n})
-=\sigma(\sigma(X_{1},\dots,X_{n-1})\cup\sigma(X_{n}))
- $$
+\begin{aligned}
+\sigma(X_1,\ldots,X_d)
+&=\sigma\bigl((X_1,\ldots,X_{d-1}),X_d\bigr)\\
+&=\sigma\left(
+\sigma(X_1,\ldots,X_{d-1})
+\cup\sigma(X_d)
+\right).
+\end{aligned}
+$$
 
 :::
 
 ::: {.proof}
-因为 $\sigma(X_{i})\subset\sigma(X_{1},\dots,X_{n-1}),\forall i\leq n-1$，所以有
+令
 
 $$
-\sigma(X_{1},\dots,X_{n})\subset\sigma((X_{1},\dots,X_{n-1}),X_{n}).
+Z=(X_1,\ldots,X_{d-1}).
 $$
 
-又因为 $\sigma(X_{1},\dots,X_{n-1})\subset\sigma(X_{1},\dots,X_{n})$ 和 $\sigma(X_{n})\subset\sigma(X_{1},\dots,X_{n})$，所以有
+在自然的坐标识别下，$(Z,X_d)$ 与 $(X_1,\ldots,X_d)$ 是同一个随机向量，因此
 
 $$
-\sigma((X_{1},\dots,X_{n-1}),X_{n})\subset\sigma(X_{1},\dots,X_{n}).
+\sigma(X_1,\ldots,X_d)=\sigma(Z,X_d).
 $$
 
+记
+
+$$
+\mathcal H
+:=\sigma\bigl(\sigma(Z)\cup\sigma(X_d)\bigr).
+$$
+
+因为 $X_1,\ldots,X_{d-1}$ 都关于 $\sigma(Z)\subseteq\mathcal H$ 可测，而 $X_d$ 关于 $\sigma(X_d)\subseteq\mathcal H$ 可测，所以由 @thm-vector-measurable，$X=(X_1,\ldots,X_d)$ 关于 $\mathcal H$ 可测。由生成 $\sigma$ 代数的最小性，
+
+$$
+\sigma(X_1,\ldots,X_d)\subseteq\mathcal H.
+$$
+
+反过来，$Z$ 与 $X_d$ 都是 $X$ 的坐标投影，因此
+
+$$
+\sigma(Z)\subseteq\sigma(X),
+\qquad
+\sigma(X_d)\subseteq\sigma(X).
+$$
+
+由于 $\sigma(X)$ 是同时包含这两个 $\sigma$ 代数的 $\sigma$ 代数，故 $\mathcal H\subseteq\sigma(X)$。两个包含方向合并即得结论。
 :::
+
+这个递归形式与第 13 章的[乘积 $\sigma$ 代数结合律](13-finite-product-spaces.qmd#thm-law-of-association-sigma-field)一致。等价地，可以用 join 记为
+
+$$
+\sigma(X_1,\ldots,X_d)
+=\sigma(X_1,\ldots,X_{d-1})\vee\sigma(X_d).
+$$
 
 ::: {#thm-multi-sigma-generate-2}
 
 ## $\pi$ 系生成 $\sigma$ 代数
 
-令 $\mathcal{G}=\{ A_{1}\cap A_{2} |A_{1}\in\sigma(X_{1}),A_{2}\in\sigma(X_{2})\}$，则有
+令
 
 $$
-\sigma(\mathcal{G})=\sigma(X_{1},X_{2}).
+\mathcal C_d
+=\left\{
+\bigcap_{k=1}^dA_k:
+A_k\in\sigma(X_k),\ k=1,\ldots,d
+\right\}.
+$$
+
+则 $\mathcal C_d$ 是一个 $\pi$ 系，并且
+
+$$
+\sigma(\mathcal C_d)=\sigma(X_1,\ldots,X_d).
 $$
 
 :::
 
 ::: {.proof}
-显然 $\sigma(\mathcal{G})\subset\sigma(X_{1},X_{2})$，现在我们来证明反方向。
-
-令 $A_{2}=\Omega$，则可知
+取所有 $A_k=\Omega$ 可知 $\Omega\in\mathcal C_d$。再设
 
 $$
-\sigma(X_{1})\subset\sigma(\mathcal{G}),
+C=\bigcap_{k=1}^dA_k,
+\qquad
+D=\bigcap_{k=1}^dB_k
 $$
 
-令 $A_{1}=\Omega$，则可知
+属于 $\mathcal C_d$，其中 $A_k,B_k\in\sigma(X_k)$，则
 
 $$
-\sigma(X_{2})\subset\sigma(\mathcal{G}),
+C\cap D
+=\bigcap_{k=1}^d(A_k\cap B_k)
+\in\mathcal C_d.
 $$
 
-因此有 $\sigma(\mathcal{G})\supset\sigma(X_{1},X_{2})$。问题得证。
+其次，由 $\sigma(X_k)\subseteq\sigma(X_1,\ldots,X_d)$ 可知
+
+$$
+\mathcal C_d\subseteq\sigma(X_1,\ldots,X_d),
+$$
+
+因而
+
+$$
+\sigma(\mathcal C_d)
+\subseteq\sigma(X_1,\ldots,X_d).
+$$
+
+反过来，固定 $j\in\{1,\ldots,d\}$。对任意 $A_j\in\sigma(X_j)$，在其余坐标取 $A_k=\Omega$，便有
+
+$$
+A_j
+=A_j\cap\bigcap_{k\ne j}\Omega
+\in\mathcal C_d.
+$$
+
+所以每个 $\sigma(X_j)$ 都包含于 $\sigma(\mathcal C_d)$。由 @prp-vector-sigma-components，
+
+$$
+\sigma(X_1,\ldots,X_d)
+=\sigma\left(\bigcup_{j=1}^d\sigma(X_j)\right)
+\subseteq\sigma(\mathcal C_d).
+$$
+
+结合两个包含方向即得等式。
 :::
 
-## 积分
+若 $A_k=X_k^{-1}(B_k)$，则 $\bigcap_kA_k=X^{-1}(\prod_kB_k)$。结合第 7 章的[原像定理](07-measurable-functions.qmd#thm-inverse-image)，这也说明 $\mathcal C_d$ 是第 13 章[可测矩形 $\pi$ 系](13-finite-product-spaces.qmd#prp-measurable-rect-is-semi-ring)在原样本空间中的逆像版本。后续讨论独立性时，可以先在这些矩形型事件上验证性质，再用 $\pi$-$\lambda$ 方法扩张。
 
-注意到 [8_积分](08-integration.qmd) 中定义的积分本质上是函数值的权重和, 但对于随机向量, 函数值是一个向量, 因此相应的积分结果也应该是向量. 这里, 我们直接给出随机向量积分的定义.
+# 向量期望 {#sec-vector-expectation}
+
+随机向量可以作为统计研究的最终对象，也可以作为后续统计量的输入。无论采取哪一种视角，都需要先用一个多维量描述它的一阶平均位置。标量期望把随机变量的平均位置概括为一个数；向量期望则保留各坐标的组织结构，不先把多维观测压缩成单个标量。
+
+## 定义与可积性
 
 ::: {#def-vector-integrate}
 
-## 随机向量的积分
+## 随机向量的期望
 
-对于随机向量 $f=(f_{1},\dots,f_{n})$, 其积分被定义为
-
-$$
-\int f =\left( \int f_{1},\dots,\int f_{n} \right).
-$$
-
-当位于概率测度空间中时, 积分也被称为期望, 表示为
+设 $X=(X_1,\ldots,X_d)$。若每个分量都可积，即
 
 $$
-\mathbb{E}f=(\mathbb{E}f_{1},\dots,\mathbb{E}f_{n}).
+\mathbb E|X_k|<\infty,
+\qquad k=1,\ldots,d,
 $$
+
+则称 $X$ **可积**，并定义
+
+$$
+\mathbb E[X]
+:=
+\bigl(\mathbb E[X_1],\ldots,\mathbb E[X_d]\bigr).
+$$ {#eq-vector-expectation}
 
 :::
 
-这样的推广是合理的, 相当于我们在积分定义时将**其中所用到的标量加法和乘法**扩展至**线性空间中的向量加法和数乘**。
+这个定义可以理解为对恒等映射 $\operatorname{id}_{\mathbb R^d}$ 取期望，但在有限维空间中只需逐坐标使用第 8 章的标量积分，不必另外建立新的积分理论。与 $\mathbb E[h(X)]$ 先通过 $h$ 提取某个标量特征不同，$\mathbb E[X]$ 直接保留各坐标的一阶平均位置，因此也称为 $X$ 的**均值向量**。
 
-## 分布
+::: {#prp-vector-integrability}
 
-在前面的学习中知道, 我们可以使用分布的概念来描述随机变量 (及测度) 所包含的信息. 分布的概念一般包含两层函数: **随机变量诱导的测度**及**分布函数**. **随机向量**也可以如此.
+## 向量可积性的等价刻画
 
-对于**随机向量**$f=(f_{1},\dots,f_{n})$，它是一个普通概率空间 $(X,\mathcal{F},P)\to(\mathbb{R}^{n},\mathcal{B}^{n})$ 的可测映射。其对应的诱导测度空间是 $(\mathbb{R}^{n},\mathcal{B}^{n},Pf^{-1})$, 这是一个典型的**乘积测度空间**, 因此刚才关于乘积测度空间上的内容便有了用武之地.
+对有限维随机向量 $X=(X_1,\ldots,X_d)$，下列条件等价：
 
-与 [分布函数](06-distribution-function.qmd) 中类似, 我们可以从两个方向来定义分布函数.
-
-首先，是从**分布函数**应该满足的性质开始 (测度空间未知, 通过分布函数来生成测度)。这里直接沿用[多维分布函数](13-finite-product-spaces.qmd#def-multi-dist-func)的定义。
-
-其次，是从**随机变量的诱导测度**出发 (定义测度相关联的分布函数):
-
-::: {#def-n-dist-rv}
-
-## 随机向量的分布函数
-
-设 $f=(f_{1},\dots,f_{n})$ 是 $(X,\mathcal{F},P)$ 上的随机向量，则对每个 $(x_{1},\dots,x_{n})\in\mathbb{R}^{n}$，令
-
-$$
-F(x_{1},\dots,x_{n})=P(f_{1}\leq x_{1},\dots,f_{n}\leq x_{n}),
-$$
-
-则 $F$ 称为随机向量 $f$ 的**分布函数**，或称为 $n$ 个随机变量 $f_{1},\dots,f_{n}$ 的**联合分布函数**，记作 $f\sim F$。
+1. 每个分量 $X_k$ 都可积；
+2. 对 $\mathbb R^d$ 上某个范数 $\|\cdot\|$，$\mathbb E\|X\|<\infty$；
+3. 对 $\mathbb R^d$ 上每个范数 $\|\cdot\|$，$\mathbb E\|X\|<\infty$。
 
 :::
 
-虽然两个定义从不同的角度出发得到, 但是两者实际上是相同的对象. 我们有如下的定理:
-
-::: {#thm-13-finite-product-spaces-36}
-
-## n 元分布函数对应定理（Correspondence Theorem）
-
-(1) $n$ 维随机向量 $f$ 的分布函数是一个 $n$ 元分布函数。
-(2) 任意一个给定的 $n$ 元分布函数，一定存在一个概率空间 $(X,\mathcal{F},P)$，在其上定义有随机向量 $f\sim F$。
-
-:::
 ::: {.proof}
-（1）由概率测度的下连续性和有界性，可以验证[多维准分布函数](13-finite-product-spaces.qmd#def-high-dim-distribution)的右连续性以及[多维分布函数](13-finite-product-spaces.qmd#def-multi-dist-func)的边界条件。因此，只需再证明 **n 重差分非负性**。
-
-为了证明这个，我们可以应用 @thm-inclusion-exclusion，或者使用**差分算子**来进行讨论。下面我们使用第二种方案。
-
-定义针对第 $i$ 个坐标的差分算子 $\Delta_i$ 为：
+对 $1$-范数，有
 
 $$
- \Delta_{a_i, b_i} F(x_1, \dots, x_n) = F(x_1, \dots, b_i, \dots, x_n) - F(x_1, \dots, a_i, \dots, x_n)
+\mathbb E\|X\|_1
+=
+\mathbb E\left[\sum_{k=1}^d|X_k|\right]
+=
+\sum_{k=1}^d\mathbb E|X_k|.
 $$
 
-这其实就是 $P(X \in \dots \times (a_i, b_i] \times \dots)$，只考虑第 $i$ 个维度的限制。现在，我们考虑 $n$ 维矩形
+因此，各分量可积当且仅当 $\mathbb E\|X\|_1<\infty$。有限维空间中的任意两个范数等价，所以对任意范数 $\|\cdot\|$，都存在常数 $c,C>0$，使
 
 $$
-R = (a_1, b_1] \times \dots \times (a_n, b_n].
+c\|x\|_1\leq\|x\|\leq C\|x\|_1.
 $$
 
-随机向量 $X$ 落在 $R$ 中的事件，就是所有分量 $X_i$ 都落在 $(a_i, b_i]$ 中。这就相当于对分布函数 $F$ 在所有 $n$ 个维度上依次做差分：
+对 $x=X$ 取期望即可得到三个条件的等价性。
+:::
+
+## 线性结构与统计意义
+
+向量期望最重要的性质是它与有限维线性结构相容。
+
+::: {#prp-affine-vector-expectation}
+
+## 仿射变换下的向量期望
+
+设 $X$ 是可积的 $\mathbb R^d$ 值随机向量，$A\in\mathbb R^{m\times d}$，$b\in\mathbb R^m$。则 $AX+b$ 可积，并且
+
+$$
+\mathbb E[AX+b]
+=A\mathbb E[X]+b.
+$$ {#eq-affine-vector-expectation}
+
+:::
+
+::: {.proof}
+记 $A=(a_{jk})$。对每个 $j=1,\ldots,m$，
+
+$$
+(AX+b)_j
+=\sum_{k=1}^d a_{jk}X_k+b_j.
+$$
+
+右侧是有限个可积随机变量的线性组合，因而可积。逐坐标应用标量积分的线性性，得到
+
+$$
+\mathbb E[(AX+b)_j]
+=\sum_{k=1}^d a_{jk}\mathbb E[X_k]+b_j,
+$$
+
+这正是 @eq-affine-vector-expectation 的第 $j$ 个坐标。
+:::
+
+特别地，对任意 $a\in\mathbb R^d$，
+
+$$
+\mathbb E[a^{\mathsf T}X]
+=a^{\mathsf T}\mathbb E[X].
+$$ {#eq-linear-functional-expectation}
+
+因此，均值向量同时编码了所有线性投影的一阶均值；反过来，只要知道所有 $a^{\mathsf T}X$ 的期望，取 $a$ 为标准基向量便能恢复 $\mathbb E[X]$ 的每个坐标。
+
+令
+
+$$
+X^{\circ}:=X-\mathbb E[X],
+$$
+
+则由 @prp-affine-vector-expectation，
+
+$$
+\mathbb E[X^{\circ}]=0.
+$$
+
+这个过程称为**中心化**。它把随机向量的平均位置移到原点，是第 19 章构造[协方差矩阵](19-moments.qmd#def-18-moments-3)的起点。
+
+范数是 $\mathbb R^d$ 上的凸函数。对可积随机向量应用第 9 章的 [Jensen 不等式](09-lp-spaces.qmd#thm-jensen-inequality)，得到
+
+$$
+\bigl\|\mathbb E[X]\bigr\|
+\leq
+\mathbb E\|X\|.
+$$ {#eq-vector-expectation-norm-bound}
+
+这个不等式说明，平均向量到原点的距离不会超过随机向量到原点距离的平均值。
+
+::: {#exm-vector-sample-mean}
+
+## 例子：向量样本均值
+
+设 $X^{(1)},\ldots,X^{(m)}$ 是同维可积随机向量，并且具有相同的均值向量 $\mu$。定义
+
+$$
+\overline X_m
+:=
+\frac{1}{m}\sum_{j=1}^m X^{(j)}.
+$$
+
+由期望的线性性，
+
+$$
+\mathbb E[\overline X_m]
+=
+\frac{1}{m}\sum_{j=1}^m\mathbb E[X^{(j)}]
+=\mu.
+$$
+
+因此，$\overline X_m$ 的均值仍为共同均值向量 $\mu$；当这些向量是来自同一总体的重复观测时，$\overline X_m$ 就是总体均值向量的无偏估计。这个期望等式本身不要求 $X^{(1)},\ldots,X^{(m)}$ 相互独立；独立性会影响其协方差和集中程度，而不是这里的线性计算。
+
+:::
+
+均值向量可以看作随机向量联合分布的重心，但它只保留一阶位置信息。不同的随机向量可能具有相同的均值，却有完全不同的离散程度、坐标依赖和分布形状。为了描述这些差异，需要研究随机向量的完整联合分布。
+
+# 联合分布与边缘分布 {#sec-joint-law-expectation}
+
+@sec-random-vector-information 讨论的 $\sigma(X)$ 位于原样本空间 $\Omega$ 上，用来描述哪些事件能够由观测值 $X$ 判定。现在把注意力转向值域：当原概率测度 $P$ 通过 $X$ 被送到 $\mathbb R^d$ 上时，得到的是一个描述随机向量取值规律的概率测度。
+
+## 联合分布
+
+根据[诱导测度与分布](07-measurable-functions.qmd#def-rv-dist)，随机向量
+
+$$
+X:(\Omega,\mathcal F,P)
+\longrightarrow
+(\mathbb R^d,\mathcal B(\mathbb R^d))
+$$
+
+的诱导测度是
+
+$$
+P_X
+:=X_{\#}P
+=P\circ X^{-1}.
+$$ {#eq-joint-law}
+
+它是 $\mathbb R^d$ 上的概率测度，并且对每个 $B\in\mathcal B(\mathbb R^d)$，
+
+$$
+P_X(B)
+=P(X\in B)
+=P\bigl(X^{-1}(B)\bigr).
+$$
+
+这里沿用 $P_X$ 表示 $X$ 的分布；当 $X=(X_1,\ldots,X_d)$ 时，也称它为这些分量的**联合分布**。
+
+随机向量 $X$ 是从样本点产生观测值的可测映射；联合分布 $P_X$ 则是值域上的概率测度。**改变样本空间或观测映射可能不改变 $P_X$，因此两者不能视为同一个对象**。
+
+@eq-joint-law 把 $\Omega$ 上的概率分配转移到 $\mathbb R^d$，同时保留所有形如 $\{X\in B\}$ 的事件概率。这个构造也给出联合分布的典范实现。
+
+::: {#exm-canonical-joint-law}
+
+## 例子：联合分布的典范实现
+
+设 $\mu$ 是 $(\mathbb R^d,\mathcal B(\mathbb R^d))$ 上任意一个概率测度。取典范概率空间
+
+$$
+(\Omega,\mathcal F,P)
+=
+(\mathbb R^d,\mathcal B(\mathbb R^d),\mu)
+$$
+
+以及恒等映射 $X(x)=x$。此时对任意 $B\in\mathcal B(\mathbb R^d)$，
+
+$$
+P_X(B)=\mu(X^{-1}(B))=\mu(B),
+$$
+
+所以 $P_X=\mu$。因此，$\mathbb R^d$ 上的每个概率测度都可以实现为某个随机向量的联合分布。
+
+:::
+
+诱导测度也描述可测变换后的分布。若 $h:\mathbb R^d\to\mathbb R^k$ 可测，令 $Y=h(X)$，则对 $C\in\mathcal B(\mathbb R^k)$，
 
 $$
 \begin{aligned}
-P(a < X \le b) &= P(a_1 < X_1 \le b_1, \dots, a_n < X_n \le b_n) \\
-&= \Delta_{a_n, b_n} \left( \dots \left( \Delta_{a_1, b_1} F(x_1, \dots, x_n) \right) \dots \right)
+P_Y(C)
+&=P\bigl(h(X)\in C\bigr)\\
+&=P_X\bigl(h^{-1}(C)\bigr).
 \end{aligned}
 $$
 
-**让我们展开这个差分运算。** 每个算子 $\Delta_{a_i, b_i}$ 都是两项之差：(代入 $b_i$) - (代入 $a_i$)。如果你把 $n$ 个这样的算子乘起来（即连续作用）, 就会得到
+因此
 
 $$
- \prod_{i=1}^n (\text{代入 } b_i - \text{代入 } a_i)
-$$
+P_{h(X)}=h_{\#}P_X=P_X\circ h^{-1}.
+$$ {#eq-transform-law}
 
-展开这个括号，你会得到 $2^n$ 项。每一项都是 $F$ 在某个点 $c$ 的值，其中 $c$ 的第 $i$ 个分量要么是 $b_i$，要么是 $a_i$。
-* 如果选择了“代入 $b_i$”，该项系数贡献一个正号 $(+1)$。
-* 如果选择了“代入 $a_i$”，该项系数贡献一个负号 $(-1)$。
-
-因此，对于任意一个顶点 $c$，如果它有 $k$ 个分量取自 $a$（即 $n(c)=k$），那么它的总符号就是 $k$ 个 $(-1)$ 相乘，即 $(-1)^k$。这就推导出了定义中的公式：
+需要特别区分联合分布与乘积测度。联合分布定义在乘积可测空间
 
 $$
- P(a < X \le b) = \sum_{c \in C} (-1)^{n(c)} F(c)
+(\mathbb R^d,\mathcal B(\mathbb R)^{\otimes d})
 $$
 
-而根据概率测度的非负性，可知上面这个式子是 $\geq 0$ 的。
+上，但这并不意味着它是乘积测度。一般而言，
 
-（2）利用[矩形增量定义的预测度](13-finite-product-spaces.qmd#prp-n-dist-semi-ring-measure)，可以先在半开矩形半环上定义测度，再利用[测度扩张定理](05-measure-extension.qmd#thm-measure-extension)得到唯一扩张。容易验证所得概率测度满足 @def-n-dist-rv 中的公式。
+$$
+P_X
+\ne
+P_{X_1}\otimes\cdots\otimes P_{X_d}.
+$$
+
+::: {.callout-warning title="联合分布不等于乘积测度"}
+“定义在乘积空间上的概率测度”和“由各坐标分布构造的乘积测度”是不同概念。只有在**坐标随机变量相互独立**时，才有
+
+$$
+P_X=P_{X_1}\otimes\cdots\otimes P_{X_d}.
+$$
+
+这一等价关系将在[第 16 章](16-independence-and-conditional-expectation.qmd#sec-independence)中证明。
+:::
+
+## 同分布
+
+::: {#def-equal-in-distribution}
+
+## 同分布
+
+设 $X$ 和 $Y$ 是两个 $\mathbb R^d$ 值随机向量，它们可以定义在不同的概率空间上。若
+
+$$
+P_X=P_Y,
+$$
+
+则称 $X$ 与 $Y$ **同分布**，记作
+
+$$
+X\overset{d}{=}Y.
+$$
 
 :::
 
-因为**随机向量可以表示为多个随机变量的组合**, 那么自然的一个问题是: 这些**随机变量的分布**与**随机向量的分布**之间是否存在联系? 为了能够去探讨这个问题, 我们需要先定义**边缘分布** (也就是分量的分布).
+同分布只比较值域上的概率测度，不比较样本点上的函数值。**若 $X$ 与 $Y$ 定义在同一概率空间上，则逐点相等蕴含几乎处处相等，几乎处处相等又蕴含同分布**；反方向一般都不成立。
 
-::: {#def-margin-dist}
+::: {#exm-equal-law-not-pointwise}
 
-## 边缘分布函数
+## 例子：同分布不等于逐点相同
 
-设 $f=(f_{1},\dots,f_{n})$ 是 $(X,\mathcal{F},P)$ 上的随机向量，对任意给定的指标 $i_{1},\dots,i_{k},k\leq n$，则称 $(f_{i_{1}},\dots,f_{i_{k}})$ 的联合分布函数叫做 **$f$ 的第 $i_{1},\dots,i_{k}$ 个分量的边缘分布函数**。特别的，第 $i$ 个分量 $f_{i}$ 的边缘分布函数记作 $F_{i}$（$=Pf_{i}^{-1}((-\infty,x])$）。
+设 $U\sim\operatorname{Unif}(0,1)$，并令
+
+$$
+X=(U,1-U),
+\qquad
+Y=(1-U,U).
+$$
+
+由于 $1-U\sim\operatorname{Unif}(0,1)$，把 $V=1-U$ 代入可得
+
+$$
+Y=(V,1-V)\overset{d}{=}(U,1-U)=X.
+$$
+
+但是除 $U=1/2$ 外，$X$ 与 $Y$ 的取值不同；在连续均匀分布下，$P(X=Y)=0$。因此，同分布远弱于逐点相等或几乎处处相等。
 
 :::
 
-结合 [多维 L-S 测度](13-finite-product-spaces.qmd#13-finite-product-spaces-多维-l-s-测度) 中的讨论可以知道, 正常情况下使用 $\{ F_{i},i=1,\dots,n \}$ 是无法确定 $F$ 的，除非是在**独立**这一特殊的条件下，这个将在[独立性的分布刻画](16-independence-and-conditional-expectation.qmd#thm-indepent-distribution)中讨论。
+由第 8 章的[换元积分法](08-integration.qmd#thm-inte-by-subs)，若 $X\overset d=Y$，则对任意 Borel 可测函数 $h$，只要 $h(X)$ 可积，$h(Y)$ 也可积，并且
 
-::: {.callout-note}
-这里有一个非常容易混淆的点。**一维测度的乘积来确定高维测度**这样的内容在本章的内容中出现了两次：
-- 通过一维测度空间中的测度来生成高维测度空间中的测度；
-- 通过边缘分布来确定联合分布。
+$$
+\mathbb E[h(X)]=\mathbb E[h(Y)].
+$$
 
-这提示两者之间存在联系：根据[独立性的分布刻画](16-independence-and-conditional-expectation.qmd#thm-indepent-distribution)，当**独立性成立**时，联合分布恰好等于边缘分布的乘积。
+## 联合分布函数 {#sec-joint-cdf-marginal}
+
+联合分布 $P_X$ 能够完整描述随机向量的取值规律，但直接处理所有 Borel 集合并不方便。与一维[分布函数](06-distribution-function.qmd)类似，可以只记录左下正交矩形的概率，把联合分布编码为一个数值函数。
+
+::: {#def-n-dist-rv}
+
+## 随机向量的联合分布函数
+
+设 $X=(X_1,\ldots,X_d)$ 是随机向量。对 $x=(x_1,\ldots,x_d)\in\mathbb R^d$，记
+
+$$
+(-\infty,x]
+:=
+\prod_{k=1}^d(-\infty,x_k].
+$$
+
+定义
+
+$$
+F_X(x)
+:=P_X((-\infty,x])
+=P(X_1\leq x_1,\ldots,X_d\leq x_d),
+$$ {#eq-joint-cdf}
+
+称 $F_X$ 为 $X$ 的**联合分布函数**。
 
 :::
 
-::: {#thm-inclusion-exclusion}
+这些左下正交矩形构成一个生成 $\mathcal B(\mathbb R^d)$ 的 $\pi$ 系。因此，若两个 Borel 概率测度在所有 $(-\infty,x]$ 上取值相同，则由测度的唯一性可知它们相同。换言之，**$F_X$ 虽然只记录一族特殊集合的概率，却仍然唯一决定联合分布 $P_X$**。
 
-## 容斥原理
-
-（集合论形式）设 $A_1, A_2, \dots, A_n$ 为有限集合，则这 $n$ 个集合的并集的元素个数为：
+联合分布函数还能恢复任意半开矩形的概率。二维时，直接对四个顶点作差可得
 
 $$
-\left| \bigcup_{i=1}^n A_i \right| = \sum_{1 \le i \le n} |A_i| - \sum_{1 \le i < j \le n} |A_i \cap A_j| + \sum_{1 \le i < j < k \le n} |A_i \cap A_j \cap A_k| - \dots + (-1)^{n-1} |A_1 \cap \dots \cap A_n|
-$$
+\begin{aligned}
+&P(a_1<X_1\leq b_1,\ a_2<X_2\leq b_2)\\
+&\quad=F_X(b_1,b_2)-F_X(a_1,b_2)\\
+&\qquad\quad-F_X(b_1,a_2)+F_X(a_1,a_2).
+\end{aligned}
+$$ {#eq-two-dimensional-cdf-increment}
 
-（概率论形式）设 $(\Omega, \mathcal{F}, P)$ 为概率空间，$A_1, A_2, \dots, A_n \in \mathcal{F}$ 为一系列事件。则这些事件中至少有一个发生的概率（即并集的概率）为：
-
-$$
-P\left( \bigcup_{i=1}^n A_i \right) = \sum_{1 \le i \le n} P(A_i) - \sum_{1 \le i < j \le n} P(A_i \cap A_j) + \dots + (-1)^{n-1} P\left( \bigcap_{i=1}^n A_i \right)
-$$
-:::
-
-## 密度
-
-仿照一维情形，可以直接应用 [Radon–Nikodym 定理](11-radon-nikodym-derivative.qmd#thm-rn)定义高维密度。假设对随机向量 $f=(f_1,\ldots,f_n)$，存在 $(\mathbb R^n,\mathcal B^n)$ 上的 $\sigma$ 有限测度 $\mu$ 使
+一般地，对第 $i$ 个坐标定义差分算子
 
 $$
-Pf^{-1}\ll \mu.
+\Delta_{a_i,b_i}^{(i)}F(x)
+:=
+F(x_1,\ldots,b_i,\ldots,x_d)
+-F(x_1,\ldots,a_i,\ldots,x_d).
 $$
 
-此时，由 [Radon–Nikodym 定理](11-radon-nikodym-derivative.qmd#thm-rn)存在可测函数 $\frac{dPf^{-1}}{d\mu}: (\mathbb{R}^{n},\mathcal{B}^{n})\to(\mathbb{R},\mathcal{B})$，满足
+若 $a<b$ 是逐坐标不等式，则
 
 $$
-\int _{A}\frac{dPf^{-1}}{d\mu} \, d\mu=Pf^{-1}(A)=P(f\in A),\quad
-\forall A\in\mathcal{B^{n}}.
-$$
+\begin{aligned}
+P(a<X\leq b)
+&=P_X((a,b])\\
+&=\Delta_{a_1,b_1}^{(1)}\cdots
+  \Delta_{a_d,b_d}^{(d)}F_X.
+\end{aligned}
+$$ {#eq-multivariate-cdf-increment}
 
-可测函数 $\frac{dPf^{-1}}{d\mu}$ 被称为 **$f$ 相对于 $\mu$ 的密度函数**，可见，**其是一个输入 $n$ 个值，输出 1 个值的函数**。当然, 我们也可以去定义**单个随机变量的边缘概率密度**, 也就是其**边缘分布的 R-N 导数**。相关导数规则见 [Radon–Nikodym 导数的性质](11-radon-nikodym-derivative.qmd#prp-rn)。
-
-下面, 我们将证明下面的一个推论, 其描述了**联合概率密度**和**边缘概率密度**之间的关系.
-
-::: {#prp-comb-margin-density}
-
-## 联合密度和边缘密度
-
-若 $p(x,y)$ 是 $n$ 和 $m$ 维随机向量 $X,Y$ 相对于 $\lambda \times \mu$ 的联合概率密度函数, 则有
+令 $\varepsilon\in\{0,1\}^d$，并定义顶点 $c_\varepsilon$ 的第 $i$ 个坐标为
 
 $$
-\int p(x,y) \, \lambda(dx)=\frac{PY^{-1}(dy)}{\mu(dy)}\ a.s.,
+(c_\varepsilon)_i
+=
+\begin{cases}
+b_i,&\varepsilon_i=1,\\
+a_i,&\varepsilon_i=0.
+\end{cases}
 $$
 
-和
+展开 @eq-multivariate-cdf-increment 可得等价的顶点求和公式
 
 $$
-\int p(x,y) \, \mu(dy)=\frac{PX^{-1}(dx)}{\lambda(dx)}\ a.s..
-$$
+P_X((a,b])
+=
+\sum_{\varepsilon\in\{0,1\}^d}
+(-1)^{d-\sum_{i=1}^d\varepsilon_i}
+F_X(c_\varepsilon).
+$$ {#eq-multivariate-cdf-vertex-sum}
 
-此外, 该结论可以推广至有限维联合概率密度.
+右侧必为非负数，这正是第 13 章所说的 **$d$ 重增量非负性**或 **$d$-递增性**。
+
+::: {#thm-13-finite-product-spaces-36}
+
+## 多维分布函数对应定理
+
+1. 任意 $\mathbb R^d$ 值随机向量 $X$ 的联合分布函数 $F_X$ 都是第 13 章定义的 [$d$ 元分布函数](13-finite-product-spaces.qmd#def-multi-dist-func)。
+2. 反过来，每个 $d$ 元分布函数 $F$ 都唯一对应一个 $\mathbb R^d$ 上的 Borel 概率测度 $P_F$，使
+
+   $$
+   P_F((-\infty,x])=F(x),
+   \qquad x\in\mathbb R^d.
+   $$
+
+   在典范概率空间 $(\mathbb R^d,\mathcal B(\mathbb R^d),P_F)$ 上，恒等映射的联合分布函数就是 $F$。
 
 :::
 
 ::: {.proof}
-$\forall B\in\mathcal{B}^{m}$，利用 [Radon–Nikodym 导数的性质](11-radon-nikodym-derivative.qmd#prp-rn) 有
+先证明第 1 条。固定除第 $i$ 个坐标以外的其他坐标，并令 $x_i^{(n)}\downarrow x_i$。相应的左下正交矩形构成递减集合列，其交集为 $(-\infty,x]$。由于 $P_X$ 是有限测度，测度的上连续性给出
 
 $$
-\begin{align}
-PY^{-1}(B)=\int _{B} PY^{-1}(dy)
-=\int _{B}\frac{PY^{-1}(dy)}{\mu(dy)} \, \mu(dy),
-\end{align}
+F_X(x_1,\ldots,x_i^{(n)},\ldots,x_d)
+\longrightarrow
+F_X(x),
 $$
 
-此外, 我们还有
+所以 $F_X$ 关于每个坐标分别右连续。
 
-$$
-\begin{align}
-PY^{-1}(B)&=P(X,Y)^{-1}(\mathbb{R}^{n}\times B) \\
-&=
-\int _{\mathbb{R}^{n}\times B}p(x,y) \, (\lambda \times \mu)(dxdy) \\
-&=\int _{B}\mu(dy)\int _{\mathbb{R}^{n}}f(x,y)\lambda(dx),
-\end{align}
-$$
+若固定其余坐标并令某个 $x_i\to-\infty$，事件 $\{X_i\leq x_i\}$ 递减到空集，因此 $F_X(x)\to0$。若所有坐标同时趋于 $+\infty$，事件 $\{X_1\leq x_1,\ldots,X_d\leq x_d\}$ 递增到 $\Omega$，所以 $F_X(x)\to1$。最后，由 @eq-multivariate-cdf-increment，任意矩形上的 $d$ 重增量等于 $P_X((a,b])\geq0$。于是 $F_X$ 满足 $d$ 元分布函数的全部条件。
 
-其中最后一行使用了 [Fubini 定理](13-finite-product-spaces.qmd#thm-fubini)。联立两个等式，得到
+对第 2 条，第 13 章已经利用[矩形增量定义的预测度](13-finite-product-spaces.qmd#prp-n-dist-semi-ring-measure)和[多维 Lebesgue–Stieltjes 测度](13-finite-product-spaces.qmd#13-finite-product-spaces-多维-l-s-测度)完成了从 $F$ 到 Borel 概率测度 $P_F$ 的扩张。唯一性来自左下正交矩形生成 $\mathcal B(\mathbb R^d)$。最后在 $(\mathbb R^d,\mathcal B(\mathbb R^d),P_F)$ 上取恒等映射，即得到联合分布函数为 $F$ 的典范随机向量。
 
-$$
-\int p(x,y) \, \lambda(dx)=\frac{PY^{-1}(dy)}{\mu(dy)}\ a.s..
-$$
-
-使用类似的方法可以得到另外一个等式的结果.
 :::
 
-本章讨论的随机向量只含有限个坐标。若把有限维向量
-$X=(X_1,\ldots,X_n)$ 推广为随机变量序列
-$X=(X_1,X_2,\ldots)$，值域便从 $\mathbb R^n$ 变为
-$\mathbb R^{\mathbb N}$。为了严格讨论这种无限维随机元素，下一章将构造[无限乘积空间](15-infinite-product-spaces.qmd)上的可测结构与概率测度。
+::: {.callout-warning title="多维情形不只是逐坐标单调"}
+当 $d\geq2$ 时，分别关于每个坐标单调和右连续还不足以保证一个函数是联合分布函数。真正控制矩形概率的是 @eq-multivariate-cdf-vertex-sum 的完整 $d$ 重增量；它必须对每个半开矩形都非负。
+:::
+
+## 边缘分布
+
+联合分布描述全部坐标的共同规律。如果只保留其中若干坐标，相应的分布由联合分布通过坐标投影得到。
+
+::: {#def-margin-dist}
+
+## 子向量的边缘分布
+
+设 $I=\{i_1<\cdots<i_k\}\subseteq\{1,\ldots,d\}$，并令
+
+$$
+\pi_I(x)
+:=(x_{i_1},\ldots,x_{i_k}),
+\qquad
+X_I:=\pi_I(X).
+$$
+
+子向量 $X_I$ 的分布称为 $X$ 关于坐标集 $I$ 的**边缘分布**，其联合分布函数称为相应的**边缘分布函数**。
+
+:::
+
+由 @eq-transform-law，边缘分布就是联合分布在坐标投影下的推前测度：
+
+$$
+P_{X_I}
+=(\pi_I)_{\#}P_X
+=P_X\circ\pi_I^{-1}.
+$$ {#eq-marginal-law-projection}
+
+因此，对任意 $B\in\mathcal B(\mathbb R^k)$，
+
+$$
+P_{X_I}(B)
+=P_X\bigl(\pi_I^{-1}(B)\bigr).
+$$
+
+若 $I=\{i\}$，那么 $\pi_i^{-1}(B)$ 就是在第 $i$ 个坐标上取 $B$、其余坐标不受限制的柱集。这说明边缘化的本质是：**保留所选坐标，并对其他坐标的所有可能取值求总概率**。
+
+边缘分布函数也可以直接从 $F_X$ 得到。固定 $x_I=(x_{i_1},\ldots,x_{i_k})$。对 $M>0$，定义 $x^{(M)}\in\mathbb R^d$：所选坐标取相应的 $x_{i_r}$，未选坐标均取 $M$。当 $M\to+\infty$ 时，相应的左下正交矩形递增，因此由概率测度的下连续性，
+
+$$
+F_{X_I}(x_I)
+=
+\lim_{M\to+\infty}F_X(x^{(M)}),
+$$ {#eq-marginal-cdf-limit}
+
+特别地，单个分量 $X_i$ 的分布函数满足
+
+$$
+F_{X_i}(t)
+=
+\lim_{M\to+\infty}
+F_X(M,\ldots,M,t,M,\ldots,M),
+$$
+
+其中 $t$ 位于第 $i$ 个坐标。
+
+## 边缘分布的局限
+
+**联合分布唯一决定每个边缘分布，但边缘分布通常不能反推出联合分布**。原因是投影只保留各子向量自身的取值规律，会丢失不同坐标如何共同变化的信息。
+
+::: {#exm-same-marginals-different-joints}
+
+## 例子：相同边缘与不同联合规律
+
+设 $U\sim\operatorname{Bernoulli}(1/2)$，并定义
+
+$$
+X=(U,U),
+\qquad
+Y=(U,1-U).
+$$
+
+$X$ 和 $Y$ 的两个一维边缘分布都是 $\operatorname{Bernoulli}(1/2)$。但是
+
+$$
+P(X_1=X_2)=1,
+\qquad
+P(Y_1=Y_2)=0.
+$$
+
+因此，它们具有完全相同的一维边缘分布，却具有不同的联合分布。
+
+:::
+
+特别需要区分“给定边缘分布”和“取边缘分布的乘积”。乘积测度
+
+$$
+P_{X_1}\otimes\cdots\otimes P_{X_d}
+$$
+
+只是具有这些边缘分布的一种特殊联合分布，它对应坐标相互独立的情形。一般的联合分布还需要额外描述坐标间的依赖结构；这一点将在[独立性的分布刻画](16-independence-and-conditional-expectation.qmd#thm-indepent-distribution)中严格说明。
+
+联合分布、联合分布函数和边缘分布分别提供了完整测度、数值编码和投影信息。下一步将讨论当这些测度相对于适当参考测度绝对连续时，如何用联合密度和边缘密度进行计算。
+
+# 联合密度
+
+## 密度函数定义
+
+联合分布 $P_X$ 是 $\mathbb R^d$ 上的概率测度。只有在选定参考测度，并且 $P_X$ 相对于该测度绝对连续时，才能进一步用一个函数表示联合分布。这里关注的参考测度是第 13 章构造的乘积测度。
+
+::: {#def-joint-density}
+
+## 随机向量的联合密度
+
+设 $X=(X_1,\ldots,X_d)$ 是随机向量，$\mu_1,\ldots,\mu_d$ 分别是 $\mathbb R$ 上的 $\sigma$ 有限测度，并令
+
+$$
+\mu=\mu_1\otimes\cdots\otimes\mu_d.
+$$
+
+若联合分布满足
+
+$$
+P_X\ll\mu,
+$$
+
+则称 Radon–Nikodym 导数
+
+$$
+p_X
+:=
+\frac{dP_X}{d\mu}
+$$ {#eq-joint-density-rn}
+
+为 $X$ 相对于 $\mu$ 的**联合密度**。
+
+:::
+
+根据 [Radon–Nikodym 定理](11-radon-nikodym-derivative.qmd#thm-rn)，$p_X$ 是一个从 $\mathbb R^d$ 到 $[0,\infty)$ 的可测函数，在 $\mu$-几乎处处相等的意义下唯一，并且满足
+
+$$
+P_X(B)
+=P(X\in B)
+=\int_B p_X(x)\,\mu(dx),
+\qquad B\in\mathcal B(\mathbb R^d).
+$$ {#eq-joint-density-event}
+
+特别地，
+
+$$
+\int_{\mathbb R^d}p_X(x)\,\mu(dx)=1.
+$$
+
+密度只在几乎处处意义下确定，因此改变 $p_X$ 在一个 $\mu$-零测集上的取值不会改变联合分布。
+
+第 8 章的[换元积分法](08-integration.qmd#thm-inte-by-subs)与 Radon–Nikodym 导数的积分性质共同给出：若 $g:\mathbb R^d\to\mathbb R$ Borel 可测，并且 $g(X)$ 可积，或者 $g\geq0$，则
+
+$$
+\mathbb E[g(X)]
+=\int_{\mathbb R^d}g(x)\,P_X(dx)
+=\int_{\mathbb R^d}g(x)p_X(x)\,\mu(dx).
+$$ {#eq-expectation-by-joint-density}
+
+相应地，联合分布函数可以写成
+
+$$
+F_X(x)
+=\int_{(-\infty,x]}p_X(u)\,\mu(du).
+$$ {#eq-cdf-by-joint-density}
+
+参考测度的选择统一了常见的连续型和离散型表示：
+
+- 若 $\mu_i$ 都是一维 Lebesgue 测度，则 $\mu=\lambda^d$，此时 $p_X$ 是通常所说的 $d$ 维联合概率密度函数。
+- 若第 $i$ 个坐标取值于至多可列集 $S_i$，并以 $S_i$ 上的计数测度为参考测度，则 $p_X(x)=P(X=x)$，联合密度就是联合概率质量函数。
+
+因此，“$X$ 有密度”本身并不是完整陈述；还必须说明它是相对于哪个参考测度的密度。联合密度也不应与边缘密度的乘积混淆。一般而言，
+
+$$
+p_X(x_1,\ldots,x_d)
+\ne
+\prod_{i=1}^d p_{X_i}(x_i).
+$$
+
+两者相等需要独立性等额外条件，具体结论见第 16 章的[独立性的分布刻画](16-independence-and-conditional-expectation.qmd#thm-indepent-distribution)。
+
+## 边缘化
+
+上一节把边缘分布表示为联合分布在坐标投影下的推前测度。当联合分布存在相对于乘积测度的密度时，这个投影操作可以转化为对未保留坐标积分。
+
+::: {#prp-comb-margin-density}
+
+## 联合密度的边缘化
+
+设 $X$ 和 $Y$ 分别是 $\mathbb R^n$ 值和 $\mathbb R^m$ 值随机向量，$\mu$ 和 $\nu$ 分别是 $\mathbb R^n$ 和 $\mathbb R^m$ 上的 $\sigma$ 有限测度。若 $(X,Y)$ 的联合分布相对于 $\mu\otimes\nu$ 具有联合密度 $p_{X,Y}$，则
+
+$$
+p_X(x)
+:=
+\int_{\mathbb R^m}p_{X,Y}(x,y)\,\nu(dy)
+$$ {#eq-marginal-density-x}
+
+是 $P_X$ 相对于 $\mu$ 的密度，而
+
+$$
+p_Y(y)
+:=
+\int_{\mathbb R^n}p_{X,Y}(x,y)\,\mu(dx)
+$$ {#eq-marginal-density-y}
+
+是 $P_Y$ 相对于 $\nu$ 的密度。两个等式均按相应参考测度的几乎处处意义理解。
+
+:::
+
+::: {.proof}
+由于 $p_{X,Y}\geq0$，可以直接使用第 13 章的 [Tonelli 定理](13-finite-product-spaces.qmd#cor-tonelli)。对任意 $A\in\mathcal B(\mathbb R^n)$，
+
+$$
+\begin{aligned}
+P_X(A)
+&=P_{(X,Y)}(A\times\mathbb R^m)\\
+&=\int_{A\times\mathbb R^m}
+  p_{X,Y}(x,y)\,(\mu\otimes\nu)(d(x,y))\\
+&=\int_A
+  \left[
+    \int_{\mathbb R^m}p_{X,Y}(x,y)\,\nu(dy)
+  \right]\mu(dx)\\
+&=\int_A p_X(x)\,\mu(dx).
+\end{aligned}
+$$
+
+因此 $P_X\ll\mu$，而且由 Radon–Nikodym 导数的几乎处处唯一性，
+
+$$
+\frac{dP_X}{d\mu}=p_X
+\qquad \mu\text{-a.e.}
+$$
+
+交换两个坐标的角色，同理可得
+
+$$
+\frac{dP_Y}{d\nu}=p_Y
+\qquad \nu\text{-a.e.}
+$$
+
+:::
+
+对一般的 $d$ 维随机向量，若要取得坐标集 $I$ 对应的子向量密度，只需保留 $x_I$，并相对于其余坐标的参考测度进行积分。因而，密度层面的边缘化与 @eq-marginal-law-projection 中测度层面的坐标投影是同一个操作的两种表示：前者把未保留坐标的概率质量累加起来，后者把联合分布推前到较低维空间。
+
+## 奇异联合分布
+
+**边缘密度的存在不能保证联合密度相对于相应的 Lebesgue 乘积测度存在**。坐标之间的确定性约束可能使全部概率集中在低维集合上。
+
+::: {#exm-singular-diagonal-law}
+
+## 例子：对角线上的联合分布
+
+设
+
+$$
+U\sim\operatorname{Unif}(0,1),
+\qquad
+X=(U,U).
+$$
+
+两个分量都服从 $\operatorname{Unif}(0,1)$，因而都具有一维 Lebesgue 密度
+
+$$
+p_{X_1}(x)=p_{X_2}(x)=\mathbf 1_{(0,1)}(x).
+$$
+
+但是，$X$ 的取值总在对角线
+
+$$
+D=\{(x,y)\in(0,1)^2:x=y\}
+$$
+
+上，所以
+
+$$
+P_X(D)=1.
+$$
+
+另一方面，对每个固定的 $x\in(0,1)$，集合 $D$ 的竖直截口至多是单点。由 Tonelli 定理，
+
+$$
+\lambda^2(D)
+=\int_0^1\lambda(\{x\})\,\lambda(dx)
+=0.
+$$
+
+若 $P_X$ 相对于 $\lambda^2$ 存在联合密度，就应当有 $P_X\ll\lambda^2$；但 $\lambda^2(D)=0$ 而 $P_X(D)=1$，产生矛盾。因此 $X$ 不存在相对于二维 Lebesgue 测度的联合密度。
+
+:::
+
+这个例子说明，**即使每个边缘分布都有 Lebesgue 密度，联合分布仍可能是奇异的**。这里的“奇异”是相对于二维 Lebesgue 测度而言；若改用集中在对角线上的参考测度，例如 $P_X$ 本身，则 $P_X$ 的 Radon–Nikodym 导数就是常数 $1$。因此，密度不是联合分布脱离参考测度后的固有函数，而是联合分布相对于某个参考测度的表示。一般概率测度相对于给定参考测度的绝对连续部分与奇异部分，可由第 12 章的 [Lebesgue 分解](12-lebesgue-decomposition.qmd#thm-leb-decomp)统一描述。
+
+**联合密度把联合分布转化为可以积分计算的函数，边缘化则把坐标投影转化为累次积分；奇异分布提醒我们，这种函数表示并不覆盖所有随机向量**。

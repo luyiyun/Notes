@@ -873,7 +873,7 @@ $$
 
 问题得证。
 :::
-基于该定理，我们还可以得到一个常用的推论。这个推论涉及到一个新的概念：可测分割（注意，之前在定义简单函数时我们使用到的是 [有限可测分割](07-measureable-functions.qmd#def-finite-measurable-partition) ，可测分割是其可数推广）。
+基于该定理，我们还可以得到一个常用的推论。这个推论涉及到一个新的概念：可测分割（注意，之前在定义简单函数时我们使用到的是 [有限可测分割](07-measurable-functions.qmd#def-finite-measurable-partition) ，可测分割是其可数推广）。
 
 ::: {#def-08-integration-16}
 
@@ -1123,7 +1123,7 @@ $$
 
 设 $g$ 是由测度空间 $(X,\mathcal{F},\mu)$ 到可测空间 $(Y,\mathcal{T})$ 的可测映射。
 
-(1) 令 $\nu=\mu \circ g^{-1}$，则 $(Y,\mathcal{T},\nu)$ 是一个测度空间；
+(1) 令 $\nu=g_{\#}\mu=\mu \circ g^{-1}$，则 $(Y,\mathcal{T},\nu)$ 是一个测度空间；
 (2) 对于 $(Y,\mathcal{T},\nu)$ 上的任何可测函数 $f$，只要等式
   $$
   \int _{Y}f \, d\nu =\int _{X}f\circ g \, d\mu,

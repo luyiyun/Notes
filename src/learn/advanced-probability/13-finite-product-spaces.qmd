@@ -36,7 +36,7 @@ order: 13
 投影把乘积空间中的点送回单个因子空间，截口则在固定部分坐标后，把高维集合或函数降到剩余坐标上。乘积 $\sigma$ 代数由投影生成；Fubini–Tonelli 定理则通过截口把高维积分还原为累次积分。
 :::
 
-本章先讨论有限维构造，再以 $\mathbb R^n$ 上的多维 Lebesgue–Stieltjes 测度作为典型实例。值域为 $\mathbb R^n$ 的可测映射及其联合分布已经拆分到[第 15 章](15-random-vectors.qmd)；无限维乘积空间则见[第 14 章](14-infinite-product-spaces.qmd)。
+本章先讨论有限维构造，再以 $\mathbb R^n$ 上的多维 Lebesgue–Stieltjes 测度作为典型实例。值域为 $\mathbb R^n$ 的可测映射及其联合分布已经拆分到[第 14 章](14-random-vectors.qmd)；无限维乘积空间则见[第 15 章](15-infinite-product-spaces.qmd)。
 
 # 乘积可测空间
 
@@ -1159,7 +1159,7 @@ $$
 \bigotimes_{i=1}^{n}P_{X_i}.
 $$
 
-两者通常不同；它们相等当且仅当 $X_1,\ldots,X_n$ 相互独立。联合分布与边缘分布将在[第 15 章“随机向量”](15-random-vectors.qmd)中定义，独立性的等价刻画则见[第 16 章](16-independence-and-conditional-expectation.qmd#thm-indepent-distribution)。
+两者通常不同；它们相等当且仅当 $X_1,\ldots,X_n$ 相互独立。联合分布与边缘分布将在[第 14 章“随机向量”](14-random-vectors.qmd)中定义，独立性的等价刻画则见[第 16 章](16-independence-and-conditional-expectation.qmd#thm-indepent-distribution)。
 
 ::: {.callout-tip title="Summary：本章要点"}
 1. 乘积 $\sigma$ 代数由可测矩形生成，也等于使所有坐标投影可测的最小 $\sigma$ 代数。

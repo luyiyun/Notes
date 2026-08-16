@@ -773,17 +773,20 @@ $\mathcal{T}$ 是一个 $\pi$ -class，$\mathcal{L}$ 是一个 $\lambda$ 类，�
 
 ::: {#def-rv-dist}
 
-## 诱导测度和分布
+## 推前测度与分布
 
-假设 $(X,\mathcal{F},\nu)$ 是一个测度空间，$f$ 是从 $(X,\mathcal{F})$ 到 $(Y,\mathcal{T})$ 的可测映射，则我们可以定义 **$f$ 诱导的测度 (induced measure by $f$ )**，记为 $\nu \circ f^{-1}$，其在 $(Y,\mathcal{T})$ 上，满足
+假设 $(X,\mathcal{F},\nu)$ 是一个测度空间，$f$ 是从 $(X,\mathcal{F})$ 到 $(Y,\mathcal{T})$ 的可测映射。定义 $(Y,\mathcal T)$ 上的测度
 
- $$
-\nu \circ f^{-1}(B)=\nu(f\in B)=\nu(f^{-1}(B)),\quad \forall B\in\mathcal{T}.
+$$
+(f_{\#}\nu)(B)
+:=(\nu\circ f^{-1})(B)
+=\nu\bigl(f^{-1}(B)\bigr),
+\qquad B\in\mathcal T.
 $$
 
-**$\nu\circ f^{-1}$ 是测度**由 @thm-inverse-image 保证。
+称 $f_{\#}\nu=\nu\circ f^{-1}$ 为 $\nu$ 在 $f$ 下的**推前测度**（pushforward measure），也称为 $f$ **诱导的测度**（induced measure）。由于原像保持空集、可列并以及不交性，$f_{\#}\nu$ 满足测度的可列可加性；相关原像规则见 @prp-07-measurable-functions-2 和 @thm-inverse-image。
 
-若 $(X,\mathcal{F},\nu)$ 是一个概率空间，$f$ 是一个随机变量，则 $\nu \circ f^{-1}$ 被称为**随机变量 $f$ 的分布或分布率（distribution or law）**。一般我们使用 $\nu_{f}$ 来表示。
+若 $(X,\mathcal{F},\nu)$ 是一个概率空间，$f$ 是一个随机变量，则推前测度 $f_{\#}\nu=\nu\circ f^{-1}$ 被称为**随机变量 $f$ 的分布或分布率（distribution or law）**。一般使用 $\nu_f$ 表示。
 
 根据 [分布函数的定义](06-distribution-function.qmd#def-dist-func)，我们可以定义 $\nu_{f}$ 的分布函数 $F_{f}$，我们称其为**随机变量 $f$ 的分布函数**(cumulative distribution function，c.d.f)，记作 $f\sim F_{f}$，称为 $f$ 服从 $F_{f}$。
 
