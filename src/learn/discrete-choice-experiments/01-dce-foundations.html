@@ -6,9 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="荣志炜">
+<meta name="description" content="系统说明 DCE 的基本对象、问卷构造、调查实施、数据记录与解释边界。">
 
-<title>无限乘积空间 – Rong’s Notes</title>
+<title>DCE基础 – Rong’s Notes</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -45,7 +45,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../../site_libs/bootstrap/bootstrap-ac85ca74a100ebb7e46a110fd8e57b9b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-5422102e672e4944a51d307770aa45d9.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -147,7 +147,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/index.html">高等概率论</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/14-infinite-product-spaces.html">无限乘积空间</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/discrete-choice-experiments/01-dce-foundations.html">Discrete Choice Experiments</a></li><li class="breadcrumb-item"><a href="../../../src/learn/discrete-choice-experiments/01-dce-foundations.html">DCE基础</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
@@ -195,13 +195,36 @@ window.Quarto = {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../../../src/learn/advanced-probability/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">高等概率论</span></a>
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Discrete Choice Experiments</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/discrete-choice-experiments/01-dce-foundations.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">DCE基础</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/discrete-choice-experiments/02-basic-statistical-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">基础统计分析</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../../src/learn/advanced-probability/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">高等概率论</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../../src/learn/advanced-probability/01-introduction.html" class="sidebar-item-text sidebar-link">
@@ -282,13 +305,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../src/learn/advanced-probability/14-infinite-product-spaces.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">无限乘积空间</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../src/learn/advanced-probability/15-random-vectors.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../src/learn/advanced-probability/14-random-vectors.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">随机向量</span></a>
   </div>
 </li>
@@ -328,11 +345,11 @@ window.Quarto = {
       <div class="sidebar-item-container"> 
             <a href="../../../src/learn/prml/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">PRML</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 show">  
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth2 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../../src/learn/prml/06-kernel-methods.html" class="sidebar-item-text sidebar-link">
@@ -367,13 +384,13 @@ window.Quarto = {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true">
  <span class="menu-text">Semi Supervised Learning</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth2 show">  
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../../src/learn/semi-supervised-learning/01-concepts-assumptions-and-theory.html" class="sidebar-item-text sidebar-link">
@@ -390,13 +407,13 @@ window.Quarto = {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="true">
  <span class="menu-text">Trajectory Mixture Models</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 show">  
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../../src/learn/trajectory-mixture-models/00-series-index.html" class="sidebar-item-text sidebar-link">
@@ -465,41 +482,64 @@ window.Quarto = {
     <h2 id="toc-title">目录</h2>
    
   <ul>
-  <li><a href="#可列维乘积空间" id="toc-可列维乘积空间" class="nav-link active" data-scroll-target="#可列维乘积空间">2 可列维乘积空间</a></li>
-  <li><a href="#任意无穷维乘积空间" id="toc-任意无穷维乘积空间" class="nav-link" data-scroll-target="#任意无穷维乘积空间">3 任意无穷维乘积空间</a></li>
+  <li><a href="#研究对象与基本概念" id="toc-研究对象与基本概念" class="nav-link active" data-scroll-target="#研究对象与基本概念">研究对象与基本概念</a>
+  <ul class="collapse">
+  <li><a href="#治疗选择示例" id="toc-治疗选择示例" class="nav-link" data-scroll-target="#治疗选择示例">治疗选择示例</a></li>
+  <li><a href="#属性与水平" id="toc-属性与水平" class="nav-link" data-scroll-target="#属性与水平">属性与水平</a></li>
+  <li><a href="#方案与备选项" id="toc-方案与备选项" class="nav-link" data-scroll-target="#方案与备选项">方案与备选项</a></li>
+  <li><a href="#选择集选择任务与结果" id="toc-选择集选择任务与结果" class="nav-link" data-scroll-target="#选择集选择任务与结果">选择集、选择任务与结果</a></li>
+  </ul></li>
+  <li><a href="#问卷构造" id="toc-问卷构造" class="nav-link" data-scroll-target="#问卷构造">问卷构造</a>
+  <ul class="collapse">
+  <li><a href="#决策问题与目标量" id="toc-决策问题与目标量" class="nav-link" data-scroll-target="#决策问题与目标量">决策问题与目标量</a></li>
+  <li><a href="#属性与水平开发" id="toc-属性与水平开发" class="nav-link" data-scroll-target="#属性与水平开发">属性与水平开发</a></li>
+  <li><a href="#选择任务形式" id="toc-选择任务形式" class="nav-link" data-scroll-target="#选择任务形式">选择任务形式</a></li>
+  <li><a href="#任务组合与实验设计" id="toc-任务组合与实验设计" class="nav-link" data-scroll-target="#任务组合与实验设计">任务组合与实验设计</a></li>
+  </ul></li>
+  <li><a href="#数据结构" id="toc-数据结构" class="nav-link" data-scroll-target="#数据结构">数据结构</a>
+  <ul class="collapse">
+  <li><a href="#备选项层长表" id="toc-备选项层长表" class="nav-link" data-scroll-target="#备选项层长表">备选项层长表</a></li>
+  <li><a href="#重复选择与调查记录" id="toc-重复选择与调查记录" class="nav-link" data-scroll-target="#重复选择与调查记录">重复选择与调查记录</a></li>
+  </ul></li>
+  <li><a href="#调查实施" id="toc-调查实施" class="nav-link" data-scroll-target="#调查实施">调查实施</a>
+  <ul class="collapse">
+  <li><a href="#研究流程" id="toc-研究流程" class="nav-link" data-scroll-target="#研究流程">研究流程</a></li>
+  <li><a href="#预测试与正式调查" id="toc-预测试与正式调查" class="nav-link" data-scroll-target="#预测试与正式调查">预测试与正式调查</a></li>
+  <li><a href="#效度与响应行为" id="toc-效度与响应行为" class="nav-link" data-scroll-target="#效度与响应行为">效度与响应行为</a></li>
+  </ul></li>
+  <li><a href="#参考来源" id="toc-参考来源" class="nav-link" data-scroll-target="#参考来源">参考来源</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/index.html">高等概率论</a></li><li class="breadcrumb-item"><a href="../../../src/learn/advanced-probability/14-infinite-product-spaces.html">无限乘积空间</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/discrete-choice-experiments/01-dce-foundations.html">Discrete Choice Experiments</a></li><li class="breadcrumb-item"><a href="../../../src/learn/discrete-choice-experiments/01-dce-foundations.html">DCE基础</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">无限乘积空间</h1>
+<h1 class="title">DCE基础</h1>
 </div>
 
+<div>
+  <div class="description">
+    系统说明 DCE 的基本对象、问卷构造、调查实施、数据记录与解释边界。
+  </div>
+</div>
 
 
 <div class="quarto-title-meta">
 
-    <div>
-    <div class="quarto-title-meta-heading">作者</div>
-    <div class="quarto-title-meta-contents">
-             <p>荣志炜 </p>
-          </div>
-  </div>
     
     <div>
     <div class="quarto-title-meta-heading">发布于</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">2025年12月18日</p>
+      <p class="date">2026年7月31日</p>
     </div>
   </div>
   
     <div>
     <div class="quarto-title-meta-heading">修改于</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">2026年7月29日</p>
+      <p class="date-modified">2026年8月16日</p>
     </div>
   </div>
     
@@ -510,273 +550,440 @@ window.Quarto = {
 </header>
 
 
-<section id="可列维乘积空间" class="level1">
-<h1>2 可列维乘积空间</h1>
-<div id="def-14-infinite-product-spaces-1" class="theorem definition">
-<p><span class="theorem-title"><strong>定义 1 (可列维乘积空间)</strong></span> 设 <span class="math inline">\((\{ X_{n},n=1,2,\dots \})\)</span> 是一列非空集合，称集合</p>
-<p>$$ <em>{n=1}^{}X</em>{n}:={ (x_{1},x_{2},)|x_{n}X_{n} }</p>
-<p>$$</p>
-<p>为这列集合的<strong>乘积</strong>。 <strong>Definition: 有限维可测矩形柱集</strong> 设 <span class="math inline">\(\{ (X_{n},\mathcal{F}_{n}),n=1,2,\dots \}\)</span> 是一列可测空间，对 <span class="math inline">\(\forall n=1,2,\dots\)</span>，记</p>
-<p><span class="math display">\[
-\mathcal{L}_{(n)}=\left\{  \prod\limits_{k=1}^{n}A_{k}|A_{k}\in\mathcal{F}_{k},k=1,2,\dots n  \right\},
-\]</span></p>
-<p><span class="math display">\[
-\mathcal{L}_{[n]}=\left\{  A\times \prod\limits_{k=n+1}^{\infty}X_{k}|A\in\mathcal{L}_{(n)}  \right\},
-\]</span></p>
-<p>则称 <span class="math inline">\(\mathcal{L}:=\bigcup_{n=1}^{\infty}\mathcal{L}_{[n]}\)</span> 中的集合为<strong>有限维可测矩形柱集</strong>。 <strong>Definition: 有限维可测柱集</strong> <span class="math inline">\(\forall n=1,2,\dots\)</span>，记</p>
-<p><span class="math display">\[
-X_{(n)}=\prod\limits_{k=1}^{n}X_{k},\quad
-\mathcal{F}_{(n)}=\prod\limits_{k=1}^{n}\mathcal{F}_{k},
-\]</span></p>
-<p>以及</p>
-<p><span class="math display">\[
-\mathcal{A}_{[n]}=\left\{  A_{(n)}\times \prod\limits_{k=n+1}^{\infty}X_{k}|A_{(n)}\in\mathcal{F}_{(n)}  \right\},
-\]</span></p>
-<p>称 <span class="math inline">\(\mathcal{A}:=\bigcup_{n=1}^{\infty}\mathcal{A}_{[n]}\)</span> 中的集合为<strong>有限维可测柱集</strong>。</p>
-</div>
-<p>根据上面的定义，我们可以注意到，<strong>下标 <span class="math inline">\((n)\)</span> 其实表示的是有限维矩形集和有限维可侧集，其中的元素是 <span class="math inline">\(n\)</span> 维向量；下标 <span class="math inline">\([n]\)</span> 表示的是柱集，其中的元素是可数维向量</strong>。比如，<span class="math inline">\(\mathcal{F}_{(n)}\)</span> 其实就是上一节介绍的有限维乘积 <span class="math inline">\(\sigma\)</span> 代数 <span class="math inline">\(\prod\limits_{k=1}^{n}\mathcal{F}_{k}\)</span>，注意不要和 <span class="math inline">\(\mathcal{F}_{n}\)</span> 混淆。</p>
-<p>这里我们解释一下为什么叫做<strong>柱集</strong>。我们以三维空间为例，这里的 <span class="math inline">\(n=2\)</span>，则剩下的那个空间需要是全集，则有下面的情况：</p>
-<div class="callout callout-style-default callout-note callout-titled" title="Excalidraw drawing pending export">
+<section id="研究对象与基本概念" class="level1">
+<h1>研究对象与基本概念</h1>
+<section id="治疗选择示例" class="level2">
+<h2 class="anchored" data-anchor-id="治疗选择示例">治疗选择示例</h2>
+<p><strong>许多决策并不是在一个指标上寻找最大值，而是在多个互相冲突的属性之间权衡。</strong>例如，患者选择治疗方案时，可能同时关心疗效、不良反应、给药方式和费用；通勤者选择交通方式时，可能同时考虑时间、价格、可靠性和舒适度。如果只询问“哪个属性最重要”，我们很难知道受访者愿意牺牲多少属性 <span class="math inline">\(A\)</span> 来换取属性 <span class="math inline">\(B\)</span> 的改善。</p>
+<p>考虑下面这个虚构的治疗选择任务：</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>属性</th>
+<th style="text-align: right;">治疗 A</th>
+<th style="text-align: right;">治疗 B</th>
+<th style="text-align: right;">暂不接受新治疗</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>症状改善概率</td>
+<td style="text-align: right;">70%</td>
+<td style="text-align: right;">55%</td>
+<td style="text-align: right;">40%</td>
+</tr>
+<tr class="even">
+<td>严重不良反应风险</td>
+<td style="text-align: right;">5%</td>
+<td style="text-align: right;">1%</td>
+<td style="text-align: right;">0%</td>
+</tr>
+<tr class="odd">
+<td>给药方式</td>
+<td style="text-align: right;">每月注射</td>
+<td style="text-align: right;">每日口服</td>
+<td style="text-align: right;">无</td>
+</tr>
+<tr class="even">
+<td>每月自付费用</td>
+<td style="text-align: right;">¥800</td>
+<td style="text-align: right;">¥200</td>
+<td style="text-align: right;">¥0</td>
+</tr>
+</tbody>
+</table>
+<p>受访者需要选择治疗 A、治疗 B 或维持现状。单独一次选择的信息很有限：如果受访者选择 A，我们不知道其主要看重较高疗效，还是能够接受注射和较高费用。<strong>离散选择实验（discrete choice experiment，DCE）会系统改变这些属性水平，向同一受访者呈现多道选择题，再根据选择随属性变化的方式推断其权衡关系</strong>。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Key Idea：把决策转写为受控选择">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">注记</span>Excalidraw drawing pending export
+<span class="screen-reader-only">注记</span>Key Idea：把决策转写为受控选择
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>原 Obsidian 图形已保留为附件：<a href="../../../assets/attachments/advanced-probability/excalidraw/finite-product-space-2024-06-21-115810.excalidraw.md">center</a>。</p>
+<p>DCE 的核心不是询问受访者如何评价孤立属性，而是把现实决策转写成一系列受控的多属性选择。研究者改变方案的属性组合，观察选择如何随之改变，再利用选择模型反推出属性权衡。</p>
 </div>
 </div>
-<p>接下来，我们将定义投影</p>
-<div id="def-14-infinite-product-spaces-2" class="theorem definition">
-<p><span class="theorem-title"><strong>定义 2 (投影)</strong></span> 从 <span class="math inline">\(\prod\limits_{n=1}^{\infty}X_{n}\)</span> 到 <span class="math inline">\(X_{n}\)</span> 的映射</p>
-<p><span class="math display">\[
-\pi_{n}(x_{1},x_{2},\dots)=x_{n}
-\]</span></p>
-<p>称为 <span class="math inline">\(\prod\limits_{n=1}^{\infty}X_{n}\)</span> 到 <span class="math inline">\(X_{n}\)</span> 的<strong>投影</strong>。 从 <span class="math inline">\(\prod\limits_{n=1}^{\infty}X_{n}\)</span> 到 <span class="math inline">\(X_{(n)}\)</span> 的映射</p>
-<p><span class="math display">\[
-\pi_{(n)}(x_{1},x_{2},\dots)=(x_{1},\dots,x_{n})
-\]</span></p>
-<p>称为 <span class="math inline">\(\prod\limits_{n=1}^{\infty}X_{n}\)</span> 到 <span class="math inline">\(X_{(n)}\)</span> 的<strong>投影</strong>。</p>
-</div>
-<p>基于投影，我们可以这样表示我们前面定义的集合系</p>
-<div id="prp-6d4236" class="theorem proposition">
-<p><span class="theorem-title"><strong>命题 1 (Proposition)</strong></span> <span class="math display">\[
-\mathcal{L}_{[n]}=\pi_{(n)}^{-1}\mathcal{L}_{(n)},\quad
-\mathcal{A}_{[n]}=\pi_{(n)}^{-1}\mathcal{F}_{(n)}.
-\]</span></p>
-</div>
-<p>根据以上内容，我们有如下的命题</p>
-<div id="prp-fae873" class="theorem proposition">
-<p><span class="theorem-title"><strong>命题 2 (Proposition)</strong></span> &nbsp;</p>
-<ol type="1">
-<li><span class="math inline">\(\mathcal{L}\)</span> 是半环并且 <span class="math inline">\(\prod\limits_{n=1}^{\infty}\in\mathcal{L}\)</span>。</li>
-<li><span class="math inline">\(\mathcal{A}\)</span> 是域。</li>
-<li><span class="math inline">\(\prod\limits_{n=1}^{\infty}\mathcal{F}_{n}:=\sigma(\mathcal{L})=\sigma(\mathcal{A})=\sigma\left( \bigcup_{n=1}^{\infty}\pi_{n}^{-1}\mathcal{F}_{n} \right)\)</span>。</li>
-</ol>
-</div>
-<div class="proof">
-<p><span class="proof-title"><em>证明</em>. </span></p>
-<ol type="1">
-<li>容易证明，略。</li>
-<li>容易证明，略。</li>
-<li>由 <a href="#6d4236">6d4236</a> 可知</li>
-</ol>
-<p><span class="math display">\[
-\bigcup_{n=1}^{\infty}\pi_{n}^{-1}\mathcal{F}_{n}\subset
-\mathcal{L}\subset \mathcal{A},
-\]</span></p>
-<p>因此有</p>
-<p><span class="math display">\[
-\sigma(\mathcal{A})\supset\sigma(\mathcal{L})\supset
-\sigma(\bigcup_{n=1}^{\infty}\pi_{n}^{-1}\mathcal{F}_{n}).
-\]</span></p>
-<p>由 <a href="#7ca59d">7ca59d</a> (2) 我们又可知</p>
-<p><span class="math display">\[
-\begin{align}
-&amp;\mathcal{A}_{[n]}=\sigma\left( \bigcup_{k=1}^{n}\pi_{k}^{-1}\mathcal{F}_{k} \right)\subset\sigma\left( \bigcup_{k=1}^{\infty}\pi_{k}^{-1}\mathcal{F}_{k} \right) \\
-&amp;\implies
-\mathcal{A}\subset\sigma\left( \bigcup_{k=1}^{\infty}\pi_{k}^{-1}\mathcal{F}_{k} \right) \\
-&amp;\implies
-\sigma(\mathcal{A})\subset\sigma\left( \bigcup_{k=1}^{\infty}\pi_{k}^{-1}\mathcal{F}_{k} \right).
-\end{align}
-\]</span></p>
-<p>注意到，第一行的等式来自于 <a href="#7ca59d">7ca59d</a> (2)（移除掉那些不会造成影响、后面无穷多个维度，因为这些维度上都是全集 <span class="math inline">\(X_{k}\)</span>）。 证毕。</p>
-</div>
-<div id="def-14-infinite-product-spaces-5" class="theorem definition">
-<p><span class="theorem-title"><strong>定义 3 (序列乘积)</strong></span> 我们将上述 <span class="math inline">\(\sigma\)</span> 域 <span class="math inline">\(\prod\limits_{n=1}^{\infty}\mathcal{F}_{n}\)</span> 称为 <strong><span class="math inline">\(\sigma\)</span> 域序列的乘积</strong>。将 <span class="math inline">\(\left( \prod\limits_{n=1}^{\infty}X_{n},\prod\limits_{n=1}^{\infty}\mathcal{F}_{n} \right)\)</span> 称为<strong>可测空间列 <span class="math inline">\(\{ (X_{n},\mathcal{F}_{n}),n=1,2,\dots \}\)</span> 的乘积</strong>。</p>
-</div>
-<p>此外，根据 <a href="#fae873">fae873</a> (3)，我们可以得到下面的结论：</p>
-<div id="thm-14-infinite-product-spaces-6" class="theorem">
-<p><span class="theorem-title"><strong>定理 1 (可测函数序列的可测性)</strong></span> 从 <span class="math inline">\((X,\mathcal{F})\)</span> 到 <span class="math inline">\((\mathbb{R}^{\infty},\mathcal{B}_{\mathbb{R}}^{\infty})\)</span> 的可测映射 <span class="math inline">\(f=(f_{1},\dots)\)</span> 称为可测函数序列，其可测性成立的充分必要条件是 <span class="math inline">\(\forall n\in\mathbb{N}^{+}\)</span>，<span class="math inline">\(f_{n}\)</span> 都可测。</p>
-</div>
-<div class="proof">
-<p><span class="proof-title"><em>证明</em>. </span><span class="math display">\[
-\begin{align}
-f^{-1}\left( \prod\limits_{n=1}^{\infty}\mathcal{F}_{n} \right)
-&amp;=f^{-1}\left(\sigma\left( \bigcup_{n=1}^{\infty}\pi_{n}^{-1}\mathcal{F}_{n} \right)\right) \\
-&amp;=\sigma\left( f^{-1}\left( \bigcup_{n=1}^{\infty}\pi_{n}^{-1}\mathcal{F}_{n} \right) \right) \\
-&amp;=\sigma\left( \bigcup_{n=1}^{\infty}(\pi_{n} \circ f)^{-1}\mathcal{F}_{n} \right) \\
-&amp;=\sigma\left( \bigcup_{n=1}^{\infty}f_{n}^{-1}\mathcal{F}_{n} \right).
-\end{align}
-\]</span></p>
-</div>
-<p>接下来，我们将在这个可列维乘积可测空间中建立起测度，其可以看做成是定理 <a href="#73165d">73165d</a> 和 <a href="#629aaa">629aaa</a> 的推广。为了方便期间，<strong>我们仅讨论概率测度的情况</strong>。</p>
-<div id="thm-409f2e" class="theorem">
-<p><span class="theorem-title"><strong>定理 2 (Tulcea 定理)</strong></span> 设 <span class="math inline">\(\{ (X_{k},\mathcal{F}_{k}),k=1,2,\dots \}\)</span> 是一列可测空间，对每个 <span class="math inline">\(k=2,3,\dots\)</span>，<span class="math inline">\(p_{k}\)</span> 是从 <span class="math inline">\((X_{(k-1)},\mathcal{F}_{(k-1)})\)</span> 到 <span class="math inline">\((X_{k},\mathcal{F}_{k})\)</span> 的概率转移函数，则对于 <span class="math inline">\((X_{1},\mathcal{F}_{1})\)</span> 上的任给概率测度 <span class="math inline">\(P_{1}\)</span>，存在乘积可测空间 <span class="math inline">\(\left( \prod\limits_{k=1}^{\infty}X_{k},\prod\limits_{k=1}^{\infty}\mathcal{F}_{k} \right)\)</span> 上唯一的概率测度 <span class="math inline">\(P\)</span>，使得</p>
-<p><span class="math display">\[
-P\pi_{(n)}^{-1}\left( \prod\limits_{k=1}^{n}A_{k} \right)=
-\int _{A_{1}}P_{1}(dx_{1})\int _{A_{2}}p_{2}(x_{1},dx_{2})\cdots
-\int _{A_{n}}p_{n}(x_{1},\dots,x_{n-1},dx_{n}).
-\]</span></p>
-</div>
-<p>这是其实是典型地<strong>用有限定义无限</strong>。无限维度的积分我们无法处理，但是我们可以处理任意有限维的积分，<strong>任意有限维即无限维</strong>。</p>
-<div class="proof">
-<p><span class="proof-title"><em>证明</em>. </span>由 <a href="#fae873">fae873</a> 可知，<span class="math inline">\(\mathcal{A}=\bigcup_{n=1}^{\infty}\pi_{(n)}^{-1}\mathcal{F}_{(n)}\)</span> 是一个 field。则 <span class="math inline">\(\forall A\in\mathcal{A}\)</span>，可以找到一个 <span class="math inline">\(n\)</span> 和 <span class="math inline">\(A_{(n)}\in\mathcal{F}_{(n)}\)</span>，使得</p>
-<p><span class="math display">\[
-A=\pi_{(n)}^{-1}A_{(n)},
-\]</span></p>
-<p>我们令</p>
-<p><span class="math display">\[
-P(A)=P_{n}(A_{(n)}):=\int _{X_{1}}P_{1}(dx_{1})\int _{X_{2}}p_{2}(x_{1},dx_{2})\cdots \int _{X_{n}}I_{A(n)}(x_{1},\dots,x_{n})p_{n}(x_{1},\dots,x_{n-1},dx_{n}),
-\]</span></p>
-<p>实际上，根据 <a href="#629aaa">629aaa</a> ，我们可以知道，每个 <span class="math inline">\(P_{n}\)</span> 都是一个 <span class="math inline">\(\mathcal{F}_{(n)}=\prod\limits_{k=1}^{n}\mathcal{F}_{k}\)</span> 上的唯一的有限维乘积测度。注意，<span class="math inline">\(P_{n}\)</span> 是，因为其接受的是 <span class="math inline">\(\mathcal{F}_{(n)}\)</span> 上的元素；<span class="math inline">\(P\)</span> 不是，因为 <span class="math inline">\(P\)</span> 接受不是 <span class="math inline">\(\mathcal{F}_{(n)}\)</span> 上的元素，而是 <span class="math inline">\(\mathcal{A}\)</span> 上的元素。</p>
-<p>接下来，我们将分 3 步来证明该定理。 (1) <span class="math inline">\(P\)</span> 的定义是一意的。 首先，需要注意到，<span class="math inline">\(P\)</span> 的定义的分歧可能来自于哪里？来自于不同的 <span class="math inline">\(A_{(n)}\)</span> 可能产生相同的原像，而 <span class="math inline">\(P\)</span> 的定义依赖自 <span class="math inline">\(A_{(n)}\)</span>，所以对于这相同的原像是否可以得到相同的 <span class="math inline">\(P\)</span> 呢？</p>
-<p>若存在 <span class="math inline">\(n\geq m\geq 1\)</span>，<span class="math inline">\(A_{(n)}\in\mathcal{F}_{(n)}\)</span> 和 <span class="math inline">\(A_{(m)}\in\mathcal{F}_{(m)}\)</span> 使得</p>
-<p><span class="math display">\[
-\pi_{(n)}^{-1}A_{(n)}=A=\pi^{-1}_{(m)}A_{(m)},
-\]</span></p>
-<p>又因为</p>
-<p><span class="math display">\[
-\pi_{(m)}^{-1}A_{(m)}=\pi_{(n)}^{-1}\left( A_{(m)}\times \prod\limits_{k=m+1}^{n}X_{k} \right),
-\]</span></p>
-<p>所以 (<strong>原像相同则集合肯定相同</strong>)</p>
-<p><span class="math display">\[
-A_{(n)}=A_{(m)}\times \prod\limits_{k=m+1}^{n}X_{k}.
-\]</span></p>
-<p>所以有</p>
-<p><span class="math display">\[
-\begin{align}
-P_{n}(A_{(n)})&amp;=P_{n}\left( A_{(m)}\times \left( \prod\limits_{k=m+1}^{n}X_{k} \right) \right) \\
-&amp;=\int _{X_{1}}P_{1}(dx_{1})\int _{X_{2}}p_{2}(x_{1},dx_{2})\cdots \int _{X_{n}}I_{A(m)\times \prod\limits_{k=m+1}^{n}X_{k}}(x_{1},\dots,x_{n})p_{n}(x_{1},\dots,x_{n-1},dx_{n}) \\
-&amp;=\int _{X_{1}}P_{1}(dx_{1})\int _{X_{2}}p_{2}(x_{1},dx_{2})\cdots \int _{X_{m}}I_{A(m)}(x_{1},\dots,x_{n})p_{m}(x_{1},\dots,x_{m-1},dx_{m}) \\
-&amp;=P_{m}(A_{(m)}),
-\end{align}
-\]</span></p>
-<p>其中，我们将第二行进行 <span class="math inline">\(n-m\)</span> 次积分（积分都为 1）后得到第三行。得证。</p>
-<ol start="2" type="1">
-<li><span class="math inline">\(P\)</span> 是 <span class="math inline">\(\mathcal{A}\)</span> 上的概率测度。 容易证明 <span class="math inline">\(P(\emptyset)=0\)</span>。 若 <span class="math inline">\(A,B\in\mathcal{A}\)</span> 不交，则存在 <span class="math inline">\(n,A_{(n)}\in\mathcal{F}_{(n)}\)</span> 和 <span class="math inline">\(B_{(n)}\in\mathcal{F}_{(n)}\)</span> 使得</li>
-</ol>
-<p><span class="math display">\[
-A=\pi_{(n)}^{-1}A_{(n)};\quad
-B=\pi_{(n)}^{-1}B_{(n)};\quad
-A_{(n)}\cap B_{(n)}=\emptyset,
-\]</span></p>
-<p>所以有</p>
-<p><span class="math display">\[
-\begin{align}
-P(A\cap B)&amp;=P_{n}(A_{(n)}\cup B_{(n)})\\
-&amp;=P_{n}(A_{(n)})+P_{n}(B_{(n)}) \\
-&amp;=P(A)+P(B).
-\end{align}
-\]</span></p>
-<p>注意，根据 <a href="#629aaa">629aaa</a> ，<span class="math inline">\(P_{n}\)</span> 实际上是一个有限维乘积测度，自然其拥有有限可加性，进而推出上面的第二行。这意味着 <span class="math inline">\(P\)</span> 有有限可加性。 根据 <a href="../../../src/learn/advanced-probability/03-measure.html#273132">1.1 测度空间和概率空间</a>，我们只需要再证明 <span class="math inline">\(P\)</span> 在空集上连续即可。这里我们采用反证法，假设存在这样的一个序列 <span class="math inline">\(\{ A^{(n)}\in\mathcal{A} \}\)</span> 使得</p>
-<p><span class="math display">\[
-A^{(n)}\downarrow\emptyset;\quad
-\lim_{ n \to \infty } P(A^{(n)})&gt;0.
-\]</span></p>
-<p>然后，我们利用 <span class="math inline">\(\mathcal{A}\)</span> 的性质容易找到整数列 <span class="math inline">\(\{ m_{n} \}\)</span> 和集合序列 <span class="math inline">\(A_{(m_{n})\in\mathcal{F}_{(m_{n})}}\)</span> 满足</p>
-<p><span class="math display">\[
-1\leq m_{1}&lt;\dots&lt;m_{n}&lt;\dots;\quad
-A^{(n)}=\pi_{(m_{n})}^{-1}A_{(m_{n})}
-\]</span></p>
-<p>然后，我们重新构造一个序列 <span class="math inline">\(\{ \tilde{A}^{(k)} \}\)</span>，其中</p>
-<p><span class="math display">\[
-\tilde{A}^{(k)}=\left\{\begin{matrix}
-\prod\limits_{i=1}^{\infty}X_{i},\quad&amp;k=1,\dots m_{1}-1; \\
-A^{(k)},&amp;k=m_{1},m_{2},\dots; \\
-A^{(n-1)},&amp;m_{n-1}\leq k&lt;m_{n}.
-\end{matrix}\right.
-\]</span></p>
-<p>这个新的序列满足 <span class="math inline">\(\tilde{A}^{(n)}\in\mathcal{A},\tilde{A}^{(n)}\downarrow\emptyset,\lim_{ n \to \infty }P(\tilde{A}^{(n)})&gt;0\)</span>，并且有对应的 <span class="math inline">\(A_{(n)}\in\mathcal{F}_{(n)}\)</span> 使得</p>
-<p><span class="math display">\[
-\tilde{A}^{(n)}=\pi_{(n)}^{-1}A_{(n)}
-\]</span></p>
-<p>成立。 这里，我们<strong>不妨</strong>直接将 <span class="math inline">\(\tilde{A}^{(n)}\)</span> 记作 <span class="math inline">\(A^{(n)}\)</span>，现在我们试着导出矛盾。 对 <span class="math inline">\(n=2,3,\dots\)</span>，令</p>
-<p><span class="math display">\[
-\phi_{1,n}(x_{1})=\int _{X_{2}}p_{2}(x_{1},dx_{2})\dots \int _{X_{n}}
-I_{A_{(n)}}(x_{1},\dots,x_{n})p_{n}(x_{1},\dots,x_{n-1},dx_{n}),
-\]</span></p>
-<p>由 <span class="math inline">\(A^{(n+1)}\subset A^{(n)}\)</span> 易得：<span class="math inline">\(\forall \{ x_{k}\in X_{k},k=1,\dots,n+1 \}\)</span> 有</p>
-<p><span class="math display">\[
-I_{A_{(n+1)}}(x_{1},\dots,x_{n+1})\leq I_{A_{(n)}}(x_{1},\dots,x_{n}),
-\]</span></p>
-<p>进而有</p>
-<p><span class="math display">\[
-0\leq \phi_{1,n+1}(x_{1})\leq \phi_{1,n}(x_{1})\leq 1,\quad\forall x_{1}\in X_{1}.
-\]</span></p>
-<p>记 <span class="math inline">\(\phi_{1}=\lim_{ n \to \infty }\phi_{1,n}\)</span>，则由 <a href="../../../src/learn/advanced-probability/08-integration.html#DCT">8_积分</a> 可知</p>
-<p><span class="math display">\[
-\int _{X_{1}}\phi_{1} \, dP_{1}=\lim_{ n \to \infty } \int _{X_{1}}\phi_{1,n} \, dP_{1}=
-\lim_{ n \to \infty } P_{n}(A_{(n)})=\lim_{ n \to \infty } P(A^{(n)})&gt;0,
-\]</span></p>
-<p>其中第一个等号是因为 DCT，第二个等号是因为 <span class="math inline">\(P_{n}\)</span> 的定义，第三个等号是因为 <span class="math inline">\(P\)</span> 的定义，最后是因为我们的谬设。 因此，<span class="math inline">\(\exists \tilde{x}_{1}\in X_{1}\)</span>，使得 <span class="math inline">\(\phi_{1}(\tilde{x}_{1})&gt;0\)</span>。此外，该 <span class="math inline">\(\tilde{x}_{1}\in A_{(1)}\)</span>，不然有</p>
-<p><span class="math display">\[
-\begin{align}
-&amp;\tilde{x}_{1}\not\in A_{(1)},\pi_{(n+1)}^{-1}A_{(n+1)}=A^{(n+1)}
-\subset A^{(n)}=\pi_{(n)}A_{(n)} \\
-\implies&amp;
-\forall n=2,3,\dots,(\tilde{x}_{1},x_{2},\dots,x_{n})\not\in A_{(n)} \\
-\implies&amp;
-\forall n=2,3,\dots,I_{A_{(n)}}(\tilde{x}_{1},\dots,x_{n})=0 \\
-\implies&amp;
-\phi_{1}(\tilde{x}_{1})=0,
-\end{align}
-\]</span></p>
-<p>这与 <span class="math inline">\(\phi_{1}(\tilde{x}_{1})&gt;0\)</span> 矛盾。总之，我们推出了：存在 <span class="math inline">\(\tilde{x}_{1}\in A_{(1)}\)</span> 使得</p>
-<p><span class="math display">\[
-\phi_{1,n}(\tilde{x}_{1})\geq \phi_{1}(\tilde{x}_{1})&gt;0,
-\quad \forall n=2,3,\dots
-\]</span></p>
-<p>对 <span class="math inline">\(n=3,4,\dots\)</span>，令</p>
-<p><span class="math display">\[
-\phi_{2,n}(x_{2})=\int _{X_{3}}p_{3}(\tilde{x}_{1},x_{2},dx_{3})
-\dots \int _{x_{n}}I_{A_{(n)}}(\tilde{x}_{1},\dots,x_{n})
-p_{n}(\tilde{x}_{1},\dots,x_{n-1},dx_{n}),
-\]</span></p>
-<p>运用相似的思路，可以得到：存在 <span class="math inline">\(X_{2}\)</span> 上的某个函数 <span class="math inline">\(\phi_{2}\)</span>，<span class="math inline">\(\phi_{2,n}\downarrow\phi_{2}\)</span>，并且存在 <span class="math inline">\(\tilde{x}_{2}\in X_{2}\)</span>，使得 <span class="math inline">\((\tilde{x}_{1},\tilde{x}_{2})\in A_{(2)}\)</span> 且</p>
-<p><span class="math display">\[
-\phi_{2,n}(\tilde{x}_{2})\geq \phi_{2}(\tilde{x}_{2})&gt;0,\quad
-\forall n=3,4,\dots
-\]</span></p>
-<p>如此继续下去，我们就得到了一个 <span class="math inline">\((\tilde{x}_{1},\tilde{x}_{2},\dots)\in\prod\limits_{k=1}^{\infty}X_{k}\)</span> 使得 <span class="math inline">\((\tilde{x}_{1},\dots,\tilde{x}_{k})\in A_{(k)}\)</span>，并且</p>
-<p><span class="math display">\[
-(\tilde{x}_{1},\dots)\in A^{(k)}=\pi_{(k)}^{-1}A_{(k)},
-\]</span></p>
-<p>对每个 <span class="math inline">\(k=1,2,\dots\)</span> 成立。这与 <span class="math inline">\(A^{(n)}\downarrow\emptyset\)</span> 矛盾。</p>
-<p>因此 <span class="math inline">\(P\)</span> 是一个测度。(2) 得证。</p>
-<ol start="3" type="1">
-<li>直接利用 1.1 测度空间和概率空间 (<code>1.1 测度空间和概率空间#^c7783b</code>)，将其唯一地扩张值 <span class="math inline">\(\sigma(\mathcal{A})=\prod\limits_{n=1}^{\infty}\mathcal{F}_{n}\)</span> 上，问题得证。</li>
-</ol>
-</div>
-<p>作为 <a href="#409f2e">409f2e</a> 定理的推论，我们可以引出下面的关于乘积测度的 Kolmogorov 定理</p>
-<div id="thm-14-infinite-product-spaces-8" class="theorem">
-<p><span class="theorem-title"><strong>定理 3 (Kolmogorov 定理)</strong></span> 对任何一列概率空间 <span class="math inline">\(\{ (x_{k},\mathcal{F}_{k},P_{k}) \}\)</span>，在 <span class="math inline">\(\left( \prod\limits_{k=1}^{\infty}X_{k},\prod\limits_{k=1}^{\infty}\mathcal{F}_{k} \right)\)</span> 上有唯一的概率测度 <span class="math inline">\(P\)</span> 使得对于 <span class="math inline">\(\forall n=1,2,\dots\)</span> 和每一组 <span class="math inline">\(A_{1}\in\mathcal{F}_{1},\dots,A_{n}\in\mathcal{F}_{n}\)</span> 有</p>
-<p><span class="math display">\[
-P\left( \pi_{(n)}^{-1}\left( \prod\limits_{k=1}^{\infty}A_{k} \right) \right)=
-\prod\limits_{k=1}^{n}P_{k}(A_{k}).
-\]</span></p>
-</div>
-<div class="proof">
-<p><span class="proof-title"><em>证明</em>. </span>将概率转移函数替换为概率测度 <span class="math inline">\(P_{k}\)</span> ，然后运用 <a href="#409f2e">409f2e</a> 即可。</p>
-</div>
-<p>我们可以看到，<strong>至少在概率空间上，可列维乘积空间上的结论基本上是有限维乘积空间上对应结论的推广</strong>。</p>
 </section>
-<section id="任意无穷维乘积空间" class="level1">
-<h1>3 任意无穷维乘积空间</h1>
-<p>TODO</p>
+<section id="属性与水平" class="level2">
+<h2 class="anchored" data-anchor-id="属性与水平">属性与水平</h2>
+<p>现实决策对象包含大量特征，DCE 只选取其中一组与研究问题相关、能够被受访者理解且可在实验中改变的维度。设共有 <span class="math inline">\(K\)</span> 个属性，第 <span class="math inline">\(k\)</span> 个属性记为 <span class="math inline">\(X_k\)</span>，它在实验中允许采用的水平集合记为 <span class="math inline">\(\mathcal L_k\)</span>。</p>
+<ul>
+<li><strong>属性</strong>（attribute）是描述决策对象的一个概念维度，例如症状改善概率、严重不良反应风险、给药方式或每月自付费用。同一属性在不同任务中应保持稳定的概念含义和表达单位。</li>
+<li><strong>水平</strong>（level）是某一属性在实验中呈现的具体取值。例如，症状改善概率的水平集合可以是 <span class="math inline">\(\{40\%,55\%,70\%\}\)</span>；给药方式的水平集合可以是 <span class="math inline">\(\{\text{每日口服},\text{每月注射}\}\)</span>。水平既可以是数值，也可以是无自然数值顺序的类别。</li>
+</ul>
+<p>在完整方案表示中，每个实验方案从每个属性的水平集合中各取一个值。比如，“费用”是属性，“每月 ¥800”是水平。</p>
+</section>
+<section id="方案与备选项" class="level2">
+<h2 class="anchored" data-anchor-id="方案与备选项">方案与备选项</h2>
+<p>将一组属性水平组合在一起，得到一个<strong>方案</strong>（profile）：</p>
+<p><span class="math display">\[
+\mathbf x=(x_1,\ldots,x_K),\qquad x_k\in\mathcal L_k.
+\]</span></p>
+<p>例如，治疗 A 的方案是</p>
+<p><span class="math display">\[
+(70\%,\,5\%,\,\text{每月注射},\,\text{¥800}).
+\]</span></p>
+<p>并非笛卡尔积 <span class="math inline">\(\mathcal L_1\times\cdots\times\mathcal L_K\)</span> 中的所有组合都合理；医学、技术、预算或制度约束可能排除不可行方案。</p>
+<p><strong>备选项</strong>（alternative）是受访者在一道任务中可以选择的对象。它通常包含1-2个方案，也可能包含标签、现状含义或其他无法完全写入属性向量的信息。治疗 A 和治疗 B 是实验备选项；“维持现状”则可能是具有固定属性水平的备选项，也可能代表因人而异的当前状态。</p>
+<div class="callout callout-style-default callout-important callout-titled" title="方案与备选项的区别">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">重要</span>方案与备选项的区别
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>在“方案 A／方案 B”这类无标签设计中，标签本身通常没有行为含义，备选项主要由其方案区分，二者在非正式表述中常被混用。在“公立医院／私立医院”这类有标签设计中，标签本身可能影响效用，此时备选项等于“标签及其方案”，不能只用属性水平组合代替。</p>
+</div>
+</div>
+</section>
+<section id="选择集选择任务与结果" class="level2">
+<h2 class="anchored" data-anchor-id="选择集选择任务与结果">选择集、选择任务与结果</h2>
+<p>一道题中共同呈现的备选项构成<strong>选择集</strong>（choice set）。若第 <span class="math inline">\(t\)</span> 道任务包含 <span class="math inline">\(J_t\)</span> 个备选项，可写为</p>
+<p><span class="math display">\[
+C_t=\{a_{t1},\ldots,a_{tJ_t}\}.
+\]</span></p>
+<p><strong>选择任务</strong>（choice task）是完整的问卷单元，包括决策情境、作答指令、选择集及必要的属性说明；选择集只是其中可供比较的对象集合。<strong>选择结果</strong>（choice outcome）则是受访者在该任务中实际选中的备选项。以前述例子为例， <span class="math display">\[
+C_t=\{\text{治疗 A},\text{治疗 B},\text{维持现状}\};
+\]</span></p>
+<p>若受访者选择治疗 A，观测结果可以记为 <span class="math inline">\(y_t=\text{治疗 A}\)</span>。</p>
+<p>这些概念的层次可概括如下：</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>概念</th>
+<th>形式对象</th>
+<th>治疗例子</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>属性</td>
+<td>一个描述维度 <span class="math inline">\(X_k\)</span></td>
+<td>严重不良反应风险</td>
+</tr>
+<tr class="even">
+<td>水平</td>
+<td>属性的一个取值 <span class="math inline">\(x_k\in\mathcal L_k\)</span></td>
+<td>5%</td>
+</tr>
+<tr class="odd">
+<td>方案</td>
+<td>完整水平组合 <span class="math inline">\(\mathbf x\)</span></td>
+<td><span class="math inline">\((70\%,5\%,\text{每月注射},\text{¥800})\)</span></td>
+</tr>
+<tr class="even">
+<td>备选项</td>
+<td>可被选择的对象 <span class="math inline">\(a_{tj}\)</span></td>
+<td>治疗 A</td>
+</tr>
+<tr class="odd">
+<td>选择集</td>
+<td>同题备选项集合 <span class="math inline">\(C_t\)</span></td>
+<td>治疗 A、治疗 B、维持现状</td>
+</tr>
+<tr class="even">
+<td>选择任务</td>
+<td>情境、指令与选择集组成的问卷单元</td>
+<td>表中的整道治疗选择题</td>
+</tr>
+<tr class="odd">
+<td>选择结果</td>
+<td>被选中的备选项 <span class="math inline">\(y_t\)</span></td>
+<td>治疗 A</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-note callout-titled" title="“离散”修饰的是选择结果">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>“离散”修饰的是选择结果
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>“离散选择”是指受访者最终从有限个备选项中选择一个，<strong>并不意味着所有属性都必须是离散变量</strong>。费用和等待时间可以是连续变量，风险可以表示为百分比，给药方式则可以是分类变量。问卷只需为构造任务选取有限个实验水平。</p>
+</div>
+</div>
+<p>上述概念规定了问卷中需要呈现和记录的基本对象。下面转向 DCE 的实施过程：如何从研究问题形成属性与水平，构造并测试选择任务，组织正式调查，并保存可供后续分析的数据。</p>
+</section>
+</section>
+<section id="问卷构造" class="level1">
+<h1>问卷构造</h1>
+<p>一份 DCE 问卷不是把若干属性随机拼接起来。研究者需要从<strong>目标决策</strong>出发，依次确定<strong>估计目标</strong>、<strong>属性空间</strong>、<strong>选择形式</strong>和<strong>任务组合</strong>；后一步始终受到前一步约束。</p>
+<section id="决策问题与目标量" class="level2">
+<h2 class="anchored" data-anchor-id="决策问题与目标量">决策问题与目标量</h2>
+<p>研究者首先需要说明<strong>谁在什么情境下作决定</strong>，以及<strong>结果将用于回答什么问题</strong>。</p>
+<ul>
+<li>若目标是估计支付意愿，通常需要有可解释的费用属性；</li>
+<li>若目标是预测新治疗的采用率，问卷中的备选项和退出选项就应尽量对应现实选择；</li>
+<li>若目标是估计总体平均权衡、预测个体选择或优化特定方案，实验设计所需的信息并不相同。</li>
+</ul>
+<p>目标量不明确时，“高效率设计”也没有明确的优化对象。</p>
+</section>
+<section id="属性与水平开发" class="level2">
+<h2 class="anchored" data-anchor-id="属性与水平开发">属性与水平开发</h2>
+<p>属性不是从现成数据库中机械挑选，也不应只反映研究者认为重要的内容。<strong>文献、访谈、焦点小组、专家意见和利益相关者</strong>参与可以共同帮助界定受访者真正用于决策的维度。Coast 等人建议把属性开发理解为两个相连阶段：<strong>先形成概念结构，再反复修订问卷语言，使属性能够准确、清楚地表达这些概念</strong>。<a href="https://pubmed.ncbi.nlm.nih.gov/21557381/">Coast et al.&nbsp;(2012)</a></p>
+<p>一个可用的属性及水平集合通常需要同时满足以下条件：</p>
+<ul>
+<li>与研究问题和受访者决策相关；</li>
+<li>含义清楚，各属性之间不过度重叠；</li>
+<li>水平现实、可实施，并覆盖政策真正关心的范围；</li>
+<li>能够形成有意义的权衡，而不是让某个方案在所有方面都显然更好；</li>
+<li>数量和表达复杂度不至于让受访者无法综合比较。</li>
+</ul>
+<p><strong>水平范围</strong>尤其重要。DCE 识别的是实验范围内的相对变化；实验从未呈现过的价格、风险或服务形式，不能仅凭模型形式就安全外推。</p>
+</section>
+<section id="选择任务形式" class="level2">
+<h2 class="anchored" data-anchor-id="选择任务形式">选择任务形式</h2>
+<p>选择任务不仅要规定实验方案如何呈现，还要决定受访者是否必须在这些方案中作出选择。若现实决策允许拒绝所有实验方案，选择集中通常需要加入一个<strong>外部备选项</strong>（outside option），以免问卷迫使受访者作出现实中不会作出的选择。外部备选项的具体含义应根据决策情境确定，其中常见的两种表述是 <strong>opt-out</strong> 和 <strong>status quo</strong>。</p>
+<ul>
+<li><strong>Opt-out（退出项）</strong>表示“不选择任何一个实验方案”。它强调的是退出当前选择集的行为，但仅凭这一标签并不能确定退出后会发生什么；退出可能意味着暂缓决定、继续寻找其他方案，或完全不采用所研究的产品或服务。</li>
+<li><strong>Status quo（现状项）</strong>表示“维持当前状态或继续采用既有方案”。它是一个具有具体行为含义的备选项，原则上应对应受访者现实中的基准状态，例如继续接受当前标准治疗，而不是笼统的“以上都不选”。</li>
+</ul>
+<p>二者有交集但不等同。当拒绝两个新治疗后必然继续当前标准治疗时，status quo 可以作为一个有明确含义的 opt-out；如果“不选 A 或 B”还可能意味着推迟治疗、转向其他机构或寻找问卷外的方案，那么笼统的 opt-out 就不能解释为单一的 status quo。</p>
+<p>选择任务的常见形式及其影响可以归纳如下：</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>设计选择</th>
+<th>基本形式</th>
+<th>主要考虑</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>无标签或有标签</td>
+<td>“方案 A／B”或“公立／私立医院”</td>
+<td>标签是否对应真实类别，是否携带无法由属性完全表示的信息</td>
+</tr>
+<tr class="even">
+<td>强制选择或设置外部备选项</td>
+<td>必须选择一个实验方案，或加入 opt-out／status quo</td>
+<td>现实中能否拒绝所有实验方案，以及外部备选项究竟代表退出、延迟还是维持现状</td>
+</tr>
+<tr class="odd">
+<td>完整或部分方案</td>
+<td>每题展示全部属性，或只让部分属性发生变化</td>
+<td>信息量、可识别性与认知负担之间的权衡</td>
+</tr>
+<tr class="even">
+<td>两个或多个方案</td>
+<td>二选一、三选一或更多</td>
+<td>是否贴近现实，同时避免比较过于复杂</td>
+</tr>
+</tbody>
+</table>
+<p>有标签与无标签以及各种外部备选项的称谓在不同领域中存在细微差异；重要的是清楚说明每个备选项在目标决策中的含义。<a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11405421/">Ride et al.&nbsp;(2024)</a> 特别是，opt-out、真正的现状方案和笼统的“以上都不选”可能对应不同的后续行为，因此不一定具有相同的效用结构。是否设置外部备选项应由研究问题和现实选择机制决定；在分析中，也不能把含义不同的退出行为不加区分地归结为同一个备选项截距。<a href="https://www.stir.ac.uk/research/hub/publication/936666">Campbell and Erdem (2019)</a></p>
+<p>完整方案让受访者同时看到所有属性；部分方案则在每道题中固定部分属性，只改变其余属性。后者可以降低复杂任务中的认知负担，但也会减少某些比较信息，并对能够估计的交互作用提出更严格要求。<a href="https://repub.eur.nl/pub/41335">Kessels, Jones, and Goos (2011)</a></p>
+</section>
+<section id="任务组合与实验设计" class="level2">
+<h2 class="anchored" data-anchor-id="任务组合与实验设计">任务组合与实验设计</h2>
+<p><strong>单独一道题只能告诉我们哪个完整方案被选中，无法分离高度绑定的属性作用。研究者需要让属性在任务之间受控变化，使疗效、风险、给药方式和费用的贡献能够被区分。</strong>所有可能组合通常多得无法全部呈现，因此实验设计的任务是<strong>从候选空间中选择一组任务，在模型可识别、统计精度、现实约束与受访者负担之间取得平衡</strong>。</p>
+<div class="callout callout-style-default callout-important callout-titled" title="先保证可识别，再追求高效率">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">重要</span>先保证可识别，再追求高效率
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>统计效率不能补救不可识别的设计。<strong>如果某两个属性总是一起变化，增加受访者数量也无法分离它们的作用</strong>。实验设计应先保证目标模型的参数能够被识别，再在给定任务数等约束下提高估计精度。<a href="https://www.ispor.org/docs/default-source/resources/outcomes-research-guidelines-index/piis1098301512041629.pdf?sfvrsn=d9c2e90c_0">Johnson et al.&nbsp;(2013)</a></p>
+</div>
+</div>
+<p><strong>固定设计</strong>在调查开始前确定全部任务；<strong>自适应设计</strong>则允许下一道任务依赖当前受访者此前的回答。自适应选题是实验设计中的专门策略，并非实施 DCE 的必要环节。无论采用哪种设计，统计上高效但过于矛盾、复杂或不现实的任务都可能降低回答质量。具体的固定设计、D-efficient 设计和自适应算法将在后续章节分别展开。</p>
+</section>
+</section>
+<section id="数据结构" class="level1">
+<h1>数据结构</h1>
+<section id="备选项层长表" class="level2">
+<h2 class="anchored" data-anchor-id="备选项层长表">备选项层长表</h2>
+<p>问卷呈现的是一张选择卡，分析时则通常把每个备选项保存为一行。若受访者 001 在任务 1 中选择治疗 A，数据可以写成：</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>受访者</th>
+<th style="text-align: right;">任务</th>
+<th>备选项</th>
+<th style="text-align: right;">改善概率</th>
+<th style="text-align: right;">风险</th>
+<th>给药方式</th>
+<th style="text-align: right;">费用</th>
+<th style="text-align: right;">被选中</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>001</td>
+<td style="text-align: right;">1</td>
+<td>治疗 A</td>
+<td style="text-align: right;">70%</td>
+<td style="text-align: right;">5%</td>
+<td>每月注射</td>
+<td style="text-align: right;">¥800</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td>001</td>
+<td style="text-align: right;">1</td>
+<td>治疗 B</td>
+<td style="text-align: right;">55%</td>
+<td style="text-align: right;">1%</td>
+<td>每日口服</td>
+<td style="text-align: right;">¥200</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td>001</td>
+<td style="text-align: right;">1</td>
+<td>维持现状</td>
+<td style="text-align: right;">40%</td>
+<td style="text-align: right;">0%</td>
+<td>无</td>
+<td style="text-align: right;">¥0</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+<p>这三行不是三次彼此独立的选择，而是同一个选择任务中的三个备选项。它们共享一个结果：其中恰有一个备选项被标记为 1。</p>
+</section>
+<section id="重复选择与调查记录" class="level2">
+<h2 class="anchored" data-anchor-id="重复选择与调查记录">重复选择与调查记录</h2>
+<p>同一受访者继续回答任务 2、任务 3，其他受访者再回答各自的一组任务，因此完整数据具有“备选项嵌套于任务、任务嵌套于受访者”的结构。</p>
+<p>这种长表同时保存了三类信息：<strong>研究者呈现了什么选择集，各备选项对应什么属性方案，以及受访者最终选择了什么</strong>。分析模型估计的是在已呈现选择集条件下的选择概率，而不是把“被选中”当作与其他行无关的普通二元响应。同一受访者的重复选择还可能共享偏好、疲劳程度和未观测因素，因此标准误和异质性模型需要处理这种组内依赖。</p>
+<p><strong>如果问卷采用自适应设计，还需要保留任务顺序、每一步的回答历史以及生成后续选择集的规则</strong>。此时，受访者看到的任务本身也是过去选择的函数；只保存最终的属性表而丢失生成过程，会使后续设计评估和推断检查变得困难。</p>
+</section>
+</section>
+<section id="调查实施" class="level1">
+<h1>调查实施</h1>
+<section id="研究流程" class="level2">
+<h2 class="anchored" data-anchor-id="研究流程">研究流程</h2>
+<p>现在可以把整项研究放回一条主线：</p>
+<p><span class="math display">\[
+\text{决策问题}
+\rightarrow
+\text{属性与水平}
+\rightarrow
+\text{选择形式}
+\rightarrow
+\text{实验设计}
+\rightarrow
+\text{试调查与抽样}
+\rightarrow
+\text{模型分析}
+\rightarrow
+\text{验证与决策}.
+\]</span></p>
+<p><strong>问题形成阶段</strong>确定目标人群、现实决策和目标量，并通过定性研究形成属性与水平。<strong>问卷与设计阶段</strong>确定备选项、退出机制、任务数量、实验设计和呈现方式。<strong>试调查与实施阶段</strong>通过认知访谈和预测试检查理解、支配方案、完成时间、疲劳和初步参数信息，再确定抽样、分块和正式调查方案。<strong>分析与解释阶段</strong>编码属性，估计选择模型及不确定性，计算权衡、支付意愿或预测概率，并检查模型、行为与外部效度。</p>
+<p>这些阶段不是可以任意交换的流水线。预期分析模型会约束实验设计；试调查得到的参数可以反过来改进设计；遗漏关键属性则无法靠更复杂的模型补救。ISPOR 的研究规范也将研究问题、属性与水平、问题格式、实验设计、问卷、数据收集、统计分析和报告视为相互依赖的整体。<a href="https://www.ispor.org/heor-resources/good-practices/article/conjoint-analysis-applications-in-health---a-checklist">Bridges et al.&nbsp;(2011)</a></p>
+</section>
+<section id="预测试与正式调查" class="level2">
+<h2 class="anchored" data-anchor-id="预测试与正式调查">预测试与正式调查</h2>
+<p>正式调查前应先检验受访者是否按照研究者预期理解属性、水平和选择情境。<strong>认知访谈</strong>主要识别术语歧义、数值信息理解困难、遗漏属性以及受访者实际采用的决策规则；<strong>预测试</strong>则进一步检查完成时间、任务难度、支配方案、退出选项使用、位置效应和初步选择分布，并为正式实验设计提供参数信息。</p>
+<p>基础实施方案至少需要明确以下内容：</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>实施环节</th>
+<th>主要任务</th>
+<th>应保留的记录</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>认知访谈</td>
+<td>检查属性含义、水平表达、情境说明和作答过程</td>
+<td>问卷版本、访谈反馈、修改依据</td>
+</tr>
+<tr class="even">
+<td>预测试</td>
+<td>检查完成时间、任务难度、异常选择模式和初步参数</td>
+<td>任务顺序、逐题选择、响应时间、退出与缺失情况</td>
+</tr>
+<tr class="odd">
+<td>抽样与分块</td>
+<td>确定目标人群、纳入排除条件、样本框及问卷版本分配</td>
+<td>招募来源、分块规则、版本编号、随机化规则</td>
+</tr>
+<tr class="even">
+<td>正式调查</td>
+<td>按既定方式呈现任务并监测实施偏差</td>
+<td>受访者编号、版本、任务顺序、完成状态、调查方式</td>
+</tr>
+<tr class="odd">
+<td>数据整理</td>
+<td>核对每题选择结果并形成备选项层长表</td>
+<td>原始问卷、清洗规则、排除原因、可复现转换步骤</td>
+</tr>
+</tbody>
+</table>
+<p>正式调查中的版本分配、任务顺序随机化、退出规则和数据质量检查应尽量在调查前确定。若调查中途修改题目、抽样范围或排除规则，应保留修改时间和原因，避免把实施变化误当作偏好差异。调查报告还应说明招募方式、完成率、缺失处理和最终分析样本如何形成。<a href="https://www.ispor.org/heor-resources/good-practices/article/conjoint-analysis-applications-in-health---a-checklist">Bridges et al.&nbsp;(2011)</a>，<a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11405421/">Ride et al.&nbsp;(2024)</a></p>
+</section>
+<section id="效度与响应行为" class="level2">
+<h2 class="anchored" data-anchor-id="效度与响应行为">效度与响应行为</h2>
+<p>DCE 还可能受到属性遗漏、问题表述、支配任务、属性忽略、简化决策规则、疲劳、学习和随机点击等因素影响。增加题目不一定增加有效信息：更多任务可以提高理论信息量，也可能降低回答质量。这正是实验设计必须同时考虑统计效率与响应效率的原因。</p>
+<div class="callout callout-style-default callout-important callout-titled" title="实验内偏好不等于现实因果效应">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">重要</span>实验内偏好不等于现实因果效应
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>研究者控制属性变化，有助于识别属性对实验内陈述选择的影响；但这不自动意味着现实购买、就医或就业行为会发生相同变化。现实选择还受到预算、制度、信息、可得性、未纳入属性和激励相容性的影响。DCE 的结果必须结合目标人群、实验范围和外部验证来解释。</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="两个不同的样本效率目标">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">注记</span>两个不同的样本效率目标
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>减少每名受访者的任务数</strong>，主要目标是降低完成时间、疲劳和认知负担；<strong>减少受访者数量</strong>，则要求在更小样本下仍保持总体参数的偏差、方差、区间覆盖率或预测精度。某个自适应问卷能够更快学习个体偏好，并不自动证明它可以用更少受访者准确估计总体偏好分布。</p>
+</div>
+</div>
+</section>
+</section>
+<section id="参考来源" class="level1">
+<h1>参考来源</h1>
+<ul>
+<li>Bridges, J. F. P., Hauber, A. B., Marshall, D., et al.&nbsp;(2011). <a href="https://www.ispor.org/heor-resources/good-practices/article/conjoint-analysis-applications-in-health---a-checklist">Conjoint Analysis Applications in Health—A Checklist</a>. <em>Value in Health</em>, 14(4), 403–413.</li>
+<li>Campbell, D., &amp; Erdem, S. (2019). <a href="https://www.stir.ac.uk/research/hub/publication/936666">Including Opt-Out Options in Discrete Choice Experiments: Issues to Consider</a>. <em>The Patient</em>, 12(1), 1–14.</li>
+<li>Coast, J., Al-Janabi, H., Sutton, E. J., et al.&nbsp;(2012). <a href="https://pubmed.ncbi.nlm.nih.gov/21557381/">Using Qualitative Methods for Attribute Development for Discrete Choice Experiments</a>. <em>Health Economics</em>, 21(6), 730–741.</li>
+<li>Johnson, F. R., Lancsar, E., Marshall, D., et al.&nbsp;(2013). <a href="https://www.ispor.org/docs/default-source/resources/outcomes-research-guidelines-index/piis1098301512041629.pdf?sfvrsn=d9c2e90c_0">Constructing Experimental Designs for Discrete-Choice Experiments</a>. <em>Value in Health</em>, 16(1), 3–13.</li>
+<li>Kessels, R., Jones, B., &amp; Goos, P. (2011). <a href="https://repub.eur.nl/pub/41335">Bayesian Optimal Designs for Discrete Choice Experiments with Partial Profiles</a>. <em>Journal of Choice Modelling</em>, 4(3), 52–74.</li>
+<li>Ride, J., Goranitis, I., Meng, Y., LaBond, C., &amp; Lancsar, E. (2024). <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11405421/">A Reporting Checklist for Discrete Choice Experiments in Health: The DIRECT Checklist</a>. <em>PharmacoEconomics</em>, 42(10), 1161–1175.</li>
+</ul>
 
 
 </section>

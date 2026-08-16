@@ -1,0 +1,2146 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="从备选项层长表出发，系统介绍属性编码、设计矩阵、随机效用、多项 Logit、似然估计、统计检验与结果解释。">
+
+<title>基础统计分析 – Rong’s Notes</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-5422102e672e4944a51d307770aa45d9.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../../styles.css">
+</head>
+
+<body class="nav-sidebar docked nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">Rong’s Notes</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="搜索"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="展开或折叠导航栏" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="../../../index.html" aria-current="page"> 
+<span class="menu-text">首页</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../src/learn/index.html"> 
+<span class="menu-text">专题学习</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../about.html"> 
+<span class="menu-text">关于</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/discrete-choice-experiments/01-dce-foundations.html">Discrete Choice Experiments</a></li><li class="breadcrumb-item"><a href="../../../src/learn/discrete-choice-experiments/02-basic-statistical-analysis.html">基础统计分析</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">首页</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../../src/learn/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">专题学习</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Deep Generative Model</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 show">  
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Discrete Choice Experiments</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/discrete-choice-experiments/01-dce-foundations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">DCE基础</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/discrete-choice-experiments/02-basic-statistical-analysis.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">基础统计分析</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../../src/learn/advanced-probability/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">高等概率论</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/01-introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">介绍</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/02-sigma-field.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sigma 域</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/03-measure.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">测度</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/04-outer-measure.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">外测度</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/05-measure-extension.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">测度扩张</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/06-distribution-function.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">分布函数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/07-measurable-functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">可测函数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/08-integration.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">积分</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/09-lp-spaces.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lp 空间</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/10-signed-measures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">符号测度</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/11-radon-nikodym-derivative.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R-N 导数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/12-lebesgue-decomposition.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lebesgue 分解</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/13-finite-product-spaces.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">有限乘积空间</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/14-random-vectors.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">随机向量</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/16-independence-and-conditional-expectation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">独立和条件期望</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/17-markov-chains-and-martingales.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">马尔可夫链与鞅</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/18-statistical-distributions-and-density-functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">统计分布与密度函数</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/19-moments.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">矩</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/advanced-probability/20-convergence-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">收敛理论</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../../src/learn/prml/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">PRML</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/prml/06-kernel-methods.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">核方法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/prml/07-sparse-kernel-machines.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">稀疏核机器</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/prml/08-graphical-models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">图模型</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/prml/09-mixture-models-and-em.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">混合模型与 EM</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/prml/10-approximate-inference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">近似推断</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true">
+ <span class="menu-text">Semi Supervised Learning</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/semi-supervised-learning/01-concepts-assumptions-and-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">基本概念、核心假设与理论基础</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/semi-supervised-learning/02-consistency-regularization-foundations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">一致性正则化（一）：扰动稳定性与自集成</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="true">
+ <span class="menu-text">Trajectory Mixture Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/trajectory-mixture-models/00-series-index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">系列导读：纵向轨迹混合模型</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/trajectory-mixture-models/01-general-trajectory-mixture-models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">轨迹混合模型的一般框架</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/trajectory-mixture-models/02-gbtm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">GBTM</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/trajectory-mixture-models/04-hlme-growth-mixture-models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><code>hlme</code>：从 GBTM 到 LCMM/GMM</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/trajectory-mixture-models/05-lcmm-latent-process-models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><code>lcmm</code>：非正态/有序结局与 latent process</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/trajectory-mixture-models/06-multlcmm-multivariate-longitudinal-markers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><code>multlcmm</code>/<code>mlcmm</code>：多个纵向指标共享潜在过程</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/trajectory-mixture-models/07-jointlcmm-and-mpjlcmm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><code>Jointlcmm</code> 与 <code>mpjlcmm</code>：纵向轨迹 + 生存结局</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../src/learn/trajectory-mixture-models/08-model-selection-classification-and-reporting.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">模型选择、分类质量与报告规范</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../about.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">关于</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#数据表示与设计矩阵" id="toc-数据表示与设计矩阵" class="nav-link active" data-scroll-target="#数据表示与设计矩阵">数据表示与设计矩阵</a>
+  <ul class="collapse">
+  <li><a href="#长表的统计结构" id="toc-长表的统计结构" class="nav-link" data-scroll-target="#长表的统计结构">长表的统计结构</a></li>
+  <li><a href="#属性变量变换" id="toc-属性变量变换" class="nav-link" data-scroll-target="#属性变量变换">属性变量变换</a></li>
+  <li><a href="#设计矩阵" id="toc-设计矩阵" class="nav-link" data-scroll-target="#设计矩阵">设计矩阵</a></li>
+  <li><a href="#任务内对比" id="toc-任务内对比" class="nav-link" data-scroll-target="#任务内对比">任务内对比</a></li>
+  <li><a href="#参数识别" id="toc-参数识别" class="nav-link" data-scroll-target="#参数识别">参数识别</a></li>
+  </ul></li>
+  <li><a href="#随机效用理论" id="toc-随机效用理论" class="nav-link" data-scroll-target="#随机效用理论">随机效用理论</a>
+  <ul class="collapse">
+  <li><a href="#效用最大化" id="toc-效用最大化" class="nav-link" data-scroll-target="#效用最大化">效用最大化</a></li>
+  <li><a href="#选择概率" id="toc-选择概率" class="nav-link" data-scroll-target="#选择概率">选择概率</a></li>
+  <li><a href="#模型假设" id="toc-模型假设" class="nav-link" data-scroll-target="#模型假设">模型假设</a></li>
+  <li><a href="#位置尺度与识别" id="toc-位置尺度与识别" class="nav-link" data-scroll-target="#位置尺度与识别">位置、尺度与识别</a></li>
+  </ul></li>
+  <li><a href="#多项-logit" id="toc-多项-logit" class="nav-link" data-scroll-target="#多项-logit">多项 Logit</a>
+  <ul class="collapse">
+  <li><a href="#模型假设-1" id="toc-模型假设-1" class="nav-link" data-scroll-target="#模型假设-1">模型假设</a></li>
+  <li><a href="#选择概率-1" id="toc-选择概率-1" class="nav-link" data-scroll-target="#选择概率-1">选择概率</a></li>
+  <li><a href="#二项情形" id="toc-二项情形" class="nav-link" data-scroll-target="#二项情形">二项情形</a></li>
+  <li><a href="#无关备选项独立性" id="toc-无关备选项独立性" class="nav-link" data-scroll-target="#无关备选项独立性">无关备选项独立性</a></li>
+  </ul></li>
+  <li><a href="#参数估计与统计推断" id="toc-参数估计与统计推断" class="nav-link" data-scroll-target="#参数估计与统计推断">参数估计与统计推断</a>
+  <ul class="collapse">
+  <li><a href="#样本似然" id="toc-样本似然" class="nav-link" data-scroll-target="#样本似然">样本似然</a></li>
+  <li><a href="#最大似然估计" id="toc-最大似然估计" class="nav-link" data-scroll-target="#最大似然估计">最大似然估计</a></li>
+  <li><a href="#重复任务" id="toc-重复任务" class="nav-link" data-scroll-target="#重复任务">重复任务</a></li>
+  <li><a href="#假设检验" id="toc-假设检验" class="nav-link" data-scroll-target="#假设检验">假设检验</a></li>
+  </ul></li>
+  <li><a href="#基础分析工作流" id="toc-基础分析工作流" class="nav-link" data-scroll-target="#基础分析工作流">基础分析工作流</a>
+  <ul class="collapse">
+  <li><a href="#分析准备" id="toc-分析准备" class="nav-link" data-scroll-target="#分析准备">分析准备</a></li>
+  <li><a href="#模型选择" id="toc-模型选择" class="nav-link" data-scroll-target="#模型选择">模型选择</a></li>
+  <li><a href="#结果解释" id="toc-结果解释" class="nav-link" data-scroll-target="#结果解释">结果解释</a></li>
+  <li><a href="#模型诊断" id="toc-模型诊断" class="nav-link" data-scroll-target="#模型诊断">模型诊断</a></li>
+  <li><a href="#r-示例" id="toc-r-示例" class="nav-link" data-scroll-target="#r-示例">R 示例</a></li>
+  </ul></li>
+  <li><a href="#参考来源" id="toc-参考来源" class="nav-link" data-scroll-target="#参考来源">参考来源</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../src/learn/index.html">专题学习</a></li><li class="breadcrumb-item"><a href="../../../src/learn/discrete-choice-experiments/01-dce-foundations.html">Discrete Choice Experiments</a></li><li class="breadcrumb-item"><a href="../../../src/learn/discrete-choice-experiments/02-basic-statistical-analysis.html">基础统计分析</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">基础统计分析</h1>
+</div>
+
+<div>
+  <div class="description">
+    从备选项层长表出发，系统介绍属性编码、设计矩阵、随机效用、多项 Logit、似然估计、统计检验与结果解释。
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">发布于</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">2026年7月31日</p>
+    </div>
+  </div>
+  
+    <div>
+    <div class="quarto-title-meta-heading">修改于</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date-modified">2026年8月16日</p>
+    </div>
+  </div>
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>获得 DCE 选择数据后，需要把任务内的方案比较转化为可识别的统计表示，在明确行为与分布假设后建立选择概率模型，并据此完成参数估计、统计推断和结果解释。本章围绕这条分析链条介绍 DCE 的基础统计方法及其方法学原理。</p>
+<section id="数据表示与设计矩阵" class="level1">
+<h1>数据表示与设计矩阵</h1>
+<p>问卷中的属性通常包含百分比、金额和文字类别，不能原样代入统计模型。基础分析首先要把原始长表转换为一组定义明确的数值列，再检查这些列在任务内部能否提供彼此独立的方案对比。这一步得到两个相关但不同的对象：备选项层的长表设计矩阵 <span class="math inline">\(\mathbf X\)</span>，以及用于检查结构性识别的任务内对比矩阵 <span class="math inline">\(\mathbf D\)</span>。</p>
+<section id="长表的统计结构" class="level2">
+<h2 class="anchored" data-anchor-id="长表的统计结构">长表的统计结构</h2>
+<p>设受访者记为 <span class="math inline">\(n\)</span>，其第 <span class="math inline">\(t\)</span> 道选择任务中的备选项记为 <span class="math inline">\(j\in C_{nt}\)</span>。一行数据对应一个 <span class="math inline">\((n,t,j)\)</span> 组合。长表中的变量可以分为四类：</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>变量类型</th>
+<th>示例</th>
+<th>分析作用</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>标识变量</td>
+<td>受访者、任务、备选项</td>
+<td>重建受访者、选择时点和选择集</td>
+</tr>
+<tr class="even">
+<td>选择结果</td>
+<td><code>chosen</code></td>
+<td>标记该任务中实际被选中的备选项</td>
+</tr>
+<tr class="odd">
+<td>备选项变量</td>
+<td>疗效、风险、费用、给药方式</td>
+<td>构造随方案变化的解释变量</td>
+</tr>
+<tr class="even">
+<td>个体或任务变量</td>
+<td>年龄、病情、任务顺序</td>
+<td>描述受访者或任务；通常需要与方案变量交互</td>
+</tr>
+</tbody>
+</table>
+<p>任务编号必须与受访者编号联合使用。不同受访者都可能回答“任务 1”，因此<strong>真正唯一的选择时点是 <span class="math inline">\((n,t)\)</span></strong>，而不是单独的 <span class="math inline">\(t\)</span>。令 <span class="math inline">\(y_{ntj}=1\)</span> 表示备选项 <span class="math inline">\(j\)</span> 被选中，否则为 0；强制选择任务应满足</p>
+<p><span class="math display">\[
+\sum_{j\in C_{nt}}y_{ntj}=1.
+\]</span></p>
+<p>正式编码前至少应检查：</p>
+<ul>
+<li><span class="math inline">\((n,t,j)\)</span> 是否唯一；</li>
+<li>每道任务的实际可选方案是否完整；</li>
+<li>选择变量是否恰有一个 1；</li>
+<li>属性值是否与问卷版本一致；</li>
+<li>被设置为不可选的方案是否被正确排除。</li>
+</ul>
+<p>若任务允许多选、排序或连续评分，就不再是这里讨论的单次离散选择数据结构。</p>
+</section>
+<section id="属性变量变换" class="level2">
+<h2 class="anchored" data-anchor-id="属性变量变换">属性变量变换</h2>
+<p>连续属性通常可以直接转成数值，但<strong>单位和基准应当服务于解释</strong>。沿用上一章的治疗选择例子，定义</p>
+<p><span class="math display">\[
+\begin{aligned}
+x_{\mathrm{eff}}
+&amp;=\frac{\text{改善概率}-55}{10},\\
+x_{\mathrm{risk}}
+&amp;=\text{风险百分点},\\
+x_{\mathrm{cost}}
+&amp;=\frac{\text{费用}}{100}.
+\end{aligned}
+\]</span></p>
+<p>再用 <span class="math inline">\(\mathrm{ASC}_{\mathrm{active}}\)</span> 区分实验治疗与维持现状。第一道任务可以转换为：</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 13%">
+<col style="width: 17%">
+<col style="width: 17%">
+<col style="width: 17%">
+<col style="width: 17%">
+<col style="width: 17%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>备选项</th>
+<th style="text-align: right;">被选中</th>
+<th style="text-align: right;"><span class="math inline">\(\mathrm{ASC}_{\mathrm{active}}\)</span></th>
+<th style="text-align: right;"><span class="math inline">\(x_{\mathrm{eff}}\)</span></th>
+<th style="text-align: right;"><span class="math inline">\(x_{\mathrm{risk}}\)</span></th>
+<th style="text-align: right;"><span class="math inline">\(x_{\mathrm{cost}}\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>治疗 A</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.5</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">8</td>
+</tr>
+<tr class="even">
+<td>治疗 B</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
+<td>维持现状</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;"><span class="math inline">\(-1.5\)</span></td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+<p>针对<strong>连续型变量</strong>，这种缩放不会改变模型能够表达的选择概率，但会改变系数单位。<span class="math inline">\(x_{\mathrm{cost}}\)</span> 的系数对应费用增加 100 元，而不是增加 1 元；把疗效中心化在 55% 还可以使 ASC 对应一个更明确的属性基准。分析报告必须给出单位、中心化基准和任何非线性变换。</p>
+<p>针对<strong>分类属性</strong>，不能仅用任意整数 <span class="math inline">\(1,2,3\)</span> 表示，因为这种写法强加了等距且线性的顺序。而应该使用<strong>哑变量变换</strong>。设给药方式有口服、注射和输液三个水平，常用编码如下：</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>水平</th>
+<th style="text-align: right;">Dummy：注射</th>
+<th style="text-align: right;">Dummy：输液</th>
+<th style="text-align: right;">Effects：注射</th>
+<th style="text-align: right;">Effects：输液</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>口服</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;"><span class="math inline">\(-1\)</span></td>
+<td style="text-align: right;"><span class="math inline">\(-1\)</span></td>
+</tr>
+<tr class="even">
+<td>注射</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td>输液</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+</tr>
+</tbody>
+</table>
+<p>这里有两种方案：</p>
+<ul>
+<li>采用 <strong>dummy coding</strong> 时，口服是参照水平，注射和输液系数分别表示相对口服的效用差。参照水平的贡献被规范为 0，但这不表示口服“没有效用”；它只是把效用原点放在口服水平。</li>
+<li>采用 <strong>effects coding</strong> 时，三个水平的效用贡献之和被约束为 0。表中只估计注射和输液两个系数，口服水平由 <span class="math display">\[
+  \beta_{\mathrm{oral}}
+  =-\beta_{\mathrm{inj}}-\beta_{\mathrm{inf}}
+  \]</span> 恢复。此时各水平系数表示相对属性水平平均效用的偏离。</li>
+</ul>
+<p>Dummy coding 与 effects coding 是同一组水平差异的不同坐标系；在效用空间和约束等价时，它们应给出相同的水平间差异和预测概率，选择主要取决于解释目的，而不是哪种编码“包含更多信息”。<a href="https://doi.org/10.1016/j.jval.2016.04.004">Hauber et al.&nbsp;(2016)</a></p>
+<div class="callout callout-style-default callout-warning callout-titled" title="维持现状不能被默认编码为口服">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">警告</span>维持现状不能被默认编码为口服
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>若维持现状没有给药方式，将它在两个 dummy 列上都编码为 0，会在形式上使其与口服共享给药方式贡献。研究者必须明确选择：把“无治疗”定义为一个真实水平；只让给药方式变量对实验治疗生效并加入治疗 ASC；或为维持现状建立独立效用规格。哪种方式合理取决于该备选项在真实决策中的含义。</p>
+</div>
+</div>
+<p><strong>备选项特定常数</strong>（alternative-specific constant，ASC）表示没有被已纳入属性解释的平均方案差异。在无标签的“治疗 A／治疗 B／维持现状”任务中，可以对两个实验治疗共同设置 <span class="math inline">\(\mathrm{ASC}_{\mathrm{active}}\)</span>；若 A、B 是具有实质含义的固定标签，则可能需要分别设置 ASC。</p>
+<p>交互项用于表示非加性效应。例如，<span class="math inline">\(x_{\mathrm{risk}}x_{\mathrm{eff}}\)</span> 允许风险效应随疗效变化；<span class="math inline">\(\mathrm{Age}_n x_{ntj,\mathrm{risk}}\)</span> 则允许风险偏好随年龄变化。年龄本身在同一人的同一道任务中对所有备选项完全相同，单独加入 <span class="math inline">\(\mathrm{Age}_n\)</span> 会在任务内比较中相消。个体变量必须与方案属性、备选项标签或 ASC 交互，才能影响条件选择概率。</p>
+</section>
+<section id="设计矩阵" class="level2">
+<h2 class="anchored" data-anchor-id="设计矩阵">设计矩阵</h2>
+<p>将一个备选项的编码变量写成行向量 <span class="math inline">\(\mathbf x_{ntj}^{\mathsf T}\)</span>，同一道任务的所有方案堆叠为</p>
+<p><span class="math display">\[
+\mathbf X_{nt}
+=
+\begin{pmatrix}
+\mathbf x_{nt1}^{\mathsf T}\\
+\mathbf x_{nt2}^{\mathsf T}\\
+\vdots\\
+\mathbf x_{ntJ}^{\mathsf T}
+\end{pmatrix}.
+\]</span></p>
+<p>若上一表的列顺序为</p>
+<p><span class="math display">\[
+(\mathrm{ASC}_{\mathrm{active}},
+x_{\mathrm{eff}},
+x_{\mathrm{risk}},
+x_{\mathrm{cost}}),
+\]</span></p>
+<p>则相应的长表设计矩阵是</p>
+<p><span class="math display">\[
+\mathbf X_{nt}
+=
+\begin{pmatrix}
+1&amp;1.5&amp;5&amp;8\\
+1&amp;0&amp;1&amp;2\\
+0&amp;-1.5&amp;0&amp;0
+\end{pmatrix}.
+\]</span></p>
+<p><span class="math inline">\(\mathbf X_{nt}\)</span> 保留了全部备选项及其选择集结构，是多项选择模型实际组织数据的主要形式。</p>
+</section>
+<section id="任务内对比" class="level2">
+<h2 class="anchored" data-anchor-id="任务内对比">任务内对比</h2>
+<p>为了看清实验提供了哪些可区分的信息，可以选择一个参照方案并取任务内行差。以维持现状为参照：</p>
+<p><span class="math display">\[
+\begin{aligned}
+\mathbf D_{nt}
+&amp;=
+\begin{pmatrix}
+\mathbf x_{nt,A}-\mathbf x_{nt,SQ}\\
+\mathbf x_{nt,B}-\mathbf x_{nt,SQ}
+\end{pmatrix}\\
+&amp;=
+\begin{pmatrix}
+1&amp;3&amp;5&amp;8\\
+1&amp;1.5&amp;1&amp;2
+\end{pmatrix}.
+\end{aligned}
+\]</span></p>
+<p>两行分别描述<strong>治疗 A</strong> 和<strong>治疗 B</strong> 相对<strong>维持现状</strong>的属性变化。一个含 <span class="math inline">\(J\)</span> 个备选项的任务最多提供 <span class="math inline">\(J-1\)</span> 个线性独立的方案对比。更换参照项会改变 <span class="math inline">\(\mathbf D_{nt}\)</span> 的具体写法，却不会改变它张成的对比空间。<strong>因此正式估计通常继续保留完整的 <span class="math inline">\(\mathbf X_{nt}\)</span>，而 <span class="math inline">\(\mathbf D\)</span> 主要用于解释二选一模型和检查结构性识别</strong>。</p>
+</section>
+<section id="参数识别" class="level2">
+<h2 class="anchored" data-anchor-id="参数识别">参数识别</h2>
+<p>把全部任务的独立对比堆叠为</p>
+<p><span class="math display">\[
+\mathbf D
+=
+\begin{pmatrix}
+\mathbf D_{11}\\
+\mathbf D_{12}\\
+\vdots\\
+\mathbf D_{NT_N}
+\end{pmatrix}.
+\]</span></p>
+<p>在效用参数化以及必要的位置、尺度约束已经确定后，若模型包含 <span class="math inline">\(K\)</span> 个自由效应，<strong>结构性识别</strong>首先要求</p>
+<p><span class="math display">\[
+\operatorname{rank}(\mathbf D)=K.
+\]</span></p>
+<p>若存在非零向量 <span class="math inline">\(\mathbf a\)</span> 使 <span class="math inline">\(\mathbf D\mathbf a=\mathbf0\)</span>，数据只能识别某些参数组合，不能区分沿 <span class="math inline">\(\mathbf a\)</span> 方向变化的参数值。这个条件可以具体理解为：</p>
+<ul>
+<li>某属性若在每道任务内部都相同，其对比列恒为 0，不能估计；</li>
+<li>两个属性若始终按固定比例共同变化，只能估计它们的一个线性组合；</li>
+<li>非线性项和交互项会增加参数维数，问卷必须提供相应的独立变化；</li>
+<li>重复发放同一个秩亏设计只能增加重复观测，不能恢复缺失的对比方向。</li>
+</ul>
+<p>必须进一步区分三种问题：</p>
+<ol type="1">
+<li><strong>结构性不可识别</strong>是 <span class="math inline">\(\mathbf D\)</span> 精确秩亏，目标参数根本无法分开；</li>
+<li><strong>弱识别或低精度</strong>是矩阵形式上满秩但列近似共线，信息矩阵接近奇异；</li>
+<li><strong>有限样本分离</strong>则是某些属性组合几乎完美预测选择，使极大似然系数持续增大。</li>
+</ol>
+<p>增加受访者可能改善后两类问题的判断或精度，但不能修复第一类问题。</p>
+<div class="callout callout-style-default callout-important callout-titled" title="先检查任务内对比，再讨论统计效率">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">重要</span>先检查任务内对比，再讨论统计效率
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>编码只是在选定的效用空间中建立坐标，不会创造问卷没有提供的信息。实验设计应先保证目标模型的任务内对比矩阵具有所需秩，再在给定任务数、现实约束和认知负担下提高信息量或 D-efficiency。<a href="https://www.ispor.org/docs/default-source/resources/outcomes-research-guidelines-index/piis1098301512041629.pdf?sfvrsn=d9c2e90c_0">Johnson et al.&nbsp;(2013)</a></p>
+</div>
+</div>
+<p>至此，长表已经被转换为可以进入选择模型的统计表示；下一步需要说明任务内属性对比如何通过随机效用理论转化为选择概率。</p>
+</section>
+</section>
+<section id="随机效用理论" class="level1">
+<h1>随机效用理论</h1>
+<p>设计矩阵描述可观测的方案差异，随机效用理论则通过潜在效用排序把这些差异与实际选择联系起来。</p>
+<section id="效用最大化" class="level2">
+<h2 class="anchored" data-anchor-id="效用最大化">效用最大化</h2>
+<p>令 <span class="math inline">\(Y_{nt}\)</span> 表示受访者 <span class="math inline">\(n\)</span> 在第 <span class="math inline">\(t\)</span> 道任务中的选择，<span class="math inline">\(C_{nt}\)</span> 表示该任务实际可选的方案集合。研究者没有观察到受访者对每个方案的效用 <span class="math inline">\(U_{ntj}\)</span>，只观察到其中哪个方案取得最大效用。效用最大化的选择规则写为</p>
+<p><span class="math display">\[
+Y_{nt}=i
+\quad\Longleftrightarrow\quad
+U_{nti}\ge U_{ntj},\qquad \forall j\in C_{nt}.
+\]</span></p>
+<p>若效用的联合分布连续，两个方案效用完全相同的概率为 0；否则还需要明确平局时的选择规则。将潜在效用分解为</p>
+<p><span class="math display">\[
+U_{ntj}
+=V(\mathbf x_{ntj},\mathbf z_n;\boldsymbol\theta)
++\varepsilon_{ntj},
+\]</span></p>
+<p>其中，<span class="math inline">\(\mathbf x_{ntj}\)</span> 是随方案变化的属性及其变换，<span class="math inline">\(\mathbf z_n\)</span> 是个体特征，<span class="math inline">\(V(\cdot)\)</span> 是研究者设定的<strong>代表性效用</strong>或<strong>系统效用</strong>，<span class="math inline">\(\varepsilon_{ntj}\)</span> 是没有被这一代表性效用函数解释的部分。后者可以包含研究者未观测到的偏好因素、变量测量误差、模型未能表达的行为过程以及个体与时点间的变化。</p>
+</section>
+<section id="选择概率" class="level2">
+<h2 class="anchored" data-anchor-id="选择概率">选择概率</h2>
+<p>记同一道任务的随机项向量为</p>
+<p><span class="math display">\[
+\boldsymbol\varepsilon_{nt}
+=(\varepsilon_{nt1},\ldots,\varepsilon_{ntJ})^{\mathsf T},
+\]</span></p>
+<p>在该联合分布存在密度时，记其条件联合密度为 <span class="math inline">\(f(\boldsymbol\varepsilon_{nt}\mid\mathbf X_{nt},\mathbf z_n;\boldsymbol\psi)\)</span>。这里暂不施加随机项与观测变量独立的假设。方案 <span class="math inline">\(i\)</span> 的<strong>条件选择概率</strong>可以写成</p>
+<p><span class="math display">\[
+\begin{aligned}
+P_{nti}(\boldsymbol\theta,\boldsymbol\psi)
+&amp;=\Pr(Y_{nt}=i\mid\mathbf X_{nt},\mathbf z_n)\\
+&amp;=\int
+\mathbf 1\!\left\{
+V_{nti}+\varepsilon_{nti}
+\ge V_{ntj}+\varepsilon_{ntj},\ \forall j\in C_{nt}
+\right\}
+f(\boldsymbol\varepsilon_{nt}\mid\mathbf X_{nt},\mathbf z_n;\boldsymbol\psi)
+\,\mathrm d\boldsymbol\varepsilon_{nt},
+\end{aligned}
+\]</span></p>
+<p>其中 <span class="math inline">\(V_{ntj}=V(\mathbf x_{ntj},\mathbf z_n;\boldsymbol\theta)\)</span>。这个积分把一个潜在的效用排序事件转化为可观测选择的概率，也说明了离散选择模型的统计本质：<strong>给定代表性效用和随机项的联合分布，对所有会使方案 <span class="math inline">\(i\)</span> 成为效用最大者的随机项取值求概率</strong>。不同的函数形式与分布假设会产生不同的选择概率，而随机效用理论本身并未预先指定其中某一种形式。<a href="https://eml.berkeley.edu/books/choice2nd/Ch02_p9-33.pdf">Train (2009), Chapter 2</a></p>
+<div class="callout callout-style-default callout-important callout-titled" title="随机不等于随意作答">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">重要</span>随机不等于随意作答
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>这里的“随机”是相对于研究者所掌握的信息而言的。受访者可能基于明确但未被研究者观测的理由作出选择，研究者因而只能对选择作概率陈述。疲劳、误解或随机点击也可能影响随机项，却不是随机效用模型对所有不确定性的唯一解释。</p>
+</div>
+</div>
+</section>
+<section id="模型假设" class="level2">
+<h2 class="anchored" data-anchor-id="模型假设">模型假设</h2>
+<p>效用最大化和分解式 <span class="math inline">\(U=V+\varepsilon\)</span> 只给出了选择模型的基本框架，还不足以唯一确定选择概率。特别是，<span class="math inline">\(\varepsilon=U-V\)</span> 只是相对于既定 <span class="math inline">\(V\)</span> 得到的未解释部分；“未解释”并不自动意味着它与观测变量独立。要得到可以估计的统计模型，还需要明确代表性效用、随机项和参数结构方面的假设。</p>
+<p><strong>代表性效用的函数形式。</strong> 一般可以写成</p>
+<p><span class="math display">\[
+V_{ntj}
+=g(\mathbf x_{ntj},\mathbf z_n;\boldsymbol\theta).
+\]</span></p>
+<p>最常用的基础假设是<strong>代表性效用对参数线性</strong>：</p>
+<p><span class="math display">\[
+V_{ntj}
+=\mathbf x_{ntj}^{\mathsf T}\boldsymbol\beta.
+\]</span></p>
+<p>这是为了估计和解释而加入的函数形式假设，不是随机效用理论自身的结论。<span class="math inline">\(\mathbf x_{ntj}\)</span> 可以包含中心化或缩放后的连续属性、分类属性的编码列、非线性基函数和交互项，因此“对参数线性”并不要求效用与原始属性之间必然呈简单直线关系。但是，如果设计矩阵只包含各属性的主效应，这一模型就同时假定这些效应在研究范围内可加且斜率不变；需要表达阈值、边际效用递减或属性协同时，应相应地扩展 <span class="math inline">\(\mathbf x_{ntj}\)</span> 或采用非线性的 <span class="math inline">\(g(\cdot)\)</span>。</p>
+<p><strong>随机项与观测变量的关系。</strong> 若在期望存在时将代表性效用定义为</p>
+<p><span class="math display">\[
+V_{ntj}
+=\operatorname E(U_{ntj}\mid\mathbf X_{nt},\mathbf z_n),
+\]</span></p>
+<p>则可以得到<strong>条件均值假设</strong></p>
+<p><span class="math display">\[
+\operatorname E(\varepsilon_{ntj}\mid\mathbf X_{nt},\mathbf z_n)=0.
+\]</span></p>
+<p>条件均值为零仍弱于统计独立。例如，<span class="math inline">\(\varepsilon_{ntj}=\sigma(\mathbf z_n)\widetilde\varepsilon_{ntj}\)</span> 可以具有零条件均值，但其方差随个体特征变化。更强的假设是随机项的整个条件分布不随观测变量改变：</p>
+<p><span class="math display">\[
+F_{\boldsymbol\varepsilon}
+(\mathbf e\mid\mathbf X_{nt},\mathbf z_n)
+=F_{\boldsymbol\varepsilon}(\mathbf e).
+\]</span></p>
+<p>在正确实施的随机化 DCE 中，实验分配的属性与未观测效用因素相独立通常较为可信；但这并不能自动排除函数形式遗漏、个体间异方差或重复任务相关。若只要求实验属性外生、同时允许随机项分布随个体特征变化，则可以采用较弱的假设</p>
+<p><span class="math display">\[
+F_{\boldsymbol\varepsilon}
+(\mathbf e\mid\mathbf X_{nt},\mathbf z_n)
+=F_{\boldsymbol\varepsilon}(\mathbf e\mid\mathbf z_n).
+\]</span></p>
+<p>因此，前面的选择概率使用条件密度 <span class="math inline">\(f(\boldsymbol\varepsilon_{nt}\mid\mathbf X_{nt},\mathbf z_n)\)</span>，是为了保留一般情形；只有加入分布独立假设后，它才可以简化为不含 <span class="math inline">\(\mathbf X_{nt}\)</span> 和 <span class="math inline">\(\mathbf z_n\)</span> 的密度。</p>
+<p><strong>随机项的分布与依赖结构。</strong> 除了与观测变量的关系，还必须说明每个随机项的边缘分布和尺度、同一道任务中不同方案随机项之间的相关性，以及同一受访者多道任务之间是否条件独立。这些假设共同决定选择概率的具体形式、方案之间的替代关系，以及重复回答应如何进入似然和不确定性估计。</p>
+<p><strong>参数的总体结构。</strong> 基础模型通常假定所有受访者共享同一个 <span class="math inline">\(\boldsymbol\theta\)</span> 或 <span class="math inline">\(\boldsymbol\beta\)</span>。若允许参数随受访者变化，还需规定个体参数的分布、它与 <span class="math inline">\(\mathbf z_n\)</span> 的关系及参数间相关性；一部分未观测偏好异质性由此从 <span class="math inline">\(\varepsilon_{ntj}\)</span> 转入随机参数。</p>
+<p>因此，随机效用理论只规定效用最大化和潜在效用分解。代表性效用的函数形式、随机项的外生性与联合分布、任务间依赖以及参数是否同质，才共同确定一个可估计的选择模型；多项 Logit 是其中一种特定组合。</p>
+</section>
+<section id="位置尺度与识别" class="level2">
+<h2 class="anchored" data-anchor-id="位置尺度与识别">位置、尺度与识别</h2>
+<p>选择模型通过潜在效用的排序生成观测选择，因此效用的共同原点和计量单位不属于选择数据能够确定的经验量。对同一道任务中的所有方案施加共同正仿射变换</p>
+<p><span class="math display">\[
+U_{ntj}'=a_{nt}+b_{nt}U_{ntj},
+\qquad b_{nt}&gt;0,
+\]</span></p>
+<p>任意两个方案的效用差满足</p>
+<p><span class="math display">\[
+U_{nti}'-U_{ntj}'
+=b_{nt}(U_{nti}-U_{ntj}).
+\]</span></p>
+<p>共同平移量 <span class="math inline">\(a_{nt}\)</span> 在差值中抵消，正缩放倍数 <span class="math inline">\(b_{nt}\)</span> 保持差值符号不变，因而</p>
+<p><span class="math display">\[
+U_{nti}&gt;U_{ntj}
+\quad\Longleftrightarrow\quad
+U_{nti}'&gt;U_{ntj}'.
+\]</span></p>
+<p>变换前后的最大效用方案及其选择概率完全相同。该结论要求同一个变换作用于任务内所有方案，且 <span class="math inline">\(b_{nt}\)</span> 为正；方案特定的变换可能改变排序，负缩放则会反转排序。<a href="https://eml.berkeley.edu/books/choice2nd/Ch02_p9-33.pdf">Train (2009), Sections 2.4–2.5</a></p>
+<p>这种观测等价性意味着，<strong>同一组选择概率对应无穷多个效用表示</strong>。<strong>统计模型必须对效用位置和尺度施加规范化约束，才能得到唯一的参数化</strong>。规范化发生在模型设定中，而不是对原始选择数据或不可观测效用进行预处理。</p>
+<p><strong>位置规范化。</strong> 共同平移不改变任务内效用差，因此所有方案共享的效用水平不能估计。含有 <span class="math inline">\(J\)</span> 个固定标签方案时，可以选定参照方案 <span class="math inline">\(r\)</span> 并令其备选项特定常数满足</p>
+<p><span class="math display">\[
+\mathrm{ASC}_r=0,
+\]</span></p>
+<p>只估计其余 <span class="math inline">\(J-1\)</span> 个 ASC；采用 ASC 和为零等约束也会得到等价的效用差和选择概率。相应地，模型不包含一个对任务内所有方案都相同的普通截距。</p>
+<p><strong>尺度规范化。</strong> 设线性效用模型为</p>
+<p><span class="math display">\[
+U_{ntj}
+=\mathbf x_{ntj}^{\mathsf T}\boldsymbol\beta
++\sigma\widetilde\varepsilon_{ntj},
+\qquad \sigma&gt;0.
+\]</span></p>
+<p>将全部效用除以 <span class="math inline">\(\sigma\)</span> 得到</p>
+<p><span class="math display">\[
+\frac{U_{ntj}}{\sigma}
+=\mathbf x_{ntj}^{\mathsf T}
+\frac{\boldsymbol\beta}{\sigma}
++\widetilde\varepsilon_{ntj}.
+\]</span></p>
+<p>两种表示产生相同选择，因此数据识别的是规范化系数</p>
+<p><span class="math display">\[
+\boldsymbol\beta^*
+=\frac{\boldsymbol\beta}{\sigma},
+\]</span></p>
+<p>而不是彼此分离的 <span class="math inline">\(\boldsymbol\beta\)</span> 与 <span class="math inline">\(\sigma\)</span>。多项 Logit 通常把第一类极值随机项的尺度固定为 1，并直接估计 <span class="math inline">\(\boldsymbol\beta^*\)</span>；Probit 则通常固定一个效用差的方差或施加等价的协方差约束。费用以 1 元还是 100 元为单位属于解释变量的计量选择，会改变相应系数的数值单位，但不会替代潜在效用的尺度规范化。</p>
+<p>实际分析需要报告参照方案、ASC 与属性编码约束以及随机项尺度规范化。估计系数表示系统效用相对于固定随机效用尺度的作用，跨模型或跨样本比较原始系数时必须考虑尺度差异。位置与尺度规范化只解决效用表示不唯一的问题，不能修复设计矩阵的秩亏。</p>
+</section>
+</section>
+<section id="多项-logit" class="level1">
+<h1>多项 Logit</h1>
+<p>随机效用理论将选择概率表示为随机效用联合分布上的积分，但一般情况下这个积分没有简单的解析形式。<strong>多项 Logit（multinomial logit，MNL）</strong>通过对随机项施加<strong>独立同分布的第一类极值假设</strong>，将一般选择概率化为闭式的 softmax 函数，是 DCE 基础分析中最常用的起点。</p>
+<section id="模型假设-1" class="level2">
+<h2 class="anchored" data-anchor-id="模型假设-1">模型假设</h2>
+<p>MNL 沿用随机效用分解</p>
+<p><span class="math display">\[
+U_{ntj}=V_{ntj}+\varepsilon_{ntj},
+\]</span></p>
+<p>并假定<strong>给定 <span class="math inline">\(\mathbf X_{nt}\)</span> 和 <span class="math inline">\(\mathbf z_n\)</span> 后，同一道任务内各方案的随机项相互独立、服从相同的单位尺度第一类极值分布</strong>：</p>
+<p><span class="math display">\[
+\varepsilon_{ntj}
+\mid\mathbf X_{nt},\mathbf z_n
+\overset{\mathrm{iid}}{\sim}
+\operatorname{EV}_1(0,1),
+\qquad j\in C_{nt}.
+\]</span></p>
+<p>该分布也称 <strong>Gumbel 分布</strong>，其累积分布函数与密度分别为</p>
+<p><span class="math display">\[
+F(e)=\exp[-\exp(-e)]
+\]</span></p>
+<p>和</p>
+<p><span class="math display">\[
+f(e)=\exp(-e)\exp[-\exp(-e)].
+\]</span></p>
+<p>单位尺度 Gumbel 分布的方差为 <span class="math inline">\(\pi^2/6\)</span>，这一设定同时完成效用尺度规范化；其共同位置在方案效用差中抵消。若保留一般尺度 <span class="math inline">\(\sigma\)</span>，概率中的代表性效用应写为 <span class="math inline">\(V_{ntj}/\sigma\)</span>。<a href="https://eml.berkeley.edu/books/choice2nd/Ch03_p34-75.pdf">Train (2009), Chapter 3</a></p>
+<p>上述 IID 假设约束同一道任务内不同方案的随机项；单次选择概率的推导不要求同一受访者的不同任务相互独立，也不要求代表性效用对参数线性。基础分析采用线性参数化时，只需在推导所得的概率中代入 <span class="math inline">\(V_{ntj}=\mathbf x_{ntj}^{\mathsf T}\boldsymbol\beta\)</span>。</p>
+</section>
+<section id="选择概率-1" class="level2">
+<h2 class="anchored" data-anchor-id="选择概率-1">选择概率</h2>
+<p>固定一个选择任务并暂时省略下标 <span class="math inline">\((n,t)\)</span>。方案 <span class="math inline">\(i\)</span> 被选择的事件为</p>
+<p><span class="math display">\[
+V_i+\varepsilon_i
+&gt;
+V_j+\varepsilon_j,
+\qquad \forall j\ne i,
+\]</span></p>
+<p>等价地，</p>
+<p><span class="math display">\[
+\varepsilon_j
+&lt;
+\varepsilon_i+V_i-V_j,
+\qquad \forall j\ne i.
+\]</span></p>
+<p>先给定 <span class="math inline">\(\varepsilon_i=s\)</span>。对任一竞争方案 <span class="math inline">\(j\)</span>，</p>
+<p><span class="math display">\[
+\Pr(\varepsilon_j&lt;s+V_i-V_j)
+=
+F(s+V_i-V_j).
+\]</span></p>
+<p>任务内随机项相互独立，因此所有不等式同时成立的条件概率为</p>
+<p><span class="math display">\[
+\Pr(Y=i\mid\varepsilon_i=s)
+=
+\prod_{j\ne i}
+F(s+V_i-V_j).
+\]</span></p>
+<p>再对尚未观测的 <span class="math inline">\(\varepsilon_i\)</span> 积分：</p>
+<p><span class="math display">\[
+P_i
+=
+\int_{-\infty}^{\infty}
+\left[
+\prod_{j\ne i}
+F(s+V_i-V_j)
+\right]
+f(s)\,\mathrm ds.
+\]</span></p>
+<p>代入 Gumbel 分布函数与密度并合并指数项，可以得到</p>
+<p><span class="math display">\[
+P_i
+=
+\int_{-\infty}^{\infty}
+e^{-s}
+\exp\left[
+-e^{-s}
+\sum_j e^{V_j-V_i}
+\right]
+\,\mathrm ds.
+\]</span></p>
+<p>求和中可以包含 <span class="math inline">\(j=i\)</span>，因为 <span class="math inline">\(e^{V_i-V_i}=1\)</span> 正好对应密度 <span class="math inline">\(f(s)\)</span> 中的 <span class="math inline">\(\exp[-e^{-s}]\)</span>。令</p>
+<p><span class="math display">\[
+A_i=\sum_j e^{V_j-V_i},
+\qquad
+q=e^{-s},
+\qquad
+\mathrm dq=-e^{-s}\mathrm ds.
+\]</span></p>
+<p>当 <span class="math inline">\(s\)</span> 从 <span class="math inline">\(-\infty\)</span> 增加到 <span class="math inline">\(\infty\)</span> 时，<span class="math inline">\(q\)</span> 从 <span class="math inline">\(\infty\)</span> 减小到 0，因此</p>
+<p><span class="math display">\[
+\begin{aligned}
+P_i
+&amp;=\int_0^\infty e^{-A_iq}\,\mathrm dq\\
+&amp;=\frac{1}{A_i}\\
+&amp;=\frac{1}{\sum_j e^{V_j-V_i}}\\
+&amp;=\frac{e^{V_i}}{\sum_j e^{V_j}}.
+\end{aligned}
+\]</span></p>
+<p>恢复受访者和任务下标，MNL 选择概率为</p>
+<p><span class="math display">\[
+P_{nti}
+=
+\frac{\exp(V_{nti})}
+{\sum_{j\in C_{nt}}\exp(V_{ntj})}.
+\]</span></p>
+<p>分母将同一选择集内所有方案的指数化代表性效用归一化，因而 <span class="math inline">\(0&lt;P_{nti}&lt;1\)</span> 且 <span class="math inline">\(\sum_iP_{nti}=1\)</span>。在线性代表性效用下，</p>
+<p><span class="math display">\[
+P_{nti}(\boldsymbol\beta)
+=
+\frac{
+\exp(\mathbf x_{nti}^{\mathsf T}\boldsymbol\beta)
+}{
+\sum_{j\in C_{nt}}
+\exp(\mathbf x_{ntj}^{\mathsf T}\boldsymbol\beta)
+}.
+\]</span></p>
+<p>这一推导说明，softmax 不是任意选择的概率函数，而是效用最大化与 IID 共同尺度 Gumbel 随机项结合后的结果。<a href="https://escholarship.org/uc/item/0p99072q">McFadden (1974)</a></p>
+<p>在 DCE 文献中，解释变量主要随方案变化时，这个模型也常称为 <strong>conditional logit</strong>。这里的 conditional logit 与多项 Logit 使用同一个选择概率式，不应仅凭名称与匹配病例—对照研究中的 conditional logistic regression 混同。</p>
+</section>
+<section id="二项情形" class="level2">
+<h2 class="anchored" data-anchor-id="二项情形">二项情形</h2>
+<p>若 <span class="math inline">\(C_{nt}=\{A,B\}\)</span>，则</p>
+<p><span class="math display">\[
+\begin{aligned}
+P_{ntA}
+&amp;=
+\frac{e^{V_{ntA}}}
+{e^{V_{ntA}}+e^{V_{ntB}}}\\
+&amp;=
+\frac{1}
+{1+\exp[-(V_{ntA}-V_{ntB})]}.
+\end{aligned}
+\]</span></p>
+<p>因此，</p>
+<p><span class="math display">\[
+\log
+\frac{P_{ntA}}{1-P_{ntA}}
+=
+V_{ntA}-V_{ntB}.
+\]</span></p>
+<p>若 <span class="math inline">\(V_{ntj}=\mathbf x_{ntj}^{\mathsf T}\boldsymbol\beta\)</span>，则</p>
+<p><span class="math display">\[
+\log
+\frac{P_{ntA}}{1-P_{ntA}}
+=
+(\mathbf x_{ntA}-\mathbf x_{ntB})^{\mathsf T}
+\boldsymbol\beta.
+\]</span></p>
+<p>二项 DCE 因而可以表示为<strong>方案属性差上的 logistic 回归</strong>。其概率形式也可以从分布角度理解：<strong>两个独立同分布 Gumbel 随机项之差服从 logistic 分布</strong>。服从 Gumbel 分布的是各方案的随机项，而不是假定每个方案的随机项本身服从 logistic 分布。</p>
+</section>
+<section id="无关备选项独立性" class="level2">
+<h2 class="anchored" data-anchor-id="无关备选项独立性">无关备选项独立性</h2>
+<p>MNL 中任意两个方案 <span class="math inline">\(i\)</span> 和 <span class="math inline">\(j\)</span> 的概率比为</p>
+<p><span class="math display">\[
+\frac{P_{nti}}{P_{ntj}}
+=
+\exp(V_{nti}-V_{ntj}),
+\]</span></p>
+<p>其对数形式为</p>
+<p><span class="math display">\[
+\log\frac{P_{nti}}{P_{ntj}}
+=
+V_{nti}-V_{ntj}.
+\]</span></p>
+<p>在给定代表性效用后，这个概率比不包含选择集中的其他方案。该性质称为<strong>无关备选项独立性</strong>（independence from irrelevant alternatives，IIA）：加入或移除其他方案时，原有两个方案的相对概率保持不变。</p>
+<p>IIA 来源于独立、同分布、共同尺度的第一类极值随机项这一完整假设组合，而不能仅归因于误差独立。例如，独立正态误差导出 Probit，并不产生相同的概率比结构。若两个治疗方案共享未观测的给药便利性或品牌印象，它们之间的随机效用可能相关；此时新增一个与原方案高度相似的方案，MNL 仍会按固定比例从所有原方案分流，可能无法表达相似方案之间更强的替代关系。</p>
+<div class="callout callout-style-default callout-warning callout-titled" title="IIA 是模型结构假设">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">警告</span>IIA 是模型结构假设
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>删除方案后比较参数的 Hausman–McFadden 检验是经典诊断方法，但有限样本、选择集改变和协方差差分非正定都可能使结果不稳定。<a href="https://doi.org/10.2307/1910997">Hausman and McFadden (1984)</a> IIA 的判断还应结合方案之间的实质相似性、可能遗漏的共同因素、预测表现以及更灵活模型下的替代模式。</p>
+</div>
+</div>
+</section>
+</section>
+<section id="参数估计与统计推断" class="level1">
+<h1>参数估计与统计推断</h1>
+<p>选择概率描述了给定属性和模型参数时各方案被选择的可能性。要由实际回答反推未知参数，还需要把每道任务的观测选择转化为似然，并明确不同任务如何组合、重复回答如何影响不确定性，以及研究假设如何转化为参数约束。</p>
+<section id="样本似然" class="level2">
+<h2 class="anchored" data-anchor-id="样本似然">样本似然</h2>
+<p>使用前文定义的选择指示变量 <span class="math inline">\(y_{ntj}\)</span>，任务 <span class="math inline">\((n,t)\)</span> 的似然贡献为</p>
+<p><span class="math display">\[
+L_{nt}(\boldsymbol\beta)
+=\prod_{j\in C_{nt}}
+P_{ntj}(\boldsymbol\beta)^{y_{ntj}}.
+\]</span></p>
+<p>由于只有实际被选方案的指示变量等于 1，上式恰好等于模型赋给实际选择的概率 <span class="math inline">\(P_{nt,y_{nt}}(\boldsymbol\beta)\)</span>。乘积只是多类别结果的紧凑写法，并不表示同一道任务中的方案行是相互独立的 Bernoulli 观测。</p>
+<p>若给定观测协变量和共同参数后，同一受访者的任务选择满足条件独立，则受访者 <span class="math inline">\(n\)</span> 的选择序列似然为</p>
+<p><span class="math display">\[
+L_n(\boldsymbol\beta)
+=\prod_{t=1}^{T_n}L_{nt}(\boldsymbol\beta).
+\]</span></p>
+<p>进一步假定不同受访者相互独立，全样本似然为</p>
+<p><span class="math display">\[
+L(\boldsymbol\beta)
+=\prod_{n=1}^{N}L_n(\boldsymbol\beta)
+=\prod_{n=1}^{N}
+\prod_{t=1}^{T_n}
+\prod_{j\in C_{nt}}
+P_{ntj}(\boldsymbol\beta)^{y_{ntj}}.
+\]</span></p>
+<p>取对数后，乘积转化为求和：</p>
+<p><span class="math display">\[
+\ell(\boldsymbol\beta)
+=\sum_{n=1}^{N}\sum_{t=1}^{T_n}
+\sum_{j\in C_{nt}}
+y_{ntj}\log P_{ntj}(\boldsymbol\beta).
+\]</span></p>
+<p>对于线性代表性效用的 MNL，代入 softmax 概率可得</p>
+<p><span class="math display">\[
+\ell(\boldsymbol\beta)
+=\sum_{n,t}
+\left[
+\mathbf x_{nt,y_{nt}}^{\mathsf T}\boldsymbol\beta
+-\log\left\{
+\sum_{j\in C_{nt}}
+\exp(\mathbf x_{ntj}^{\mathsf T}\boldsymbol\beta)
+\right\}
+\right].
+\]</span></p>
+<p>第一项是实际被选方案的代表性效用，第二项通过 log-sum-exp 将其与选择集中的全部方案比较。实际选择的预测概率越小，相应的对数似然惩罚越大；因此，最大化对数似然等价于在全部任务上最小化多类别 log loss。</p>
+<p>任务间条件独立是把任务概率相乘为受访者联合概率所需的附加假设，并不来自单道任务的 MNL 概率推导。如果同一人的回答仍存在相关性，上述乘积不再是完整的受访者联合似然，但可以作为工作独立似然或复合似然用于估计。此时，参数估计和不确定性估计所需的条件必须分别讨论。</p>
+</section>
+<section id="最大似然估计" class="level2">
+<h2 class="anchored" data-anchor-id="最大似然估计">最大似然估计</h2>
+<p>最大似然估计量定义为</p>
+<p><span class="math display">\[
+\widehat{\boldsymbol\beta}
+=\arg\max_{\boldsymbol\beta}\ell(\boldsymbol\beta).
+\]</span></p>
+<p>对线性效用 MNL，得分向量为</p>
+<p><span class="math display">\[
+\begin{aligned}
+\mathbf s(\boldsymbol\beta)
+&amp;=\frac{\partial\ell(\boldsymbol\beta)}
+{\partial\boldsymbol\beta}\\
+&amp;=\sum_{n,t}
+\left[
+\mathbf x_{nt,y_{nt}}
+-\sum_{j\in C_{nt}}
+P_{ntj}(\boldsymbol\beta)\mathbf x_{ntj}
+\right].
+\end{aligned}
+\]</span></p>
+<p>每道任务的得分比较两个量：<strong>实际被选方案的属性向量，以及模型按当前选择概率计算的属性期望</strong>。内部最优点的一阶条件</p>
+<p><span class="math display">\[
+\mathbf s(\widehat{\boldsymbol\beta})=\mathbf0
+\]</span></p>
+<p>表示这些差异在全样本中达到平衡。换言之，MLE 调整参数，使模型预测的选择所对应的属性总量与实际选择所体现的属性总量相匹配。</p>
+<p>对任务 <span class="math inline">\((n,t)\)</span>，令 <span class="math inline">\(\mathbf X_{nt}\)</span> 的每一行对应一个方案，<span class="math inline">\(\mathbf p_{nt}\)</span> 为该任务的选择概率向量，则 Hessian 为</p>
+<p><span class="math display">\[
+\mathbf H(\boldsymbol\beta)
+=-\sum_{n,t}\mathbf X_{nt}^{\mathsf T}
+\left[
+\operatorname{diag}(\mathbf p_{nt})
+-\mathbf p_{nt}\mathbf p_{nt}^{\mathsf T}
+\right]
+\mathbf X_{nt}.
+\]</span></p>
+<p>方括号内是多类别选择指示变量的条件协方差矩阵，因而为半正定矩阵；Hessian 相应为半负定矩阵，所以线性效用 MNL 的对数似然是凹函数。若施加必要的规范化约束后，任务内属性对比能够识别目标参数且不存在完全分离，通常可以得到唯一的有限极大值。负 Hessian 汇总了这些属性对比所提供的信息，模型型协方差估计相应写为</p>
+<p><span class="math display">\[
+\widehat{\operatorname{Var}}_{\mathrm{model}}
+(\widehat{\boldsymbol\beta})
+=\left[-\mathbf H(\widehat{\boldsymbol\beta})\right]^{-1}.
+\]</span></p>
+<p>这一协方差公式依赖完整似然及其条件独立假设。数值优化可以采用 Newton–Raphson、Fisher scoring 或准 Newton 方法；软件报告“收敛”只表示满足了停止准则，不等于模型设定和参数识别均无问题。<a href="https://eml.berkeley.edu/books/choice2.html">Train (2009), Chapter 8</a></p>
+</section>
+<section id="重复任务" class="level2">
+<h2 class="anchored" data-anchor-id="重复任务">重复任务</h2>
+<p>同一受访者的多次回答可能共享未观测偏好、理解方式、疲劳程度和回答策略，因此基础推断通常在受访者层面聚类。</p>
+<p>若工作似然对应的估计方程在真实参数或目标参数处满足</p>
+<p><span class="math display">\[
+\operatorname E[\mathbf s_n(\boldsymbol\beta_0)]=\mathbf0,
+\]</span></p>
+<p>并且不同受访者相互独立，则可以允许同一受访者内部的任务得分以未知形式相关。令任务得分为 <span class="math inline">\(\mathbf s_{nt}(\boldsymbol\beta)\)</span>，受访者总得分为</p>
+<p><span class="math display">\[
+\mathbf s_n(\widehat{\boldsymbol\beta})
+=\sum_{t=1}^{T_n}
+\mathbf s_{nt}(\widehat{\boldsymbol\beta}),
+\]</span></p>
+<p>并记</p>
+<p><span class="math display">\[
+\widehat{\mathbf A}
+=-\mathbf H(\widehat{\boldsymbol\beta}),
+\qquad
+\widehat{\mathbf B}
+=\sum_{n=1}^{N}
+\mathbf s_n\mathbf s_n^{\mathsf T}.
+\]</span></p>
+<p>受访者层聚类 sandwich 协方差的基本形式为</p>
+<p><span class="math display">\[
+\widehat{\operatorname{Var}}_{\mathrm{CR}}
+(\widehat{\boldsymbol\beta})
+=\widehat{\mathbf A}^{-1}
+\widehat{\mathbf B}
+\widehat{\mathbf A}^{-1}.
+\]</span></p>
+<p>中间的 <span class="math inline">\(\widehat{\mathbf B}\)</span> 先在受访者内部汇总任务得分，再计算跨受访者的变异，因而保留了任意的受访者内得分相关。实际软件通常还会应用有限样本修正。受访者数量较少时，常规聚类渐近近似可能偏乐观，需要采用适当的小样本修正、按受访者重抽样的 bootstrap，或直接建立能够描述跨任务依赖的层级模型。<a href="https://doi.org/10.3368/jhr.50.2.317">Cameron and Miller (2015)</a></p>
+<div class="callout callout-style-default callout-important callout-titled" title="聚类稳健标准误不等于异质性模型">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">重要</span>聚类稳健标准误不等于异质性模型
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>聚类稳健协方差只调整 <span class="math inline">\(\widehat{\boldsymbol\beta}\)</span> 的抽样不确定性，不改变参数点估计和预测概率，也不估计个体偏好分布。如果简单 MNL 的选择概率因未观测偏好异质性而设定错误，稳健标准误不能使其系数自动成为总体平均偏好。持续的个体差异和跨任务相关需要 mixed logit、潜在类别或层级贝叶斯模型显式描述。</p>
+</div>
+</div>
+</section>
+<section id="假设检验" class="level2">
+<h2 class="anchored" data-anchor-id="假设检验">假设检验</h2>
+<p>统计检验首先要求把研究问题写成参数约束。一般原假设可以表示为</p>
+<p><span class="math display">\[
+H_0:\ \mathbf r(\boldsymbol\beta)=\mathbf0,
+\]</span></p>
+<p>其中 <span class="math inline">\(\mathbf r(\boldsymbol\beta)\)</span> 包含 <span class="math inline">\(q\)</span> 个约束。单个系数检验可以写为 <span class="math inline">\(H_0:\beta_k=0\)</span>；具有 <span class="math inline">\(K\)</span> 个水平的分类属性通常对应 <span class="math inline">\(K-1\)</span> 个编码系数，因此“该属性整体没有作用”需要联合检验全部 <span class="math inline">\(K-1\)</span> 个系数。交互作用也应根据其编码方式联合检验相关参数，而不能只依据其中一个系数的显著性判断整个交互结构。</p>
+<p><strong>Wald 检验。</strong> 设</p>
+<p><span class="math display">\[
+\mathbf G(\boldsymbol\beta)
+=\frac{\partial\mathbf r(\boldsymbol\beta)}
+{\partial\boldsymbol\beta^{\mathsf T}},
+\]</span></p>
+<p>则 Wald 统计量为</p>
+<p><span class="math display">\[
+W
+=\mathbf r(\widehat{\boldsymbol\beta})^{\mathsf T}
+\left[
+\mathbf G(\widehat{\boldsymbol\beta})
+\widehat{\mathbf V}
+\mathbf G(\widehat{\boldsymbol\beta})^{\mathsf T}
+\right]^{-1}
+\mathbf r(\widehat{\boldsymbol\beta}),
+\]</span></p>
+<p>其中 <span class="math inline">\(\widehat{\mathbf V}\)</span> 可以是模型型协方差，也可以是受访者层聚类稳健协方差。Wald 检验只需估计无约束模型，但在小样本、参数接近边界或非线性变换高度偏斜时可能不稳定。</p>
+<p><strong>似然比检验。</strong> 若约束模型嵌套于无约束模型，分别记其最大化对数似然为 <span class="math inline">\(\ell_R\)</span> 和 <span class="math inline">\(\ell_U\)</span>，则</p>
+<p><span class="math display">\[
+LR=2(\ell_U-\ell_R).
+\]</span></p>
+<p>似然比检验需要同时估计约束和无约束模型，并依赖完整似然及相应的正则条件。</p>
+<p><strong>Score 检验。</strong> Score 检验只估计约束模型，并在约束估计量 <span class="math inline">\(\widetilde{\boldsymbol\beta}\)</span> 处检查释放参数后是否存在明显的似然上升方向；存在干扰参数时，需要使用调整后的有效得分和信息矩阵。</p>
+<p>在原假设成立且满足常规正则条件时，Wald、似然比和 Score 统计量都渐近服从自由度为 <span class="math inline">\(q\)</span> 的卡方分布。三者在大样本下渐近等价，但所需模型拟合和有限样本表现不同：</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>检验</th>
+<th>需要估计的模型</th>
+<th>核心比较</th>
+<th>典型用途</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Wald</td>
+<td>无约束模型</td>
+<td>参数估计值与原假设约束之间的距离</td>
+<td>单个系数、分类属性或交互项的联合检验</td>
+</tr>
+<tr class="even">
+<td>似然比</td>
+<td>约束模型和无约束模型</td>
+<td>解除约束后对数似然的改善</td>
+<td>嵌套模型比较</td>
+</tr>
+<tr class="odd">
+<td>Score</td>
+<td>约束模型</td>
+<td>从原假设出发是否存在显著的改进方向</td>
+<td>检验待加入的变量或复杂扩展</td>
+</tr>
+</tbody>
+</table>
+<p>非嵌套模型不能直接使用普通似然比检验，边界参数也可能使常规卡方近似失效。若任务乘积只是工作独立似然而非完整似然，聚类稳健协方差可用于 Wald 检验，但不会自动使普通似然比检验具有受访者内相关稳健性；此时需要相应的稳健检验、复合似然调整或按受访者 bootstrap。</p>
+</section>
+</section>
+<section id="基础分析工作流" class="level1">
+<h1>基础分析工作流</h1>
+<p>DCE 的基础分析依次包括分析准备、模型选择、结果解释、模型诊断和软件实现。</p>
+<section id="分析准备" class="level2">
+<h2 class="anchored" data-anchor-id="分析准备">分析准备</h2>
+<p>分析开始前，应完成前述长表结构、属性编码和任务内对比检查。在查看结果前，还需确定连续属性函数形式、交互项、主要目标量和推断单位，并预先规定缺失处理、排除规则、敏感性分析、受访者层聚类方式以及估计任务与验证任务的划分。</p>
+</section>
+<section id="模型选择" class="level2">
+<h2 class="anchored" data-anchor-id="模型选择">模型选择</h2>
+<p>MNL 通常作为基础模型，用于核对数据编码、效用方向、平均属性效应和似然计算。模型扩展应对应明确的研究问题或失效机制，而不应仅由样本内拟合改善驱动。</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>研究问题或数据结构</th>
+<th>基础处理或扩展方向</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>估计总体平均属性效应</td>
+<td>包含主要属性和必要 ASC 的 MNL</td>
+</tr>
+<tr class="even">
+<td>偏好随已观测个体特征变化</td>
+<td>属性或方案标签与个体特征的交互</td>
+</tr>
+<tr class="odd">
+<td>属性效应具有预先设定的非线性</td>
+<td>分段函数、多项式或样条</td>
+</tr>
+<tr class="even">
+<td>存在连续的未观测偏好差异</td>
+<td>Mixed Logit</td>
+</tr>
+<tr class="odd">
+<td>人群可能由若干偏好类型构成</td>
+<td>潜在类别模型</td>
+</tr>
+<tr class="even">
+<td>相似方案共享未观测因素</td>
+<td>Nested Logit 或 Probit</td>
+</tr>
+<tr class="odd">
+<td>同一人的任务选择具有持续相关</td>
+<td>Panel Mixed Logit 或其他层级模型</td>
+</tr>
+<tr class="even">
+<td>系数差异可能混合误差尺度差异</td>
+<td>尺度异质性模型</td>
+</tr>
+</tbody>
+</table>
+<p>基础分析可先估计包含主要属性和必要 ASC 的 MNL，再依据研究问题加入交互项、非线性项或更复杂的随机效用结构。偏好异质性与相关随机效用模型见<a href="03-preference-heterogeneity-models.qmd">偏好异质性的分析模型</a>，支付意愿、福利和更复杂的预测验证见<a href="04-estimands-diagnostics-and-behavioral-complications.qmd">目标量与诊断</a>。</p>
+</section>
+<section id="结果解释" class="level2">
+<h2 class="anchored" data-anchor-id="结果解释">结果解释</h2>
+<p>DCE 的分析结果不能只停留在系数表。基础模型通常需要进一步给出偏好权重、属性的相对重要性、属性之间的边际替代率以及研究情景下的选择概率。这四类结果分别描述效用方向、属性范围内的效用变化、属性之间的权衡和完整选择集中的行为预测，不能相互替代。<a href="https://doi.org/10.1016/j.jval.2016.04.004">Hauber et al.&nbsp;(2016)</a></p>
+<p><strong>偏好权重。</strong> 设属性 <span class="math inline">\(k\)</span> 对代表性效用的贡献为 <span class="math inline">\(v_k(x_k)\)</span>。分类属性水平 <span class="math inline">\(r\)</span> 的偏好权重记为 <span class="math inline">\(w_{kr}=v_k(r)\)</span>；连续属性采用线性形式时，系数 <span class="math inline">\(\beta_k\)</span> 表示 <span class="math inline">\(x_k\)</span> 每增加一个计量单位所产生的规范化效用变化。正的权重差表示相应水平更受偏好，负的权重差表示相对不受偏好，但权重的绝对零点和共同尺度没有直接行为含义。</p>
+<p>在 dummy（reference）coding 下，分类水平系数表示相对于参照水平的效用差；在 effects coding 下，省略水平由前述和为零约束恢复。若连续属性 <span class="math inline">\(x_k\)</span> 增加 <span class="math inline">\(\Delta x_k\)</span>，方案 <span class="math inline">\(i\)</span> 相对于方案 <span class="math inline">\(j\)</span> 的优势比变化为 <span class="math inline">\(\exp(\widehat\beta_k\Delta x_k)\)</span>；这一结果是方案间的相对比较，而不是无条件选择比例。</p>
+<p><strong>相对重要性。</strong> 在研究预先规定的属性水平范围 <span class="math inline">\(\mathcal X_k\)</span> 内，属性 <span class="math inline">\(k\)</span> 能够产生的最大效用变化为</p>
+<p><span class="math display">\[
+R_k
+=\max_{x\in\mathcal X_k}\widehat v_k(x)
+-\min_{x\in\mathcal X_k}\widehat v_k(x).
+\]</span></p>
+<p>分类属性可直接使用各水平偏好权重的极差；若连续属性在线性模型中的研究范围为 <span class="math inline">\([a_k,b_k]\)</span>，则 <span class="math inline">\(R_k=|\widehat\beta_k|(b_k-a_k)\)</span>。把各属性的效用极差标准化，可以得到百分比形式的相对重要性：</p>
+<p><span class="math display">\[
+RI_k
+=\frac{R_k}{\sum_{h=1}^{K}R_h}\times100\%.
+\]</span></p>
+<p>相对重要性衡量的是<strong>给定水平范围内</strong>各属性能够引起的效用变化，而不是脱离实验范围的固定属性排序。扩大某个属性的水平跨度会提高其 <span class="math inline">\(R_k\)</span>，因此只有使用相同属性定义、水平范围和效用模型时，相对重要性才具有可比性。</p>
+<p><strong>边际替代率。</strong> 对两个连续属性 <span class="math inline">\(x_k\)</span> 和 <span class="math inline">\(x_m\)</span>，保持代表性效用不变可得到</p>
+<p><span class="math display">\[
+\operatorname{MRS}_{k,m}
+=-\frac{\partial V/\partial x_k}
+{\partial V/\partial x_m}.
+\]</span></p>
+<p>在线性效用模型中，该比值化为 <span class="math inline">\(-\widehat\beta_k/\widehat\beta_m\)</span>，表示为了补偿 <span class="math inline">\(x_k\)</span> 增加一个单位，属性 <span class="math inline">\(x_m\)</span> 需要改变多少单位。对于分类属性从水平 <span class="math inline">\(r\)</span> 变为 <span class="math inline">\(s\)</span>，分子应替换为偏好权重差 <span class="math inline">\(\widehat w_{ks}-\widehat w_{kr}\)</span>。当分母属性是连续费用时，这一替代率可解释为边际支付意愿，但其有效性依赖费用系数符号、函数形式、计量单位和不确定性处理。</p>
+<p><strong>情景选择概率。</strong> 给定情景 <span class="math inline">\(s\)</span> 中全部候选方案的属性组合，将估计参数代入每个方案的代表性效用 <span class="math inline">\(\widehat V_{sj}\)</span>，MNL 的预测概率为</p>
+<p><span class="math display">\[
+\widehat P_{sj}
+=\frac{\exp(\widehat V_{sj})}
+{\sum_{h\in C_s}\exp(\widehat V_{sh})}.
+\]</span></p>
+<p>情景计算必须同时给出完整选择集，并保留方案 ASC、退出项和所有交互项。改变某一方案的属性后，可以报告该方案的概率变化以及其他方案之间的替代。概率是模型条件下的预测量，不应直接解释为未来市场份额；若样本不能代表目标人群，还需要相应的外推或加权依据。</p>
+<p>偏好权重可以直接报告估计值、标准误和置信区间；相对重要性、边际替代率和情景选择概率属于参数的非线性函数，应使用 delta method、参数模拟或按受访者 bootstrap 传播参数不确定性。仅报告由点估计计算的派生结果会低估分析中的不确定性。</p>
+</section>
+<section id="模型诊断" class="level2">
+<h2 class="anchored" data-anchor-id="模型诊断">模型诊断</h2>
+<p>模型诊断需要分别考察数值估计、参数识别、样本内拟合、样本外预测和行为合理性。</p>
+<p><strong>数值与识别。</strong> 在前述结构性秩检查之外，还应报告停止准则，并检查最终梯度、Hessian 的特征值或条件状况、异常大的系数和标准误。稀疏水平、近似共线以及完全或近完全分离都可能造成不稳定估计；复杂或非凸模型还应使用多组合理初值复核结果。</p>
+<p><strong>拟合与模型比较。</strong> 相对截距或等概率空模型的 McFadden 指标为</p>
+<p><span class="math display">\[
+\rho^2
+=1-\frac{\ell(\widehat{\boldsymbol\beta})}
+{\ell(\widehat{\boldsymbol\beta}_0)}.
+\]</span></p>
+<p>它表示相对于指定基准模型的对数似然改善比例，不是线性回归中的解释方差。复杂度不同的候选模型还常报告</p>
+<p><span class="math display">\[
+\mathrm{AIC}=-2\ell+2K,
+\qquad
+\mathrm{BIC}=-2\ell+K\log M.
+\]</span></p>
+<p>其中 <span class="math inline">\(K\)</span> 是自由参数数目。重复选择数据中 BIC 的有效样本量 <span class="math inline">\(M\)</span> 并非没有争议：任务数与独立受访者数对应不同渐近框架，因此报告 BIC 时必须说明采用的单位。AIC 和 BIC 也不能替代模型假设、行为解释和样本外评价。</p>
+<p><strong>预测检查。</strong> 对每道任务可以计算实际选择的 log loss、最高概率命中率和概率校准。命中率忽略预测置信程度，在备选项数量变化时也不易比较；log loss 与估计目标更加一致。实验预留的 holdout 任务可用于评价任务内预测。若目标是推广到新受访者，训练集和测试集还应按受访者划分，避免同一人的其他任务泄漏到测试集。</p>
+<p><strong>行为合理性。</strong> 应检查费用、风险等属性的效应方向，分类水平效用是否出现难以解释的跳跃，ASC 是否主导全部预测，以及相似方案之间的替代是否符合研究情境。支配任务、完成时间和逐题选择模式可以作为数据质量线索，但不应在看到结果后使用任意规则删除所谓“异常”受访者；预先说明排除规则并报告敏感性分析更便于复核。<a href="https://doi.org/10.1016/j.jval.2016.04.004">Hauber et al.&nbsp;(2016)</a></p>
+</section>
+<section id="r-示例" class="level2">
+<h2 class="anchored" data-anchor-id="r-示例">R 示例</h2>
+<p>R 中估计基础 DCE 模型常用的接口包括 <code>survival::clogit()</code>、<code>survival::coxph()</code> 和 <code>mlogit::mlogit()</code>。下面分别给出同一效用函数的简化写法。假定长表 <code>dce_long</code> 包含 <code>respondent_id</code>、<code>task_id</code>、<code>alternative_id</code>、唯一标识“受访者—任务”组合的 <code>choice_set</code>、选择指示变量 <code>chosen</code>，以及已经编码的 <code>benefit</code>、<code>risk</code>、<code>cost</code>、<code>oral</code> 和 <code>treatment_asc</code>。其中 <code>treatment_asc</code> 表示实验治疗相对于参照方案的 ASC。</p>
+<p><strong><code>clogit()</code>：条件 Logit。</strong> 每道选择任务构成一个分层，函数直接最大化条件似然。</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(survival)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>fit_clogit <span class="ot">&lt;-</span> <span class="fu">clogit</span>(</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  chosen <span class="sc">~</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    benefit <span class="sc">+</span> risk <span class="sc">+</span> cost <span class="sc">+</span> oral <span class="sc">+</span> treatment_asc <span class="sc">+</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">strata</span>(choice_set),</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> dce_long,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"exact"</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_clogit)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong><code>coxph()</code>：精确部分似然。</strong> 将所有方案的时间设为常数，并以选择集分层，即可得到与条件 Logit 相同的似然；<code>cluster</code> 参数用于计算受访者层聚类稳健协方差。</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(survival)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>dce_long<span class="sc">$</span>constant_time <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>fit_coxph <span class="ot">&lt;-</span> <span class="fu">coxph</span>(</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Surv</span>(constant_time, chosen) <span class="sc">~</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    benefit <span class="sc">+</span> risk <span class="sc">+</span> cost <span class="sc">+</span> oral <span class="sc">+</span> treatment_asc <span class="sc">+</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">strata</span>(choice_set),</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> dce_long,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">ties =</span> <span class="st">"exact"</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">cluster =</span> respondent_id,</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">robust =</span> <span class="cn">TRUE</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_coxph)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong><code>mlogit()</code>：离散选择专用接口。</strong> <code>dfidx()</code> 显式声明选择集、受访者和方案索引；公式中的 <code>| 0</code> 关闭自动加入的方案特定截距，因为示例已经通过 <code>treatment_asc</code> 指定了 ASC。</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mlogit)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>dce_mlogit <span class="ot">&lt;-</span> dfidx<span class="sc">::</span><span class="fu">dfidx</span>(</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  dce_long,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">choice =</span> <span class="st">"chosen"</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">idx =</span> <span class="fu">list</span>(</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">"choice_set"</span>, <span class="st">"respondent_id"</span>),</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"alternative_id"</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">shape =</span> <span class="st">"long"</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>fit_mlogit <span class="ot">&lt;-</span> <span class="fu">mlogit</span>(</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  chosen <span class="sc">~</span> benefit <span class="sc">+</span> risk <span class="sc">+</span> cost <span class="sc">+</span> oral <span class="sc">+</span> treatment_asc <span class="sc">|</span> <span class="dv">0</span>,</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> dce_mlogit</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_mlogit)</span></code></pre></div><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></div>
+<p>在每个选择集中恰有一个方案被选择，并且三个接口使用相同样本、编码、效用函数和识别约束时，它们估计的是同一个基础 MNL，参数点估计应当一致。<code>clogit()</code> 默认给出基于条件似然信息矩阵的协方差；上面的 <code>coxph()</code> 示例通过 <code>cluster = respondent_id</code> 改用聚类稳健协方差，因此其标准误、置信区间和 Wald 检验不应与另外两个默认输出直接比较。若需要比较推断结果，三个实现还必须采用相同的协方差估计和有限样本修正。<a href="https://stat.ethz.ch/R-manual/R-patched/library/survival/html/clogit.html"><code>clogit</code> 官方文档</a>；<a href="https://stat.ethz.ch/R-manual/R-devel/library/survival/html/coxph.html"><code>coxph</code> 官方文档</a>；<a href="https://cran.r-project.org/web/packages/mlogit/mlogit.pdf"><code>mlogit</code> 官方手册</a></p>
+<p>这些代码只演示基础接口，变量名称、属性编码和 ASC 约束必须替换为实际研究的设计矩阵定义。</p>
+</section>
+</section>
+<section id="参考来源" class="level1">
+<h1>参考来源</h1>
+<ul>
+<li>Bech, M., &amp; Gyrd-Hansen, D. (2005). <a href="https://doi.org/10.1002/hec.984">Effects coding in discrete choice experiments</a>. <em>Health Economics</em>, 14(10), 1079–1083.</li>
+<li>Johnson, F. R., Lancsar, E., Marshall, D., et al.&nbsp;(2013). <a href="https://www.ispor.org/docs/default-source/resources/outcomes-research-guidelines-index/piis1098301512041629.pdf?sfvrsn=d9c2e90c_0">Constructing Experimental Designs for Discrete-Choice Experiments</a>. <em>Value in Health</em>, 16(1), 3–13.</li>
+<li>Cameron, A. C., &amp; Miller, D. L. (2015). <a href="https://doi.org/10.3368/jhr.50.2.317">A practitioner’s guide to cluster-robust inference</a>. <em>Journal of Human Resources</em>, 50(2), 317–372.</li>
+<li>Hauber, A. B., González, J. M., Groothuis-Oudshoorn, C. G. M., et al.&nbsp;(2016). <a href="https://doi.org/10.1016/j.jval.2016.04.004">Statistical methods for the analysis of discrete choice experiments</a>. <em>Value in Health</em>, 19(4), 300–315.</li>
+<li>Hausman, J., &amp; McFadden, D. (1984). <a href="https://doi.org/10.2307/1910997">Specification tests for the multinomial logit model</a>. <em>Econometrica</em>, 52(5), 1219–1240.</li>
+<li>McFadden, D. (1974). <a href="https://escholarship.org/uc/item/0p99072q">Conditional logit analysis of qualitative choice behavior</a>. In P. Zarembka (Ed.), <em>Frontiers in Econometrics</em>.</li>
+<li>Croissant, Y. (2026). <a href="https://cran.r-project.org/web/packages/mlogit/mlogit.pdf"><code>mlogit</code>: Multinomial Logit Models</a>. R package manual.</li>
+<li>Therneau, T. (2026). R <code>survival</code> package documentation: <a href="https://stat.ethz.ch/R-manual/R-patched/library/survival/html/clogit.html">Conditional logistic regression</a> and <a href="https://stat.ethz.ch/R-manual/R-devel/library/survival/html/coxph.html">Cox proportional hazards regression</a>.</li>
+<li>Train, K. E. (2009). <a href="https://eml.berkeley.edu/books/choice2.html">Discrete Choice Methods with Simulation, 2nd ed.</a>. Cambridge University Press.</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script>
+(function () {
+  function makeProofsCollapsible() {
+    const proofs = document.querySelectorAll("div.proof");
+
+    proofs.forEach(function (proof) {
+      if (proof.dataset.collapsibleReady === "true") return;
+
+      const details = document.createElement("details");
+
+      details.className = proof.className;
+      details.classList.add("proof-collapsible");
+      details.dataset.collapsibleReady = "true";
+
+      if (proof.id) {
+        details.id = proof.id;
+      }
+
+      details.open = proof.classList.contains("open");
+
+      const summary = document.createElement("summary");
+      const title = proof.querySelector(".proof-title");
+
+      if (title) {
+        summary.innerHTML = title.innerHTML;
+        title.remove();
+      } else {
+        summary.innerHTML = "<strong>Proof</strong>";
+      }
+
+      details.appendChild(summary);
+
+      while (proof.firstChild) {
+        details.appendChild(proof.firstChild);
+      }
+
+      proof.replaceWith(details);
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", makeProofsCollapsible);
+  } else {
+    makeProofsCollapsible();
+  }
+})();
+</script>
+<script>
+(function () {
+  function fixTheoremTitleSpacing() {
+    const titleSelectors = [
+      ".theorem-title",
+      ".lemma-title",
+      ".corollary-title",
+      ".proposition-title",
+      ".conjecture-title",
+      ".definition-title",
+      ".example-title",
+      ".exercise-title",
+      ".solution-title",
+      ".remark-title",
+      ".algorithm-title",
+      ".proof-title"
+    ].join(",");
+
+    document.querySelectorAll(titleSelectors).forEach(function (title) {
+      const p = title.parentElement;
+
+      if (!p || p.tagName.toLowerCase() !== "p") return;
+
+      /*
+        Quarto/Pandoc often inserts a text node like:
+        <p><span class="theorem-title">...</span>&nbsp;</p>
+
+        Remove whitespace-only text nodes, including non-breaking spaces.
+      */
+      Array.from(p.childNodes).forEach(function (node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          const cleaned = node.textContent.replace(/\u00a0/g, " ").trim();
+          if (cleaned === "") {
+            node.remove();
+          }
+        }
+      });
+
+      p.classList.add("math-env-title-p");
+
+      /*
+        If the paragraph only contains the title span after cleanup,
+        mark it as title-only.
+      */
+      const meaningfulChildren = Array.from(p.childNodes).filter(function (node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          return node.textContent.replace(/\u00a0/g, " ").trim() !== "";
+        }
+        return true;
+      });
+
+      if (meaningfulChildren.length === 1 && meaningfulChildren[0] === title) {
+        p.classList.add("math-env-title-only");
+      }
+
+      /*
+        If the title-only paragraph is followed by a list,
+        compress the gap between title and list.
+      */
+      const next = p.nextElementSibling;
+      if (
+        p.classList.contains("math-env-title-only") &&
+        next &&
+        (next.tagName.toLowerCase() === "ol" || next.tagName.toLowerCase() === "ul")
+      ) {
+        p.classList.add("math-env-title-before-list");
+      }
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", fixTheoremTitleSpacing);
+  } else {
+    fixTheoremTitleSpacing();
+  }
+})();
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "已复制");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "已复制");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/luyiyun\.github\.io\/Notes\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<input type="hidden" id="giscus-base-theme" value="light">
+<input type="hidden" id="giscus-alt-theme" value="dark_dimmed">
+<script>
+  function loadGiscus() {
+    // Function to get the theme based on body class
+    const getTheme = () => {
+      let baseTheme = document.getElementById('giscus-base-theme').value;
+      let altTheme = document.getElementById('giscus-alt-theme').value;
+      return document.body.classList.contains('quarto-dark') ? altTheme : baseTheme;
+    };
+    const script = document.createElement("script");
+    script.src = "https://giscus.app/client.js";
+    script.async = true;
+    script.dataset.repo = "luyiyun/Notes-comments";
+    script.dataset.repoId = "R_kgDOScB5XQ";
+    script.dataset.category = "Announcements";
+    script.dataset.categoryId = "DIC_kwDOScB5Xc4C87kL";
+    script.dataset.mapping = "pathname";
+    script.dataset.reactionsEnabled = "1";
+    script.dataset.emitMetadata = "0";
+    script.dataset.inputPosition = "bottom";
+    script.dataset.theme = getTheme();
+    script.dataset.lang = "zh-CN";
+    script.crossOrigin = "anonymous";
+    // Append the script to the desired div instead of at the end of the body
+    document.getElementById("quarto-content").appendChild(script);
+  }
+  loadGiscus();
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
